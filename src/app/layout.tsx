@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
 import ChatWidget from "./components/ChatWidget";
+import LeadConnectorVoiceScript from "@/components/LeadConnectorVoiceScript";
 
 export const metadata: Metadata = {
   title: "247ROI | Revenue That Runs 24/7",
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased min-h-screen">
         <Providers>{children}</Providers>
+        <LeadConnectorVoiceScript />
         <ChatWidget />
       </body>
     </html>

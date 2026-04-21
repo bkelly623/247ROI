@@ -3,7 +3,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { TestDriveLink } from "@/components/TestDriveLink";
-import LeadConnectorVoiceWidget from "@/components/LeadConnectorVoiceWidget";
+import LeadConnectorVoiceLauncher from "@/components/LeadConnectorVoiceLauncher";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export default function Hero() {
   return (
@@ -38,8 +39,8 @@ export default function Hero() {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-14 items-center">
-          <div className="text-center lg:text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="text-center lg:text-left order-1">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -63,7 +64,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+              className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 lg:mb-10 leading-relaxed"
             >
               Answers calls, responds to texts, handles your website, and follows up automatically — so you never miss
               a customer again.
@@ -73,12 +74,12 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center lg:justify-start max-w-xl mx-auto lg:mx-0"
+              className="flex justify-center lg:justify-start max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-0"
             >
               <Button
                 size="lg"
                 asChild
-                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
               >
                 <TestDriveLink className="inline-flex h-full min-h-[4rem] w-full items-center justify-center px-4 py-3 text-center leading-snug">
                   Try This On Your Business (Free)
@@ -91,22 +92,57 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.15 }}
-            className="relative w-full max-w-lg mx-auto lg:max-w-none"
+            className="relative w-full max-w-lg mx-auto lg:max-w-none order-2"
           >
+            <motion.div
+              className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-80"
+              aria-hidden
+              animate={{
+                opacity: [0.45, 0.75, 0.45],
+                scale: [1, 1.03, 1],
+              }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background:
+                  "radial-gradient(ellipse 70% 60% at 50% 45%, hsl(174 72% 56% / 0.22), transparent 62%), radial-gradient(ellipse 55% 50% at 75% 75%, hsl(262 83% 58% / 0.14), transparent 58%)",
+                filter: "blur(28px)",
+              }}
+            />
             <div
-              className="pointer-events-none absolute -inset-4 rounded-[1.75rem] opacity-90 bg-[radial-gradient(ellipse_80%_70%_at_50%_40%,hsl(174_72%_56%/0.35),transparent_65%),radial-gradient(ellipse_60%_50%_at_80%_80%,hsl(262_83%_58%/0.2),transparent_55%)] blur-3xl"
+              className="pointer-events-none absolute -inset-3 rounded-[1.75rem] opacity-90 bg-[radial-gradient(ellipse_80%_70%_at_50%_40%,hsl(174_72%_56%/0.28),transparent_65%),radial-gradient(ellipse_60%_50%_at_80%_80%,hsl(262_83%_58%/0.16),transparent_55%)] blur-2xl"
               aria-hidden
             />
-            <div className="relative rounded-[1.35rem] border border-white/10 bg-gradient-to-b from-zinc-900/95 via-zinc-950 to-black p-8 sm:p-10 shadow-[0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06),0_24px_64px_-12px_rgba(0,0,0,0.75)]">
+
+            <motion.div
+              whileHover={{ y: -4, transition: { duration: 0.35 } }}
+              className="relative rounded-[1.35rem] border border-white/10 bg-gradient-to-b from-zinc-900/95 via-zinc-950 to-black p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06),0_24px_64px_-12px_rgba(0,0,0,0.75)] transition-shadow duration-500 hover:border-primary/25 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_28px_72px_-12px_rgba(0,0,0,0.78),0_0_48px_hsl(174_72%_56%/0.12)]"
+            >
               <div className="absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_45%,rgba(255,255,255,0.02)_100%)] pointer-events-none" />
-              <p className="text-center text-[11px] font-semibold uppercase tracking-[0.28em] text-primary/90 mb-2">
-                Live voice AI chat
-              </p>
-              <p className="text-center text-sm text-zinc-400 mb-8 max-w-sm mx-auto leading-relaxed">
-                Your real LeadConnector widget is active here. Open it to test exactly what visitors see.
-              </p>
-              <LeadConnectorVoiceWidget />
-            </div>
+
+              <div className="relative flex flex-col items-center text-center">
+                <p className="text-base sm:text-lg font-display font-semibold text-foreground tracking-tight mb-3 max-w-md leading-snug">
+                  Talk to our AI receptionist right now
+                </p>
+                <p className="text-sm text-zinc-400 mb-8 max-w-md mx-auto leading-relaxed">
+                  Ask about pricing, availability, or booking — just like a real customer
+                </p>
+
+                <div className="w-full flex justify-center py-2 min-h-[12rem] sm:min-h-[13rem] items-center">
+                  <LeadConnectorVoiceLauncher />
+                </div>
+
+                <p className="mt-8 text-[13px] text-zinc-500 leading-relaxed max-w-md">
+                  Or call{" "}
+                  <a
+                    href={PRIMARY_PHONE_HREF}
+                    className="text-primary hover:text-primary/90 font-medium underline-offset-2 hover:underline tabular-nums"
+                  >
+                    {PRIMARY_PHONE_DISPLAY}
+                  </a>{" "}
+                  to hear it on your phone
+                </p>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
