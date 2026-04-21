@@ -1,12 +1,36 @@
 "use client";
 
+import { useCallback, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Script from "next/script";
 import { Button } from "@/components/ui/button";
-import { TestDriveLink } from "@/components/TestDriveLink";
 import LeadConnectorVoiceLauncher from "@/components/LeadConnectorVoiceLauncher";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import {
+  GHL_VOICE_WIDGET_ID,
+  GHL_VOICE_WIDGET_RESOURCES_URL,
+  GHL_VOICE_WIDGET_SCRIPT_SRC,
+} from "@/lib/ghlVoiceWidget";
 
 export default function Hero() {
+  const voiceDemoRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState(false);
+  const [showTapHint, setShowTapHint] = useState(false);
+  const [micPulseNonce, setMicPulseNonce] = useState(0);
+
+  const scrollToVoiceDemo = useCallback(() => {
+    voiceDemoRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setSpotlight(true);
+    setShowTapHint(true);
+    setMicPulseNonce((n) => n + 1);
+    window.setTimeout(() => setSpotlight(false), 2800);
+    window.setTimeout(() => setShowTapHint(false), 10000);
+  }, []);
+
+  const scrollToBookCall = useCallback(() => {
+    document.getElementById("book-call")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 md:pt-32">
       <div className="absolute inset-0 hero-gradient" />
@@ -74,26 +98,42 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center lg:justify-start max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-0"
+              className="flex flex-col justify-center lg:justify-start max-w-xl mx-auto lg:mx-0 gap-4 mb-10 lg:mb-0"
             >
               <Button
+                type="button"
                 size="lg"
-                asChild
+                onClick={scrollToVoiceDemo}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
               >
-                <TestDriveLink className="inline-flex h-full min-h-[4rem] w-full items-center justify-center px-4 py-3 text-center leading-snug">
-                  Try This On Your Business (Free)
-                </TestDriveLink>
+                Talk to the AI Receptionist
               </Button>
+              <button
+                type="button"
+                onClick={scrollToBookCall}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center lg:text-left"
+              >
+                Or book a 10-minute setup call
+              </button>
             </motion.div>
           </div>
 
           <motion.div
+            ref={voiceDemoRef}
+            id="voice-demo"
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.15 }}
-            className="relative w-full max-w-lg mx-auto lg:max-w-none order-2"
+            className="relative w-full max-w-lg mx-auto lg:max-w-none order-2 scroll-mt-28"
           >
+            <Script
+              id="leadconnector-voice-widget-hero"
+              src={GHL_VOICE_WIDGET_SCRIPT_SRC}
+              strategy="afterInteractive"
+              data-resources-url={GHL_VOICE_WIDGET_RESOURCES_URL}
+              data-widget-id={GHL_VOICE_WIDGET_ID}
+            />
+
             <motion.div
               className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-80"
               aria-hidden
@@ -115,7 +155,11 @@ export default function Hero() {
 
             <motion.div
               whileHover={{ y: -4, transition: { duration: 0.35 } }}
-              className="relative rounded-[1.35rem] border border-white/10 bg-gradient-to-b from-zinc-900/95 via-zinc-950 to-black p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06),0_24px_64px_-12px_rgba(0,0,0,0.75)] transition-shadow duration-500 hover:border-primary/25 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_28px_72px_-12px_rgba(0,0,0,0.78),0_0_48px_hsl(174_72%_56%/0.12)]"
+              className={`relative rounded-[1.35rem] border bg-gradient-to-b from-zinc-900/95 via-zinc-950 to-black p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06),0_24px_64px_-12px_rgba(0,0,0,0.75)] transition-[box-shadow,border-color] duration-500 hover:border-primary/25 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_28px_72px_-12px_rgba(0,0,0,0.78),0_0_48px_hsl(174_72%_56%/0.12)] ${
+                spotlight
+                  ? "border-primary/50 shadow-[0_0_0_2px_hsl(174_72%_56%/0.45),0_0_56px_hsl(174_72%_56%/0.28),0_24px_64px_-12px_rgba(0,0,0,0.75)]"
+                  : "border-white/10"
+              }`}
             >
               <div className="absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_45%,rgba(255,255,255,0.02)_100%)] pointer-events-none" />
 
@@ -123,23 +167,28 @@ export default function Hero() {
                 <p className="text-base sm:text-lg font-display font-semibold text-foreground tracking-tight mb-3 max-w-md leading-snug">
                   Talk to our AI receptionist right now
                 </p>
-                <p className="text-sm text-zinc-400 mb-8 max-w-md mx-auto leading-relaxed">
+                <p className="text-sm text-zinc-400 mb-6 max-w-md mx-auto leading-relaxed">
                   Ask about pricing, availability, or booking — just like a real customer
                 </p>
 
+                {showTapHint ? (
+                  <p className="mb-4 text-xs font-medium uppercase tracking-wide text-primary/90" aria-live="polite">
+                    Tap the mic to start
+                  </p>
+                ) : null}
+
                 <div className="w-full flex justify-center py-2 min-h-[12rem] sm:min-h-[13rem] items-center">
-                  <LeadConnectorVoiceLauncher />
+                  <LeadConnectorVoiceLauncher micPulseNonce={micPulseNonce} />
                 </div>
 
                 <p className="mt-8 text-[13px] text-zinc-500 leading-relaxed max-w-md">
-                  Or call{" "}
+                  Prefer to call?{" "}
                   <a
                     href={PRIMARY_PHONE_HREF}
                     className="text-primary hover:text-primary/90 font-medium underline-offset-2 hover:underline tabular-nums"
                   >
                     {PRIMARY_PHONE_DISPLAY}
-                  </a>{" "}
-                  to hear it on your phone
+                  </a>
                 </p>
               </div>
             </motion.div>

@@ -1,6 +1,6 @@
 import { CALENDAR_PATH } from "@/app/components/cta";
 
-/** Legacy hash for `HashBookingRedirect` (`/#book-call` → `/calendar`). */
+/** Homepage anchor id for inline booking section (`/#book-call` scrolls on `/`). */
 export const BOOKING_HASH = "book-call";
 
 export { CALENDAR_PATH } from "@/app/components/cta";

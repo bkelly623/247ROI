@@ -33,7 +33,7 @@ const footerColumns: {
       { label: "Calculator", href: "/#free-audit" },
       { label: "Guarantee", href: "/guarantee" },
       { label: "Support", href: "mailto:contact@247roi.com" },
-      { label: "Book a call", href: "/calendar" },
+      { label: "Book a call", href: "/#book-call" },
     ],
   },
   {

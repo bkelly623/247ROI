@@ -6,6 +6,7 @@ import FreeAuditSection from "@/components/FreeAuditSection";
 import WhatThisDoes from "@/components/WhatThisDoes";
 import WhereItWorks from "@/components/WhereItWorks";
 import CTA from "@/components/CTA";
+import HomeSetupCallSection from "@/components/HomeSetupCallSection";
 import Footer from "@/components/Footer";
 
 export default function HomePage() {
@@ -17,6 +18,7 @@ export default function HomePage() {
       <WhatThisDoes />
       <WhereItWorks />
       <CTA />
+      <HomeSetupCallSection />
       <Footer />
     </div>
   );

@@ -124,7 +124,7 @@ Rule: do not mix primary/demo roles when editing CTAs or chat fallbacks.
 - Other services remain card-based and stylistically consistent
 
 ### Hero right-side voice/chat update (current state)
-- Added global `LeadConnectorVoiceScript` (layout) + hero `LeadConnectorVoiceLauncher` for the GHL Voice AI demo card
+- GHL Voice AI: `Script` loads once inside hero `#voice-demo`; `LeadConnectorVoiceLauncher` opens the widget without clicking the site chat control
 - Loader script currently used:
   - `https://widgets.leadconnectorhq.com/loader.js`
   - `data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"`
@@ -176,8 +176,8 @@ When asked to continue this project, do this first:
 2. Read:
    - `src/components/HomePage.tsx`
    - `src/components/Hero.tsx`
-   - `src/components/LeadConnectorVoiceScript.tsx`
    - `src/components/LeadConnectorVoiceLauncher.tsx`
+   - `src/components/HomeSetupCallSection.tsx` (`#book-call` — homepage booking embed)
    - `src/components/ServicesPage.tsx`
    - `src/components/Navbar.tsx`
    - `src/components/CTA.tsx`

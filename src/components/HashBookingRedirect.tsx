@@ -2,24 +2,30 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { CALENDAR_PATH } from "@/app/components/cta";
 import { BOOKING_HASH } from "@/lib/openBooking";
 
-/** Old links to `/#book-call` redirect to the full calendar page. */
+/** On the homepage, `/#book-call` scrolls to the inline booking section (no redirect). */
 export default function HashBookingRedirect() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const redirectIfLegacyHash = () => {
+    const scrollIfHash = () => {
       if (typeof window === "undefined") return;
-      if (pathname === "/" && window.location.hash === `#${BOOKING_HASH}`) {
-        window.location.replace(CALENDAR_PATH);
+      if (pathname !== "/") return;
+      if (window.location.hash !== `#${BOOKING_HASH}`) return;
+      const el = document.getElementById(BOOKING_HASH);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
 
-    redirectIfLegacyHash();
-    window.addEventListener("hashchange", redirectIfLegacyHash);
-    return () => window.removeEventListener("hashchange", redirectIfLegacyHash);
+    scrollIfHash();
+    const t = window.setTimeout(scrollIfHash, 200);
+    window.addEventListener("hashchange", scrollIfHash);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("hashchange", scrollIfHash);
+    };
   }, [pathname]);
 
   return null;

@@ -110,7 +110,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <div aria-live="polite">
+    <div data-247roi-site-chat="true" aria-live="polite">
       <AnimatePresence>
         {open ? (
           <motion.div
