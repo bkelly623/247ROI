@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Script from "next/script";
-import { MessageSquareAudio } from "lucide-react";
+import { MessageSquareDot } from "lucide-react";
 
 const WIDGET_SCRIPT_SRC = "https://widgets.leadconnectorhq.com/loader.js";
 const WIDGET_RESOURCES_URL = "https://widgets.leadconnectorhq.com/chat-widget/loader.js";
@@ -57,7 +57,7 @@ export default function LeadConnectorVoiceWidget() {
         aria-label="Open voice AI chat"
       >
         <span className="absolute inset-0 rounded-full opacity-40 group-hover:opacity-60 transition-opacity bg-[radial-gradient(circle_at_50%_35%,hsl(174_72%_56%/0.5),transparent_55%)]" />
-        <MessageSquareAudio
+        <MessageSquareDot
           className="relative h-12 w-12 sm:h-14 sm:w-14 text-primary drop-shadow-[0_0_12px_hsl(174_72%_56%/0.8)]"
           strokeWidth={1.75}
         />
