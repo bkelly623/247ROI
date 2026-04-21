@@ -64,8 +64,10 @@ export default function Features() {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="glass rounded-xl p-6"
               >
-                <div className="text-3xl font-display font-bold gradient-text">99.9%</div>
-                <div className="text-sm text-muted-foreground mt-1">Uptime Guarantee</div>
+                <div className="font-display font-semibold text-foreground leading-snug">Always-on capture</div>
+                <div className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                  Inbound handled when you&apos;re busy or closed.
+                </div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -74,8 +76,10 @@ export default function Features() {
                 transition={{ delay: 0.3, duration: 0.5 }}
                 className="glass rounded-xl p-6"
               >
-                <div className="text-3xl font-display font-bold gradient-text">&lt;2s</div>
-                <div className="text-sm text-muted-foreground mt-1">Response Time</div>
+                <div className="font-display font-semibold text-foreground leading-snug">Clean handoff</div>
+                <div className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                  AI first — your team when it matters.
+                </div>
               </motion.div>
             </div>
           </motion.div>

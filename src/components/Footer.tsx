@@ -9,19 +9,20 @@ const footerColumns: {
   links: { label: string; href: string }[];
 }[] = [
   {
-    title: "Services",
+    title: "Product",
     links: [
-      { label: "AI Receptionists", href: "#services" },
-      { label: "Review Generation", href: "#services" },
-      { label: "Web Design", href: "#services" },
-      { label: "Automation", href: "#services" },
+      { label: "Services", href: "/services" },
+      { label: "What this does", href: "/#what-it-does" },
+      { label: "Where it works", href: "/#where-it-works" },
+      { label: "Free audit (calculator)", href: "/#free-audit" },
+      { label: "Try free", href: "#contact" },
     ],
   },
   {
     title: "Company",
     links: [
       { label: "About Us", href: "#contact" },
-      { label: "Case Studies", href: "#testimonials" },
+      { label: "Why 247ROI", href: "/#what-it-does" },
       { label: "Careers", href: "#contact" },
       { label: "Contact", href: "#contact" },
     ],
@@ -29,7 +30,7 @@ const footerColumns: {
   {
     title: "Resources",
     links: [
-      { label: "Free audit (calculator)", href: "/#free-audit" },
+      { label: "Calculator", href: "/#free-audit" },
       { label: "Guarantee", href: "/guarantee" },
       { label: "Support", href: "mailto:contact@247roi.com" },
       { label: "Book a call", href: "/calendar" },

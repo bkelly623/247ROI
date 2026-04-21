@@ -3,9 +3,8 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FreeAuditSection from "@/components/FreeAuditSection";
-import Services from "@/components/Services";
-import Features from "@/components/Features";
-import Testimonials from "@/components/Testimonials";
+import WhatThisDoes from "@/components/WhatThisDoes";
+import WhereItWorks from "@/components/WhereItWorks";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
@@ -15,9 +14,8 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <FreeAuditSection />
-      <Services />
-      <Features />
-      <Testimonials />
+      <WhatThisDoes />
+      <WhereItWorks />
       <CTA />
       <Footer />
     </div>

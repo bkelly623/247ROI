@@ -10,10 +10,10 @@ import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta"
 import { TestDriveLink } from "@/components/TestDriveLink";
 
 const navLinks = [
-  { name: "Free audit", href: "#free-audit" },
-  { name: "Services", href: "#services" },
-  { name: "Features", href: "#features" },
-  { name: "Reviews", href: "#testimonials" },
+  { name: "Free audit", href: "/#free-audit" },
+  { name: "Services", href: "/services" },
+  { name: "What it does", href: "/#what-it-does" },
+  { name: "Where it works", href: "/#where-it-works" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -81,7 +81,7 @@ export default function Navbar() {
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
               >
                 <TestDriveLink>
-                  Test drive our AI receptionist
+                  Try This On Your Business (Free)
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </TestDriveLink>
               </Button>
@@ -132,7 +132,7 @@ export default function Navbar() {
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 font-semibold w-fit"
                 >
                   <TestDriveLink onClick={() => setIsOpen(false)}>
-                    Test drive our AI receptionist
+                    Try This On Your Business (Free)
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </TestDriveLink>
                 </Button>

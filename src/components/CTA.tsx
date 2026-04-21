@@ -2,11 +2,9 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import Link from "next/link";
 import { TestDriveLink } from "@/components/TestDriveLink";
-import { CALENDAR_PATH } from "@/app/components/cta";
 
 export default function CTA() {
   return (
@@ -54,19 +52,19 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-6"
+                className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mb-5"
               >
-                Ready to <span className="gradient-text">Transform</span> Your Business?
+                See it on <span className="gradient-text">your</span> business
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10"
+                className="text-muted-foreground text-lg max-w-xl mx-auto mb-10 leading-relaxed"
               >
-                Join hundreds of businesses using 247ROI to capture more revenue 24/7 — even while you sleep.
-                Let&apos;s talk about your goals.
+                Same AI receptionist experience your customers get — try it free, then we&apos;ll align it to how
+                you work.
               </motion.p>
 
               <motion.div
@@ -74,28 +72,16 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center"
+                className="flex justify-center"
               >
                 <Button
                   size="lg"
                   asChild
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 font-semibold group"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)]"
                 >
-                  <TestDriveLink className="inline-flex items-center justify-center">
-                    Test drive our AI
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <TestDriveLink className="inline-flex items-center justify-center px-6 py-3 text-center leading-snug">
+                    Try This On Your Business (Free)
                   </TestDriveLink>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full px-8 font-semibold border-foreground/20 hover:bg-foreground/5"
-                  asChild
-                >
-                  <Link href={CALENDAR_PATH} className="inline-flex items-center justify-center">
-                    <Calendar className="mr-2 w-4 h-4" />
-                    Schedule a Call
-                  </Link>
                 </Button>
               </motion.div>
 
@@ -104,7 +90,7 @@ export default function CTA() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="mt-12 flex flex-col sm:flex-row gap-6 justify-center items-center text-muted-foreground"
+                className="mt-12 flex flex-col sm:flex-row gap-6 justify-center items-center text-muted-foreground text-sm"
               >
                 <a
                   href={PRIMARY_PHONE_HREF}

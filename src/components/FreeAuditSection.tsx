@@ -8,7 +8,7 @@ export default function FreeAuditSection() {
   return (
     <section
       id="free-audit"
-      className="relative py-20 md:py-28 overflow-hidden scroll-mt-28 border-y border-border/60 bg-gradient-to-b from-background via-card/20 to-background"
+      className="relative pt-12 pb-20 md:pt-16 md:pb-24 overflow-hidden scroll-mt-28 border-y border-border/60 bg-gradient-to-b from-background via-card/20 to-background"
     >
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-[10%] w-72 h-72 rounded-full bg-primary/10 blur-3xl" />

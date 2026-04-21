@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, MessageCircle, Send, X } from "lucide-react";
-import NavCtaPair from "./NavCtaPair";
 import {
   DEMO_PHONE_DISPLAY,
   PRIMARY_PHONE_DISPLAY,
@@ -15,18 +14,23 @@ type ChatRole = "user" | "assistant";
 type ChatMessage = {
   role: ChatRole;
   content: string;
+  /** Smaller helper line under the main opener */
+  style?: "hint";
 };
+
+const AUTO_OPEN_MS = 2600;
+const AUTO_OPEN_KEY = "247roi_chat_autoopen_v1";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
-  const [showTip, setShowTip] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: `Hi — 247ROI helps you turn inbound calls and messages into revenue 24/7. Fastest path: call or text ${PRIMARY_PHONE_DISPLAY}. Want to hear the system? Try the live demo at ${DEMO_PHONE_DISPLAY}. What kind of inbound volume are you handling right now?`,
+      content: "Hey — this site can actually talk. Want to try it?",
     },
+    { role: "assistant", content: "Tap the mic to start", style: "hint" },
   ]);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -36,6 +40,17 @@ export default function ChatWidget() {
     if (!open) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, open]);
+
+  /** Auto-open once per browser session after ~2.5s */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(AUTO_OPEN_KEY)) return;
+    const id = window.setTimeout(() => {
+      setOpen(true);
+      sessionStorage.setItem(AUTO_OPEN_KEY, "1");
+    }, AUTO_OPEN_MS);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -54,20 +69,6 @@ export default function ChatWidget() {
     };
   }, []);
 
-  useEffect(() => {
-    if (open) return;
-    const hasSeenTip = window.sessionStorage.getItem("chat_tip_seen");
-    if (hasSeenTip) return;
-
-    setShowTip(true);
-    const timer = window.setTimeout(() => {
-      setShowTip(false);
-      window.sessionStorage.setItem("chat_tip_seen", "1");
-    }, 7000);
-
-    return () => window.clearTimeout(timer);
-  }, [open]);
-
   const canSend = useMemo(() => input.trim().length > 0 && !isLoading, [input, isLoading]);
 
   async function send() {
@@ -84,7 +85,9 @@ export default function ChatWidget() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages }),
+        body: JSON.stringify({
+          messages: nextMessages.map(({ role, content }) => ({ role, content })),
+        }),
       });
 
       const data = (await res.json()) as { reply?: string };
@@ -140,9 +143,7 @@ export default function ChatWidget() {
                       <p className="font-display font-semibold text-[15px] text-foreground tracking-tight truncate">
                         <span className="gradient-text">247ROI</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground tracking-wide">
-                        ROI around the clock · fast replies
-                      </p>
+                      <p className="text-[11px] text-muted-foreground tracking-wide">Ask anything</p>
                     </div>
                   </div>
                   <button
@@ -161,17 +162,19 @@ export default function ChatWidget() {
                 <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3">
                   {messages.map((m, i) => (
                     <motion.div
-                      key={`${i}-${m.role}`}
+                      key={`${i}-${m.role}-${m.style ?? "main"}`}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.25 }}
+                      transition={{ duration: 0.2 }}
                       className={m.role === "user" ? "flex justify-end" : "flex justify-start"}
                     >
                       <div
                         className={
                           m.role === "user"
                             ? "bg-gradient-to-br from-primary to-primary/85 text-primary-foreground px-3.5 py-2.5 rounded-2xl rounded-br-md text-[13px] leading-relaxed max-w-[88%] shadow-[0_4px_24px_hsl(174_72%_56%/0.25)]"
-                            : "bg-muted/50 backdrop-blur-sm border border-white/[0.07] text-foreground/95 px-3.5 py-2.5 rounded-2xl rounded-bl-md text-[13px] leading-relaxed max-w-[88%]"
+                            : m.style === "hint"
+                              ? "text-[11px] text-muted-foreground/90 px-1 py-0.5 max-w-[88%] leading-snug italic"
+                              : "bg-muted/50 backdrop-blur-sm border border-white/[0.07] text-foreground/95 px-3.5 py-2.5 rounded-2xl rounded-bl-md text-[13px] leading-relaxed max-w-[88%]"
                         }
                       >
                         {m.content}
@@ -201,17 +204,6 @@ export default function ChatWidget() {
                 </div>
 
                 <div className="relative px-4 py-3 border-t border-white/[0.08] bg-card/30 backdrop-blur-md">
-                  <div className="mb-3">
-                    <NavCtaPair
-                      compact
-                      showDemo
-                      showGuarantee={false}
-                      primaryLabel="hero"
-                      surface="dark"
-                      className="w-full"
-                    />
-                  </div>
-
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -223,7 +215,7 @@ export default function ChatWidget() {
                     <input
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      placeholder="Ask a quick question…"
+                      placeholder="Type a message…"
                       className="flex-1 rounded-xl border border-white/[0.1] bg-background/60 px-3.5 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/30 transition-shadow"
                     />
                     <button
@@ -238,23 +230,6 @@ export default function ChatWidget() {
                 </div>
               </div>
             </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showTip && !open ? (
-          <motion.div
-            initial={{ opacity: 0, y: 8, x: 4 }}
-            animate={{ opacity: 1, y: 0, x: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.35 }}
-            className="fixed bottom-[5.75rem] right-6 z-[9998] max-w-[240px] rounded-xl glass-strong border border-white/10 px-3.5 py-2.5 shadow-[0_12px_40px_-10px_hsl(0_0%_0%/0.5)]"
-          >
-            <p className="text-[12px] text-foreground/90 leading-snug">
-              <span className="text-primary font-medium">Tap the orb</span> — ask anything, or call us
-              directly.
-            </p>
           </motion.div>
         ) : null}
       </AnimatePresence>
