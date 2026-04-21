@@ -1,205 +1,162 @@
 # 247ROI Website — Project Brain
 
-Single source of truth for the `247ROI` marketing site.  
-Use this file first whenever continuity is lost.
+**Single source of truth** for the `247ROI` marketing site. Read this first when continuity is lost or a new session starts.
 
 ---
 
 ## 1) What this project is
 
-- Repo folder: `247ROI`
-- Stack: Next.js App Router (v15), React, Tailwind, Framer Motion, shadcn-style UI
-- Purpose: premium conversion site for AI receptionist + automation services
-- Design language: dark/glassmorphism with high-contrast gradients, motion, and card-driven sections
+| Item | Detail |
+|------|--------|
+| **Folder** | `247ROI` (GitHub: `bkelly623/247ROI`, branch `main`) |
+| **Stack** | Next.js 15 (App Router), React, Tailwind, Framer Motion, shadcn-style UI (`src/components/ui`) |
+| **Purpose** | High-conversion marketing site: AI receptionist + automation; revenue / ROI framing |
+| **Visual system** | Dark theme, glassmorphism, gradients, glow — **do not simplify or strip** unless explicitly requested |
 
-This codebase is a close derivative of `automagixx-website`, but now has independent branding and funnel structure.
-
----
-
-## 2) Transition history (important)
-
-247ROI started as a rebrand/fork of the Automagixx site (which itself drew visual structure from the agency-flow showcase pattern).  
-The transition intent was:
-
-- Keep proven UX patterns, visual system, and technical architecture
-- Reframe messaging from "Automagixx" to "247ROI"
-- Emphasize "ROI around the clock" over "magic/agency" language
-- Tighten homepage into a direct funnel
-
-Current reality:
-
-- 247ROI has diverged significantly in homepage structure and messaging
-- A dedicated `/services` page now exists
-- Some integration details (notably GHL inline voice widget behavior) are still in-progress
+**Lineage:** Forked / rebranded from **Automagixx** (`automagixx-website`–style codebase + agency-flow showcase roots). Messaging and URLs should be **247ROI-first**; replace leftover Automagixx references where they affect trust or domains.
 
 ---
 
-## 3) Canonical brand, offer, and voice
+## 2) Canonical contacts & constants
 
-### Brand
-- Name: **247ROI**
-- Promise: captured revenue 24/7 (calls answered, leads captured, follow-up automated)
+**Source of truth:** `src/app/components/cta.ts`
 
-### Core offer hierarchy
-1. **AI Receptionist** (primary)
-2. Review Generation
-3. Web Design
-4. Automation
+| Role | Display | Notes |
+|------|---------|--------|
+| **Primary business** | `(917) 572-7734` | `PRIMARY_PHONE_HREF` — main CTA phone line |
+| **Demo line** | `(484) 673-7612` | Demo / `TestDriveLink` mobile dial behavior |
+| **Email (UI)** | `contact@247roi.com` | Confirm inbox + FormSubmit when domain is live |
 
-### Voice guardrails
-- Clear, high-conviction, premium
-- Revenue-centric but not hypey
-- Avoid generic agency filler and mixed-brand references to Automagixx
+Do **not** swap primary vs demo numbers across components or `/api/chat` fallbacks.
 
 ---
 
-## 4) Canonical contact constants (must stay consistent)
+## 3) Homepage funnel (current — ground truth)
 
-Defined in `src/app/components/cta.ts` and reused across components/routes.
+**File:** `src/app/page.tsx` → `src/components/HomePage.tsx`
 
-- Primary business phone: `(917) 572-7734` (`tel:+19175727734`)
-- Demo line: `(484) 673-7612` (`tel:+14846737612`)
-- Email currently used in UI: `contact@247roi.com`
+**Section order (top → bottom):**
 
-Rule: do not mix primary/demo roles when editing CTAs or chat fallbacks.
+1. **`Navbar`** — links include `/#free-audit`, `/services`, `/#what-it-does`, `/#where-it-works`, `#contact`; primary nav button uses `TestDriveLink` (“Try This On Your Business (Free)”).
+2. **`Hero`** — **primary conversion surface** (see §4).
+3. **`FreeAuditSection`** — missed-call calculator (`#free-audit`).
+4. **`WhatThisDoes`** — five capability cards (`#what-it-does`).
+5. **`WhereItWorks`** — channel cards (`#where-it-works`).
+6. **`CTA`** — `#contact`; glass card; **“Try This On Your Business (Free)”** via `TestDriveLink` (different from Hero primary — intentional secondary conversion block).
+7. **`HomeSetupCallSection`** — **10-minute setup call** booking embed (`#book-call`). **Scroll anchor is on the calendar card wrapper** (top of iframe block), not the headline above it.
+8. **`Footer`**
 
----
-
-## 5) Current site map and key files
-
-### Entrypoints
-- Home route: `src/app/page.tsx` -> `src/components/HomePage.tsx`
-- Services route: `src/app/services/page.tsx` -> `src/components/ServicesPage.tsx`
-
-### Homepage (`HomePage.tsx`) current funnel order
-1. `Navbar`
-2. `Hero`
-3. `FreeAuditSection` (missed-call calculator section directly below hero)
-4. `WhatThisDoes`
-5. `WhereItWorks`
-6. `CTA`
-7. `Footer`
-
-### Main conversion/support components
-- `src/components/Hero.tsx`
-- `src/components/FreeAuditSection.tsx`
-- `src/components/WhatThisDoes.tsx`
-- `src/components/WhereItWorks.tsx`
-- `src/components/CTA.tsx`
-- `src/components/TestDriveLink.tsx`
-- `src/components/Navbar.tsx`
-- `src/components/Footer.tsx`
-
-### Services page
-- `src/components/ServicesPage.tsx`
-  - Featured "AI Receptionist" block (strong visual emphasis)
-  - Other services cards (Review Generation, Web Design, Automation)
-  - Reuses global `CTA` + `Footer`
-
-### Other key routes
-- `/calendar` (booking embed)
-- `/missed-call-calculator`
-- `/guarantee`
-- `/privacy-policy`
-- `/terms-of-service`
-- `/intake`, `/onboarding`
-- `/dashboard`, `/dashboard/analytics`
+**Intent:** Land → interact with AI in hero → calculator + proof sections → optional `CTA` block → **book call** at `#book-call`.
 
 ---
 
-## 6) What has been completed recently
+## 4) Hero — behavior & files
 
-### Funnel restructure on homepage
-- Removed Services/Features sections from homepage composition (files kept on disk)
-- Added `WhatThisDoes` card section
-- Added `WhereItWorks` channel card section
-- Kept premium visual quality and card styling patterns
-- Updated nav/footer links to fit new flow
-- Updated primary CTA copy to: **"Try This On Your Business (Free)"**
+**File:** `src/components/Hero.tsx`
 
-### New services page
-- Created `/services` route and dedicated page layout
-- Migrated service content off homepage to this page
-- AI Receptionist elevated as primary focus with stronger presentation
-- Other services remain card-based and stylistically consistent
+| Element | Behavior |
+|---------|----------|
+| **Primary button** | **“Talk to the AI Receptionist”** — does **not** navigate away; **smooth-scrolls** to `#voice-demo`, temporary **spotlight** on the voice card, **mic pulse** animation on the launcher area, short **“Tap the mic to start”** hint. |
+| **Secondary text link** | **“Or book a 10-minute setup call”** — smooth-scroll to `#book-call`. **Centered under the primary button** (grouped in a column with `items-center`). |
+| **Voice card** | `#voice-demo`, `scroll-mt-28`; premium dark card + glow (unchanged design language). |
+| **GHL script** | Loaded **only in Hero** via `next/script` + constants in `src/lib/ghlVoiceWidget.ts` (`loader.js`, `data-resources-url`, `data-widget-id`). |
 
-### Hero right-side voice/chat update (current state)
-- GHL Voice AI: `Script` loads once inside hero `#voice-demo`; `LeadConnectorVoiceLauncher` opens the widget without clicking the site chat control
-- Loader script currently used:
-  - `https://widgets.leadconnectorhq.com/loader.js`
-  - `data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"`
-  - `data-widget-id="69e7826129e846f2447559ff"`
-- Current behavior is launcher-oriented (opens/targets widget), not guaranteed true inline embed rendering
+**Supporting components:**
+
+- **`src/components/LeadConnectorInHero.tsx`** — After GHL injects its UI (often **fixed bottom-right**, which *reads* like “footer” when scrolled), this **moves** the detected launcher root into **`#gcl-launcher-slot`** inside the hero card so the demo **reads as in-card**. Uses `MutationObserver` + heuristics (skips `[data-247roi-site-chat]`).
+- **`src/components/LeadConnectorVoiceLauncher.tsx`** — Fallback **custom** launcher + `tryOpenLeadConnectorVoiceWidget()` if the slot is still empty after ~8s. **Must not** click the 247ROI site chat (`[data-247roi-site-chat]`). Prefer GHL-specific selectors first.
+
+**Site chat (separate product):**
+
+- **`src/app/components/ChatWidget.tsx`** — Global floating chat; root has **`data-247roi-site-chat="true"`** so GHL “open chat” heuristics do not target it.
 
 ---
 
-## 7) Known open issues / risks
+## 5) Booking / hash routing
 
-### A) Inline voice widget in Hero not fully solved
-Goal: true embedded inline widget on hero-right while separate floating widget remains global.
+- **`HomeSetupCallSection.tsx`** — Embeds **GHL/LeadConnector–style** booking via `links.automagixx.com` (iframe + `form_embed.js`). **TODO long-term:** point embeds to 247ROI-branded links when available.
+- **`#book-call`** — On the **outer wrapper of the calendar card** (first pixel users should see when scrolling to “book”).
+- **`src/components/HashBookingRedirect.tsx`** (imported in `providers.tsx`) — On `/`, **`/#book-call` scrolls** to the element; **does not** redirect to `/calendar` (legacy behavior removed).
+- **`src/lib/openBooking.ts`** — `BOOKING_HASH` / comments updated for inline section; `requestOpenBooking()` still exists if something needs full-page `/calendar`.
 
-Current blocker hypothesis:
-- GHL widget domain/website target may still be tied to `automagixx.com`
-- Loader snippet may represent floating chat launcher mode, not inline embed mode
-
-Needed resolution:
-1. In GHL, update allowed domain(s) to include active 247ROI environment(s)
-2. Obtain correct **inline embed** install code (if different from floating loader)
-3. Mount inline embed inside hero-right container; keep existing floating widget separate
-
-### B) Potential stale brand traces
-- Because 247ROI was forked, verify no remaining "Automagixx" copy/URLs in live-critical flows
-
-### C) Operational validation
-- Ensure form/email endpoints and inboxes are fully live for `contact@247roi.com`
-- Re-check legal/domain references for final production domain
+**Footer:** “Book a call” → **`/#book-call`**.
 
 ---
 
-## 8) Working rules for future edits
+## 6) Services page
 
-1. Preserve premium visual language: glass cards, gradients, subtle motion, spacing discipline
-2. Reuse existing components/styles before inventing new patterns
-3. Keep homepage tight; route secondary detail to `/services` or dedicated pages
-4. Maintain CTA consistency:
-   - Primary CTA label: "Try This On Your Business (Free)"
-   - `TestDriveLink` behavior remains intentional across desktop/mobile
-5. Keep nav anchors and route links coherent (`/#...` vs `#...`) across pages
+- **Route:** `/services` → `src/app/services/page.tsx` → `src/components/ServicesPage.tsx`
+- **Content:** AI Receptionist (featured) + Review Generation, Web Design, Automation (cards). Legacy **`Services.tsx`** may still exist on disk; homepage does not import it.
 
 ---
 
-## 9) Quick "resume work" checklist
+## 7) Other notable routes
 
-When asked to continue this project, do this first:
-
-1. Read this `BRAIN.md`
-2. Read:
-   - `src/components/HomePage.tsx`
-   - `src/components/Hero.tsx`
-   - `src/components/LeadConnectorVoiceLauncher.tsx`
-   - `src/components/HomeSetupCallSection.tsx` (`#book-call` — homepage booking embed)
-   - `src/components/ServicesPage.tsx`
-   - `src/components/Navbar.tsx`
-   - `src/components/CTA.tsx`
-3. Confirm widget behavior in browser:
-   - Inline in hero-right?
-   - Floating chat still independent?
-4. Run quality checks:
-   - `npm run lint`
-   - `npm run build`
+| Path | Role |
+|------|------|
+| `/calendar` | Full-page booking (separate from homepage embed) |
+| `/missed-call-calculator` | Standalone calculator |
+| `/guarantee`, `/privacy-policy`, `/terms-of-service` | Legal |
+| `/intake`, `/onboarding` | Forms / flows |
+| `/api/chat`, `/api/intake` | Server routes |
+| `/dashboard`, `/dashboard/analytics` | Internal |
+| `/test-chatbot` | Legacy embed test page |
 
 ---
 
-## 10) Definition of done (near-term)
+## 8) What’s done (major milestones)
 
-Project is in a strong state once:
-
-- Hero-right contains a verified **inline** Voice AI/GHL experience
-- Floating chat remains separate/global
-- No Automagixx references remain in user-facing 247ROI flows
-- CTA/contact/legal/domain details are production-correct
-- Lint/build pass cleanly
+- Homepage funnel: **WhatThisDoes**, **WhereItWorks**; Services/Features **removed from homepage composition** (files not necessarily deleted).
+- **`/services`** page with moved service content + featured AI Receptionist.
+- **Hero** repositioned as **AI-first**: scroll-based primary CTA, secondary link to **`#book-call`**, voice card + GHL script + **relocate-to-slot** behavior.
+- **Home setup call** section at end of homepage with iframe + SMS disclaimer pattern.
+- **Vercel build fix:** Lucide icon compatibility (`MessageSquareDot` vs removed `MessageSquareAudio`).
+- **Git:** `main` tracks `origin/main` (verify latest commit on GitHub if deploy lags).
 
 ---
 
-Last updated: 2026-04-21 (post-funnel restructure, `/services` creation, and first-pass LeadConnector hero integration).
+## 9) What’s left to do (prioritized)
+
+### A) GHL / LeadConnector (highest uncertainty)
+
+1. **Domain allowlist** — In GoHighLevel, ensure **production + preview + localhost** URLs are allowed for the Voice AI / chat widget (if still tied to `automagixx.com`, behavior may fail or look wrong).
+2. **True inline embed** — If GHL provides a **dedicated inline** snippet (vs floating loader), replace or supplement `loader.js` so the experience is **officially** inline; our DOM move is a **best-effort** workaround.
+3. **Booking URLs** — Replace `links.automagixx.com` embeds with **247ROI** equivalents when the subaccount/links exist.
+
+### B) Content & brand audit
+
+- Sweep user-facing copy for **Automagixx** / wrong domains / wrong emails.
+- Align **`TestDriveLink`** / demo behavior with product decisions (Hero vs nav vs bottom `CTA` — three entry points is intentional but should stay coherent).
+
+### C) Ops
+
+- Confirm **`contact@247roi.com`** (or production email) for forms and deliverability.
+- Vercel: confirm project ↔ repo ↔ branch; **Redeploy** if webhooks miss.
+
+### D) Optional polish
+
+- If **`LeadConnectorInHero`** ever conflicts with GHL DOM updates (shadow DOM, new class names), adjust selectors or fall back to GHL-supported inline embed only.
+- **`test-chatbot`** still references legacy automagixx embed — update or remove when obsolete.
+
+---
+
+## 10) Working rules for future edits
+
+1. **Preserve** glass/gradient/glow/spacing quality — no “simplified” UI unless asked.
+2. **Reuse** existing patterns (`BookingSmsDisclaimer`, card shells, `scroll-mt-28` for fixed nav).
+3. **Hero primary** = scroll + demo in **`#voice-demo`**; **booking** = **`#book-call`** on the **calendar card**.
+4. **Do not** confuse **GHL Voice** launcher with **`ChatWidget`** — exclusion relies on `data-247roi-site-chat`.
+5. After material changes: **`npm run lint`** and **`npm run build`**.
+
+---
+
+## 11) Resume checklist (next session)
+
+1. Read this **`BRAIN.md`**.
+2. Skim **`HomePage.tsx`**, **`Hero.tsx`**, **`LeadConnectorInHero.tsx`**, **`HomeSetupCallSection.tsx`**, **`HashBookingRedirect.tsx`**.
+3. In browser: Hero CTA → voice card; secondary + footer → **`#book-call`** lands on **calendar card**; GHL UI **in hero slot** (not stuck bottom-right).
+4. Run **`npm run lint`** && **`npm run build`**.
+
+---
+
+*Last updated: homepage funnel + GHL relocate + `#book-call` anchor on calendar card + brain refresh for session handoff.*
