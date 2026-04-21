@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Script from "next/script";
 import { Button } from "@/components/ui/button";
 import LeadConnectorVoiceLauncher from "@/components/LeadConnectorVoiceLauncher";
+import LeadConnectorInHero from "@/components/LeadConnectorInHero";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 import {
   GHL_VOICE_WIDGET_ID,
@@ -17,6 +18,23 @@ export default function Hero() {
   const [spotlight, setSpotlight] = useState(false);
   const [showTapHint, setShowTapHint] = useState(false);
   const [micPulseNonce, setMicPulseNonce] = useState(0);
+  const [slotFilled, setSlotFilled] = useState(false);
+  const [showFallbackLauncher, setShowFallbackLauncher] = useState(false);
+
+  useEffect(() => {
+    const slot = document.getElementById("gcl-launcher-slot");
+    if (!slot) return;
+    const sync = () => setSlotFilled(slot.childElementCount > 0);
+    sync();
+    const obs = new MutationObserver(sync);
+    obs.observe(slot, { childList: true, subtree: true });
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setShowFallbackLauncher(true), 8000);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const scrollToVoiceDemo = useCallback(() => {
     voiceDemoRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -30,6 +48,8 @@ export default function Hero() {
   const scrollToBookCall = useCallback(() => {
     document.getElementById("book-call")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
+
+  const showLauncherFallback = showFallbackLauncher && !slotFilled;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 md:pt-32">
@@ -98,23 +118,25 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col justify-center lg:justify-start max-w-xl mx-auto lg:mx-0 gap-4 mb-10 lg:mb-0"
+              className="w-full max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-0 flex justify-center lg:justify-start"
             >
-              <Button
-                type="button"
-                size="lg"
-                onClick={scrollToVoiceDemo}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
-              >
-                Talk to the AI Receptionist
-              </Button>
-              <button
-                type="button"
-                onClick={scrollToBookCall}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center lg:text-left"
-              >
-                Or book a 10-minute setup call
-              </button>
+              <div className="flex flex-col items-center gap-4">
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={scrollToVoiceDemo}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
+                >
+                  Talk to the AI Receptionist
+                </Button>
+                <button
+                  type="button"
+                  onClick={scrollToBookCall}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center max-w-xs"
+                >
+                  Or book a 10-minute setup call
+                </button>
+              </div>
             </motion.div>
           </div>
 
@@ -133,6 +155,7 @@ export default function Hero() {
               data-resources-url={GHL_VOICE_WIDGET_RESOURCES_URL}
               data-widget-id={GHL_VOICE_WIDGET_ID}
             />
+            <LeadConnectorInHero />
 
             <motion.div
               className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-80"
@@ -177,9 +200,31 @@ export default function Hero() {
                   </p>
                 ) : null}
 
-                <div className="w-full flex justify-center py-2 min-h-[12rem] sm:min-h-[13rem] items-center">
-                  <LeadConnectorVoiceLauncher micPulseNonce={micPulseNonce} />
-                </div>
+                <motion.div
+                  key={micPulseNonce}
+                  initial={{ scale: 1 }}
+                  animate={
+                    micPulseNonce > 0
+                      ? { scale: [1, 1.06, 1, 1.06, 1, 1.06, 1] }
+                      : { scale: 1 }
+                  }
+                  transition={
+                    micPulseNonce > 0
+                      ? { duration: 1.65, ease: [0.4, 0, 0.2, 1] }
+                      : { duration: 0.2 }
+                  }
+                  className="relative flex w-full min-h-[12rem] sm:min-h-[13rem] flex-col items-center justify-center py-2"
+                >
+                  <div
+                    id="gcl-launcher-slot"
+                    className="relative flex w-full flex-1 min-h-[10rem] items-center justify-center"
+                  />
+                  {showLauncherFallback ? (
+                    <div className={slotFilled ? "hidden" : "mt-2"}>
+                      <LeadConnectorVoiceLauncher micPulseNonce={0} />
+                    </div>
+                  ) : null}
+                </motion.div>
 
                 <p className="mt-8 text-[13px] text-zinc-500 leading-relaxed max-w-md">
                   Prefer to call?{" "}

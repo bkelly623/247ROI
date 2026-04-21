@@ -10,10 +10,7 @@ const SETUP_CALL_IFRAME_ID = "deaNfs7Dq6XtD6FzYMR8_1776805467449";
 
 export default function HomeSetupCallSection() {
   return (
-    <section
-      id="book-call"
-      className="relative scroll-mt-28 overflow-hidden border-t border-border/40 py-24 md:py-28"
-    >
+    <section className="relative overflow-hidden border-t border-border/40 py-24 md:py-28">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-muted/15 via-transparent to-muted/15" />
 
       <Script src={SETUP_CALL_FORM_EMBED_SRC} strategy="lazyOnload" />
@@ -34,7 +31,8 @@ export default function HomeSetupCallSection() {
             Book a quick 10-minute setup call and we&apos;ll show you exactly how it works for you.
           </p>
 
-          <div className="mx-auto mt-10 w-full">
+          {/* `#book-call` sits on the calendar card (top of embed), not the section headline */}
+          <div id="book-call" className="scroll-mt-28 mx-auto mt-10 w-full max-w-4xl">
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-card/80 via-card/40 to-card/30 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_64px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/[0.04]">
               <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_45%,rgba(255,255,255,0.02)_100%)]" />
               <div className="relative w-full min-h-[560px] sm:min-h-[640px] md:min-h-[700px]">
