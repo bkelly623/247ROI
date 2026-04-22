@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import Script from "next/script";
 import { Button } from "@/components/ui/button";
 import LeadConnectorVoiceLauncher from "@/components/LeadConnectorVoiceLauncher";
@@ -15,6 +15,7 @@ import {
 
 export default function Hero() {
   const voiceDemoRef = useRef<HTMLDivElement>(null);
+  const voiceCardControls = useAnimationControls();
   const [spotlight, setSpotlight] = useState(false);
   const [showTapHint, setShowTapHint] = useState(false);
   const [micPulseNonce, setMicPulseNonce] = useState(0);
@@ -41,9 +42,15 @@ export default function Hero() {
     setSpotlight(true);
     setShowTapHint(true);
     setMicPulseNonce((n) => n + 1);
-    window.setTimeout(() => setSpotlight(false), 2800);
+    void voiceCardControls
+      .start({
+        scale: [1, 1.03, 1, 1.03, 1, 1.03, 1],
+        transition: { duration: 1.65, ease: [0.4, 0, 0.2, 1] },
+      })
+      .then(() => voiceCardControls.start({ scale: 1, transition: { duration: 0.2 } }));
+    window.setTimeout(() => setSpotlight(false), 4200);
     window.setTimeout(() => setShowTapHint(false), 10000);
-  }, []);
+  }, [voiceCardControls]);
 
   const scrollToBookCall = useCallback(() => {
     document.getElementById("book-call")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -84,7 +91,108 @@ export default function Hero() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div className="text-center lg:text-left order-1">
+          {/* Voice demo first on mobile + left on desktop */}
+          <motion.div
+            ref={voiceDemoRef}
+            id="voice-demo"
+            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.1 }}
+            className="relative w-full max-w-lg mx-auto lg:max-w-none order-1 scroll-mt-28"
+          >
+            <Script
+              id="leadconnector-voice-widget-hero"
+              src={GHL_VOICE_WIDGET_SCRIPT_SRC}
+              strategy="afterInteractive"
+              data-resources-url={GHL_VOICE_WIDGET_RESOURCES_URL}
+              data-widget-id={GHL_VOICE_WIDGET_ID}
+            />
+            <LeadConnectorInHero />
+
+            <motion.div
+              className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-90"
+              aria-hidden
+              animate={{
+                opacity: [0.5, 0.82, 0.5],
+                scale: [1, 1.03, 1],
+              }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background:
+                  "radial-gradient(ellipse 70% 60% at 50% 42%, hsl(38 92% 50% / 0.18), transparent 60%), radial-gradient(ellipse 55% 50% at 75% 78%, hsl(174 72% 56% / 0.22), transparent 58%)",
+                filter: "blur(28px)",
+              }}
+            />
+            <div
+              className="pointer-events-none absolute -inset-3 rounded-[1.75rem] opacity-95 bg-[radial-gradient(ellipse_80%_70%_at_50%_38%,hsl(174_72%_56%/0.22),transparent_62%),radial-gradient(ellipse_55%_50%_at_85%_85%,hsl(38_90%_55%/0.12),transparent_55%)] blur-2xl"
+              aria-hidden
+            />
+
+            <motion.div
+              animate={voiceCardControls}
+              initial={{ scale: 1 }}
+              whileHover={{ y: -4, transition: { duration: 0.35 } }}
+              className={`relative rounded-[1.35rem] border bg-gradient-to-b from-stone-800/95 via-zinc-900/95 to-zinc-950 p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,253,248,0.08),0_24px_64px_-12px_rgba(0,0,0,0.65)] transition-[box-shadow,border-color] duration-500 hover:border-primary/35 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_28px_72px_-12px_rgba(0,0,0,0.72),0_0_52px_hsl(174_72%_56%/0.18)] ${
+                spotlight
+                  ? "border-primary/55 shadow-[0_0_0_2px_hsl(174_72%_56%/0.5),0_0_64px_hsl(174_72%_56%/0.32),0_24px_64px_-12px_rgba(0,0,0,0.65)]"
+                  : "border-stone-400/20"
+              }`}
+            >
+              {micPulseNonce > 0 ? (
+                <motion.div
+                  key={micPulseNonce}
+                  className="pointer-events-none absolute inset-0 z-[1] rounded-[1.35rem] ring-2 ring-primary/60"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 0.9, 0.4, 0] }}
+                  transition={{ duration: 2.2, ease: "easeOut" }}
+                  aria-hidden
+                />
+              ) : null}
+              <div className="pointer-events-none absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(135deg,rgba(255,252,245,0.07)_0%,transparent_42%,rgba(174,222,200,0.04)_100%)]" />
+
+              <div className="relative z-[2] flex flex-col items-center text-center">
+                <p className="text-lg sm:text-xl font-display font-semibold text-stone-100 tracking-tight mb-3 max-w-md leading-snug">
+                  Go ahead — say hello
+                </p>
+                <p className="text-base sm:text-[17px] text-stone-300/95 mb-7 max-w-md mx-auto leading-relaxed">
+                  Ask a real question: hours, pricing, or how you&apos;d book. It answers like your front desk would.
+                </p>
+
+                {showTapHint ? (
+                  <p className="mb-4 text-sm font-medium tracking-wide text-primary" aria-live="polite">
+                    Tap the mic to start
+                  </p>
+                ) : null}
+
+                {/* Never put key={micPulseNonce} here — it remounts #gcl-launcher-slot and kills the relocated GHL widget */}
+                <div className="relative flex w-full min-h-[12rem] sm:min-h-[13rem] flex-col items-center justify-center py-2">
+                  <div
+                    id="gcl-launcher-slot"
+                    className="relative flex w-full flex-1 min-h-[10rem] items-center justify-center"
+                  />
+                  {showLauncherFallback ? (
+                    <div className={slotFilled ? "hidden" : "mt-2"}>
+                      <LeadConnectorVoiceLauncher micPulseNonce={0} />
+                    </div>
+                  ) : null}
+                </div>
+
+                <p className="mt-8 text-sm sm:text-base text-stone-400 leading-relaxed max-w-md">
+                  Prefer the phone? Call{" "}
+                  <a
+                    href={PRIMARY_PHONE_HREF}
+                    className="text-primary font-semibold underline-offset-2 hover:underline tabular-nums"
+                  >
+                    {PRIMARY_PHONE_DISPLAY}
+                  </a>{" "}
+                  and hear the same receptionist.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Copy + CTAs: right on desktop, below voice on mobile */}
+          <div className="text-center lg:text-left order-2">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -139,105 +247,6 @@ export default function Hero() {
               </div>
             </motion.div>
           </div>
-
-          <motion.div
-            ref={voiceDemoRef}
-            id="voice-demo"
-            initial={{ opacity: 0, scale: 0.96, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.15 }}
-            className="relative w-full max-w-lg mx-auto lg:max-w-none order-2 scroll-mt-28"
-          >
-            <Script
-              id="leadconnector-voice-widget-hero"
-              src={GHL_VOICE_WIDGET_SCRIPT_SRC}
-              strategy="afterInteractive"
-              data-resources-url={GHL_VOICE_WIDGET_RESOURCES_URL}
-              data-widget-id={GHL_VOICE_WIDGET_ID}
-            />
-            <LeadConnectorInHero />
-
-            <motion.div
-              className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-80"
-              aria-hidden
-              animate={{
-                opacity: [0.45, 0.75, 0.45],
-                scale: [1, 1.03, 1],
-              }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-              style={{
-                background:
-                  "radial-gradient(ellipse 70% 60% at 50% 45%, hsl(174 72% 56% / 0.22), transparent 62%), radial-gradient(ellipse 55% 50% at 75% 75%, hsl(262 83% 58% / 0.14), transparent 58%)",
-                filter: "blur(28px)",
-              }}
-            />
-            <div
-              className="pointer-events-none absolute -inset-3 rounded-[1.75rem] opacity-90 bg-[radial-gradient(ellipse_80%_70%_at_50%_40%,hsl(174_72%_56%/0.28),transparent_65%),radial-gradient(ellipse_60%_50%_at_80%_80%,hsl(262_83%_58%/0.16),transparent_55%)] blur-2xl"
-              aria-hidden
-            />
-
-            <motion.div
-              whileHover={{ y: -4, transition: { duration: 0.35 } }}
-              className={`relative rounded-[1.35rem] border bg-gradient-to-b from-zinc-900/95 via-zinc-950 to-black p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_rgba(255,255,255,0.06),0_24px_64px_-12px_rgba(0,0,0,0.75)] transition-[box-shadow,border-color] duration-500 hover:border-primary/25 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_28px_72px_-12px_rgba(0,0,0,0.78),0_0_48px_hsl(174_72%_56%/0.12)] ${
-                spotlight
-                  ? "border-primary/50 shadow-[0_0_0_2px_hsl(174_72%_56%/0.45),0_0_56px_hsl(174_72%_56%/0.28),0_24px_64px_-12px_rgba(0,0,0,0.75)]"
-                  : "border-white/10"
-              }`}
-            >
-              <div className="absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_45%,rgba(255,255,255,0.02)_100%)] pointer-events-none" />
-
-              <div className="relative flex flex-col items-center text-center">
-                <p className="text-base sm:text-lg font-display font-semibold text-foreground tracking-tight mb-3 max-w-md leading-snug">
-                  Talk to our AI receptionist right now
-                </p>
-                <p className="text-sm text-zinc-400 mb-6 max-w-md mx-auto leading-relaxed">
-                  Ask about pricing, availability, or booking — just like a real customer
-                </p>
-
-                {showTapHint ? (
-                  <p className="mb-4 text-xs font-medium uppercase tracking-wide text-primary/90" aria-live="polite">
-                    Tap the mic to start
-                  </p>
-                ) : null}
-
-                <motion.div
-                  key={micPulseNonce}
-                  initial={{ scale: 1 }}
-                  animate={
-                    micPulseNonce > 0
-                      ? { scale: [1, 1.06, 1, 1.06, 1, 1.06, 1] }
-                      : { scale: 1 }
-                  }
-                  transition={
-                    micPulseNonce > 0
-                      ? { duration: 1.65, ease: [0.4, 0, 0.2, 1] }
-                      : { duration: 0.2 }
-                  }
-                  className="relative flex w-full min-h-[12rem] sm:min-h-[13rem] flex-col items-center justify-center py-2"
-                >
-                  <div
-                    id="gcl-launcher-slot"
-                    className="relative flex w-full flex-1 min-h-[10rem] items-center justify-center"
-                  />
-                  {showLauncherFallback ? (
-                    <div className={slotFilled ? "hidden" : "mt-2"}>
-                      <LeadConnectorVoiceLauncher micPulseNonce={0} />
-                    </div>
-                  ) : null}
-                </motion.div>
-
-                <p className="mt-8 text-[13px] text-zinc-500 leading-relaxed max-w-md">
-                  Prefer to call?{" "}
-                  <a
-                    href={PRIMARY_PHONE_HREF}
-                    className="text-primary hover:text-primary/90 font-medium underline-offset-2 hover:underline tabular-nums"
-                  >
-                    {PRIMARY_PHONE_DISPLAY}
-                  </a>
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
         </div>
       </div>
 

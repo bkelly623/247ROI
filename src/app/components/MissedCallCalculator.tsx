@@ -269,9 +269,6 @@ export default function MissedCallCalculator({ showHeading = true }: MissedCallC
             <p className="mt-2 max-w-[28ch] text-[13px] font-semibold leading-snug text-foreground/90 mx-auto">
               That&apos;s {xCount} customers you never even spoke to
             </p>
-            <p className="mt-1 max-w-[30ch] text-[12px] font-semibold leading-snug text-secondary mx-auto">
-              That&apos;s {xCount} jobs your competitors are taking from you
-            </p>
           </section>
 
           <p className="mt-auto pt-6 text-center text-[11px] font-medium tracking-tight text-muted-foreground">
