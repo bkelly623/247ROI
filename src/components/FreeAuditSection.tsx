@@ -57,7 +57,7 @@ export default function FreeAuditSection() {
           >
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-primary/25 via-transparent to-secondary/20 blur-xl opacity-80 pointer-events-none" />
             <div className="relative rounded-3xl border border-white/10 glass-strong glow p-6 sm:p-8 shadow-[var(--shadow-card)]">
-              <MissedCallCalculator showHeading={false} />
+              <MissedCallCalculator showHeading={false} enableIdleDemo />
             </div>
           </motion.div>
         </div>

@@ -1,12 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { TestDriveLink } from "@/components/TestDriveLink";
+import { requestBookCallFocus, requestVoiceDemoFocus } from "@/lib/scrollFunnel";
 
 export default function CTA() {
+  const pathname = usePathname();
+
   return (
     <section id="contact" className="py-24 relative overflow-hidden scroll-mt-28">
       <div className="container mx-auto px-6">
@@ -72,17 +75,23 @@ export default function CTA() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex justify-center"
+                className="flex flex-col items-center gap-4"
               >
                 <Button
+                  type="button"
                   size="lg"
-                  asChild
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)]"
+                  onClick={() => requestVoiceDemoFocus(pathname)}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)] touch-manipulation"
                 >
-                  <TestDriveLink className="inline-flex items-center justify-center px-6 py-3 text-center leading-snug">
-                    Try This On Your Business (Free)
-                  </TestDriveLink>
+                  Talk to the AI Receptionist
                 </Button>
+                <button
+                  type="button"
+                  onClick={() => requestBookCallFocus(pathname)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center max-w-xs"
+                >
+                  Or book a 10-minute setup call
+                </button>
               </motion.div>
 
               <motion.div

@@ -4,10 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, Phone, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, Phone, X } from "lucide-react";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { TestDriveLink } from "@/components/TestDriveLink";
 
 const navLinks = [
   { name: "Free audit", href: "/#free-audit" },
@@ -68,24 +66,6 @@ export default function Navbar() {
               <Phone className="w-4 h-4 text-primary shrink-0" aria-hidden />
               {PRIMARY_PHONE_DISPLAY}
             </a>
-
-            <motion.div
-              className="relative z-10 shrink-0"
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.35, duration: 0.35 }}
-            >
-              <Button
-                asChild
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
-              >
-                <TestDriveLink>
-                  Try This On Your Business (Free)
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </TestDriveLink>
-              </Button>
-            </motion.div>
           </div>
 
           <button
@@ -126,16 +106,6 @@ export default function Navbar() {
                   <Phone className="w-4 h-4 text-primary" aria-hidden />
                   {PRIMARY_PHONE_DISPLAY}
                 </a>
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 font-semibold w-fit"
-                >
-                  <TestDriveLink onClick={() => setIsOpen(false)}>
-                    Try This On Your Business (Free)
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </TestDriveLink>
-                </Button>
               </div>
             </motion.div>
           )}

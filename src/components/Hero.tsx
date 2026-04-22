@@ -12,6 +12,7 @@ import {
   GHL_VOICE_WIDGET_RESOURCES_URL,
   GHL_VOICE_WIDGET_SCRIPT_SRC,
 } from "@/lib/ghlVoiceWidget";
+import { scrollBookCallIntoView, VOICE_DEMO_FOCUS_EVENT } from "@/lib/scrollFunnel";
 
 export default function Hero() {
   const voiceDemoRef = useRef<HTMLDivElement>(null);
@@ -53,8 +54,16 @@ export default function Hero() {
   }, [voiceCardControls]);
 
   const scrollToBookCall = useCallback(() => {
-    document.getElementById("book-call")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollBookCallIntoView();
   }, []);
+
+  useEffect(() => {
+    const onVoiceFocus = () => {
+      scrollToVoiceDemo();
+    };
+    window.addEventListener(VOICE_DEMO_FOCUS_EVENT, onVoiceFocus);
+    return () => window.removeEventListener(VOICE_DEMO_FOCUS_EVENT, onVoiceFocus);
+  }, [scrollToVoiceDemo]);
 
   const showLauncherFallback = showFallbackLauncher && !slotFilled;
 
@@ -132,10 +141,10 @@ export default function Hero() {
               animate={voiceCardControls}
               initial={{ scale: 1 }}
               whileHover={{ y: -4, transition: { duration: 0.35 } }}
-              className={`relative rounded-[1.35rem] border bg-gradient-to-b from-stone-800/95 via-zinc-900/95 to-zinc-950 p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,255,255,0.1),inset_0_1px_0_rgba(255,253,248,0.08),0_24px_64px_-12px_rgba(0,0,0,0.65)] transition-[box-shadow,border-color] duration-500 hover:border-primary/35 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_28px_72px_-12px_rgba(0,0,0,0.72),0_0_52px_hsl(174_72%_56%/0.18)] ${
+              className={`relative rounded-[1.35rem] border bg-gradient-to-b from-amber-950/45 via-stone-800/92 to-stone-950/96 p-8 sm:p-10 md:p-12 shadow-[0_0_0_1px_rgba(255,237,213,0.14),inset_0_1px_0_rgba(255,251,235,0.12),0_24px_56px_-14px_rgba(28,25,23,0.55)] transition-[box-shadow,border-color] duration-500 hover:border-primary/40 hover:shadow-[0_0_0_1px_rgba(255,247,237,0.16),0_28px_64px_-14px_rgba(28,25,23,0.5),0_0_48px_hsl(174_72%_56%/0.2)] ${
                 spotlight
                   ? "border-primary/55 shadow-[0_0_0_2px_hsl(174_72%_56%/0.5),0_0_64px_hsl(174_72%_56%/0.32),0_24px_64px_-12px_rgba(0,0,0,0.65)]"
-                  : "border-stone-400/20"
+                  : "border-amber-200/15"
               }`}
             >
               {micPulseNonce > 0 ? (
@@ -148,14 +157,14 @@ export default function Hero() {
                   aria-hidden
                 />
               ) : null}
-              <div className="pointer-events-none absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(135deg,rgba(255,252,245,0.07)_0%,transparent_42%,rgba(174,222,200,0.04)_100%)]" />
+              <div className="pointer-events-none absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(135deg,rgba(255,251,235,0.1)_0%,transparent_40%,rgba(167,243,208,0.06)_100%)]" />
 
               <div className="relative z-[2] flex flex-col items-center text-center">
-                <p className="text-lg sm:text-xl font-display font-semibold text-stone-100 tracking-tight mb-3 max-w-md leading-snug">
-                  Go ahead — say hello
+                <p className="text-lg sm:text-xl font-display font-semibold text-stone-50 tracking-tight mb-3 max-w-md leading-snug">
+                  Talk to our AI receptionist right now
                 </p>
-                <p className="text-base sm:text-[17px] text-stone-300/95 mb-7 max-w-md mx-auto leading-relaxed">
-                  Ask a real question: hours, pricing, or how you&apos;d book. It answers like your front desk would.
+                <p className="text-base sm:text-[17px] text-stone-200/95 mb-7 max-w-md mx-auto leading-relaxed">
+                  Ask about pricing, availability, or booking — just like a real customer
                 </p>
 
                 {showTapHint ? (
@@ -177,22 +186,21 @@ export default function Hero() {
                   ) : null}
                 </div>
 
-                <p className="mt-8 text-sm sm:text-base text-stone-400 leading-relaxed max-w-md">
-                  Prefer the phone? Call{" "}
+                <p className="mt-8 text-sm sm:text-base text-stone-300/95 leading-relaxed max-w-md">
+                  Prefer to call?{" "}
                   <a
                     href={PRIMARY_PHONE_HREF}
                     className="text-primary font-semibold underline-offset-2 hover:underline tabular-nums"
                   >
                     {PRIMARY_PHONE_DISPLAY}
-                  </a>{" "}
-                  and hear the same receptionist.
+                  </a>
                 </p>
               </div>
             </motion.div>
           </motion.div>
 
           {/* Copy + CTAs: right on desktop, below voice on mobile */}
-          <div className="text-center lg:text-left order-2">
+          <div className="text-center order-2">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -216,7 +224,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 lg:mb-10 leading-relaxed"
+              className="text-lg text-muted-foreground max-w-xl mx-auto mb-8 lg:mb-10 leading-relaxed"
             >
               Answers calls, responds to texts, handles your website, and follows up automatically — so you never miss
               a customer again.
@@ -226,7 +234,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="w-full max-w-xl mx-auto lg:mx-0 mb-10 lg:mb-0 flex justify-center lg:justify-start"
+              className="w-full max-w-xl mx-auto mb-10 lg:mb-0 flex justify-center"
             >
               <div className="flex flex-col items-center gap-4">
                 <Button

@@ -37,12 +37,12 @@ Do **not** swap primary vs demo numbers across components or `/api/chat` fallbac
 
 **Section order (top → bottom):**
 
-1. **`Navbar`** — links include `/#free-audit`, `/services`, `/#what-it-does`, `/#where-it-works`, `#contact`; primary nav button uses `TestDriveLink` (“Try This On Your Business (Free)”).
+1. **`Navbar`** — links include `/#free-audit`, `/services`, `/#what-it-does`, `/#where-it-works`, `#contact`; **no** primary nav CTA button (conversion stays in-section: Hero / What this does / bottom `CTA`).
 2. **`Hero`** — **primary conversion surface** (see §4).
-3. **`FreeAuditSection`** — missed-call calculator (`#free-audit`).
-4. **`WhatThisDoes`** — five capability cards (`#what-it-does`).
+3. **`FreeAuditSection`** — missed-call calculator (`#free-audit`); `MissedCallCalculator` is mounted with **`enableIdleDemo`** so industry presets **cycle randomly** while the block is in view and the user is idle (pauses ~60s after interaction; respects **`prefers-reduced-motion`**).
+4. **`WhatThisDoes`** — five capability cards (`#what-it-does`); after the intro copy, same **Talk to the AI Receptionist** / **Or book a 10-minute setup call** pair as Hero (via `src/lib/scrollFunnel.ts`).
 5. **`WhereItWorks`** — channel cards (`#where-it-works`).
-6. **`CTA`** — `#contact`; glass card; **“Try This On Your Business (Free)”** via `TestDriveLink` (different from Hero primary — intentional secondary conversion block).
+6. **`CTA`** — `#contact`; glass card; primary **“Talk to the AI Receptionist”** + secondary **“Or book a 10-minute setup call”** (same scroll / off-home hash behavior as Hero, not site chat).
 7. **`HomeSetupCallSection`** — **10-minute setup call** booking embed (`#book-call`). **Scroll anchor is on the calendar card wrapper** (top of iframe block), not the headline above it.
 8. **`Footer`**
 
@@ -58,7 +58,7 @@ Do **not** swap primary vs demo numbers across components or `/api/chat` fallbac
 |---------|----------|
 | **Primary button** | **“Talk to the AI Receptionist”** — does **not** navigate away; **smooth-scrolls** to `#voice-demo`, temporary **spotlight** on the voice card, **mic pulse** animation on the launcher area, short **“Tap the mic to start”** hint. |
 | **Secondary text link** | **“Or book a 10-minute setup call”** — smooth-scroll to `#book-call`. **Centered under the primary button** (grouped in a column with `items-center`). |
-| **Voice card** | `#voice-demo`, `scroll-mt-28`; premium dark card + glow (unchanged design language). |
+| **Voice card** | `#voice-demo`, `scroll-mt-28`; warm dark card (amber/stone gradient) + glow. **Copy:** “Talk to our AI receptionist right now” / “Ask about pricing, availability, or booking — just like a real customer”; footer line **“Prefer to call?”** + primary number. |
 | **GHL script** | Loaded **only in Hero** via `next/script` + constants in `src/lib/ghlVoiceWidget.ts` (`loader.js`, `data-resources-url`, `data-widget-id`). |
 
 **Supporting components:**
@@ -75,8 +75,9 @@ Do **not** swap primary vs demo numbers across components or `/api/chat` fallbac
 ## 5) Booking / hash routing
 
 - **`HomeSetupCallSection.tsx`** — Embeds **GHL/LeadConnector–style** booking via `links.automagixx.com` (iframe + `form_embed.js`). **TODO long-term:** point embeds to 247ROI-branded links when available.
-- **`#book-call`** — On the **outer wrapper of the calendar card** (first pixel users should see when scrolling to “book”).
-- **`src/components/HashBookingRedirect.tsx`** (imported in `providers.tsx`) — On `/`, **`/#book-call` scrolls** to the element; **does not** redirect to `/calendar` (legacy behavior removed).
+- **`#book-call`** — On the **iframe viewport wrapper** inside the rounded card (scroll lands on the calendar, not the section headline). Uses **`scroll-mt-32` / `sm:scroll-mt-36`** so the fixed nav does not cover the embed.
+- **`src/lib/scrollFunnel.ts`** — `requestVoiceDemoFocus` / `requestBookCallFocus` / `scrollBookCallIntoView`; dispatches **`247roi-focus-voice-demo`** on `/` so Hero runs the same focus animation as the in-hero button.
+- **`src/components/HashBookingRedirect.tsx`** (imported in `providers.tsx`) — On `/`, **`/#book-call`** smooth-scrolls; **`/#voice-demo`** dispatches the voice focus event (same as primary CTAs).
 - **`src/lib/openBooking.ts`** — `BOOKING_HASH` / comments updated for inline section; `requestOpenBooking()` still exists if something needs full-page `/calendar`.
 
 **Footer:** “Book a call” → **`/#book-call`**.
@@ -126,7 +127,7 @@ Do **not** swap primary vs demo numbers across components or `/api/chat` fallbac
 ### B) Content & brand audit
 
 - Sweep user-facing copy for **Automagixx** / wrong domains / wrong emails.
-- Align **`TestDriveLink`** / demo behavior with product decisions (Hero vs nav vs bottom `CTA` — three entry points is intentional but should stay coherent).
+- **`TestDriveLink`** remains for any **dial-to-demo** / chat-specific entry points; primary funnel CTAs use **`scrollFunnel`** (voice demo + `#book-call`), not site chat.
 
 ### C) Ops
 
@@ -153,10 +154,10 @@ Do **not** swap primary vs demo numbers across components or `/api/chat` fallbac
 ## 11) Resume checklist (next session)
 
 1. Read this **`BRAIN.md`**.
-2. Skim **`HomePage.tsx`**, **`Hero.tsx`**, **`LeadConnectorInHero.tsx`**, **`HomeSetupCallSection.tsx`**, **`HashBookingRedirect.tsx`**.
+2. Skim **`HomePage.tsx`**, **`Hero.tsx`**, **`scrollFunnel.ts`**, **`LeadConnectorInHero.tsx`**, **`HomeSetupCallSection.tsx`**, **`HashBookingRedirect.tsx`**.
 3. In browser: Hero CTA → voice card; secondary + footer → **`#book-call`** lands on **calendar card**; GHL UI **in hero slot** (not stuck bottom-right).
 4. Run **`npm run lint`** && **`npm run build`**.
 
 ---
 
-*Last updated: homepage funnel + GHL relocate + `#book-call` anchor on calendar card + brain refresh for session handoff.*
+*Last updated: nav CTA removed; `scrollFunnel` + hash voice focus; WhatThisDoes / bottom CTA aligned with Hero; calculator idle demo; `#book-call` on iframe wrapper.*

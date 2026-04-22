@@ -31,11 +31,15 @@ export default function HomeSetupCallSection() {
             Book a quick 10-minute setup call and we&apos;ll show you exactly how it works for you.
           </p>
 
-          {/* `#book-call` sits on the calendar card (top of embed), not the section headline */}
-          <div id="book-call" className="scroll-mt-28 mx-auto mt-10 w-full max-w-4xl">
+          <div className="mx-auto mt-10 w-full max-w-4xl">
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-card/80 via-card/40 to-card/30 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_64px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/[0.04]">
               <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[linear-gradient(135deg,rgba(255,255,255,0.04)_0%,transparent_45%,rgba(255,255,255,0.02)_100%)]" />
-              <div className="relative w-full min-h-[560px] sm:min-h-[640px] md:min-h-[700px]">
+              {/* `#book-call`: anchor is the embed viewport so scroll clears the headline + navbar */}
+              <div
+                id="book-call"
+                tabIndex={-1}
+                className="relative w-full min-h-[560px] scroll-mt-32 sm:min-h-[640px] sm:scroll-mt-36 md:min-h-[700px]"
+              >
                 <iframe
                   src={SETUP_CALL_IFRAME_SRC}
                   style={{ width: "100%", border: "none", overflow: "hidden" }}

@@ -92,9 +92,22 @@ const rangeClass =
 type MissedCallCalculatorProps = {
   /** Standalone `/missed-call-calculator` page shows the classic H1. */
   showHeading?: boolean;
+  /** When true (e.g. homepage free audit), cycles industry presets while idle — pauses after interaction. */
+  enableIdleDemo?: boolean;
 };
 
-export default function MissedCallCalculator({ showHeading = true }: MissedCallCalculatorProps) {
+export default function MissedCallCalculator({
+  showHeading = true,
+  enableIdleDemo = false,
+}: MissedCallCalculatorProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const businessRef = useRef<BusinessId>("roofing");
+  const lastUserInteractionRef = useRef(0);
+  const userTouchedRef = useRef(false);
+  const visibleRef = useRef(false);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const selectBusinessFnRef = useRef<(id: BusinessId) => void>(() => {});
+
   const [business, setBusiness] = useState<BusinessId>("roofing");
   const [missedCalls, setMissedCalls] = useState(BUSINESSES.roofing.missed);
   const [conversion, setConversion] = useState(BUSINESSES.roofing.conversion);
@@ -144,6 +157,105 @@ export default function MissedCallCalculator({ showHeading = true }: MissedCallC
     presetRafRef.current = requestAnimationFrame(step);
   };
 
+  selectBusinessFnRef.current = selectBusiness;
+  businessRef.current = business;
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !enableIdleDemo) return;
+
+    const markUser = () => {
+      userTouchedRef.current = true;
+      lastUserInteractionRef.current = Date.now();
+    };
+
+    el.addEventListener("pointerdown", markUser, true);
+    el.addEventListener("keydown", markUser, true);
+    return () => {
+      el.removeEventListener("pointerdown", markUser, true);
+      el.removeEventListener("keydown", markUser, true);
+    };
+  }, [enableIdleDemo]);
+
+  useEffect(() => {
+    if (!enableIdleDemo) return;
+
+    const el = rootRef.current;
+    if (!el) return;
+
+    const clearIdleTimer = () => {
+      if (idleTimerRef.current != null) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
+    };
+
+    const scheduleIdleTick = () => {
+      clearIdleTimer();
+      const delayMs = 9000 + Math.random() * 12000;
+      idleTimerRef.current = setTimeout(() => {
+        idleTimerRef.current = null;
+        if (!visibleRef.current) {
+          return;
+        }
+        if (typeof document !== "undefined" && document.hidden) {
+          return;
+        }
+        if (
+          typeof window !== "undefined" &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          return;
+        }
+
+        const now = Date.now();
+        const idleNeededMs = userTouchedRef.current ? 60_000 : 12_000;
+        if (now - lastUserInteractionRef.current < idleNeededMs) {
+          scheduleIdleTick();
+          return;
+        }
+
+        const cur = businessRef.current;
+        const ids = (Object.keys(BUSINESSES) as BusinessId[]).filter((id) => id !== cur);
+        if (ids.length > 0) {
+          const pick = ids[Math.floor(Math.random() * ids.length)]!;
+          selectBusinessFnRef.current(pick);
+        }
+        scheduleIdleTick();
+      }, delayMs);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.12);
+        visibleRef.current = visible;
+        if (visible) {
+          scheduleIdleTick();
+        } else {
+          clearIdleTimer();
+        }
+      },
+      { threshold: [0, 0.12, 0.2, 0.35] },
+    );
+
+    io.observe(el);
+
+    const onVisibility = () => {
+      if (typeof document !== "undefined" && document.hidden) {
+        clearIdleTimer();
+      } else if (visibleRef.current) {
+        scheduleIdleTick();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      clearIdleTimer();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [enableIdleDemo]);
+
   const periodDays = useMemo(
     () => PERIODS.find((p) => p.id === period)?.days ?? 30,
     [period],
@@ -167,7 +279,7 @@ export default function MissedCallCalculator({ showHeading = true }: MissedCallC
   const sliderValue = "text-[13px] font-bold tabular-nums tracking-tight text-primary";
 
   return (
-    <div className="w-full font-sans text-foreground antialiased">
+    <div ref={rootRef} className="w-full font-sans text-foreground antialiased">
       <div className="mx-auto flex w-full max-w-[420px] flex-col items-center px-1 py-2 sm:px-2">
         {showHeading ? (
           <h1 className="mb-6 text-center font-display text-lg font-semibold leading-snug tracking-tight text-foreground sm:text-xl">
