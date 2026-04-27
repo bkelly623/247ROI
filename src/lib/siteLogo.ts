@@ -13,11 +13,3 @@ export const siteLogoNavImageClassName =
 /** Footer: largest in-app mark — full wordmark legible above columns. */
 export const siteLogoFooterImageClassName =
   "h-14 w-auto max-h-[58px] max-w-[min(380px,92vw)] object-contain object-left sm:h-16 sm:max-h-[64px] sm:max-w-[min(440px,88vw)]";
-
-/** Hero voice card: matches footer scale inside the dark card. */
-export const siteLogoHeroCardImageClassName =
-  "h-14 w-auto max-h-[58px] max-w-[min(380px,96%)] object-contain sm:h-16 sm:max-h-[64px] sm:max-w-[min(440px,94%)]";
-
-/** Calculator footer: clearly readable under results; still secondary to buttons. */
-export const siteLogoCalculatorImageClassName =
-  "h-11 w-auto max-h-[48px] max-w-[min(300px,90vw)] object-contain sm:h-12 sm:max-h-[52px] sm:max-w-[min(340px,86vw)]";
