@@ -153,14 +153,14 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Voice demo panel stays in hero on desktop */}
+          {/* Voice demo: same block as desktop; stacks below copy on small screens (1 col) */}
           <motion.div
             ref={voiceDemoRef}
             id="voice-demo"
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.1 }}
-            className="relative hidden lg:block w-full max-w-lg mx-auto lg:max-w-none order-2 scroll-mt-28"
+            className="relative w-full max-w-lg mx-auto lg:max-w-none order-2 scroll-mt-28"
           >
             <Script
               id="leadconnector-voice-widget-hero"

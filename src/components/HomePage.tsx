@@ -5,7 +5,6 @@ import Hero from "@/components/Hero";
 import FreeAuditSection from "@/components/FreeAuditSection";
 import WhatThisDoes from "@/components/WhatThisDoes";
 import WhereItWorks from "@/components/WhereItWorks";
-import VoiceWidgetSection from "@/components/VoiceWidgetSection";
 import HomeSetupCallSection from "@/components/HomeSetupCallSection";
 import Footer from "@/components/Footer";
 
@@ -17,7 +16,6 @@ export default function HomePage() {
       <FreeAuditSection />
       <WhatThisDoes />
       <WhereItWorks />
-      <VoiceWidgetSection />
       <HomeSetupCallSection />
       <Footer />
     </div>
