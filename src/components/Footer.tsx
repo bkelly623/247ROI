@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const footerColumns: {
   title: string;
@@ -23,7 +24,6 @@ const footerColumns: {
     links: [
       { label: "About Us", href: "#contact" },
       { label: "Why 247ROI", href: "/#what-it-does" },
-      { label: "Careers", href: "#contact" },
       { label: "Contact", href: "#contact" },
     ],
   },
@@ -68,6 +68,12 @@ export default function Footer() {
                 Systems that generate ROI around the clock — capture leads, book revenue, and keep pipeline moving
                 while you sleep.
               </p>
+              <a
+                href={PRIMARY_PHONE_HREF}
+                className="inline-block mt-4 text-sm text-muted-foreground hover:text-primary transition-colors tabular-nums"
+              >
+                {PRIMARY_PHONE_DISPLAY}
+              </a>
             </motion.div>
           </div>
 

@@ -5,15 +5,15 @@ export const CALENDAR_PATH = "/calendar";
 export const BOOKING_ANCHOR = "#book-call";
 
 /** Primary business line — call/text CTA. */
-export const PRIMARY_PHONE_HREF = "tel:+19175727734";
-export const PRIMARY_PHONE_DISPLAY = "(917) 572-7734";
+export const PRIMARY_PHONE_HREF = "tel:+18663602529";
+export const PRIMARY_PHONE_DISPLAY = "(866) 360-2529";
 
 /** Live demo line — every demo reference. */
 export const DEMO_PHONE_HREF = "tel:+14846737612";
 export const DEMO_PHONE_DISPLAY = "(484) 673-7612";
 
-export const CTA_LABEL_NAV = "Call Us Now";
-export const HERO_PRIMARY_CTA_LABEL = "Call or Text Us";
+export const CTA_LABEL_NAV = "Book a Setup Call";
+export const HERO_PRIMARY_CTA_LABEL = "Call Our AI Receptionist Now";
 export const DEMO_CTA_LABEL = "Try the Live Demo";
 export const DEMO_CARD_BUTTON_LABEL = "Try the Demo";
 

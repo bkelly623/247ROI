@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const navLinks = [
@@ -66,6 +67,13 @@ export default function Navbar() {
               <Phone className="w-4 h-4 text-primary shrink-0" aria-hidden />
               {PRIMARY_PHONE_DISPLAY}
             </a>
+            <Button
+              asChild
+              size="lg"
+              className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
+            >
+              <Link href="/#book-call">Book a Setup Call</Link>
+            </Button>
           </div>
 
           <button
@@ -106,6 +114,15 @@ export default function Navbar() {
                   <Phone className="w-4 h-4 text-primary" aria-hidden />
                   {PRIMARY_PHONE_DISPLAY}
                 </a>
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 font-semibold w-fit"
+                >
+                  <Link href="/#book-call" onClick={() => setIsOpen(false)}>
+                    Book a Setup Call
+                  </Link>
+                </Button>
               </div>
             </motion.div>
           )}

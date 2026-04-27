@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-const PRIMARY_DISPLAY = "(917) 572-7734";
-const PRIMARY_TEL = "tel:+19175727734";
+const PRIMARY_DISPLAY = "(866) 360-2529";
+const PRIMARY_TEL = "tel:+18663602529";
 const DEMO_DISPLAY = "(484) 673-7612";
 const DEMO_TEL = "tel:+14846737612";
 

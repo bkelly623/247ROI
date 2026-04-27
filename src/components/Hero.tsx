@@ -100,14 +100,70 @@ export default function Hero() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          {/* Voice demo first on mobile + left on desktop */}
+          {/* Copy + CTAs */}
+          <div className="text-center order-1">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
+            >
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
+              <span className="text-sm text-muted-foreground">Voice · Text · Web — one receptionist</span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-display font-bold leading-[1.08] mb-6"
+            >
+              Your AI Receptionist — <span className="gradient-text">Wherever Your Customers Reach You</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-lg text-muted-foreground max-w-xl mx-auto mb-8 lg:mb-10 leading-relaxed"
+            >
+              We build it custom for your business, run it live for 30 days, and you don&apos;t pay until you see it
+              work.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="w-full max-w-xl mx-auto mb-10 lg:mb-0 flex justify-center"
+            >
+              <div className="flex flex-col items-center gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
+                >
+                  <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+                </Button>
+                <button
+                  type="button"
+                  onClick={scrollToBookCall}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center max-w-xs"
+                >
+                  Or book a 10-minute setup call
+                </button>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Voice demo panel stays in hero on desktop */}
           <motion.div
             ref={voiceDemoRef}
             id="voice-demo"
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.1 }}
-            className="relative w-full max-w-lg mx-auto lg:max-w-none order-1 scroll-mt-28"
+            className="relative hidden lg:block w-full max-w-lg mx-auto lg:max-w-none order-2 scroll-mt-28"
           >
             <Script
               id="leadconnector-voice-widget-hero"
@@ -199,62 +255,6 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Copy + CTAs: right on desktop, below voice on mobile */}
-          <div className="text-center order-2">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
-            >
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
-              <span className="text-sm text-muted-foreground">Voice · Text · Web — one receptionist</span>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-display font-bold leading-[1.08] mb-6"
-            >
-              Your AI Receptionist — <span className="gradient-text">Wherever Your Customers Reach You</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-muted-foreground max-w-xl mx-auto mb-8 lg:mb-10 leading-relaxed"
-            >
-              Answers calls, responds to texts, handles your website, and follows up automatically — so you never miss
-              a customer again.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="w-full max-w-xl mx-auto mb-10 lg:mb-0 flex justify-center"
-            >
-              <div className="flex flex-col items-center gap-4">
-                <Button
-                  type="button"
-                  size="lg"
-                  onClick={scrollToVoiceDemo}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
-                >
-                  Talk to the AI Receptionist
-                </Button>
-                <button
-                  type="button"
-                  onClick={scrollToBookCall}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center max-w-xs"
-                >
-                  Or book a 10-minute setup call
-                </button>
-              </div>
-            </motion.div>
-          </div>
         </div>
       </div>
 

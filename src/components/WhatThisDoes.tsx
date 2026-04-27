@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { Zap, Target, Calendar, RefreshCw, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { requestBookCallFocus, requestVoiceDemoFocus } from "@/lib/scrollFunnel";
+import { requestBookCallFocus } from "@/lib/scrollFunnel";
+import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const items: { icon: LucideIcon; title: string; description: string; gradient: string }[] = [
   {
@@ -63,23 +64,6 @@ export default function WhatThisDoes() {
             Five jobs handled end-to-end — so nothing slips through when you&apos;re busy or off the clock.
           </p>
 
-          <div className="mt-10 flex flex-col items-center gap-3">
-            <Button
-              type="button"
-              size="lg"
-              onClick={() => requestVoiceDemoFocus(pathname)}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 min-h-[3.25rem] text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
-            >
-              Talk to the AI Receptionist
-            </Button>
-            <button
-              type="button"
-              onClick={() => requestBookCallFocus(pathname)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation"
-            >
-              Or book a 10-minute setup call
-            </button>
-          </div>
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
@@ -112,6 +96,23 @@ export default function WhatThisDoes() {
             </motion.div>
             );
           })}
+        </div>
+
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <Button
+            asChild
+            size="lg"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 min-h-[3.25rem] text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
+          >
+            <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+          </Button>
+          <button
+            type="button"
+            onClick={() => requestBookCallFocus(pathname)}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation"
+          >
+            Or book a 10-minute setup call
+          </button>
         </div>
       </div>
     </section>

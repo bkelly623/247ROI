@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { requestBookCallFocus, requestVoiceDemoFocus } from "@/lib/scrollFunnel";
+import { requestBookCallFocus } from "@/lib/scrollFunnel";
 
 export default function CTA() {
   const pathname = usePathname();
@@ -78,12 +78,11 @@ export default function CTA() {
                 className="flex flex-col items-center gap-4"
               >
                 <Button
-                  type="button"
+                  asChild
                   size="lg"
-                  onClick={() => requestVoiceDemoFocus(pathname)}
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)] touch-manipulation"
                 >
-                  Talk to the AI Receptionist
+                  <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
                 </Button>
                 <button
                   type="button"

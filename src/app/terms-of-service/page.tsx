@@ -61,8 +61,8 @@ export default function TermsOfServicePage() {
                     brendan@247roi.com
                   </a>{" "}
                   or call{" "}
-                  <a href="tel:+19175727734" className="underline underline-offset-2 hover:text-gray-900">
-                    (917) 572-7734
+                  <a href="tel:+18663602529" className="underline underline-offset-2 hover:text-gray-900">
+                    (866) 360-2529
                   </a>{" "}
                   during business hours.
                 </p>
@@ -157,8 +157,8 @@ export default function TermsOfServicePage() {
             <p className="mt-2">Brendan Kelly, doing business as 247ROI</p>
             <p className="mt-2">
               Phone:{" "}
-              <a href="tel:+19175727734" className="underline underline-offset-2 hover:text-gray-900">
-                (917) 572-7734
+              <a href="tel:+18663602529" className="underline underline-offset-2 hover:text-gray-900">
+                (866) 360-2529
               </a>
             </p>
             <p className="mt-2">

@@ -48,6 +48,7 @@ export default function LeadConnectorInHero() {
     if (!slot) return;
 
     const tryRelocate = () => {
+      if (!(slot instanceof HTMLElement) || slot.offsetParent === null) return;
       if (slot.childElementCount > 0) return;
 
       const candidates: HTMLElement[] = [];

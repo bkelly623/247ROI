@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Clock, MessageCircle, Send, X } from "lucide-react";
 import {
   DEMO_PHONE_DISPLAY,
+  PRIMARY_PHONE_HREF,
   PRIMARY_PHONE_DISPLAY,
 } from "./cta";
 import { chatHashIsOpen, clearChatHash, subscribeOpenChat } from "@/lib/openChat";
@@ -18,7 +19,6 @@ type ChatMessage = {
   style?: "hint";
 };
 
-const AUTO_OPEN_MS = 2600;
 const AUTO_OPEN_KEY = "247roi_chat_autoopen_v1";
 
 export default function ChatWidget() {
@@ -28,7 +28,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "Hey — this site can actually talk. Want to try it?",
+      content: "Ready to see this running on your business?",
     },
     { role: "assistant", content: "Tap the mic to start", style: "hint" },
   ]);
@@ -41,15 +41,26 @@ export default function ChatWidget() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, open]);
 
-  /** Auto-open once per browser session after ~2.5s */
+  /** Auto-open once per browser session after scrolling halfway down the page. */
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem(AUTO_OPEN_KEY)) return;
-    const id = window.setTimeout(() => {
-      setOpen(true);
-      sessionStorage.setItem(AUTO_OPEN_KEY, "1");
-    }, AUTO_OPEN_MS);
-    return () => window.clearTimeout(id);
+
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      const progress = window.scrollY / scrollable;
+      if (progress >= 0.5) {
+        setOpen(true);
+        sessionStorage.setItem(AUTO_OPEN_KEY, "1");
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -160,6 +171,12 @@ export default function ChatWidget() {
                 </div>
 
                 <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3">
+                  <a
+                    href={PRIMARY_PHONE_HREF}
+                    className="inline-flex items-center justify-center w-full rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold shadow-[0_0_20px_hsl(174_72%_56%/0.35)] hover:bg-primary/90 transition-colors"
+                  >
+                    Call Pam Now — (866) 360-2529
+                  </a>
                   {messages.map((m, i) => (
                     <motion.div
                       key={`${i}-${m.role}-${m.style ?? "main"}`}

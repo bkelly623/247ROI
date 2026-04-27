@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import Script from "next/script";
 import { BookingSmsDisclaimer } from "@/components/BookingEmbed";
+import { Button } from "@/components/ui/button";
+import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { scrollBookCallIntoView } from "@/lib/scrollFunnel";
 
 const SETUP_CALL_FORM_EMBED_SRC = "https://links.automagixx.com/js/form_embed.js";
 const SETUP_CALL_IFRAME_SRC = "https://links.automagixx.com/widget/booking/deaNfs7Dq6XtD6FzYMR8";
@@ -23,13 +26,29 @@ export default function HomeSetupCallSection() {
           transition={{ duration: 0.55 }}
           className="text-center"
         >
-          <span className="text-primary text-sm font-semibold uppercase tracking-wider">Next step</span>
           <h2 className="font-display mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl">
-            Want this running on <span className="gradient-text">your</span> business?
+            Get It Running On Your Business — <span className="gradient-text">Free For 30 Days</span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            Book a quick 10-minute setup call and we&apos;ll show you exactly how it works for you.
+            We build it custom, wire it up, and run it live. You don&apos;t pay until you see it work. If it
+            doesn&apos;t perform — shut it off. You owe nothing.
           </p>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <Button
+              asChild
+              size="lg"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)] touch-manipulation"
+            >
+              <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+            </Button>
+            <button
+              type="button"
+              onClick={scrollBookCallIntoView}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center"
+            >
+              Or book a 10-minute setup call
+            </button>
+          </div>
 
           <div className="mx-auto mt-10 w-full max-w-4xl">
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-card/80 via-card/40 to-card/30 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_24px_64px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/[0.04]">
