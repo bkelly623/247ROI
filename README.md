@@ -17,7 +17,7 @@ npm run dev
 - [ ] Register **`contact@247roi.com`** (or your chosen address) and enable [FormSubmit](https://formsubmit.co) for intake + any forms.  
 - [ ] Point legal URLs and footer if the live domain differs from `247roi.com`.  
 - [ ] Replace `test-chatbot` embed URL if you deploy a dedicated chat server.  
-- [ ] Swap `public/logo-robot.png` if you want a 247ROI-specific mark.
+- [ ] Brand mark: `public/site-logo.png` (see `src/lib/siteLogo.ts`).
 
 ## Scripts
 

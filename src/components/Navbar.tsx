@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { SITE_LOGO_ALT, SITE_LOGO_PATH } from "@/lib/siteLogo";
 
 const navLinks = [
   { name: "Free audit", href: "/#free-audit" },
@@ -28,12 +29,16 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setIsOpen(false)}>
-            <span className="inline-flex rounded-lg overflow-hidden ring-1 ring-white/10">
-              <Image src="/logo-robot.png" alt="247ROI" width={36} height={36} className="h-9 w-auto bg-card" />
-            </span>
-            <span className="font-display font-bold text-xl sm:text-2xl text-foreground drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-transform group-hover:scale-[1.02]">
-              247ROI
+          <Link href="/" className="flex items-center group shrink-0" onClick={() => setIsOpen(false)}>
+            <span className="inline-flex rounded-lg overflow-hidden ring-1 ring-white/10 px-1.5 py-0.5 bg-black/40">
+              <Image
+                src={SITE_LOGO_PATH}
+                alt={SITE_LOGO_ALT}
+                width={160}
+                height={40}
+                className="h-8 w-auto max-h-9 max-w-[min(180px,52vw)] object-contain object-left transition-transform group-hover:scale-[1.02]"
+                priority
+              />
             </span>
           </Link>
 

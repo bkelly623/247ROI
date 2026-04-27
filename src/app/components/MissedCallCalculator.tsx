@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   AI_RECEPTIONIST_CTA_PHONE_HREF,
   BOOK_SETUP_CALL_LINK_CLASSNAME,
 } from "@/app/components/cta";
+import { SITE_LOGO_ALT, SITE_LOGO_PATH } from "@/lib/siteLogo";
 
 const MIN_AVG = 50;
 const MAX_AVG = 10000;
@@ -405,9 +407,15 @@ export default function MissedCallCalculator({
             </div>
           </section>
 
-          <p className="mt-auto pt-6 text-center text-[11px] font-medium tracking-tight text-muted-foreground">
-            247ROI
-          </p>
+          <div className="mt-auto flex justify-center pt-6">
+            <Image
+              src={SITE_LOGO_PATH}
+              alt={SITE_LOGO_ALT}
+              width={120}
+              height={32}
+              className="h-4 w-auto max-w-[min(120px,55%)] object-contain opacity-85"
+            />
+          </div>
         </div>
       </div>
     </div>
