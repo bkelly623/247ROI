@@ -7,7 +7,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { SITE_LOGO_ALT, SITE_LOGO_PATH } from "@/lib/siteLogo";
+import {
+  SITE_LOGO_ALT,
+  SITE_LOGO_INTRINSIC,
+  SITE_LOGO_PATH,
+  siteLogoNavImageClassName,
+} from "@/lib/siteLogo";
 
 const navLinks = [
   { name: "Free audit", href: "/#free-audit" },
@@ -30,13 +35,13 @@ export default function Navbar() {
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center group shrink-0" onClick={() => setIsOpen(false)}>
-            <span className="inline-flex rounded-lg overflow-hidden ring-1 ring-white/10 px-1.5 py-0.5 bg-black/40">
+            <span className="inline-flex rounded-lg overflow-hidden ring-1 ring-white/10 px-2 py-1 bg-black/40">
               <Image
                 src={SITE_LOGO_PATH}
                 alt={SITE_LOGO_ALT}
-                width={160}
-                height={40}
-                className="h-8 w-auto max-h-9 max-w-[min(180px,52vw)] object-contain object-left transition-transform group-hover:scale-[1.02]"
+                width={SITE_LOGO_INTRINSIC.width}
+                height={SITE_LOGO_INTRINSIC.height}
+                className={`${siteLogoNavImageClassName} transition-transform group-hover:scale-[1.02]`}
                 priority
               />
             </span>

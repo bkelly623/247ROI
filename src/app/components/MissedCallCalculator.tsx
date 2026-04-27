@@ -8,7 +8,12 @@ import {
   AI_RECEPTIONIST_CTA_PHONE_HREF,
   BOOK_SETUP_CALL_LINK_CLASSNAME,
 } from "@/app/components/cta";
-import { SITE_LOGO_ALT, SITE_LOGO_PATH } from "@/lib/siteLogo";
+import {
+  SITE_LOGO_ALT,
+  SITE_LOGO_INTRINSIC,
+  SITE_LOGO_PATH,
+  siteLogoCalculatorImageClassName,
+} from "@/lib/siteLogo";
 
 const MIN_AVG = 50;
 const MAX_AVG = 10000;
@@ -407,13 +412,13 @@ export default function MissedCallCalculator({
             </div>
           </section>
 
-          <div className="mt-auto flex justify-center pt-6">
+          <div className="mt-auto flex justify-center pt-8">
             <Image
               src={SITE_LOGO_PATH}
               alt={SITE_LOGO_ALT}
-              width={120}
-              height={32}
-              className="h-4 w-auto max-w-[min(120px,55%)] object-contain opacity-85"
+              width={SITE_LOGO_INTRINSIC.width}
+              height={SITE_LOGO_INTRINSIC.height}
+              className={`${siteLogoCalculatorImageClassName} opacity-90`}
             />
           </div>
         </div>

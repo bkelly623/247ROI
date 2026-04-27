@@ -19,7 +19,12 @@ import {
   GHL_VOICE_WIDGET_SCRIPT_SRC,
 } from "@/lib/ghlVoiceWidget";
 import { VOICE_DEMO_FOCUS_EVENT } from "@/lib/scrollFunnel";
-import { SITE_LOGO_ALT, SITE_LOGO_PATH } from "@/lib/siteLogo";
+import {
+  SITE_LOGO_ALT,
+  SITE_LOGO_INTRINSIC,
+  SITE_LOGO_PATH,
+  siteLogoHeroCardImageClassName,
+} from "@/lib/siteLogo";
 
 export default function Hero() {
   const voiceDemoRef = useRef<HTMLDivElement>(null);
@@ -250,13 +255,13 @@ export default function Hero() {
                     {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
                   </a>
                 </p>
-                <div className="mt-5 flex justify-center">
+                <div className="mt-6 flex justify-center">
                   <Image
                     src={SITE_LOGO_PATH}
                     alt={SITE_LOGO_ALT}
-                    width={140}
-                    height={36}
-                    className="h-5 w-auto max-w-[min(140px,70%)] object-contain opacity-95"
+                    width={SITE_LOGO_INTRINSIC.width}
+                    height={SITE_LOGO_INTRINSIC.height}
+                    className={`${siteLogoHeroCardImageClassName} opacity-95`}
                   />
                 </div>
               </div>

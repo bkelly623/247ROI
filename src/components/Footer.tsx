@@ -4,7 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { SITE_LOGO_ALT, SITE_LOGO_PATH } from "@/lib/siteLogo";
+import {
+  SITE_LOGO_ALT,
+  SITE_LOGO_INTRINSIC,
+  SITE_LOGO_PATH,
+  siteLogoFooterImageClassName,
+} from "@/lib/siteLogo";
 
 const footerColumns: {
   title: string;
@@ -58,13 +63,13 @@ export default function Footer() {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <Link href="/" className="inline-flex mb-4 rounded-lg overflow-hidden ring-1 ring-white/10 px-1.5 py-1 bg-black/40">
+              <Link href="/" className="inline-flex mb-4 rounded-lg overflow-hidden ring-1 ring-white/10 px-2 py-1.5 bg-black/40">
                 <Image
                   src={SITE_LOGO_PATH}
                   alt={SITE_LOGO_ALT}
-                  width={200}
-                  height={48}
-                  className="h-10 w-auto max-w-[220px] object-contain object-left"
+                  width={SITE_LOGO_INTRINSIC.width}
+                  height={SITE_LOGO_INTRINSIC.height}
+                  className={siteLogoFooterImageClassName}
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-xs">
