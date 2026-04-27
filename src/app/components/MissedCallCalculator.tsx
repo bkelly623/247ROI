@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { requestBookCallFocus } from "@/lib/scrollFunnel";
+import {
+  AI_RECEPTIONIST_CTA_PHONE_HREF,
+  BOOK_SETUP_CALL_LINK_CLASSNAME,
+} from "@/app/components/cta";
 
 const MIN_AVG = 50;
 const MAX_AVG = 10000;
@@ -104,7 +106,6 @@ export default function MissedCallCalculator({
   showHeading = true,
   enableIdleDemo = false,
 }: MissedCallCalculatorProps) {
-  const pathname = usePathname();
   const rootRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<BusinessId>("roofing");
   const lastUserInteractionRef = useRef(0);
@@ -393,15 +394,14 @@ export default function MissedCallCalculator({
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
               >
-                <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+                <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
               </Button>
-              <button
-                type="button"
-                onClick={() => requestBookCallFocus(pathname)}
-                className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation"
+              <Link
+                href="/#book-call"
+                className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-xs sm:text-sm text-center`}
               >
                 Or book a 10-minute setup call
-              </button>
+              </Link>
             </div>
           </section>
 

@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { Zap, Target, Calendar, RefreshCw, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { requestBookCallFocus } from "@/lib/scrollFunnel";
-import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import {
+  AI_RECEPTIONIST_CTA_PHONE_HREF,
+  BOOK_SETUP_CALL_LINK_CLASSNAME,
+} from "@/app/components/cta";
 
 const items: { icon: LucideIcon; title: string; description: string; gradient: string }[] = [
   {
@@ -42,8 +44,6 @@ const items: { icon: LucideIcon; title: string; description: string; gradient: s
 ];
 
 export default function WhatThisDoes() {
-  const pathname = usePathname();
-
   return (
     <section id="what-it-does" className="py-24 relative overflow-hidden scroll-mt-28 border-t border-border/40">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/15 to-transparent" />
@@ -104,15 +104,11 @@ export default function WhatThisDoes() {
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 min-h-[3.25rem] text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
           >
-            <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+            <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
           </Button>
-          <button
-            type="button"
-            onClick={() => requestBookCallFocus(pathname)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation"
-          >
+          <Link href="/#book-call" className={BOOK_SETUP_CALL_LINK_CLASSNAME}>
             Or book a 10-minute setup call
-          </button>
+          </Link>
         </div>
       </div>
     </section>

@@ -1,10 +1,10 @@
 import {
+  BUSINESS_LINE_CTA_LABEL,
   CTA_MICRO,
   DEMO_CARD_BUTTON_LABEL,
   DEMO_PHONE_DISPLAY,
   DEMO_PHONE_HREF,
   DEMO_SUBTEXT,
-  HERO_PRIMARY_CTA_LABEL,
   PRIMARY_PHONE_DISPLAY,
   PRIMARY_PHONE_HREF,
 } from "./cta";
@@ -53,7 +53,7 @@ export default function DualCtaCards({
           Your business line
         </p>
         <a href={PRIMARY_PHONE_HREF} className={primaryBtn}>
-          {HERO_PRIMARY_CTA_LABEL}
+          {BUSINESS_LINE_CTA_LABEL}
         </a>
         <p className={phoneLine}>{PRIMARY_PHONE_DISPLAY}</p>
         <a href="/guarantee" className={microCls}>

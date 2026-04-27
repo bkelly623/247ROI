@@ -1,18 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { motion, useAnimationControls } from "framer-motion";
 import Script from "next/script";
 import { Button } from "@/components/ui/button";
 import LeadConnectorVoiceLauncher from "@/components/LeadConnectorVoiceLauncher";
 import LeadConnectorInHero from "@/components/LeadConnectorInHero";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import {
+  AI_RECEPTIONIST_CTA_PHONE_DISPLAY,
+  AI_RECEPTIONIST_CTA_PHONE_HREF,
+  BOOK_SETUP_CALL_LINK_CLASSNAME,
+} from "@/app/components/cta";
 import {
   GHL_VOICE_WIDGET_ID,
   GHL_VOICE_WIDGET_RESOURCES_URL,
   GHL_VOICE_WIDGET_SCRIPT_SRC,
 } from "@/lib/ghlVoiceWidget";
-import { scrollBookCallIntoView, VOICE_DEMO_FOCUS_EVENT } from "@/lib/scrollFunnel";
+import { VOICE_DEMO_FOCUS_EVENT } from "@/lib/scrollFunnel";
 
 export default function Hero() {
   const voiceDemoRef = useRef<HTMLDivElement>(null);
@@ -52,10 +57,6 @@ export default function Hero() {
     window.setTimeout(() => setSpotlight(false), 4200);
     window.setTimeout(() => setShowTapHint(false), 10000);
   }, [voiceCardControls]);
-
-  const scrollToBookCall = useCallback(() => {
-    scrollBookCallIntoView();
-  }, []);
 
   useEffect(() => {
     const onVoiceFocus = () => {
@@ -143,15 +144,11 @@ export default function Hero() {
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
                 >
-                  <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+                  <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
                 </Button>
-                <button
-                  type="button"
-                  onClick={scrollToBookCall}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center max-w-xs"
-                >
+                <Link href="/#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
                   Or book a 10-minute setup call
-                </button>
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -245,10 +242,10 @@ export default function Hero() {
                 <p className="mt-8 text-sm sm:text-base text-stone-300/95 leading-relaxed max-w-md">
                   Prefer to call?{" "}
                   <a
-                    href={PRIMARY_PHONE_HREF}
-                    className="text-primary font-semibold underline-offset-2 hover:underline tabular-nums"
+                    href={AI_RECEPTIONIST_CTA_PHONE_HREF}
+                    className="text-primary font-semibold underline underline-offset-2 hover:underline tabular-nums"
                   >
-                    {PRIMARY_PHONE_DISPLAY}
+                    {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
                   </a>
                 </p>
               </div>

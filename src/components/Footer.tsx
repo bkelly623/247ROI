@@ -23,7 +23,6 @@ const footerColumns: {
     title: "Company",
     links: [
       { label: "About Us", href: "#contact" },
-      { label: "Why 247ROI", href: "/#what-it-does" },
       { label: "Contact", href: "#contact" },
     ],
   },

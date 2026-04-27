@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { Phone, Globe, MessageSquare, Mail, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { requestBookCallFocus } from "@/lib/scrollFunnel";
+import {
+  AI_RECEPTIONIST_CTA_PHONE_HREF,
+  BOOK_SETUP_CALL_LINK_CLASSNAME,
+} from "@/app/components/cta";
 
 const channels: { icon: LucideIcon; label: string; gradient: string }[] = [
   { icon: Phone, label: "Phone", gradient: "from-primary to-cyan-400" },
@@ -17,8 +19,6 @@ const channels: { icon: LucideIcon; label: string; gradient: string }[] = [
 ];
 
 export default function WhereItWorks() {
-  const pathname = usePathname();
-
   return (
     <section id="where-it-works" className="py-24 relative overflow-hidden scroll-mt-28 border-t border-border/40">
       <div className="absolute inset-0 bg-gradient-to-b from-muted/10 via-transparent to-muted/10" />
@@ -72,15 +72,11 @@ export default function WhereItWorks() {
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 min-h-[3.25rem] text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
           >
-            <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+            <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
           </Button>
-          <button
-            type="button"
-            onClick={() => requestBookCallFocus(pathname)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center"
-          >
+          <Link href="/#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center`}>
             Or book a 10-minute setup call
-          </button>
+          </Link>
         </div>
       </div>
     </section>

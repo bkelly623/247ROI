@@ -8,7 +8,7 @@ import {
   GHL_VOICE_WIDGET_RESOURCES_URL,
   GHL_VOICE_WIDGET_SCRIPT_SRC,
 } from "@/lib/ghlVoiceWidget";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { AI_RECEPTIONIST_CTA_PHONE_DISPLAY, AI_RECEPTIONIST_CTA_PHONE_HREF } from "@/app/components/cta";
 
 export default function VoiceWidgetSection() {
   return (
@@ -43,10 +43,10 @@ export default function VoiceWidgetSection() {
             <p className="mt-8 text-sm sm:text-base text-stone-300/95 leading-relaxed max-w-md">
               Prefer to call?{" "}
               <a
-                href={PRIMARY_PHONE_HREF}
-                className="text-primary font-semibold underline-offset-2 hover:underline tabular-nums"
+                href={AI_RECEPTIONIST_CTA_PHONE_HREF}
+                className="text-primary font-semibold underline underline-offset-2 hover:underline tabular-nums"
               >
-                {PRIMARY_PHONE_DISPLAY}
+                {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
               </a>
             </p>
           </div>

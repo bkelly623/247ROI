@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import Script from "next/script";
 import { BookingSmsDisclaimer } from "@/components/BookingEmbed";
 import { Button } from "@/components/ui/button";
-import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { scrollBookCallIntoView } from "@/lib/scrollFunnel";
+import {
+  AI_RECEPTIONIST_CTA_PHONE_HREF,
+  BOOK_SETUP_CALL_LINK_CLASSNAME,
+} from "@/app/components/cta";
 
 const SETUP_CALL_FORM_EMBED_SRC = "https://links.automagixx.com/js/form_embed.js";
 const SETUP_CALL_IFRAME_SRC = "https://links.automagixx.com/widget/booking/deaNfs7Dq6XtD6FzYMR8";
@@ -39,15 +41,11 @@ export default function HomeSetupCallSection() {
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)] touch-manipulation"
             >
-              <a href={PRIMARY_PHONE_HREF}>Call Our AI Receptionist Now</a>
+              <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
             </Button>
-            <button
-              type="button"
-              onClick={scrollBookCallIntoView}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline touch-manipulation text-center"
-            >
+            <a href="#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center`}>
               Or book a 10-minute setup call
-            </button>
+            </a>
           </div>
 
           <div className="mx-auto mt-10 w-full max-w-4xl">

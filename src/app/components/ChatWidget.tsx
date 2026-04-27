@@ -4,8 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, MessageCircle, Send, X } from "lucide-react";
 import {
+  AI_RECEPTIONIST_CTA_PHONE_DISPLAY,
+  AI_RECEPTIONIST_CTA_PHONE_HREF,
   DEMO_PHONE_DISPLAY,
-  PRIMARY_PHONE_HREF,
   PRIMARY_PHONE_DISPLAY,
 } from "./cta";
 import { chatHashIsOpen, clearChatHash, subscribeOpenChat } from "@/lib/openChat";
@@ -172,10 +173,10 @@ export default function ChatWidget() {
 
                 <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3">
                   <a
-                    href={PRIMARY_PHONE_HREF}
+                    href={AI_RECEPTIONIST_CTA_PHONE_HREF}
                     className="inline-flex items-center justify-center w-full rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold shadow-[0_0_20px_hsl(174_72%_56%/0.35)] hover:bg-primary/90 transition-colors"
                   >
-                    Call Pam Now — (866) 360-2529
+                    Call Pam Now — {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
                   </a>
                   {messages.map((m, i) => (
                     <motion.div
