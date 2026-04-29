@@ -35,7 +35,8 @@ export default function FreeAuditSection() {
             <p className="text-muted-foreground text-lg max-w-lg mx-auto lg:mx-0 mb-6 leading-relaxed">
               Drag a few sliders. We&apos;ll estimate the revenue walking out the door while the phone rings — no
               signup, no fluff. When you&apos;re ready, we help you{" "}
-              <span className="text-foreground/90 font-medium">capture every lead</span> with AI that answers 24/7.
+              <span className="text-foreground/90 font-medium">plug the leak</span> with AI that answers, follows up,
+              and books 24/7.
             </p>
             <div className="flex flex-wrap gap-3 justify-center lg:justify-start text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/30 px-3 py-1.5">

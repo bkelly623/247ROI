@@ -33,10 +33,10 @@ export default function WhereItWorks() {
         >
           <span className="text-primary text-sm font-semibold uppercase tracking-wider">Where it works</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-4 mb-5">
-            One receptionist, <span className="gradient-text">every channel</span>
+            One revenue employee, <span className="gradient-text">every channel</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-            Your receptionist works everywhere your customers reach you.
+            Calls, texts, website chats, emails, and social messages all feed the same response system — so leads get handled instead of scattered.
           </p>
         </motion.div>
 

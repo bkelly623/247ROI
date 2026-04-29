@@ -110,7 +110,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
             >
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
-              <span className="text-sm text-muted-foreground">Voice · Text · Web — one receptionist</span>
+              <span className="text-sm text-muted-foreground">AI receptionists · Revenue employees · 24/7 follow-up</span>
             </motion.div>
 
             <motion.h1
@@ -119,7 +119,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-display font-bold leading-[1.08] mb-6"
             >
-              Your AI Receptionist — <span className="gradient-text">Wherever Your Customers Reach You</span>
+              AI Employees That <span className="gradient-text">Capture Revenue Leaks</span> 24/7
             </motion.h1>
 
             <motion.p
@@ -128,8 +128,8 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-muted-foreground max-w-xl mx-auto mb-8 lg:mb-10 leading-relaxed"
             >
-              We build it custom for your business, run it live for 30 days, and you don&apos;t pay until you see it
-              work.
+              247ROI installs AI receptionists and revenue agents that answer calls, follow up with leads, book
+              appointments, and keep opportunities moving while your team is busy or off the clock.
             </motion.p>
 
             <motion.div
@@ -149,6 +149,9 @@ export default function Hero() {
                 <Link href="/#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
                   Or book a 10-minute setup call
                 </Link>
+                <p className="max-w-md text-center text-sm leading-relaxed text-muted-foreground">
+                  No upfront setup cost for the 30-day test. Continue only if it creates value.
+                </p>
               </div>
             </motion.div>
           </div>
@@ -217,7 +220,8 @@ export default function Hero() {
                   Talk to our AI receptionist right now
                 </p>
                 <p className="text-base sm:text-[17px] text-stone-200/95 mb-7 max-w-md mx-auto leading-relaxed">
-                  Ask about pricing, availability, or booking — just like a real customer
+                  Ask about pricing, availability, or booking — then hear how the voice can match your brand:
+                  professional, friendly, luxury, direct, or witty.
                 </p>
 
                 {showTapHint ? (

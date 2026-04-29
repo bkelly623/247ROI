@@ -14,31 +14,31 @@ const items: { icon: LucideIcon; title: string; description: string; gradient: s
   {
     icon: Zap,
     title: "Answers instantly",
-    description: "First touch in seconds — no voicemail limbo, no ghosting.",
+    description: "Every call gets a fast first response — no voicemail limbo, no ghosting.",
     gradient: "from-primary to-cyan-400",
   },
   {
     icon: Target,
-    title: "Captures every lead",
-    description: "Names, intent, and context saved before the moment passes.",
+    title: "Captures revenue leaks",
+    description: "Names, intent, urgency, and context saved before the opportunity slips away.",
     gradient: "from-cyan-400 to-primary",
   },
   {
     icon: Calendar,
     title: "Books appointments",
-    description: "Slots that fit your calendar, confirmed without the back-and-forth.",
+    description: "Appointment and estimate requests move toward booked revenue without the back-and-forth.",
     gradient: "from-primary to-secondary",
   },
   {
     icon: RefreshCw,
     title: "Follows up automatically",
-    description: "Reminders and nudges so warm leads don’t go cold.",
+    description: "SMS nudges and reminders keep warm leads from going cold after the first touch.",
     gradient: "from-secondary to-pink-500",
   },
   {
     icon: Layers,
-    title: "Works across channels",
-    description: "One brain for voice, text, and web — consistent every time.",
+    title: "Sounds like your brand",
+    description: "Professional, friendly, luxury, direct, or witty — one consistent voice across calls, text, and web.",
     gradient: "from-violet-500 to-primary",
   },
 ];
@@ -58,10 +58,10 @@ export default function WhatThisDoes() {
         >
           <span className="text-primary text-sm font-semibold uppercase tracking-wider">What this does</span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-4 mb-5">
-            Your receptionist, <span className="gradient-text">on autopilot</span>
+            AI employees that <span className="gradient-text">perform the revenue job</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-            Five jobs handled end-to-end — so nothing slips through when you&apos;re busy or off the clock.
+            A chatbot answers questions. An AI employee performs a job: answer, qualify, follow up, schedule, and hand your team the context.
           </p>
 
         </motion.div>

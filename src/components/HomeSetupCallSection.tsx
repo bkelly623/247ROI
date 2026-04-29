@@ -29,11 +29,11 @@ export default function HomeSetupCallSection() {
           className="text-center"
         >
           <h2 className="font-display mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl">
-            Get It Running On Your Business — <span className="gradient-text">Free For 30 Days</span>
+            Test an AI Employee On Your Business — <span className="gradient-text">No Upfront Setup Cost</span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            We build it custom, wire it up, and run it live. You don&apos;t pay until you see it work. If it
-            doesn&apos;t perform — shut it off. You owe nothing.
+            We build it custom, wire it up, and run it live for 30 days. If it captures value, continue monthly.
+            If it doesn&apos;t, shut it off — no long-term contract and no pressure.
           </p>
           <div className="mt-8 flex flex-col items-center gap-3">
             <Button

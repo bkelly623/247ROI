@@ -22,6 +22,7 @@ const footerColumns: {
       { label: "What this does", href: "/#what-it-does" },
       { label: "Where it works", href: "/#where-it-works" },
       { label: "Free audit (calculator)", href: "/#free-audit" },
+      { label: "Plumbing case study", href: "/plumbing-ai-receptionist" },
       { label: "Try free", href: "#contact" },
     ],
   },
