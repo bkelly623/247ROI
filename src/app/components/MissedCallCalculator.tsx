@@ -394,7 +394,7 @@ export default function MissedCallCalculator({
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
               >
-                <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
+                <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
               </Button>
               <Link
                 href="/#book-call"

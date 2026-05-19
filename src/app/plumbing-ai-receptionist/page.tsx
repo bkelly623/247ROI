@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import PlumbingLandingPage from "@/components/PlumbingLandingPage";
 
 export const metadata: Metadata = {
-  title: "Plumbing AI Receptionist Case Study | 247ROI",
+  title: "Plumbing Missed-Call Recovery | 247ROI",
   description:
-    "Apply for the 247ROI 30-day plumbing AI receptionist case study. No upfront setup cost, 24/7 missed-call recovery, lead qualification, follow-up, and result tracking.",
+    "24/7 missed-call capture and instant follow-up for plumbing companies. No upfront setup cost for qualified businesses — continue only if it creates value.",
 };
 
-export default function PlumbingAiReceptionistRoutePage() {
+export default function PlumbingRoutePage() {
   return <PlumbingLandingPage />;
 }

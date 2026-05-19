@@ -41,7 +41,7 @@ export default function HomeSetupCallSection() {
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[3.75rem] text-base sm:text-lg font-semibold shadow-[0_0_40px_hsl(174_72%_56%/0.25)] touch-manipulation"
             >
-              <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
+              <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
             </Button>
             <a href="#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center`}>
               Or book a 10-minute setup call

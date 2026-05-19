@@ -18,28 +18,17 @@ const footerColumns: {
   {
     title: "Product",
     links: [
+      { label: "Demo", href: "/demo" },
       { label: "Services", href: "/services" },
-      { label: "What this does", href: "/#what-it-does" },
-      { label: "Where it works", href: "/#where-it-works" },
-      { label: "Free audit (calculator)", href: "/#free-audit" },
-      { label: "Plumbing case study", href: "/plumbing-ai-receptionist" },
-      { label: "Try free", href: "#contact" },
+      { label: "Missed-call calculator", href: "/missed-call-calculator" },
+      { label: "Book a call", href: "/#book-call" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "#contact" },
-      { label: "Contact", href: "#contact" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "Calculator", href: "/#free-audit" },
-      { label: "Guarantee", href: "/guarantee" },
+      { label: "Contact", href: "/#contact" },
       { label: "Support", href: "mailto:contact@247roi.com" },
-      { label: "Book a call", href: "/#book-call" },
     ],
   },
   {
@@ -47,7 +36,6 @@ const footerColumns: {
     links: [
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms of Service", href: "/terms-of-service" },
-      { label: "Cookie Policy", href: "/privacy-policy" },
     ],
   },
 ];
@@ -57,14 +45,17 @@ export default function Footer() {
     <footer className="py-16 border-t border-border">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
-          <div className="col-span-2 md:col-span-4 lg:col-span-1">
+          <div className="col-span-2 md:col-span-4 lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <Link href="/" className="inline-flex mb-4 rounded-lg overflow-hidden ring-1 ring-white/10 px-2 py-1.5 bg-black/40">
+              <Link
+                href="/"
+                className="inline-flex mb-4 rounded-lg overflow-hidden ring-1 ring-white/10 px-2 py-1.5 bg-black/40"
+              >
                 <Image
                   src={SITE_LOGO_PATH}
                   alt={SITE_LOGO_ALT}
@@ -73,9 +64,8 @@ export default function Footer() {
                   className={siteLogoFooterImageClassName}
                 />
               </Link>
-              <p className="text-muted-foreground text-sm max-w-xs">
-                Systems that generate ROI around the clock — capture leads, book revenue, and keep pipeline moving
-                while you sleep.
+              <p className="text-muted-foreground text-sm max-w-sm">
+                Revenue recovery systems for trades businesses — every call answered, instant follow-up, and a simple weekly scorecard.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}
@@ -92,16 +82,14 @@ export default function Footer() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
+              transition={{ duration: 0.5, delay: 0.08 * index }}
+              className="col-span-1"
             >
               <h3 className="font-semibold text-foreground mb-4">{col.title}</h3>
               <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-muted-foreground text-sm hover:text-primary transition-colors duration-200"
-                    >
+                    <Link href={link.href} className="text-muted-foreground text-sm hover:text-primary transition-colors duration-200">
                       {link.label}
                     </Link>
                   </li>
@@ -115,21 +103,11 @@ export default function Footer() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4"
         >
           <p className="text-muted-foreground text-sm">© {new Date().getFullYear()} 247ROI. All rights reserved.</p>
-          <div className="flex gap-6">
-            {["Twitter", "LinkedIn", "Instagram"].map((social) => (
-              <span
-                key={social}
-                className="text-muted-foreground text-sm cursor-default opacity-60"
-                aria-hidden
-              >
-                {social}
-              </span>
-            ))}
-          </div>
+          <p className="text-muted-foreground text-xs">Built for trades businesses.</p>
         </motion.div>
       </div>
     </footer>

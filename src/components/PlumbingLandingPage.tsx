@@ -56,7 +56,7 @@ const handles = [
 ];
 
 const offerBullets = [
-  "Custom AI receptionist setup",
+  "Custom missed-call recovery setup",
   "Plumbing-specific call flow",
   "24/7 call answering",
   "Lead capture and qualification",
@@ -71,7 +71,7 @@ const steps = [
     copy: "We learn your service area, hours, services, booking process, and escalation rules.",
   },
   {
-    title: "We build and test your AI receptionist",
+    title: "We build and test your call flow",
     copy: "We customize the call flow around real plumbing calls and test it before launch.",
   },
   {
@@ -88,7 +88,7 @@ const faq = [
   {
     question: "Is this free forever?",
     answer:
-      "No. This is a 30-day case study. We waive the upfront setup cost so you can see the system work before deciding whether to continue.",
+      "No. This is a 30-day test. We waive the upfront setup cost so you can see the system work before deciding whether to continue.",
   },
   {
     question: "What happens after 30 days?",
@@ -178,7 +178,7 @@ export default function PlumbingLandingPage() {
               >
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full glass px-4 py-2">
                   <Droplets className="h-4 w-4 text-primary" aria-hidden />
-                  <span className="text-sm text-muted-foreground">3 Plumbing Companies Wanted</span>
+                  <span className="text-sm text-muted-foreground">Plumbing missed-call recovery</span>
                 </div>
 
                 <h1 className="mb-6 text-4xl font-display font-bold leading-[1.05] sm:text-5xl lg:text-6xl xl:text-7xl">
@@ -186,9 +186,7 @@ export default function PlumbingLandingPage() {
                 </h1>
 
                 <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl lg:mx-0">
-                  We&rsquo;re selecting 3 plumbing companies for a 30-day AI receptionist case study. We&rsquo;ll set it up
-                  with no upfront cost, answer and qualify calls 24/7, and track how many opportunities it helps
-                  recover.
+                  If your plumbing company is a fit, we&rsquo;ll install a 30-day missed-call recovery system with no upfront setup cost. It answers and qualifies calls 24/7, follows up instantly, and tracks what it recovers.
                 </p>
 
                 <PrimaryCtas />
@@ -211,7 +209,7 @@ export default function PlumbingLandingPage() {
                   <div className="relative">
                     <div className="mb-6 flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-sm uppercase tracking-[0.22em] text-primary">Case study offer</p>
+                        <p className="text-sm uppercase tracking-[0.22em] text-primary">30-day test</p>
                         <h2 className="mt-2 text-2xl font-display font-bold">30 Days Live in Your Business</h2>
                       </div>
                       <div className="rounded-2xl border border-primary/25 bg-primary/10 p-3 text-primary">
@@ -221,9 +219,9 @@ export default function PlumbingLandingPage() {
 
                     <div className="grid grid-cols-3 gap-3 text-center">
                       {[
-                        ["24/7", "answering"],
-                        ["0", "setup cost"],
-                        ["3", "spots open"],
+                        ["Fast", "response"],
+                        ["0", "upfront setup"],
+                        ["24/7", "coverage"],
                       ].map(([stat, label]) => (
                         <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                           <p className="text-2xl font-display font-bold gradient-text">{stat}</p>
@@ -296,7 +294,7 @@ export default function PlumbingLandingPage() {
             <SectionIntro
               badge="Call coverage"
               title="Built for Real Plumbing Calls"
-              copy="The AI receptionist is customized to the calls your plumbing company actually receives — not a generic chatbot bolted onto your site."
+              copy="The revenue recovery system is customized to the calls your plumbing company actually receives — not a generic chatbot bolted onto your site."
             />
 
             <div className="mx-auto grid max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -334,10 +332,10 @@ export default function PlumbingLandingPage() {
                     30-Day Missed-Call Recovery Case Study
                   </div>
                   <h2 className="mb-5 text-3xl font-display font-bold leading-tight sm:text-4xl lg:text-5xl">
-                    See if an AI receptionist can recover real plumbing opportunities before you commit.
+                    See if an revenue recovery system can recover real plumbing opportunities before you commit.
                   </h2>
                   <p className="mb-7 text-lg leading-relaxed text-muted-foreground">
-                    We&rsquo;ll install a custom AI receptionist for your plumbing business, run it live for 30 days, and
+                    We&rsquo;ll install a custom revenue recovery system for your plumbing business, run it live for 30 days, and
                     track the calls, leads, and opportunities it helps capture.
                   </p>
                   <Button
@@ -470,7 +468,7 @@ export default function PlumbingLandingPage() {
                   Apply for one of the 3 plumbing case study spots.
                 </h2>
                 <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  If your company is a fit, we&rsquo;ll map your call flow, build the AI receptionist, and run the
+                  If your company is a fit, we&rsquo;ll map your call flow, build the revenue recovery system, and run the
                   30-day missed-call recovery test with no upfront setup cost.
                 </p>
                 <PrimaryCtas center />

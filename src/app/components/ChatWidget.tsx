@@ -6,7 +6,6 @@ import { Clock, MessageCircle, Send, X } from "lucide-react";
 import {
   AI_RECEPTIONIST_CTA_PHONE_DISPLAY,
   AI_RECEPTIONIST_CTA_PHONE_HREF,
-  DEMO_PHONE_DISPLAY,
   PRIMARY_PHONE_DISPLAY,
 } from "./cta";
 import { chatHashIsOpen, clearChatHash, subscribeOpenChat } from "@/lib/openChat";
@@ -105,7 +104,7 @@ export default function ChatWidget() {
       const data = (await res.json()) as { reply?: string };
       const reply =
         data.reply ??
-        `Sorry — I couldn’t respond right now. Call or text ${PRIMARY_PHONE_DISPLAY}. For the live demo, call ${DEMO_PHONE_DISPLAY}.`;
+        `Sorry — I couldn’t respond right now. Call or text ${PRIMARY_PHONE_DISPLAY}. For the live demo, call ${AI_RECEPTIONIST_CTA_PHONE_DISPLAY}.`;
 
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch {
@@ -113,7 +112,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content: `Something went wrong. Call or text ${PRIMARY_PHONE_DISPLAY} — or try the demo at ${DEMO_PHONE_DISPLAY}.`,
+          content: `Something went wrong. Call or text ${PRIMARY_PHONE_DISPLAY} — or try the demo at ${AI_RECEPTIONIST_CTA_PHONE_DISPLAY}.`,
         },
       ]);
     } finally {
