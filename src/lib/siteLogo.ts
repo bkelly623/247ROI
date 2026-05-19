@@ -4,7 +4,7 @@ export const SITE_LOGO_PATH = "/site-logo.png";
 export const SITE_LOGO_ALT = "247ROI";
 
 /** Intrinsic ratio for Next/Image (horizontal mark ~4:1). */
-export const SITE_LOGO_INTRINSIC = { width: 480, height: 120 } as const;
+export const SITE_LOGO_INTRINSIC = { width: 1200, height: 300 } as const;
 
 /** Nav: primary brand read at arm’s length; capped so menu + logo fit on narrow phones. */
 export const siteLogoNavImageClassName =
