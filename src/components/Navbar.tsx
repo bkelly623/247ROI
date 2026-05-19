@@ -15,7 +15,7 @@ import {
 } from "@/lib/siteLogo";
 
 const navLinks = [
-  { name: "Free audit", href: "/#free-audit" },
+  { name: "Demo", href: "/demo" },
   { name: "Services", href: "/services" },
   { name: "What it does", href: "/#what-it-does" },
   { name: "Where it works", href: "/#where-it-works" },

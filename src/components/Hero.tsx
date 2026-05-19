@@ -110,7 +110,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-6"
             >
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
-              <span className="text-sm text-muted-foreground">AI receptionists · Revenue employees · 24/7 follow-up</span>
+              <span className="text-sm text-muted-foreground">Every call answered · Instant response · 24/7 lead capture</span>
             </motion.div>
 
             <motion.h1
@@ -119,7 +119,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-3xl sm:text-4xl lg:text-5xl xl:text-[3.25rem] font-display font-bold leading-[1.08] mb-6"
             >
-              AI Employees That <span className="gradient-text">Capture Revenue Leaks</span> 24/7
+              Stop losing jobs to <span className="gradient-text">missed calls</span>
             </motion.h1>
 
             <motion.p
@@ -128,8 +128,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-muted-foreground max-w-xl mx-auto mb-8 lg:mb-10 leading-relaxed"
             >
-              247ROI installs AI receptionists and revenue agents that answer calls, follow up with leads, book
-              appointments, and keep opportunities moving while your team is busy or off the clock.
+              247ROI installs revenue recovery systems for trades businesses: every call answered, instant follow-up, and more jobs booked 24/7.
             </motion.p>
 
             <motion.div
@@ -144,7 +143,7 @@ export default function Hero() {
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-12 min-h-[4rem] w-full sm:w-auto text-base sm:text-lg font-semibold shadow-[0_0_50px_rgba(255,255,255,0.35),0_0_80px_rgba(255,255,255,0.2)] hover:shadow-[0_0_70px_rgba(255,255,255,0.45)] transition-shadow touch-manipulation"
                 >
-                  <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call Our AI Receptionist Now</a>
+                  <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
                 </Button>
                 <Link href="/#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
                   Or book a 10-minute setup call
@@ -217,11 +216,10 @@ export default function Hero() {
 
               <div className="relative z-[2] flex flex-col items-center text-center">
                 <p className="text-lg sm:text-xl font-display font-semibold text-stone-50 tracking-tight mb-3 max-w-md leading-snug">
-                  Talk to our AI receptionist right now
+                  Call the demo line right now
                 </p>
                 <p className="text-base sm:text-[17px] text-stone-200/95 mb-7 max-w-md mx-auto leading-relaxed">
-                  Ask about pricing, availability, or booking — then hear how the voice can match your brand:
-                  professional, friendly, luxury, direct, or witty.
+                  Try it like a customer: ask for service, pricing, availability, or to book. It&apos;s built to sound natural and capture the job details.
                 </p>
 
                 {showTapHint ? (
@@ -244,7 +242,7 @@ export default function Hero() {
                 </div>
 
                 <p className="mt-8 text-sm sm:text-base text-stone-300/95 leading-relaxed max-w-md">
-                  Prefer to call?{" "}
+                  Prefer to call the demo line?{" "}
                   <a
                     href={AI_RECEPTIONIST_CTA_PHONE_HREF}
                     className="text-primary font-semibold underline underline-offset-2 hover:underline tabular-nums"

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import ServicesPage from "@/components/ServicesPage";
 
 export const metadata: Metadata = {
-  title: "AI & Automation Services | 247ROI",
+  title: "Revenue Recovery Systems | 247ROI",
   description:
-    "AI receptionist, review generation, web design, and automation — systems that capture revenue around the clock.",
+    "Missed-call capture, instant follow-up, booking, and reporting — revenue recovery systems for trades businesses.",
 };
 
 export default function ServicesRoutePage() {

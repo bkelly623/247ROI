@@ -2,7 +2,6 @@
 
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FreeAuditSection from "@/components/FreeAuditSection";
 import WhatThisDoes from "@/components/WhatThisDoes";
 import WhereItWorks from "@/components/WhereItWorks";
 import CurrentCampaignSection from "@/components/CurrentCampaignSection";
@@ -14,7 +13,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <Hero />
-      <FreeAuditSection />
       <WhatThisDoes />
       <WhereItWorks />
       <CurrentCampaignSection />

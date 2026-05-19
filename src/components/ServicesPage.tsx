@@ -2,21 +2,21 @@
 
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import { Bot, Star, Monitor, TrendingUp, ArrowUpRight } from "lucide-react";
+import { PhoneCall, Zap, RefreshCw, Star, ArrowUpRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
-const aiReceptionist = {
-  icon: Bot,
-  title: "AI Receptionist",
+const coreSystem = {
+  icon: PhoneCall,
+  title: "Missed-Call Revenue Recovery",
   description:
-    "24/7 AI-powered receptionists that answer calls, book appointments, and never miss a lead. Your business, always on.",
-  features: ["24/7 Availability", "Natural Conversations", "Appointment Booking", "Lead Capture"],
+    "Every call answered, job details captured, instant follow-up, and a clear weekly scorecard — so missed calls turn into booked jobs.",
+  features: ["After-hours + overflow", "Capture job details", "Instant follow-up", "Booking + reporting"],
   gradient: "from-primary to-cyan-400",
 };
 
-const otherServices: {
+const otherSystems: {
   icon: LucideIcon;
   title: string;
   description: string;
@@ -24,33 +24,33 @@ const otherServices: {
   gradient: string;
 }[] = [
   {
-    icon: Star,
-    title: "Review Generation",
+    icon: Zap,
+    title: "Speed-to-Lead",
     description:
-      "Automatically collect and boost your Google reviews. Turn happy customers into your best marketing asset.",
-    features: ["Automated Follow-ups", "Review Monitoring", "Response Templates", "Analytics Dashboard"],
+      "Instant response for web forms and inbound inquiries — text/email follow-up that keeps leads from going cold.",
+    features: ["Form → text in <60s", "Routing rules", "Reminders", "Lead tracking"],
     gradient: "from-secondary to-pink-500",
   },
   {
-    icon: Monitor,
-    title: "Web Design",
+    icon: RefreshCw,
+    title: "Reactivation",
     description:
-      "Premium websites that convert visitors into customers. Stunning designs backed by conversion science.",
-    features: ["Custom Design", "Mobile Optimized", "SEO Ready", "Fast Loading"],
+      "Bring back past estimates and inactive customers with a simple, compliant follow-up campaign.",
+    features: ["Estimate follow-up", "Past customer reactivation", "Seasonal campaigns", "Opt-out controls"],
     gradient: "from-primary to-secondary",
   },
   {
-    icon: TrendingUp,
-    title: "Automation",
+    icon: Star,
+    title: "Review Generation",
     description:
-      "Supercharge your pipeline with AI-driven workflows. More appointments, more consultations, more revenue.",
-    features: ["Book More Appts", "Schedule Consultations", "Lead Nurturing", "Pipeline Automation"],
+      "Turn completed jobs into more Google reviews automatically — without chasing customers manually.",
+    features: ["Automated requests", "Review monitoring", "Response templates", "Reporting"],
     gradient: "from-cyan-400 to-primary",
   },
 ];
 
 export default function ServicesPage() {
-  const PrimaryIcon = aiReceptionist.icon;
+  const PrimaryIcon = coreSystem.icon;
 
   return (
     <div className="min-h-screen bg-background">
@@ -67,17 +67,17 @@ export default function ServicesPage() {
             >
               <span className="text-primary text-sm font-semibold uppercase tracking-wider">247ROI</span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold mt-4 mb-6 leading-tight">
-                AI &amp; <span className="gradient-text">Automation Services</span>
+                Revenue <span className="gradient-text">recovery systems</span>
               </h1>
               <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
-                Every system we install is aimed at one thing: more captured revenue — calls answered, leads followed
-                up, and opportunities turned into dollars, around the clock.
+                We don&apos;t sell &quot;AI&quot;. We install systems that stop leads from slipping through the cracks — missed-call capture,
+                instant response, booking, and reporting.
               </p>
             </motion.div>
           </div>
         </section>
 
-        <section id="ai-receptionist" className="pb-12 md:pb-16 scroll-mt-28">
+        <section id="core-system" className="pb-12 md:pb-16 scroll-mt-28">
           <div className="container mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 36 }}
@@ -96,17 +96,15 @@ export default function ServicesPage() {
                 <div className="relative p-8 md:p-12 lg:p-16 lg:grid lg:grid-cols-12 lg:gap-12 lg:items-center">
                   <div className="lg:col-span-7">
                     <span className="inline-flex items-center rounded-full border border-primary/35 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary mb-6">
-                      Primary focus
+                      Core system
                     </span>
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-5 flex flex-wrap items-center gap-3">
-                      {aiReceptionist.title}
+                      {coreSystem.title}
                       <ArrowUpRight className="hidden sm:inline w-8 h-8 text-primary shrink-0" aria-hidden />
                     </h2>
-                    <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-xl">
-                      {aiReceptionist.description}
-                    </p>
+                    <p className="text-muted-foreground text-lg leading-relaxed mb-8 max-w-xl">{coreSystem.description}</p>
                     <ul className="grid sm:grid-cols-2 gap-3 max-w-xl">
-                      {aiReceptionist.features.map((feature) => (
+                      {coreSystem.features.map((feature) => (
                         <li
                           key={feature}
                           className="flex items-center gap-3 text-sm text-foreground/90 rounded-xl border border-white/[0.08] bg-background/40 px-4 py-3 backdrop-blur-sm"
@@ -121,13 +119,16 @@ export default function ServicesPage() {
                   <div className="lg:col-span-5 mt-12 lg:mt-0 flex justify-center lg:justify-end">
                     <div className="relative">
                       <div
-                        className={`absolute inset-0 rounded-[2rem] bg-gradient-to-br ${aiReceptionist.gradient} opacity-35 blur-2xl scale-110`}
+                        className={`absolute inset-0 rounded-[2rem] bg-gradient-to-br ${coreSystem.gradient} opacity-35 blur-2xl scale-110`}
                         aria-hidden
                       />
                       <div
-                        className={`relative flex h-52 w-52 sm:h-64 sm:w-64 items-center justify-center rounded-[2rem] bg-gradient-to-br ${aiReceptionist.gradient} shadow-2xl ring-1 ring-white/20`}
+                        className={`relative flex h-52 w-52 sm:h-64 sm:w-64 items-center justify-center rounded-[2rem] bg-gradient-to-br ${coreSystem.gradient} shadow-2xl ring-1 ring-white/20`}
                       >
-                        <PrimaryIcon className="w-24 h-24 sm:w-32 sm:h-32 text-primary-foreground drop-shadow-lg" strokeWidth={1.25} />
+                        <PrimaryIcon
+                          className="w-24 h-24 sm:w-32 sm:h-32 text-primary-foreground drop-shadow-lg"
+                          strokeWidth={1.25}
+                        />
                       </div>
                     </div>
                   </div>
@@ -148,18 +149,17 @@ export default function ServicesPage() {
               transition={{ duration: 0.55 }}
               className="text-center mb-14 md:mb-16"
             >
-              <span className="text-primary text-sm font-semibold uppercase tracking-wider">Also available</span>
+              <span className="text-primary text-sm font-semibold uppercase tracking-wider">Add-ons</span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold mt-4 mb-5">
-                Other <span className="gradient-text">services</span>
+                Expansion <span className="gradient-text">systems</span>
               </h2>
               <p className="text-muted-foreground max-w-xl mx-auto text-lg leading-relaxed">
-                Same build quality — stacked behind the receptionist because that&apos;s where most revenue leaks
-                happen first.
+                Once the missed-call leak is fixed, we stack follow-up and reputation systems to keep revenue compounding.
               </p>
             </motion.div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {otherServices.map((service, index) => {
+              {otherSystems.map((service, index) => {
                 const Icon = service.icon;
                 return (
                   <motion.div
