@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Script from "next/script";
 import Navbar from "@/components/Navbar";
@@ -18,6 +19,28 @@ import {
 } from "@/lib/ghlVoiceWidget";
 
 export default function DemoPage() {
+  const [slotFilled, setSlotFilled] = useState(false);
+  const [showFallbackLauncher, setShowFallbackLauncher] = useState(false);
+
+  useEffect(() => {
+    const slot = document.getElementById("gcl-launcher-slot");
+    if (!slot) return;
+
+    const sync = () => setSlotFilled(slot.childElementCount > 0);
+    sync();
+
+    const obs = new MutationObserver(sync);
+    obs.observe(slot, { childList: true, subtree: true });
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setShowFallbackLauncher(true), 8000);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  const showLauncherFallback = showFallbackLauncher && !slotFilled;
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -67,9 +90,11 @@ export default function DemoPage() {
 
                   <div className="relative flex w-full min-h-[12rem] sm:min-h-[13rem] flex-col items-center justify-center py-2">
                     <div id="gcl-launcher-slot" className="relative flex w-full flex-1 min-h-[10rem] items-center justify-center" />
-                    <div className="mt-4">
-                      <LeadConnectorVoiceLauncher />
-                    </div>
+                    {showLauncherFallback ? (
+                      <div className={slotFilled ? "hidden" : "mt-4"}>
+                        <LeadConnectorVoiceLauncher />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -105,28 +130,16 @@ export default function DemoPage() {
                     priority={false}
                   />
                 </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Example thread. Messaging should only be sent to inbound / consented leads.
-                </p>
+                <p className="mt-3 text-xs text-muted-foreground">Example thread. Messaging should only be sent to inbound / consented leads.</p>
               </motion.div>
 
               <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.05 }}>
                 <h2 className="text-2xl sm:text-3xl font-display font-bold mb-3">What you see weekly</h2>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  No black box. You get simple KPIs that show what was captured, booked, and recovered.
-                </p>
+                <p className="text-muted-foreground leading-relaxed mb-6">No black box. You get simple KPIs that show what was captured, booked, and recovered.</p>
                 <div className="rounded-3xl overflow-hidden border border-white/[0.08] bg-background/40">
-                  <Image
-                    src="/demo/kpi-demo.png"
-                    alt="KPI dashboard demo"
-                    width={1536}
-                    height={1024}
-                    className="w-full h-auto"
-                  />
+                  <Image src="/demo/kpi-demo.png" alt="KPI dashboard demo" width={1536} height={1024} className="w-full h-auto" />
                 </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Example dashboard. Final metrics are defined during onboarding based on your workflow.
-                </p>
+                <p className="mt-3 text-xs text-muted-foreground">Example dashboard. Final metrics are defined during onboarding based on your workflow.</p>
               </motion.div>
             </div>
           </div>
