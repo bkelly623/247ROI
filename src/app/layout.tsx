@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/site-logo.png",
+        url: "/opengraph-image",
         alt: "247ROI",
       },
     ],
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "247ROI | Revenue That Runs 24/7",
     description:
       "Capture leads, book appointments, and grow revenue around the clock — even while you sleep. AI-powered systems built for businesses that want measurable ROI.",
-    images: ["/site-logo.png"],
+    images: ["/twitter-image"],
   },
 };
 
