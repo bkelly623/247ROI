@@ -1,0 +1,25 @@
+[
+  {
+    "slug": "welcome",
+    "title": "Welcome: What 247ROI Builds (And Why It Matters)",
+    "publishedAt": "2026-05-27",
+    "summary": "A quick overview of what 247ROI does: capture missed leads, book appointments automatically, and recover revenue with AI systems that run 24/7.",
+    "keyTakeaways": [
+      "Most businesses lose revenue after hours and on missed calls.",
+      "AI reception + follow-up can recover leads quickly and consistently.",
+      "A simple system beats complex tooling when ROI is the goal."
+    ],
+    "faqs": [
+      {
+        "q": "What is 247ROI?",
+        "a": "247ROI builds AI-powered revenue systems that capture leads, book appointments, and follow up automatically."
+      },
+      {
+        "q": "Who is this for?",
+        "a": "Service businesses that rely on inbound calls/leads and want more booked jobs without hiring more staff."
+      }
+    ],
+    "primaryCta": { "label": "Book a setup call", "href": "/calendar" }
+  }
+]
+
