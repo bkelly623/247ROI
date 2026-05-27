@@ -279,7 +279,7 @@ export default function MissedCallCalculator({
   const pillInactive =
     "border-border bg-muted/40 text-foreground hover:border-primary/35 hover:bg-muted/70";
   const pillActive =
-    "border-transparent bg-primary text-primary-foreground shadow-[0_0_22px_hsl(174_72%_56%/0.25)]";
+    "border-transparent bg-primary text-primary-foreground shadow-[0_0_22px_hsl(var(--primary)/0.22)]";
 
   const sliderLabel = "text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground";
   const sliderValue = "text-[13px] font-bold tabular-nums tracking-tight text-primary";
@@ -381,7 +381,7 @@ export default function MissedCallCalculator({
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
               You&apos;re Losing
             </p>
-            <p className="missed-calc-result-pulse mt-1.5 text-[3rem] font-display font-extrabold leading-[1.02] tracking-[-0.02em] sm:text-[4.25rem] gradient-text drop-shadow-[0_0_28px_hsl(174_72%_56%/0.35)]">
+            <p className="missed-calc-result-pulse mt-1.5 text-[3rem] font-display font-extrabold leading-[1.02] tracking-[-0.02em] sm:text-[4.25rem] gradient-text drop-shadow-[0_0_28px_hsl(var(--primary)/0.32)]">
               {formatMoney(animatedTotal)}
             </p>
             <p className="mt-2 max-w-[28ch] text-[13px] font-semibold leading-snug text-foreground/90 mx-auto">
@@ -392,7 +392,7 @@ export default function MissedCallCalculator({
               <Button
                 asChild
                 size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(174_72%_56%/0.22)] touch-manipulation"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.22)] touch-manipulation"
               >
                 <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
               </Button>

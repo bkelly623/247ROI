@@ -109,7 +109,7 @@
   }
 
   .glow-text {
-    text-shadow: 0 0 26px hsl(174 72% 56% / 0.25);
+    text-shadow: 0 0 26px hsl(var(--primary) / 0.25);
   }
 
   .animate-float {
@@ -158,10 +158,10 @@
 @keyframes pulse-glow {
   0%,
   100% {
-    box-shadow: 0 0 20px hsl(174 72% 56% / 0.3);
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.22);
   }
   50% {
-    box-shadow: 0 0 40px hsl(174 72% 56% / 0.6);
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.45);
   }
 }
 
@@ -202,10 +202,10 @@ html {
 @keyframes missed-calc-glow-pulse {
   0%,
   100% {
-    text-shadow: 0 0 25px hsl(174 72% 56% / 0.4), 0 0 48px hsl(262 83% 58% / 0.12);
+    text-shadow: 0 0 24px hsl(var(--primary) / 0.34), 0 0 52px hsl(var(--primary) / 0.12);
   }
   50% {
-    text-shadow: 0 0 34px hsl(174 72% 56% / 0.55), 0 0 64px hsl(262 83% 58% / 0.18);
+    text-shadow: 0 0 34px hsl(var(--primary) / 0.48), 0 0 74px hsl(var(--primary) / 0.18);
   }
 }
 
