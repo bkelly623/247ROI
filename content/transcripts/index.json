@@ -20,6 +20,33 @@
       }
     ],
     "primaryCta": { "label": "Book a setup call", "href": "/calendar" }
+  },
+  {
+    "slug": "missed-calls-12740-week",
+    "title": "Missed Calls Are Costing You $12,740/Week",
+    "publishedAt": "2026-05-28",
+    "summary": "Missed calls aren’t a minor ops issue — they’re a direct revenue leak. Here’s the math, the real customer journey, and the simple system that stops leads from calling the next listing.",
+    "youtubeId": "VtzjI0wzrYk",
+    "keyTakeaways": [
+      "If a call hits voicemail, many buyers immediately call the next listing — and they rarely come back.",
+      "Missed calls compound: after-hours, job sites, and peak-season spikes all create silent revenue loss.",
+      "A 24/7 answering + instant follow-up system turns ‘we’ll call you back’ into booked jobs.",
+      "Your fastest growth lever is fixing the front door: answering, routing, booking, and follow-up."
+    ],
+    "faqs": [
+      {
+        "q": "How do I estimate what missed calls cost me?",
+        "a": "Count missed calls from last week, then multiply by your average job value. If you want a more conservative number, multiply by your close rate instead of 100%."
+      },
+      {
+        "q": "What should happen when someone calls after-hours?",
+        "a": "They should be answered immediately, asked a few qualifying questions, and either booked or routed — then receive a confirmation text so the lead doesn’t go cold."
+      },
+      {
+        "q": "Where do I start with 247ROI?",
+        "a": "Run the missed call calculator to estimate the leak, then book a quick call to map the simplest system that plugs it for your business."
+      }
+    ],
+    "primaryCta": { "label": "Run the missed call calculator", "href": "/missed-call-calculator" }
   }
 ]
-

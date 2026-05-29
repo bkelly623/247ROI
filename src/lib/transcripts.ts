@@ -11,6 +11,7 @@ export type TranscriptIndexEntry = {
   title: string;
   publishedAt: string; // YYYY-MM-DD
   summary: string;
+  youtubeId?: string;
   keyTakeaways?: string[];
   faqs?: TranscriptFaq[];
   primaryCta?: TranscriptCta;
@@ -36,4 +37,3 @@ export async function getTranscriptBySlug(slug: string) {
   const body = await readFile(markdownPath, "utf8");
   return { entry, body };
 }
-

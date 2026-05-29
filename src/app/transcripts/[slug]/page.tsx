@@ -24,6 +24,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const result = await getTranscriptBySlug(slug);
   if (!result) return {};
 
+  const youtubeId = result.entry.youtubeId;
+  const ogImage = youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : undefined;
+
   return {
     title: `${result.entry.title} | Transcripts | 247ROI`,
     description: result.entry.summary,
@@ -33,6 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: result.entry.summary,
       url: `${SITE_URL}/transcripts/${slug}`,
       type: "article",
+      images: ogImage ? [{ url: ogImage }] : undefined,
     },
   };
 }
@@ -66,6 +70,20 @@ export default async function TranscriptPage({ params }: PageProps) {
     publisher: { "@type": "Organization", name: "247ROI", url: SITE_URL },
   };
 
+  const videoJsonLd = entry.youtubeId
+    ? {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        name: entry.title,
+        description: entry.summary,
+        uploadDate: entry.publishedAt,
+        embedUrl: `https://www.youtube.com/embed/${entry.youtubeId}`,
+        contentUrl: `https://www.youtube.com/watch?v=${entry.youtubeId}`,
+        thumbnailUrl: `https://i.ytimg.com/vi/${entry.youtubeId}/hqdefault.jpg`,
+        publisher: { "@type": "Organization", name: "247ROI", url: SITE_URL },
+      }
+    : null;
+
   const faqJsonLd =
     entry.faqs?.length
       ? {
@@ -89,6 +107,12 @@ export default async function TranscriptPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {videoJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+        />
+      ) : null}
       {faqJsonLd ? (
         <script
           type="application/ld+json"
@@ -104,6 +128,22 @@ export default async function TranscriptPage({ params }: PageProps) {
 
       <h1 className="mt-4 text-3xl font-bold tracking-tight">{entry.title}</h1>
       <div className="mt-2 text-sm text-muted-foreground">{entry.publishedAt}</div>
+
+      {entry.youtubeId ? (
+        <section className="mt-8 overflow-hidden rounded-xl border border-border/70 bg-black/20">
+          <div className="aspect-video w-full">
+            <iframe
+              className="h-full w-full"
+              src={`https://www.youtube.com/embed/${entry.youtubeId}`}
+              title={entry.title}
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-8 rounded-xl border border-border/70 p-6">
         <h2 className="text-base font-semibold">Executive summary</h2>

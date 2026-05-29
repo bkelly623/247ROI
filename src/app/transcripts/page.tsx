@@ -3,9 +3,9 @@ import Link from "next/link";
 import { getTranscriptsIndex } from "@/lib/transcripts";
 
 export const metadata: Metadata = {
-  title: "Transcripts | 247ROI",
+  title: "Video Transcripts | 247ROI",
   description:
-    "Long-form transcripts and breakdowns for AI discoverability and customer research — summaries, takeaways, and FAQs.",
+    "Video transcripts and breakdowns for lead capture, missed calls, and 24/7 revenue systems — summaries, takeaways, and FAQs.",
   alternates: { canonical: "/transcripts" },
 };
 
@@ -14,7 +14,7 @@ export default async function TranscriptsIndexPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-16">
-      <h1 className="text-3xl font-bold tracking-tight">Transcripts</h1>
+      <h1 className="text-3xl font-bold tracking-tight">Video transcripts</h1>
       <p className="mt-4 text-muted-foreground max-w-3xl">
         Each transcript includes an executive summary, key takeaways, and FAQs to make the content
         easy to scan for humans and easy to parse for search engines and LLMs.
@@ -38,4 +38,3 @@ export default async function TranscriptsIndexPage() {
     </main>
   );
 }
-
