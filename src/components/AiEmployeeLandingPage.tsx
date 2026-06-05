@@ -114,11 +114,11 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
               <div>
                 <span className="text-sm font-semibold uppercase tracking-wider text-primary">Pain points</span>
                 <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
-                  Sell the problem before the AI.
+                  Fix the work that keeps slipping.
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  This page is written for buyers who already feel the operational leak. The AI employee is the fix,
-                  not the headline gimmick.
+                  Each AI employee is built around a specific leak in your operation, then tuned to your tools,
+                  workflow, and real customer handoffs.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
@@ -204,9 +204,9 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
           <div className="container mx-auto px-6">
             <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 rounded-2xl border border-primary/25 bg-primary/10 p-7 text-center sm:flex-row sm:text-left">
               <div>
-                <h2 className="font-display text-2xl font-bold">Use this page after a matching cold call.</h2>
+                <h2 className="font-display text-2xl font-bold">Want this role built for your business?</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  The call creates intent. This page continues that exact offer instead of resetting the buyer on a generic homepage.
+                  Book a short setup call and we will map the workflow, the handoffs, and the scorecard before anything goes live.
                 </p>
               </div>
               <Link href="/#book-call" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">

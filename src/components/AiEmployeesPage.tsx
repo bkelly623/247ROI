@@ -123,12 +123,13 @@ export default function AiEmployeesPage() {
         <section className="border-b border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
             <div className="mx-auto mb-12 max-w-3xl text-center">
-              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Offer menu</span>
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">AI employee roles</span>
               <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
-                Dedicated pages for dedicated pitches
+                Pick the first bottleneck to remove
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Cold calls should continue on a matching page. Do not send every buyer to a generic homepage.
+                Start with the role closest to revenue: answering faster, following up harder, quoting sooner, or
+                preparing more profitable jobs.
               </p>
             </div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -143,7 +144,7 @@ export default function AiEmployeesPage() {
           <div className="container mx-auto px-6">
             <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
               {[
-                ["1", "Pick the first role", "Choose the employee tied to the clearest revenue leak, not the trendiest automation."],
+                ["1", "Pick the first role", "Choose the employee tied to your clearest revenue leak, not the trendiest automation."],
                 ["2", "Build around the workflow", "Map tools, scripts, handoffs, approvals, and scorecard metrics before launch."],
                 ["3", "Expand only after proof", "Stack the next employee after the first one captures revenue or removes measurable labor."],
               ].map(([number, title, body]) => (

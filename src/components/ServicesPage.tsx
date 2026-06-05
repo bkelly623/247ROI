@@ -47,8 +47,8 @@ export default function ServicesPage() {
                 AI employees that target <span className="gradient-text">profit leaks</span>
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                The homepage stays focused on the AI receptionist funnel. Services now branches into dedicated AI
-                employee offers so every outreach angle has a matching conversion page.
+                247ROI builds role-specific AI employees for service businesses: answering calls, following up with
+                leads, preparing estimates, organizing bids, reviewing takeoffs, and turning proof into sales content.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button
@@ -74,13 +74,13 @@ export default function ServicesPage() {
         <section className="border-t border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
             <div className="mx-auto mb-12 max-w-3xl text-center">
-              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Best first offers</span>
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Best first hires</span>
               <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
                 Start where revenue is already leaking
               </h2>
               <p className="mt-4 text-muted-foreground">
-                These are the most direct paths for cold outreach: front-office capture, follow-up, estimating,
-                bidding, and takeoff prep.
+                These are the roles closest to missed revenue, slow response, owner bottlenecks, and unprofitable
+                admin work.
               </p>
             </div>
 
@@ -124,11 +124,10 @@ export default function ServicesPage() {
         <section className="border-t border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
             <div className="mx-auto max-w-5xl rounded-2xl border border-primary/25 bg-primary/10 p-8 text-center">
-              <h2 className="font-display text-3xl font-bold">One offer per buyer intent.</h2>
+              <h2 className="font-display text-3xl font-bold">Build the AI employee your workflow actually needs.</h2>
               <p className="mx-auto mt-4 max-w-3xl text-muted-foreground">
-                Cold outreach should send an AI estimator prospect to the estimator page, a bidding prospect to the
-                bidding page, and a missed-call prospect to the receptionist page. The homepage remains a credibility
-                check and receptionist funnel.
+                Start with the highest-value leak, prove the return, then add the next role only when the first one is
+                saving time, capturing revenue, or improving follow-through.
               </p>
             </div>
           </div>
