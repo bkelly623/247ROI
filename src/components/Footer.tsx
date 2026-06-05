@@ -19,6 +19,7 @@ const footerColumns: {
     title: "Product",
     links: [
       { label: "Demo", href: "/demo" },
+      { label: "AI Employees", href: "/ai-employees" },
       { label: "Services", href: "/services" },
       { label: "Missed-call calculator", href: "/missed-call-calculator" },
       { label: "Book a call", href: "/#book-call" },

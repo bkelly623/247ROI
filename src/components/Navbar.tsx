@@ -16,11 +16,10 @@ import {
 
 const navLinks = [
   { name: "Demo", href: "/demo" },
+  { name: "AI Employees", href: "/ai-employees" },
   { name: "Services", href: "/services" },
   { name: "Videos", href: "/transcripts" },
   { name: "What it does", href: "/#what-it-does" },
-  { name: "Where it works", href: "/#where-it-works" },
-  { name: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {

@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 import { getTranscriptsIndex } from "@/lib/transcripts";
+import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
 
 const INDEXABLE_PATHS = [
   "/",
   "/services",
+  "/ai-employees",
   "/demo",
   "/calendar",
   "/missed-call-calculator",
@@ -25,12 +27,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified,
   }));
 
+  const aiEmployeeUrls = AI_EMPLOYEE_OFFERS.map((offer) => ({
+    url: `${SITE_URL}${offer.route}`,
+    lastModified,
+  }));
+
   const transcripts = await getTranscriptsIndex();
   const transcriptUrls = transcripts.map((t) => ({
     url: `${SITE_URL}/transcripts/${t.slug}`,
     lastModified,
   }));
 
-  return [...baseUrls, ...transcriptUrls];
+  return [...baseUrls, ...aiEmployeeUrls, ...transcriptUrls];
 }
-
