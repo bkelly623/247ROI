@@ -33,6 +33,14 @@ const priorityLabels = {
   growth: "Expansion role",
 };
 
+const campaignRoutes = [
+  ["Plumbing calls", "/plumbing-ai-receptionist", "Missed emergency calls, drains, water heaters, and service requests."],
+  ["HVAC calls", "/hvac-ai-receptionist", "Seasonal demand spikes, after-hours service, and replacement inquiries."],
+  ["Roofing follow-up", "/roofing-estimate-follow-up", "Storm leads, inspections, open estimates, and homeowner reminders."],
+  ["Estimator bottleneck", "/ai-estimator", "Photo intake, scope notes, quote packets, and follow-up."],
+  ["Contractor bidding", "/contractor-bid-assistant", "Bid fit, requirements, deadlines, and prep checklists."],
+] as const;
+
 function OfferCard({ offer, index }: { offer: AiEmployeeOffer; index: number }) {
   const Icon = iconMap[offer.icon];
 
@@ -155,6 +163,31 @@ export default function AiEmployeesPage() {
                   <h3 className="mb-3 font-display text-xl font-bold">{title}</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">{body}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Campaign routes</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                Pick the page that matches the conversation
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                The tighter the page matches the buyer&apos;s immediate problem, the less work the prospect has to do.
+              </p>
+            </div>
+            <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {campaignRoutes.map(([title, href, body]) => (
+                <Link key={href} href={href} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-transform hover:-translate-y-1">
+                  <h3 className="mb-3 flex items-center gap-2 font-display text-base font-bold">
+                    {title}
+                    <ArrowRight className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{body}</p>
+                </Link>
               ))}
             </div>
           </div>

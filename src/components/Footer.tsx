@@ -20,6 +20,8 @@ const footerColumns: {
     links: [
       { label: "Demo", href: "/demo" },
       { label: "AI Employees", href: "/ai-employees" },
+      { label: "AI Estimator", href: "/ai-estimator" },
+      { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
       { label: "Services", href: "/services" },
       { label: "Missed-call calculator", href: "/missed-call-calculator" },
       { label: "Book a call", href: "/#book-call" },

@@ -32,10 +32,10 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] glass-strong backdrop-blur-xl supports-[backdrop-filter]:bg-background/70"
     >
-      <div className="container mx-auto px-6 py-3">
+      <div className="container mx-auto px-4 py-2 sm:px-6 lg:py-3">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center group shrink-0" onClick={() => setIsOpen(false)}>
-            <span className="inline-flex rounded-lg overflow-hidden ring-1 ring-white/10 px-2 py-1 bg-black/40">
+            <span className="inline-flex rounded-md overflow-hidden ring-1 ring-white/10 px-1.5 py-1 bg-black/40 sm:rounded-lg sm:px-2">
               <Image
                 src={SITE_LOGO_PATH}
                 alt={SITE_LOGO_ALT}
@@ -47,7 +47,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden lg:flex items-center gap-6 xl:gap-8 relative flex-1 justify-end min-w-0">
+          <div className="hidden lg:flex items-center gap-5 xl:gap-7 relative flex-1 justify-end min-w-0">
             <div
               className="absolute inset-0 -inset-x-12 -inset-y-4 pointer-events-none"
               style={{
@@ -89,7 +89,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden text-foreground p-2 shrink-0"
+              className="lg:hidden text-foreground p-2 shrink-0 rounded-lg hover:bg-white/[0.06]"
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}

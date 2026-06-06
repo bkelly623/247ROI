@@ -130,7 +130,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.96 }}
             transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            className="fixed bottom-6 right-6 z-[9998] w-[min(380px,calc(100vw-28px))]"
+            className="fixed bottom-20 right-3 z-[9998] w-[min(380px,calc(100vw-24px))] sm:bottom-6 sm:right-6"
           >
             <div className="relative rounded-[1.35rem] p-[1px] overflow-hidden shadow-[0_0_0_1px_hsl(210_40%_98%/0.08),0_25px_80px_-20px_hsl(0_0%_0%/0.65),0_0_60px_hsl(174_72%_56%/0.12)]">
               <div
@@ -251,7 +251,7 @@ export default function ChatWidget() {
         ) : null}
       </AnimatePresence>
 
-      <div className="fixed bottom-6 right-6 z-[9999] flex items-center justify-center h-16 w-16">
+      <div className="fixed bottom-3 right-3 z-[9999] flex h-14 w-14 items-center justify-center sm:bottom-6 sm:right-6 sm:h-16 sm:w-16">
         <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-40" aria-hidden />
         <motion.span
           className="absolute inset-[-6px] rounded-full border border-primary/25 pointer-events-none"
@@ -270,7 +270,7 @@ export default function ChatWidget() {
           }
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.94 }}
-          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-secondary text-primary-foreground shadow-[0_0_32px_hsl(174_72%_56%/0.45),0_8px_32px_hsl(262_83%_58%/0.25)] ring-2 ring-white/15 hover:shadow-[0_0_40px_hsl(174_72%_56%/0.55)] transition-shadow"
+          className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-secondary text-primary-foreground shadow-[0_0_32px_hsl(174_72%_56%/0.45),0_8px_32px_hsl(262_83%_58%/0.25)] ring-2 ring-white/15 transition-shadow hover:shadow-[0_0_40px_hsl(174_72%_56%/0.55)] sm:h-14 sm:w-14"
           aria-label={open ? "Close chat" : "Open chat"}
         >
           <AnimatePresence mode="wait" initial={false}>

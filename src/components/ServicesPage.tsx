@@ -28,6 +28,29 @@ const iconMap = {
 
 const topOffers = AI_EMPLOYEE_OFFERS.filter((offer) => offer.priority !== "growth");
 
+const verticalPages = [
+  {
+    title: "Plumbing missed-call recovery",
+    href: "/plumbing-ai-receptionist",
+    body: "Emergency calls, drain jobs, water heaters, service-area checks, and after-hours overflow.",
+  },
+  {
+    title: "HVAC AI receptionist",
+    href: "/hvac-ai-receptionist",
+    body: "Heat-wave and cold-snap call capture, tune-up requests, urgent routing, and replacement inquiries.",
+  },
+  {
+    title: "Roofing estimate follow-up",
+    href: "/roofing-estimate-follow-up",
+    body: "Storm lead response, inspection booking, stale estimate reactivation, and reminder sequences.",
+  },
+  {
+    title: "Contractor bid assistant",
+    href: "/contractor-bid-assistant",
+    body: "Opportunity screening, requirements extraction, deadline reminders, and bid-prep checklists.",
+  },
+];
+
 export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-background">
@@ -129,6 +152,36 @@ export default function ServicesPage() {
                 Start with the highest-value leak, prove the return, then add the next role only when the first one is
                 saving time, capturing revenue, or improving follow-through.
               </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">High-intent pages</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                Send each campaign to the exact problem
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                These pages match a buyer&apos;s market and pain instead of forcing every prospect through a broad
+                services menu.
+              </p>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {verticalPages.map((page) => (
+                <Link
+                  key={page.href}
+                  href={page.href}
+                  className="group rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-transform hover:-translate-y-1"
+                >
+                  <h3 className="mb-3 flex items-center gap-2 font-display text-lg font-bold">
+                    {page.title}
+                    <ArrowRight className="h-4 w-4 text-primary opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{page.body}</p>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

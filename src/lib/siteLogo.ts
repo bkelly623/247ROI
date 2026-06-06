@@ -8,7 +8,7 @@ export const SITE_LOGO_INTRINSIC = { width: 738, height: 240 } as const;
 
 /** Nav: prominent, legible brand mark. */
 export const siteLogoNavImageClassName =
-  "h-16 w-auto max-h-[72px] max-w-[min(520px,74vw)] object-contain object-left sm:h-20 sm:max-h-[88px] sm:max-w-[min(640px,60vw)] lg:max-w-[min(680px,34vw)]";
+  "h-10 w-auto max-h-[48px] max-w-[min(250px,58vw)] object-contain object-left sm:h-12 sm:max-h-[56px] sm:max-w-[min(320px,46vw)] lg:h-14 lg:max-h-[64px] lg:max-w-[min(420px,26vw)]";
 
 /** Footer: largest in-app mark — full wordmark legible above columns. */
 export const siteLogoFooterImageClassName =
