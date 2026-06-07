@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 const plans = [
   {
     name: "Audit",
-    price: "Short diagnostic",
-    body: "For finding the first AI employee worth building before committing to a system.",
+    price: "First decision",
+    body: "For deciding which AI employee deserves to exist before committing to a system.",
     bullets: ["Workflow diagnosis", "Role recommendation", "Approval boundaries", "Scorecard definition"],
   },
   {
@@ -48,12 +48,12 @@ export default function PricingPage() {
           <div className="container relative z-10 mx-auto px-6 text-center">
             <span className="text-sm font-semibold uppercase tracking-wider text-primary">Pricing</span>
             <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-              Priced around the employee, not the software.
+              If the AI employee cannot pay for itself, it should not be hired.
             </h1>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-              Most first AI employees are managed monthly with setup quoted after the audit. Narrow follow-up and
-              receptionist roles price lower. Estimating, bidding, and document-heavy roles price higher because the job
-              spec and handoffs matter more.
+              Pricing follows the role, not a generic software tier. Narrow follow-up and receptionist employees price
+              lower. Estimating, bidding, and document-heavy employees price higher because the job spec, integrations,
+              and human approval rules matter more.
             </p>
           </div>
         </section>
@@ -78,10 +78,10 @@ export default function PricingPage() {
               ))}
             </div>
             <div className="mx-auto mt-10 max-w-4xl rounded-3xl border border-primary/25 bg-primary/10 p-8 text-center">
-              <h2 className="font-display text-2xl font-bold">How the quote gets decided</h2>
+              <h2 className="font-display text-2xl font-bold">What changes the price</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                A receptionist, estimator assistant, and bid assistant do not have the same build scope. The audit ties
-                price to the first role, the tools involved, and how performance will be measured.
+                A receptionist, estimator assistant, and bid assistant are not the same hire. The audit ties price to the
+                first role, the systems involved, and the evidence that proves the employee is working.
               </p>
               <div className="mt-7 grid gap-3 text-left md:grid-cols-3">
                 {pricingRules.map(([label, body]) => (
@@ -93,7 +93,7 @@ export default function PricingPage() {
               </div>
               <Button asChild size="lg" className="mt-7 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                 <Link href="/contact">
-                  Book AI Audit <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                  Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                 </Link>
               </Button>
             </div>

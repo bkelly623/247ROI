@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { CTA_LABEL_NAV, PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 import {
   SITE_LOGO_ALT,
   SITE_LOGO_INTRINSIC,
@@ -82,7 +82,7 @@ export default function Navbar() {
               size="lg"
               className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
             >
-              <Link href="/contact">Book AI Audit</Link>
+              <Link href="/contact">{CTA_LABEL_NAV}</Link>
             </Button>
           </div>
 
@@ -130,7 +130,7 @@ export default function Navbar() {
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 font-semibold w-fit"
                 >
                   <Link href="/contact" onClick={() => setIsOpen(false)}>
-                    Book AI Audit
+                    {CTA_LABEL_NAV}
                   </Link>
                 </Button>
               </div>

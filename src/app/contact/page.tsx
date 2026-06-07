@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "Book an AI Employee Audit | 247ROI",
+  title: "Find Your First AI Employee | 247ROI",
   description:
-    "Book a short AI employee audit with 247ROI. Identify the first workflow worth automating, human approval points, and the scorecard before anything goes live.",
+    "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, scorecard, and launch path before anything goes live.",
 };
 
 const auditOutputs = [
@@ -40,11 +40,11 @@ export default function ContactPage() {
                   AI employee audit
                 </span>
                 <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                  Bring the workflow your team keeps dropping.
+                  Bring the bottleneck. We will decide if an AI employee deserves the job.
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  In one short audit, we identify whether there is a real AI employee worth building: the job role,
-                  the handoffs, the risks, the human approvals, and the scorecard.
+                  This is not a demo trap. It is a practical diagnosis of one workflow: the role, the handoffs, the risks,
+                  the human approvals, and the numbers that prove whether the employee should exist.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
@@ -61,13 +61,13 @@ export default function ContactPage() {
                   </Button>
                 </div>
                 <p className="mt-5 text-sm text-muted-foreground">
-                  Best first message: “I want an AI employee for [workflow]. We currently handle it by [current process].”
+                  Best first message: “I want an AI employee for [workflow]. Right now it breaks when [specific failure].”
                 </p>
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7">
                 <p className="text-sm font-semibold uppercase tracking-wider text-primary">Audit output</p>
-                <h2 className="mt-3 font-display text-2xl font-bold">What you get from the conversation</h2>
+                <h2 className="mt-3 font-display text-2xl font-bold">What gets decided before anything is built</h2>
                 <div className="mt-6 space-y-3">
                   {auditOutputs.map((item) => (
                     <div key={item} className="flex gap-3 rounded-2xl border border-white/10 bg-background/40 p-4">
@@ -89,10 +89,10 @@ export default function ContactPage() {
             <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
               <div>
                 <span className="text-sm font-semibold uppercase tracking-wider text-primary">Audit brief</span>
-                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">You do not need a polished process.</h2>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Messy is useful. Vague is not.</h2>
                 <p className="mt-4 text-muted-foreground">
-                  The best audit conversations usually start with a messy bottleneck. Bring the real version, not the
-                  brochure version.
+                  The best audit conversations start with the real bottleneck: screenshots, notes, missed calls, stale
+                  estimates, awkward handoffs, and the work your team keeps postponing.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">

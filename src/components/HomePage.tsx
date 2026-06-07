@@ -52,9 +52,24 @@ const roles = [
 ];
 
 const proofCards = [
-  ["70-80%", "of repetitive workflow targeted for AI assistance before human approval"],
-  ["<60 sec", "target first-touch speed for inbound lead response systems"],
-  ["30 days", "to prove one role with a scorecard before expanding"],
+  ["70-80%", "of the repeatable work targeted before human approval"],
+  ["<60 sec", "target first-touch speed when leads hit after hours"],
+  ["30 days", "to prove the role deserves to stay on payroll"],
+];
+
+const pressureCards = [
+  {
+    title: "The lead is warm for about five minutes.",
+    body: "After that, you are not following up. You are apologizing for being late.",
+  },
+  {
+    title: "The estimate is not stuck because nobody cares.",
+    body: "It is stuck because photos, scope notes, missing details, and review steps are scattered.",
+  },
+  {
+    title: "The bid invite is not the work.",
+    body: "The work is extracting deadlines, requirements, red flags, documents, and a sane go/no-go answer.",
+  },
 ];
 
 const artifacts = [
@@ -99,20 +114,20 @@ export default function HomePage() {
               <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                 <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
                   <Sparkles className="h-4 w-4" aria-hidden />
-                  AI employees for service-business bottlenecks
+                  AI employees for the work nobody owns
                 </span>
                 <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.98] sm:text-6xl lg:text-7xl">
-                  Your next employee does not need a chair.
+                  Your next employee does not need a chair. It needs a job description.
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                  247ROI installs managed AI employees for the operational work that keeps bleeding time and revenue:
-                  lead response, estimating prep, bid intake, inbox/SMS triage, and handoffs. One role first. Human
-                  approval where it matters. Measurable output every week.
+                  247ROI builds managed AI employees for the work your team keeps meaning to do faster: lead response,
+                  estimating prep, bid intake, inbox/SMS triage, and operational handoffs. Not software you remember to
+                  check. Not chatbot cosplay. A defined role, a weekly scorecard, and human approval where judgment matters.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                     <Link href="/contact">
-                      Book AI Audit <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                      Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
@@ -123,7 +138,7 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                  Built for service businesses that need speed, discipline, and follow-through without adding another full-time seat.
+                  Built for service businesses that need speed, discipline, and follow-through before they are ready to add another full-time seat.
                 </p>
               </motion.div>
 
@@ -134,7 +149,7 @@ export default function HomePage() {
                     <div className="mb-6 flex items-center justify-between gap-4">
                       <div>
                         <p className="text-sm font-semibold uppercase tracking-wider text-primary">AI employee audit</p>
-                        <h2 className="mt-2 font-display text-2xl font-bold">Find the first role worth building.</h2>
+                        <h2 className="mt-2 font-display text-2xl font-bold">Find the first role worth hiring.</h2>
                       </div>
                       <Radar className="h-9 w-9 text-primary" aria-hidden />
                     </div>
@@ -149,7 +164,7 @@ export default function HomePage() {
                     <div className="mt-6 rounded-2xl border border-primary/25 bg-primary/10 p-4">
                       <p className="text-sm font-semibold text-primary">Output</p>
                       <p className="mt-2 text-sm leading-relaxed text-foreground/85">
-                        A recommended first AI employee, the handoff rules, expected weekly scorecard, and whether the opportunity is worth building.
+                        A recommended first AI employee, the handoff rules, expected weekly scorecard, and whether the role is worth hiring.
                       </p>
                     </div>
                     <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-background/40">
@@ -182,13 +197,35 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="mb-10 max-w-3xl">
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Why this pays</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">The expensive work is hiding in the gaps.</h2>
+              <p className="mt-4 text-muted-foreground">
+                Most businesses do not need a giant AI transformation. They need one narrow employee that attacks a leak
+                everyone already knows exists.
+              </p>
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {pressureCards.map((card) => (
+                <div key={card.title} className="rounded-3xl border border-white/10 bg-white/[0.035] p-6">
+                  <h3 className="font-display text-xl font-bold leading-snug">{card.title}</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="how-it-works" className="border-b border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
             <div className="mx-auto mb-12 max-w-3xl text-center">
               <span className="text-sm font-semibold uppercase tracking-wider text-primary">Operating model</span>
-              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">A useful AI employee has a job description.</h2>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">A useful AI employee is not a vague assistant.</h2>
               <p className="mt-4 text-muted-foreground">
-                Not a chatbot. Not a pile of zaps. A specific role with inputs, rules, exceptions, outputs, and a scorecard.
+                It is a specific role with inputs, rules, exceptions, outputs, and a scorecard. If the job cannot be
+                described, it should not be automated yet.
               </p>
             </div>
             <div className="grid gap-5 lg:grid-cols-4">
@@ -210,11 +247,12 @@ export default function HomePage() {
 
         <section className="border-b border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
-            <div className="mb-12 max-w-3xl">
-              <span className="text-sm font-semibold uppercase tracking-wider text-primary">First hires</span>
-              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Start where the money is leaking.</h2>
+              <div className="mb-12 max-w-3xl">
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">First hires</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Start with the employee that pays for itself fastest.</h2>
               <p className="mt-4 text-muted-foreground">
-                The first AI employee should be painfully obvious after a short audit. These are the roles most likely to pay for themselves.
+                The first AI employee should be painfully obvious after a short audit. These are the roles most likely to
+                create visible ROI before you expand.
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -303,13 +341,13 @@ export default function HomePage() {
           <div className="container mx-auto px-6">
             <div className="mx-auto max-w-5xl rounded-3xl border border-primary/25 bg-primary/10 p-8 text-center sm:p-12">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">Next step</p>
-              <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">Book the AI Employee Audit.</h2>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">Find the first AI employee worth hiring.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
                 Bring the messy workflow. We will tell you the first role worth building, the scorecard, and what should stay human.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/contact">Book AI Audit</Link>
+                  <Link href="/contact">Start the Audit</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                   <a href="mailto:contact@247roi.com">
