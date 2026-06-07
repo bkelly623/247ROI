@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
-import { Calendar } from "lucide-react";
-import { BookingIframe, BookingSmsDisclaimer } from "@/components/BookingEmbed";
+import { Mail, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "Schedule a Call | 247ROI",
-  description: "Book a time with 247ROI — AI systems built to capture revenue 24/7 for local businesses.",
+  title: "Contact 247ROI | AI Employee Workflow Map",
+  description: "Contact 247ROI to map the first AI employee worth building for your business.",
 };
 
 export default function CalendarPage() {
   return (
     <main className="flex min-h-dvh flex-col bg-background text-foreground">
-      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="lazyOnload" />
-
       <header className="shrink-0 border-b border-border/60 bg-card/30 backdrop-blur-sm">
         <div className="container mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
@@ -32,35 +29,35 @@ export default function CalendarPage() {
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-5xl flex-1 min-h-0 flex-col px-4 py-4 sm:px-6 sm:py-6">
-        <div className="mb-4 shrink-0 sm:mb-6">
-          <div className="mb-2 flex items-center gap-3 text-primary">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 ring-1 ring-primary/25 sm:h-11 sm:w-11">
-              <Calendar className="h-5 w-5" strokeWidth={2} aria-hidden />
-            </span>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Scheduling
-            </p>
-          </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight md:text-4xl">Schedule a call</h1>
-          <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted-foreground md:text-base">
-            Prefer the fastest path? Call or text{" "}
-            <a href={PRIMARY_PHONE_HREF} className="font-semibold text-primary underline underline-offset-2">
-              {PRIMARY_PHONE_DISPLAY}
-            </a>{" "}
-            first. Otherwise, pick a time below — the full flow stays on this page.
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-7 sm:p-10">
+          <p className="text-sm font-semibold uppercase tracking-wider text-primary">Calendar removed</p>
+          <h1 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-5xl">
+            Start with a workflow map.
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            The old booking calendar is no longer active. Call or email with the workflow you want to improve:
+            missed calls, follow-up, estimating, bidding, inbox response, or operations coordination.
           </p>
-        </div>
-
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <BookingIframe
-            variant="page"
-            wrapperClassName="rounded-xl border-border/80 shadow-lg ring-1 ring-white/5 sm:rounded-2xl"
-          />
-        </div>
-
-        <div className="mt-4 shrink-0 border-t border-border/40 pt-4">
-          <BookingSmsDisclaimer className="!text-left text-[11px] leading-snug sm:!text-center sm:text-[12px]" />
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
+              <a href={PRIMARY_PHONE_HREF}>
+                <Phone className="mr-2 h-4 w-4" aria-hidden />
+                Call {PRIMARY_PHONE_DISPLAY}
+              </a>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]"
+            >
+              <a href="mailto:contact@247roi.com?subject=AI%20employee%20workflow%20map">
+                <Mail className="mr-2 h-4 w-4" aria-hidden />
+                Email the workflow
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
     </main>

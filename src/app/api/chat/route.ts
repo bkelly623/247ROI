@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 const PRIMARY_DISPLAY = "(917) 572-7734";
 const PRIMARY_TEL = "tel:+19175727734";
-const DEMO_DISPLAY = "(484) 673-7612";
-const DEMO_TEL = "tel:+14846737612";
+const DEMO_DISPLAY = "(866) 360-2529";
+const DEMO_TEL = "tel:+18663602529";
 
 function resolveOpenAIKey(): string | undefined {
   return (
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const key = resolveOpenAIKey();
   if (!key) {
     return NextResponse.json({
-      reply: `Chat isn’t configured right now. Call or text ${PRIMARY_DISPLAY} (${PRIMARY_TEL}) — or try the live demo at ${DEMO_DISPLAY} (${DEMO_TEL}).`,
+      reply: `Chat is not configured right now. Call or text ${PRIMARY_DISPLAY} (${PRIMARY_TEL}) with the workflow you want to improve. The live receptionist demo is ${DEMO_DISPLAY} (${DEMO_TEL}).`,
     });
   }
 
@@ -34,17 +34,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply: "No message provided." }, { status: 400 });
   }
 
-  const system = `You are 247ROI’s website assistant. Tone: confident, simple, premium — never corporate-buzzwordy.
+  const system = `You are 247ROI's website assistant. Tone: confident, simple, practical, premium. Avoid hype and corporate buzzwords.
 
-Positioning: 247ROI installs systems that capture inbound opportunities (calls, texts, messages) and turn them into measurable revenue — 24/7, including while the owner sleeps. Emphasize ROI, revenue capture, and always-on response. Do NOT say “AI agency” or “cutting-edge technology.” Do NOT use “magic” as a theme.
+Positioning: 247ROI builds managed AI employees for SMB service businesses. Common roles include AI receptionist, follow-up agent, estimator assistant, bid assistant, inbox/SMS response assistant, and operations coordinator.
+
+Promise: AI-assisted workflow acceleration, not fake full autonomy. Explain that AI can usually handle the repeatable 70-80% of a well-scoped workflow and save major time, while humans keep approval on pricing, bids, exceptions, and sensitive decisions.
+
+Best next step: ask what workflow is slow or leaking revenue, then direct qualified visitors to call/text the primary business line or email contact@247roi.com for a workflow map.
 
 Phone numbers (never mix these up):
 - Primary business (call/text): ${PRIMARY_DISPLAY} → ${PRIMARY_TEL}
 - Live demo ONLY: ${DEMO_DISPLAY} → ${DEMO_TEL}
 
-Prefer directing visitors to call/text primary first; offer the demo number when they want to hear the system.
+Prefer the primary business line first. Offer the demo number only when they specifically want to hear the AI receptionist demo.
 
-Never mention any other phone numbers.`;
+Never mention any other phone numbers. Do not mention GoHighLevel, Automagixx, deleted calendars, internal tools, or website implementation details.`;
 
   try {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -65,7 +69,7 @@ Never mention any other phone numbers.`;
       const err = await res.text();
       console.error("OpenAI error", res.status, err);
       return NextResponse.json({
-        reply: `Something went wrong. Call or text ${PRIMARY_DISPLAY} — or try the demo at ${DEMO_DISPLAY}.`,
+        reply: `Something went wrong. Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve. The receptionist demo line is ${DEMO_DISPLAY}.`,
       });
     }
 
@@ -74,12 +78,12 @@ Never mention any other phone numbers.`;
     };
     const reply = data.choices?.[0]?.message?.content?.trim();
     return NextResponse.json({
-      reply: reply || `Call or text ${PRIMARY_DISPLAY} — or try the demo at ${DEMO_DISPLAY}.`,
+      reply: reply || `Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve. The receptionist demo line is ${DEMO_DISPLAY}.`,
     });
   } catch (e) {
     console.error(e);
     return NextResponse.json({
-      reply: `I couldn’t respond just now. Call or text ${PRIMARY_DISPLAY} — demo line ${DEMO_DISPLAY}.`,
+      reply: `I could not respond just now. Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve. The receptionist demo line is ${DEMO_DISPLAY}.`,
     });
   }
 }

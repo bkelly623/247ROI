@@ -8,7 +8,6 @@ const INDEXABLE_PATHS = [
   "/services",
   "/ai-employees",
   "/demo",
-  "/calendar",
   "/missed-call-calculator",
   "/plumbing-ai-receptionist",
   "/hvac-ai-receptionist",

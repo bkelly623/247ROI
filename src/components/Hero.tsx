@@ -145,8 +145,8 @@ export default function Hero() {
                 >
                   <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
                 </Button>
-                <Link href="/#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
-                  Or book a 10-minute setup call
+                <Link href="/#contact" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
+                  Or get a workflow map
                 </Link>
                 <p className="max-w-md text-center text-sm leading-relaxed text-muted-foreground">
                   No upfront setup cost for the 30-day test. Continue only if it creates value.
@@ -224,7 +224,7 @@ export default function Hero() {
 
                 {showTapHint ? (
                   <p className="mb-4 text-sm font-medium tracking-wide text-primary" aria-live="polite">
-                    Tap the mic to start
+                    Tap the demo launcher to start
                   </p>
                 ) : null}
 

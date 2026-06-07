@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Clock, MessageCircle, Send, X } from "lucide-react";
+import { MessageCircle, Send, X } from "lucide-react";
 import {
   AI_RECEPTIONIST_CTA_PHONE_DISPLAY,
   AI_RECEPTIONIST_CTA_PHONE_HREF,
   PRIMARY_PHONE_DISPLAY,
+  PRIMARY_PHONE_HREF,
 } from "./cta";
 import { chatHashIsOpen, clearChatHash, subscribeOpenChat } from "@/lib/openChat";
 
@@ -19,8 +20,6 @@ type ChatMessage = {
   style?: "hint";
 };
 
-const AUTO_OPEN_KEY = "247roi_chat_autoopen_v1";
-
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,9 +27,9 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "Ready to see this running on your business?",
+      content: "Tell me the workflow you want an AI employee to help with.",
     },
-    { role: "assistant", content: "Tap the mic to start", style: "hint" },
+    { role: "assistant", content: "Good fits: missed calls, follow-up, estimating support, bidding prep, inbox/SMS response, and operations handoffs.", style: "hint" },
   ]);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -40,28 +39,6 @@ export default function ChatWidget() {
     if (!open) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, open]);
-
-  /** Auto-open once per browser session after scrolling halfway down the page. */
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(AUTO_OPEN_KEY)) return;
-
-    const onScroll = () => {
-      const doc = document.documentElement;
-      const scrollable = doc.scrollHeight - window.innerHeight;
-      if (scrollable <= 0) return;
-      const progress = window.scrollY / scrollable;
-      if (progress >= 0.5) {
-        setOpen(true);
-        sessionStorage.setItem(AUTO_OPEN_KEY, "1");
-        window.removeEventListener("scroll", onScroll);
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -148,13 +125,13 @@ export default function ChatWidget() {
                 <div className="relative flex items-center justify-between gap-3 px-4 py-3.5 border-b border-white/[0.08] bg-gradient-to-r from-card/80 via-card/40 to-transparent">
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/25 to-secondary/20 ring-1 ring-primary/30 shadow-[0_0_20px_hsl(174_72%_56%/0.2)]">
-                      <Clock className="h-5 w-5 text-primary" strokeWidth={1.75} aria-hidden />
+                      <MessageCircle className="h-5 w-5 text-primary" strokeWidth={1.75} aria-hidden />
                     </span>
                     <div className="min-w-0">
                       <p className="font-display font-semibold text-[15px] text-foreground tracking-tight truncate">
                         <span className="gradient-text">247ROI</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground tracking-wide">Ask anything</p>
+                      <p className="text-[11px] text-muted-foreground tracking-wide">AI employee workflow map</p>
                     </div>
                   </div>
                   <button
@@ -172,10 +149,16 @@ export default function ChatWidget() {
 
                 <div className="relative flex-1 overflow-y-auto px-4 py-3 space-y-3">
                   <a
-                    href={AI_RECEPTIONIST_CTA_PHONE_HREF}
+                    href={PRIMARY_PHONE_HREF}
                     className="inline-flex items-center justify-center w-full rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold shadow-[0_0_20px_hsl(174_72%_56%/0.35)] hover:bg-primary/90 transition-colors"
                   >
-                    Call Pam Now — {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
+                    Call or text {PRIMARY_PHONE_DISPLAY}
+                  </a>
+                  <a
+                    href={AI_RECEPTIONIST_CTA_PHONE_HREF}
+                    className="inline-flex items-center justify-center w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[13px] font-semibold text-foreground hover:bg-white/[0.07] transition-colors"
+                  >
+                    Hear the receptionist demo — {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
                   </a>
                   {messages.map((m, i) => (
                     <motion.div

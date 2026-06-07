@@ -40,12 +40,11 @@ export default function TwitterImage() {
           </div>
 
           <div style={{ fontSize: 72, fontWeight: 800, lineHeight: 1.05 }}>
-            Revenue That Runs 24/7
+            AI Employees for SMB Operations
           </div>
 
           <div style={{ fontSize: 30, opacity: 0.88, maxWidth: 980, lineHeight: 1.3 }}>
-            Capture leads, book appointments, and follow up automatically — measurable ROI, even
-            after hours.
+            Lead response, follow-up, estimating support, bidding prep, and operational handoffs.
           </div>
         </div>
 
@@ -65,4 +64,3 @@ export default function TwitterImage() {
     size,
   );
 }
-

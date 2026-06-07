@@ -1,8 +1,8 @@
-/** Full-page scheduling (LeadConnector embed). */
-export const CALENDAR_PATH = "/calendar";
+/** Old scheduling path now points prospects to direct contact because the calendar account is inactive. */
+export const CALENDAR_PATH = "/#contact";
 
-/** @deprecated Old modal hash. Homepage `/#book-call` redirects to `CALENDAR_PATH`. */
-export const BOOKING_ANCHOR = "#book-call";
+/** @deprecated Old modal hash. Homepage `/#contact` redirects to `CALENDAR_PATH`. */
+export const BOOKING_ANCHOR = "#contact";
 
 /** Primary business line — navbar, footer, “contact the business”. */
 export const PRIMARY_PHONE_HREF = "tel:+19175727734";
@@ -16,10 +16,10 @@ export const AI_RECEPTIONIST_CTA_PHONE_DISPLAY = "(866) 360-2529";
 export const DEMO_PHONE_HREF = AI_RECEPTIONIST_CTA_PHONE_HREF;
 export const DEMO_PHONE_DISPLAY = AI_RECEPTIONIST_CTA_PHONE_DISPLAY;
 
-export const CTA_LABEL_NAV = "Book a Setup Call";
+export const CTA_LABEL_NAV = "Get Workflow Map";
 export const HERO_PRIMARY_CTA_LABEL = "Call the Demo Line Now";
 
-/** Under-CTA booking link — must read as a real hyperlink (shared class). */
+/** Under-CTA contact link — must read as a real hyperlink (shared class). */
 export const BOOK_SETUP_CALL_LINK_CLASSNAME =
   "inline-block text-sm font-semibold text-primary underline underline-offset-4 decoration-2 decoration-primary/80 hover:decoration-primary hover:text-primary/90 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm";
 
@@ -31,5 +31,5 @@ export const DEMO_CARD_BUTTON_LABEL = "Try the Demo";
 export const CTA_MICRO = "Includes a 30-day performance guarantee.";
 export const DEMO_SUBTEXT = "Call and hear the system — about 30 seconds.";
 
-/** Optional scheduling route (same as calendar page). */
+/** Optional scheduling route replacement. */
 export const BOOKING_URL = CALENDAR_PATH;

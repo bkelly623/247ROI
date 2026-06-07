@@ -121,7 +121,7 @@ export default function AiEmployeesPage() {
                   variant="outline"
                   className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]"
                 >
-                  <Link href="/#book-call">Book a 10-Minute Setup Call</Link>
+                  <Link href="/#contact">Get Workflow Map</Link>
                 </Button>
               </div>
             </motion.div>

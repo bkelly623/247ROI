@@ -148,7 +148,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                     variant="outline"
                     className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]"
                   >
-                    <Link href="/#book-call">Book a 10-Minute Setup Call</Link>
+                    <Link href="/#contact">Get Workflow Map</Link>
                   </Button>
                 </div>
                 <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
@@ -382,11 +382,11 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
               <div>
                 <h2 className="font-display text-2xl font-bold">Want this role built for your business?</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Book a short setup call and we will map the workflow, the handoffs, and the scorecard before anything goes live.
+                  Send the workflow and we will map the role, the handoffs, and the scorecard before anything goes live.
                 </p>
               </div>
-              <Link href="/#book-call" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
-                Book setup call <ArrowRight className="h-4 w-4" aria-hidden />
+              <Link href="/#contact" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
+                Get workflow map <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </div>

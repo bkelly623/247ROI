@@ -19,7 +19,7 @@ const navLinks = [
   { name: "AI Employees", href: "/ai-employees" },
   { name: "Services", href: "/services" },
   { name: "Videos", href: "/transcripts" },
-  { name: "What it does", href: "/#what-it-does" },
+  { name: "How it works", href: "/#how-it-works" },
 ];
 
 export default function Navbar() {
@@ -82,7 +82,7 @@ export default function Navbar() {
               size="lg"
               className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
             >
-              <Link href="/#book-call">Book a Setup Call</Link>
+              <Link href="/#contact">Get Workflow Map</Link>
             </Button>
           </div>
 
@@ -129,8 +129,8 @@ export default function Navbar() {
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 font-semibold w-fit"
                 >
-                  <Link href="/#book-call" onClick={() => setIsOpen(false)}>
-                    Book a Setup Call
+                  <Link href="/#contact" onClick={() => setIsOpen(false)}>
+                    Get Workflow Map
                   </Link>
                 </Button>
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Script from "next/script";
@@ -100,12 +101,12 @@ export default function DemoPage() {
               </div>
 
               <div className="mt-8 text-center">
-                <a
-                  href="/\#book-call"
+                <Link
+                  href="/#contact"
                   className="inline-flex items-center justify-center h-11 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 text-sm font-semibold"
                 >
-                  Book a 10-minute setup call
-                </a>
+                  Get workflow map
+                </Link>
                 <p className="mt-3 text-xs text-muted-foreground">No upfront setup cost for the 30-day test. Continue only if it creates value.</p>
               </div>
             </div>

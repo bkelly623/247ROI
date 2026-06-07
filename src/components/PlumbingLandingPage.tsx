@@ -21,7 +21,7 @@ import MissedCallCalculator from "@/app/components/MissedCallCalculator";
 import { Button } from "@/components/ui/button";
 import { AI_RECEPTIONIST_CTA_PHONE_HREF, BOOK_SETUP_CALL_LINK_CLASSNAME } from "@/app/components/cta";
 
-const applyHref = "/#book-call";
+const applyHref = "/#contact";
 const plumbingDemoHref = AI_RECEPTIONIST_CTA_PHONE_HREF;
 
 const problemCards = [

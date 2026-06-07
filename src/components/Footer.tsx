@@ -24,7 +24,7 @@ const footerColumns: {
       { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
       { label: "Services", href: "/services" },
       { label: "Missed-call calculator", href: "/missed-call-calculator" },
-      { label: "Book a call", href: "/#book-call" },
+      { label: "Contact", href: "/#contact" },
     ],
   },
   {
@@ -68,7 +68,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-sm">
-                Revenue recovery systems for trades businesses — every call answered, instant follow-up, and a simple weekly scorecard.
+                AI employees for small and medium-sized businesses: lead response, follow-up, estimating support, bidding prep, and operational handoffs.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}

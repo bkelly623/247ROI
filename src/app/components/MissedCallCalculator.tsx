@@ -397,10 +397,10 @@ export default function MissedCallCalculator({
                 <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
               </Button>
               <Link
-                href="/#book-call"
+                href="/#contact"
                 className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-xs sm:text-sm text-center`}
               >
-                Or book a 10-minute setup call
+                Or get a workflow map
               </Link>
             </div>
           </section>

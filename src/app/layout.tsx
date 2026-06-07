@@ -6,17 +6,17 @@ import { SITE_URL } from "@/lib/site";
 import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "247ROI | Revenue That Runs 24/7",
+  title: "247ROI | AI Employees for SMB Operations",
   description:
-    "Capture leads, book appointments, and grow revenue around the clock — even while you sleep. AI-powered systems built for businesses that want measurable ROI.",
+    "Managed AI employees for small and medium-sized businesses: lead response, follow-up, estimating support, bidding prep, and operational coordination.",
   metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "247ROI | Revenue That Runs 24/7",
+    title: "247ROI | AI Employees for SMB Operations",
     description:
-      "Capture leads, book appointments, and grow revenue around the clock — even while you sleep. AI-powered systems built for businesses that want measurable ROI.",
+      "Managed AI employees for small and medium-sized businesses: lead response, follow-up, estimating support, bidding prep, and operational coordination.",
     url: SITE_URL,
     siteName: "247ROI",
     locale: "en_US",
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "247ROI | Revenue That Runs 24/7",
+    title: "247ROI | AI Employees for SMB Operations",
     description:
-      "Capture leads, book appointments, and grow revenue around the clock — even while you sleep. AI-powered systems built for businesses that want measurable ROI.",
+      "Managed AI employees for small and medium-sized businesses: lead response, follow-up, estimating support, bidding prep, and operational coordination.",
     images: ["/twitter-image"],
   },
 };

@@ -7,7 +7,7 @@ export function isHomePathname(pathname: string): boolean {
 
 export function scrollBookCallIntoView(): void {
   if (typeof document === "undefined") return;
-  document.getElementById("book-call")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 /** From any page: home scrolls in-page; other routes navigate to the homepage hash. */
@@ -27,6 +27,6 @@ export function requestBookCallFocus(pathname: string | null | undefined): void 
   if (isHomePathname(path)) {
     scrollBookCallIntoView();
   } else {
-    window.location.assign("/#book-call");
+    window.location.assign("/#contact");
   }
 }

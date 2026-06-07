@@ -28,7 +28,7 @@ export default function CTA() {
               See it in <span className="gradient-text">your</span> business
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-              Call the demo line, then book 10 minutes to see if you qualify for the 30-day test.
+              Call or email with the workflow you want to improve. We will identify the first AI employee worth building.
             </p>
 
             <div className="flex flex-col items-center gap-4">
@@ -39,8 +39,8 @@ export default function CTA() {
               >
                 <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
               </Button>
-              <Link href="/#book-call" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
-                Or book a 10-minute setup call
+              <Link href="/#contact" className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-center max-w-xs`}>
+                Or send the workflow by email
               </Link>
             </div>
 
