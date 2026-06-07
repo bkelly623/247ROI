@@ -3,10 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  AI_RECEPTIONIST_CTA_PHONE_HREF,
-  BOOK_SETUP_CALL_LINK_CLASSNAME,
-} from "@/app/components/cta";
+import { BOOK_SETUP_CALL_LINK_CLASSNAME } from "@/app/components/cta";
 
 const MIN_AVG = 50;
 const MAX_AVG = 10000;
@@ -394,13 +391,13 @@ export default function MissedCallCalculator({
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.22)] touch-manipulation"
               >
-                <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line Now</a>
+                <Link href="/contact">Book AI Audit</Link>
               </Button>
               <Link
-                href="/#contact"
+                href="/services"
                 className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-xs sm:text-sm text-center`}
               >
-                Or get a workflow map
+                See AI employee services
               </Link>
             </div>
           </section>

@@ -18,19 +18,21 @@ const footerColumns: {
   {
     title: "Product",
     links: [
-      { label: "Demo", href: "/demo" },
       { label: "AI Employees", href: "/ai-employees" },
+      { label: "Example workflows", href: "/demo" },
+      { label: "Pricing", href: "/pricing" },
       { label: "AI Estimator", href: "/ai-estimator" },
       { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
       { label: "Services", href: "/services" },
       { label: "Missed-call calculator", href: "/missed-call-calculator" },
-      { label: "Contact", href: "/#contact" },
+      { label: "Contact", href: "/contact" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "Contact", href: "/#contact" },
+      { label: "Contact", href: "/contact" },
+      { label: "AI audit", href: "/contact" },
       { label: "Support", href: "mailto:contact@247roi.com" },
     ],
   },
@@ -68,7 +70,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-sm">
-                AI employees for small and medium-sized businesses: lead response, follow-up, estimating support, bidding prep, and operational handoffs.
+                Managed AI employees for service businesses: lead response, follow-up, estimating prep, bid discipline, and operational handoffs.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}
@@ -110,7 +112,7 @@ export default function Footer() {
           className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4"
         >
           <p className="text-muted-foreground text-sm">© {new Date().getFullYear()} 247ROI. All rights reserved.</p>
-          <p className="text-muted-foreground text-xs">Built for trades businesses.</p>
+          <p className="text-muted-foreground text-xs">Built for service businesses that want faster operations.</p>
         </motion.div>
       </div>
     </footer>

@@ -22,19 +22,19 @@ export default function TermsOfServicePage() {
               <div>
                 <p className="font-medium text-gray-900">1. Program Description:</p>
                 <p className="mt-2">
-                  This messaging program sends appointment confirmation and reminder messages to
-                  customers who have booked an appointment with Brendan Kelly, doing business as
+                  This messaging program sends audit follow-up, service update, and support messages to
+                  customers or prospects who have contacted Brendan Kelly, doing business as
                   247ROI through our website at{" "}
                   <a
-                    href="https://247roi.com"
+                    href="https://www.get247roi.com"
                     className="underline underline-offset-2 hover:text-gray-900"
                   >
-                    https://247roi.com
+                    https://www.get247roi.com
                   </a>
-                  , or via our scheduling forms, and have explicitly opted in to receive SMS
+                  , or via our contact forms, and have explicitly opted in to receive SMS
                   notifications. Opt-in is collected via web forms with a dedicated checkbox for SMS
-                  consent. Messages include scheduling confirmations, appointment reminders,
-                  rescheduling updates, and customer support communications.
+                  consent. Messages may include audit follow-up, service updates, reminders,
+                  and customer support communications.
                 </p>
               </div>
 
@@ -55,10 +55,10 @@ export default function TermsOfServicePage() {
                   If you experience issues with the messaging program, reply with the keyword
                   &quot;HELP&quot; for more assistance, or reach out directly to{" "}
                   <a
-                    href="mailto:brendan@247roi.com"
+                    href="mailto:contact@247roi.com"
                     className="underline underline-offset-2 hover:text-gray-900"
                   >
-                    brendan@247roi.com
+                    contact@247roi.com
                   </a>{" "}
                   or call{" "}
                   <a href="tel:+19175727734" className="underline underline-offset-2 hover:text-gray-900">
@@ -77,8 +77,8 @@ export default function TermsOfServicePage() {
                 <p className="font-medium text-gray-900">5. Message &amp; Data Rates:</p>
                 <p className="mt-2">
                   Message and data rates may apply for messages sent to you from us and to us from
-                  you. Message frequency varies based on your service usage and appointment
-                  schedule. For questions about your text plan or data plan, contact your wireless
+                  you. Message frequency varies based on your inquiry and service activity.
+                  For questions about your text plan or data plan, contact your wireless
                   provider.
                 </p>
               </div>
@@ -101,10 +101,10 @@ export default function TermsOfServicePage() {
                 <p className="mt-2">
                   For privacy-related inquiries, please refer to our Privacy Policy at{" "}
                   <a
-                    href="https://247roi.com/privacy-policy"
+                    href="https://www.get247roi.com/privacy-policy"
                     className="underline underline-offset-2 hover:text-gray-900"
                   >
-                    https://247roi.com/privacy-policy
+                    https://www.get247roi.com/privacy-policy
                   </a>
                 </p>
               </div>
@@ -164,19 +164,19 @@ export default function TermsOfServicePage() {
             <p className="mt-2">
               Email:{" "}
               <a
-                href="mailto:brendan@247roi.com"
+                href="mailto:contact@247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                brendan@247roi.com
+                contact@247roi.com
               </a>
             </p>
             <p className="mt-2">
               Website:{" "}
               <a
-                href="https://247roi.com"
+                href="https://www.get247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                https://247roi.com
+                https://www.get247roi.com
               </a>
             </p>
           </div>

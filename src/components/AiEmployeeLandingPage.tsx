@@ -21,7 +21,7 @@ import Footer from "@/components/Footer";
 import HomeSetupCallSection from "@/components/HomeSetupCallSection";
 import { Button } from "@/components/ui/button";
 import type { AiEmployeeOffer } from "@/lib/aiEmployees";
-import { AI_RECEPTIONIST_CTA_PHONE_HREF } from "@/app/components/cta";
+import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const iconMap = {
   phone: PhoneCall,
@@ -50,7 +50,7 @@ const proofBySlug: Record<
     snapshot: "Caller name, service need, urgency, address, preferred time, and booked-or-needs-callback status.",
     workflow: ["Customer calls after hours", "AI answers and qualifies the job", "Urgent calls route to the right person", "Summary lands in your inbox or CRM"],
     deliverables: ["Call transcript and summary", "Urgency tag", "Booking request", "Weekly recovered-call report"],
-    objections: ["Uses your service area and job rules", "Hands off when a human should take over", "Can run as overflow, after-hours, or a dedicated demo line"],
+    objections: ["Uses your service area and job rules", "Hands off when a human should take over", "Can run as overflow, after-hours, or a dedicated line"],
     scorecard: ["Answered calls", "Qualified jobs", "Urgent handoffs", "Booked opportunities"],
   },
   "ai-follow-up-agent": {
@@ -140,7 +140,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                     size="lg"
                     className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90"
                   >
-                    <a href={AI_RECEPTIONIST_CTA_PHONE_HREF}>Call the Demo Line</a>
+                    <Link href="/contact">Book AI Audit</Link>
                   </Button>
                   <Button
                     asChild
@@ -148,7 +148,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                     variant="outline"
                     className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]"
                   >
-                    <Link href="/#contact">Get Workflow Map</Link>
+                    <a href={PRIMARY_PHONE_HREF}>Call 247ROI</a>
                   </Button>
                 </div>
                 <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
@@ -382,11 +382,11 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
               <div>
                 <h2 className="font-display text-2xl font-bold">Want this role built for your business?</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Send the workflow and we will map the role, the handoffs, and the scorecard before anything goes live.
+                  Book a short audit and we will map the role, the handoffs, and the scorecard before anything goes live.
                 </p>
               </div>
-              <Link href="/#contact" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
-                Get workflow map <ArrowRight className="h-4 w-4" aria-hidden />
+              <Link href="/contact" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
+                Book AI Audit <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </div>

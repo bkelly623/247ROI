@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
                 <p className="font-medium text-gray-900">Customer Communication:</p>
                 <ul className="mt-2 space-y-1 list-disc pl-6">
                   <li>Service inquiries</li>
-                  <li>Appointment details</li>
+                  <li>AI employee audit and service inquiry details</li>
                   <li>Communication history</li>
                 </ul>
               </div>
@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
             <p>We use collected data to:</p>
             <ul className="mt-3 space-y-1 list-disc pl-6">
               <li>Provide and improve services</li>
-              <li>Schedule appointments</li>
+              <li>Respond to AI employee audit and service inquiries</li>
               <li>Communicate with customers</li>
               <li>Maintain records of consent</li>
               <li>Ensure security and fraud prevention</li>
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">3. SMS Messaging &amp; Compliance</h2>
             <p className="mb-4">
               By opting into our SMS messaging services, you agree to receive text messages related
-              to our services, including appointment confirmations, reminders, and support updates.
+              to our services, including audit follow-up, service updates, and support communications.
             </p>
             <div className="space-y-4">
               <div>
@@ -109,10 +109,10 @@ export default function PrivacyPolicyPage() {
                   <li>
                     Reply HELP or contact{" "}
                     <a
-                      href="mailto:brendan@247roi.com"
+                      href="mailto:contact@247roi.com"
                       className="underline underline-offset-2 hover:text-gray-900"
                     >
-                      brendan@247roi.com
+                      contact@247roi.com
                     </a>
                   </li>
                 </ul>
@@ -187,10 +187,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-4">
               Contact:{" "}
               <a
-                href="mailto:brendan@247roi.com"
+                href="mailto:contact@247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                brendan@247roi.com
+                contact@247roi.com
               </a>
             </p>
           </div>
@@ -223,19 +223,19 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2">
               Email:{" "}
               <a
-                href="mailto:brendan@247roi.com"
+                href="mailto:contact@247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                brendan@247roi.com
+                contact@247roi.com
               </a>
             </p>
             <p className="mt-2">
               Website:{" "}
               <a
-                href="https://247roi.com"
+                href="https://www.get247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                https://247roi.com
+                https://www.get247roi.com
               </a>
             </p>
           </div>

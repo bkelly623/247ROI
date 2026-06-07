@@ -1,13 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ArrowRight, Mail, Phone, SearchCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  PRIMARY_PHONE_DISPLAY,
-  PRIMARY_PHONE_HREF,
-} from "@/app/components/cta";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export default function HomeSetupCallSection() {
   return (
@@ -21,66 +18,50 @@ export default function HomeSetupCallSection() {
           transition={{ duration: 0.5 }}
           className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_0.82fr] lg:items-stretch"
         >
-          <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-7 sm:p-9">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7 sm:p-10">
             <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
               <SearchCheck className="h-4 w-4" aria-hidden />
-              AI employee opportunity map
+              AI employee audit
             </span>
             <h2 className="font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-              Let&apos;s find the first AI employee worth building.
+              Find the first AI employee worth building.
             </h2>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Call or email with the workflow that is costing time, speed, or revenue. We will map the role, the
-              handoffs, and the scorecard before anything goes live.
+              We inspect one real workflow, identify the highest-value automation role, define the handoffs, and decide
+              what should stay under human approval.
             </p>
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              {[
-                "What work is repetitive?",
-                "Where do leads slow down?",
-                "What should humans approve?",
-              ].map((item) => (
-                <div key={item} className="rounded-xl border border-white/10 bg-background/40 p-4 text-sm font-medium text-foreground/85">
+              {["Lead leak", "Repeatable work", "Human approval"].map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-background/40 p-4 text-sm font-semibold text-foreground/85">
                   {item}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-primary/20 bg-primary/10 p-7 sm:p-9">
+          <div className="rounded-3xl border border-primary/20 bg-primary/10 p-7 sm:p-10">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">Start here</p>
-            <h3 className="mt-3 font-display text-2xl font-bold">No calendar widget. Direct contact only.</h3>
+            <h3 className="mt-3 font-display text-2xl font-bold">Book a short AI audit.</h3>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              The old booking form is removed. Use the business line or email and we will keep the next step simple.
+              No generic pitch. We will talk through the workflow and tell you whether there is a real employee to build.
             </p>
             <div className="mt-7 flex flex-col gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="justify-center rounded-full bg-primary px-7 font-semibold text-primary-foreground hover:bg-primary/90"
-              >
+              <Button asChild size="lg" className="justify-center rounded-full bg-primary px-7 font-semibold text-primary-foreground hover:bg-primary/90">
+                <Link href="/contact">
+                  Book AI Audit <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="justify-center rounded-full border-white/15 bg-white/[0.03] px-7 text-foreground hover:bg-white/[0.07]">
                 <a href={PRIMARY_PHONE_HREF}>
                   <Phone className="mr-2 h-4 w-4" aria-hidden />
-                  Call {PRIMARY_PHONE_DISPLAY}
+                  {PRIMARY_PHONE_DISPLAY}
                 </a>
               </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="justify-center rounded-full border-white/15 bg-white/[0.03] px-7 text-foreground hover:bg-white/[0.07]"
-              >
-                <a href="mailto:contact@247roi.com?subject=AI%20employee%20workflow%20map">
-                  <Mail className="mr-2 h-4 w-4" aria-hidden />
-                  Email the workflow
-                </a>
-              </Button>
+              <a href="mailto:contact@247roi.com" className="inline-flex justify-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
+                <Mail className="h-4 w-4" aria-hidden />
+                contact@247roi.com
+              </a>
             </div>
-            <Link
-              href="/ai-employees"
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4"
-            >
-              See AI employee roles <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
           </div>
         </motion.div>
       </div>

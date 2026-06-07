@@ -3,12 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Send, X } from "lucide-react";
-import {
-  AI_RECEPTIONIST_CTA_PHONE_DISPLAY,
-  AI_RECEPTIONIST_CTA_PHONE_HREF,
-  PRIMARY_PHONE_DISPLAY,
-  PRIMARY_PHONE_HREF,
-} from "./cta";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "./cta";
 import { chatHashIsOpen, clearChatHash, subscribeOpenChat } from "@/lib/openChat";
 
 type ChatRole = "user" | "assistant";
@@ -81,7 +76,7 @@ export default function ChatWidget() {
       const data = (await res.json()) as { reply?: string };
       const reply =
         data.reply ??
-        `Sorry — I couldn’t respond right now. Call or text ${PRIMARY_PHONE_DISPLAY}. For the live demo, call ${AI_RECEPTIONIST_CTA_PHONE_DISPLAY}.`;
+        `Sorry — I couldn't respond right now. Call or text ${PRIMARY_PHONE_DISPLAY}, or book an AI Employee Audit on the contact page.`;
 
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch {
@@ -89,7 +84,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content: `Something went wrong. Call or text ${PRIMARY_PHONE_DISPLAY} — or try the demo at ${AI_RECEPTIONIST_CTA_PHONE_DISPLAY}.`,
+          content: `Something went wrong. Call or text ${PRIMARY_PHONE_DISPLAY}, or book an AI Employee Audit on the contact page.`,
         },
       ]);
     } finally {
@@ -131,7 +126,7 @@ export default function ChatWidget() {
                       <p className="font-display font-semibold text-[15px] text-foreground tracking-tight truncate">
                         <span className="gradient-text">247ROI</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground tracking-wide">AI employee workflow map</p>
+                      <p className="text-[11px] text-muted-foreground tracking-wide">AI employee audit</p>
                     </div>
                   </div>
                   <button
@@ -153,12 +148,6 @@ export default function ChatWidget() {
                     className="inline-flex items-center justify-center w-full rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold shadow-[0_0_20px_hsl(174_72%_56%/0.35)] hover:bg-primary/90 transition-colors"
                   >
                     Call or text {PRIMARY_PHONE_DISPLAY}
-                  </a>
-                  <a
-                    href={AI_RECEPTIONIST_CTA_PHONE_HREF}
-                    className="inline-flex items-center justify-center w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[13px] font-semibold text-foreground hover:bg-white/[0.07] transition-colors"
-                  >
-                    Hear the receptionist demo — {AI_RECEPTIONIST_CTA_PHONE_DISPLAY}
                   </a>
                   {messages.map((m, i) => (
                     <motion.div

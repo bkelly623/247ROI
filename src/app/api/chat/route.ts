@@ -40,7 +40,7 @@ Positioning: 247ROI builds managed AI employees for SMB service businesses. Comm
 
 Promise: AI-assisted workflow acceleration, not fake full autonomy. Explain that AI can usually handle the repeatable 70-80% of a well-scoped workflow and save major time, while humans keep approval on pricing, bids, exceptions, and sensitive decisions.
 
-Best next step: ask what workflow is slow or leaking revenue, then direct qualified visitors to call/text the primary business line or email contact@247roi.com for a workflow map.
+Best next step: ask what workflow is slow or leaking revenue, then direct qualified visitors to book an AI Employee Audit at /contact, call/text the primary business line, or email contact@247roi.com.
 
 Phone numbers (never mix these up):
 - Primary business (call/text): ${PRIMARY_DISPLAY} → ${PRIMARY_TEL}
@@ -69,7 +69,7 @@ Never mention any other phone numbers. Do not mention GoHighLevel, Automagixx, d
       const err = await res.text();
       console.error("OpenAI error", res.status, err);
       return NextResponse.json({
-        reply: `Something went wrong. Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve. The receptionist demo line is ${DEMO_DISPLAY}.`,
+        reply: `Something went wrong. Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve, or book an AI Employee Audit on the contact page.`,
       });
     }
 
@@ -78,12 +78,12 @@ Never mention any other phone numbers. Do not mention GoHighLevel, Automagixx, d
     };
     const reply = data.choices?.[0]?.message?.content?.trim();
     return NextResponse.json({
-      reply: reply || `Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve. The receptionist demo line is ${DEMO_DISPLAY}.`,
+      reply: reply || `Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve, or book an AI Employee Audit on the contact page.`,
     });
   } catch (e) {
     console.error(e);
     return NextResponse.json({
-      reply: `I could not respond just now. Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve. The receptionist demo line is ${DEMO_DISPLAY}.`,
+      reply: `I could not respond just now. Call or text ${PRIMARY_DISPLAY} with the workflow you want to improve, or book an AI Employee Audit on the contact page.`,
     });
   }
 }

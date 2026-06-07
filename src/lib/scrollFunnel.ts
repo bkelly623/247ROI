@@ -27,6 +27,6 @@ export function requestBookCallFocus(pathname: string | null | undefined): void 
   if (isHomePathname(path)) {
     scrollBookCallIntoView();
   } else {
-    window.location.assign("/#contact");
+    window.location.assign("/contact");
   }
 }

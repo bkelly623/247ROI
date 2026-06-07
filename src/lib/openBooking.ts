@@ -1,6 +1,6 @@
 import { CALENDAR_PATH } from "@/app/components/cta";
 
-/** Homepage anchor id for inline booking section (`/#contact` scrolls on `/`). */
+/** Legacy homepage anchor id. New conversion path is `/contact`. */
 export const BOOKING_HASH = "contact";
 
 export { CALENDAR_PATH } from "@/app/components/cta";

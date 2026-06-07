@@ -19,10 +19,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MissedCallCalculator from "@/app/components/MissedCallCalculator";
 import { Button } from "@/components/ui/button";
-import { AI_RECEPTIONIST_CTA_PHONE_HREF, BOOK_SETUP_CALL_LINK_CLASSNAME } from "@/app/components/cta";
+import { BOOK_SETUP_CALL_LINK_CLASSNAME, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
-const applyHref = "/#contact";
-const plumbingDemoHref = AI_RECEPTIONIST_CTA_PHONE_HREF;
+const applyHref = "/contact";
+const plumbingDemoHref = PRIMARY_PHONE_HREF;
 
 const problemCards = [
   {
@@ -67,7 +67,7 @@ const offerBullets = [
 
 const steps = [
   {
-    title: "Quick setup call",
+    title: "AI employee audit",
     copy: "We learn your service area, hours, services, booking process, and escalation rules.",
   },
   {
@@ -140,7 +140,7 @@ function PrimaryCtas({ center = false }: { center?: boolean }) {
         size="lg"
         className="min-h-[3.65rem] rounded-full bg-primary px-7 text-base font-semibold text-primary-foreground shadow-[0_0_42px_hsl(174_72%_56%/0.32)] hover:bg-primary/90 hover:shadow-[0_0_60px_hsl(174_72%_56%/0.42)] sm:px-9"
       >
-        <Link href={applyHref}>Apply for the 30-Day Case Study</Link>
+        <Link href={applyHref}>Book AI Audit</Link>
       </Button>
       <Button
         asChild
@@ -148,7 +148,7 @@ function PrimaryCtas({ center = false }: { center?: boolean }) {
         variant="outline"
         className="min-h-[3.65rem] rounded-full border-white/15 bg-white/[0.03] px-7 text-base font-semibold text-foreground hover:bg-white/[0.08] sm:px-9"
       >
-        <a href={plumbingDemoHref}>Call the Plumbing Demo</a>
+        <a href={plumbingDemoHref}>Call 247ROI</a>
       </Button>
     </div>
   );
@@ -332,7 +332,7 @@ export default function PlumbingLandingPage() {
                     30-Day Missed-Call Recovery Case Study
                   </div>
                   <h2 className="mb-5 text-3xl font-display font-bold leading-tight sm:text-4xl lg:text-5xl">
-                    See if an revenue recovery system can recover real plumbing opportunities before you commit.
+                    See if a revenue recovery system can recover real plumbing opportunities before you commit.
                   </h2>
                   <p className="mb-7 text-lg leading-relaxed text-muted-foreground">
                     We&rsquo;ll install a custom revenue recovery system for your plumbing business, run it live for 30 days, and
@@ -343,7 +343,7 @@ export default function PlumbingLandingPage() {
                     size="lg"
                     className="min-h-[3.65rem] rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-[0_0_42px_hsl(174_72%_56%/0.32)] hover:bg-primary/90"
                   >
-                    <Link href={applyHref}>Apply for the Case Study</Link>
+                    <Link href={applyHref}>Book AI Audit</Link>
                   </Button>
                 </motion.div>
 
@@ -465,7 +465,7 @@ export default function PlumbingLandingPage() {
                   <CalendarCheck className="h-7 w-7" aria-hidden />
                 </div>
                 <h2 className="mx-auto mb-5 max-w-3xl text-3xl font-display font-bold leading-tight sm:text-4xl lg:text-5xl">
-                  Apply for one of the 3 plumbing case study spots.
+                  Book an audit for a plumbing missed-call employee.
                 </h2>
                 <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                   If your company is a fit, we&rsquo;ll map your call flow, build the revenue recovery system, and run the
