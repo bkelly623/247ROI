@@ -20,7 +20,7 @@ const plans = [
   },
   {
     name: "First Employee",
-    price: "Custom quote",
+    price: "$750-$2,500/mo",
     body: "For one constrained AI employee built around a real workflow and measured weekly.",
     bullets: ["One AI job role", "Scripts and handoffs", "Tool/workflow setup", "Weekly performance scorecard"],
   },
@@ -30,6 +30,12 @@ const plans = [
     body: "For businesses ready to stack multiple AI employees after the first role proves ROI.",
     bullets: ["Multiple roles", "Shared operating rules", "Cross-workflow reporting", "Ongoing optimization"],
   },
+];
+
+const pricingRules = [
+  ["Lower scope", "Follow-up, receptionist, reminders, simple inbox triage, and other narrow roles with clean handoffs."],
+  ["Higher scope", "Estimator, bid, takeoff, multi-tool, or document-heavy roles that need deeper workflow setup."],
+  ["Build fee", "Quoted after audit when the setup effort is clear. Qualified pilots may reduce or defer setup to prove value first."],
 ];
 
 export default function PricingPage() {
@@ -45,8 +51,9 @@ export default function PricingPage() {
               Priced around the employee, not the software.
             </h1>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-              AI employee work depends on workflow complexity, integrations, approval rules, and required output.
-              The audit exists so the first quote is tied to a real business role.
+              Most first AI employees are managed monthly with setup quoted after the audit. Narrow follow-up and
+              receptionist roles price lower. Estimating, bidding, and document-heavy roles price higher because the job
+              spec and handoffs matter more.
             </p>
           </div>
         </section>
@@ -71,11 +78,19 @@ export default function PricingPage() {
               ))}
             </div>
             <div className="mx-auto mt-10 max-w-4xl rounded-3xl border border-primary/25 bg-primary/10 p-8 text-center">
-              <h2 className="font-display text-2xl font-bold">Why no fake pricing table?</h2>
+              <h2 className="font-display text-2xl font-bold">How the quote gets decided</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                A receptionist, estimator assistant, and bid assistant do not have the same build scope. We give pricing
-                expectations after identifying the first role, the tools involved, and how performance will be measured.
+                A receptionist, estimator assistant, and bid assistant do not have the same build scope. The audit ties
+                price to the first role, the tools involved, and how performance will be measured.
               </p>
+              <div className="mt-7 grid gap-3 text-left md:grid-cols-3">
+                {pricingRules.map(([label, body]) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-background/35 p-4">
+                    <p className="text-sm font-semibold text-foreground">{label}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{body}</p>
+                  </div>
+                ))}
+              </div>
               <Button asChild size="lg" className="mt-7 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                 <Link href="/contact">
                   Book AI Audit <ArrowRight className="ml-2 h-4 w-4" aria-hidden />

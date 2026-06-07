@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 
 const PRIMARY_DISPLAY = "(917) 572-7734";
 const PRIMARY_TEL = "tel:+19175727734";
-const DEMO_DISPLAY = "(866) 360-2529";
-const DEMO_TEL = "tel:+18663602529";
 
 function resolveOpenAIKey(): string | undefined {
   return (
@@ -18,7 +16,7 @@ export async function POST(req: Request) {
   const key = resolveOpenAIKey();
   if (!key) {
     return NextResponse.json({
-      reply: `Chat is not configured right now. Call or text ${PRIMARY_DISPLAY} (${PRIMARY_TEL}) with the workflow you want to improve. The live receptionist demo is ${DEMO_DISPLAY} (${DEMO_TEL}).`,
+      reply: `The fastest next step is simple: call or text ${PRIMARY_DISPLAY}, or send the workflow you want improved through the contact page. Good first message: “I want an AI employee for [workflow].”`,
     });
   }
 
@@ -42,11 +40,10 @@ Promise: AI-assisted workflow acceleration, not fake full autonomy. Explain that
 
 Best next step: ask what workflow is slow or leaking revenue, then direct qualified visitors to book an AI Employee Audit at /contact, call/text the primary business line, or email contact@247roi.com.
 
-Phone numbers (never mix these up):
+Phone number:
 - Primary business (call/text): ${PRIMARY_DISPLAY} → ${PRIMARY_TEL}
-- Live demo ONLY: ${DEMO_DISPLAY} → ${DEMO_TEL}
 
-Prefer the primary business line first. Offer the demo number only when they specifically want to hear the AI receptionist demo.
+Prefer the primary business line first.
 
 Never mention any other phone numbers. Do not mention GoHighLevel, Automagixx, deleted calendars, internal tools, or website implementation details.`;
 

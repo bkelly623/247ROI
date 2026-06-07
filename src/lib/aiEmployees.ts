@@ -59,7 +59,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Stop letting warm leads cool off.",
     subheadline:
       "An AI follow-up employee that texts, emails, qualifies, reminds, and reactivates leads so more inquiries become appointments.",
-    priceHint: "Starting at $597/month after setup",
+    priceHint: "$750-$2,500/month after scope",
     bestFor: "Businesses with form fills, missed calls, estimates, or old leads that need faster second and third touches.",
     route: "/ai-employees/ai-follow-up-agent",
     icon: "message",
@@ -187,7 +187,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Turn jobs, proof, and offers into daily market presence.",
     subheadline:
       "An AI content employee that turns your services, customer questions, reviews, photos, and offers into posts, scripts, campaigns, and follow-up assets.",
-    priceHint: "Starting at $597/month after setup",
+    priceHint: "$750-$2,500/month after scope",
     bestFor: "Businesses that need more consistent content without pulling the owner into a blank-page content grind.",
     route: "/ai-employees/ai-content-employee",
     icon: "megaphone",

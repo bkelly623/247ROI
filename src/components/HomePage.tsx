@@ -57,6 +57,27 @@ const proofCards = [
   ["30 days", "to prove one role with a scorecard before expanding"],
 ];
 
+const artifacts = [
+  {
+    label: "Lead rescue",
+    title: "9:47 PM roofing lead",
+    output: "Replied in 42 seconds, qualified roof age and leak location, offered two inspection windows, routed urgent summary to owner.",
+    metric: "First touch protected",
+  },
+  {
+    label: "Estimator prep",
+    title: "Quote packet ready",
+    output: "Collected missing photos, grouped scope notes, flagged unclear measurements, drafted review-ready estimate summary.",
+    metric: "Owner review faster",
+  },
+  {
+    label: "Bid discipline",
+    title: "Commercial invite triaged",
+    output: "Pulled deadline, trade fit, documents required, red flags, location, and go/no-go checklist from scattered files.",
+    metric: "Bad-fit work filtered",
+  },
+];
+
 const auditChecks = [
   "Where revenue leaks before a human responds",
   "Which tasks repeat enough to automate safely",
@@ -81,11 +102,11 @@ export default function HomePage() {
                   AI employees for service-business bottlenecks
                 </span>
                 <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.98] sm:text-6xl lg:text-7xl">
-                  Hire the AI employee your team should have had yesterday.
+                  Your next employee does not need a chair.
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                  247ROI installs managed AI employees that handle the repeatable work around lead response,
-                  estimating prep, bid intake, inbox/SMS triage, and operations handoffs. One role first. Human
+                  247ROI installs managed AI employees for the operational work that keeps bleeding time and revenue:
+                  lead response, estimating prep, bid intake, inbox/SMS triage, and handoffs. One role first. Human
                   approval where it matters. Measurable output every week.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -102,7 +123,7 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                  Built for cold-call follow-up: prospects get a simple next step and a concrete reason to keep talking.
+                  Built for service businesses that need speed, discipline, and follow-through without adding another full-time seat.
                 </p>
               </motion.div>
 
@@ -210,6 +231,39 @@ export default function HomePage() {
                   </Link>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+              <div>
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">What buyers see</span>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                  Not AI theater. Work product.
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  A useful AI employee leaves evidence behind: replies, summaries, packets, queues, scorecards, and clean
+                  human handoffs. That is what gets measured.
+                </p>
+              </div>
+              <div className="grid gap-4">
+                {artifacts.map((item) => (
+                  <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.035] p-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-primary">{item.label}</p>
+                        <h3 className="mt-2 font-display text-xl font-bold">{item.title}</h3>
+                      </div>
+                      <span className="w-fit rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                        {item.metric}
+                      </span>
+                    </div>
+                    <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{item.output}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

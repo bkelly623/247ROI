@@ -224,11 +224,10 @@ export default function ChatWidget() {
       </AnimatePresence>
 
       <div className="fixed bottom-3 right-3 z-[9999] flex h-14 w-14 items-center justify-center sm:bottom-6 sm:right-6 sm:h-16 sm:w-16">
-        <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-40" aria-hidden />
         <motion.span
-          className="absolute inset-[-6px] rounded-full border border-primary/25 pointer-events-none"
-          animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.85, 0.5] }}
-          transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-[-5px] rounded-full border border-primary/20 pointer-events-none"
+          animate={{ opacity: open ? 0.55 : 0.35 }}
+          transition={{ duration: 0.2 }}
           aria-hidden
         />
         <motion.button

@@ -20,6 +20,12 @@ const auditOutputs = [
   "Launch path and pricing fit",
 ];
 
+const briefPrompts = [
+  "What work keeps getting delayed, missed, or repeated?",
+  "Where does a lead, estimate, bid, message, or handoff stall?",
+  "Who approves final pricing, bids, exceptions, or sensitive replies?",
+];
+
 export default function ContactPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -73,6 +79,28 @@ export default function ContactPage() {
                 <Link href="/pricing" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
                   View pricing expectations <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-16 md:py-20">
+          <div className="container mx-auto px-6">
+            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+              <div>
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Audit brief</span>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">You do not need a polished process.</h2>
+                <p className="mt-4 text-muted-foreground">
+                  The best audit conversations usually start with a messy bottleneck. Bring the real version, not the
+                  brochure version.
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {briefPrompts.map((prompt) => (
+                  <div key={prompt} className="rounded-3xl border border-white/10 bg-white/[0.035] p-5">
+                    <p className="text-sm leading-relaxed text-foreground/85">{prompt}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
