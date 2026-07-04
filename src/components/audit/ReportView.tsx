@@ -110,8 +110,8 @@ export function ReportView({ sessionId }: { sessionId: string }) {
             <CardContent className="flex flex-col items-center pt-6">
               <ScoreRing
                 score={report.opportunityIndex}
-                label="Opportunity Score"
-                sublabel="Higher gap = bigger first-mover win"
+                label="Infrastructure Readiness"
+                sublabel="Lower score = more upside if you act first"
               />
             </CardContent>
           </Card>
@@ -146,10 +146,43 @@ export function ReportView({ sessionId }: { sessionId: string }) {
           <SectionScores sections={report.sections} />
         </div>
 
+        {/* Social findings */}
+        {report.socialFindings && (
+          <Card className="border-border">
+            <CardHeader>
+              <CardTitle className="text-base">What we checked on your website</CardTitle>
+              <CardDescription>{report.socialFindings.note}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Linked on site</p>
+                {report.socialFindings.found.length ? (
+                  <ul className="space-y-1 text-sm text-primary">
+                    {report.socialFindings.found.map((s) => (
+                      <li key={s}>✓ {s}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">None detected in homepage HTML</p>
+                )}
+              </div>
+              <div>
+                <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Not linked on site</p>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  {report.socialFindings.notLinked.map((s) => (
+                    <li key={s}>○ {s}</li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Site blueprint */}
         <SiteBlueprint
           businessName={session.business_name}
           websiteUrl={session.website_url}
+          screenshotUrl={report.sitePreview.screenshotUrl}
           before={report.sitePreview.beforeAnnotations}
           after={report.sitePreview.afterAnnotations}
         />

@@ -22,9 +22,10 @@ export function FauxTerminal({
     setVisible([]);
     let i = 0;
     const id = setInterval(() => {
-      if (i < lines.length) {
+      if (i < lines.length && lines[i]) {
         const ts = new Date().toLocaleTimeString();
-        setVisible((prev) => [...prev, `[${ts}] ${lines[i]}`]);
+        const line = String(lines[i]).trim();
+        if (line) setVisible((prev) => [...prev, `[${ts}] ${line}`]);
         i++;
       } else {
         clearInterval(id);

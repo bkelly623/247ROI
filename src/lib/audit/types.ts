@@ -58,8 +58,15 @@ export interface AuditReport {
   guideSteps: string[];
   sitePreview: {
     businessName: string;
+    websiteUrl?: string;
+    screenshotUrl?: string;
     beforeAnnotations: SiteAnnotation[];
     afterAnnotations: SiteAnnotation[];
+  };
+  socialFindings?: {
+    found: string[];
+    notLinked: string[];
+    note: string;
   };
   revenueInsight?: {
     monthlyLeakEstimate: number;

@@ -8,6 +8,11 @@ import type {
 } from "./types";
 import { BRAND } from "./config";
 import { SERVICE_CATALOG } from "./types";
+import {
+  detectSocialLinks,
+  socialScoreFromSignals,
+  socialSummary,
+} from "./social-detect";
 
 interface TechnicalSignals {
   url: string;
@@ -29,6 +34,7 @@ interface TechnicalSignals {
   hasH1: boolean;
   contentWordCount: number;
   fetchError?: string;
+  html: string;
 }
 
 function pickSecondaryPackage(
@@ -104,7 +110,17 @@ function buildSections(signals: TechnicalSignals): AuditSection[] {
     Math.min(75, 28 + (signals.hasSsl ? 12 : 0) + (signals.hasTitle ? 8 : 0))
   );
 
-  const socialScore = Math.max(10, Math.min(55, 18 + (signals.contentWordCount > 500 ? 12 : 0)));
+  const social = detectSocialLinks(signals.html);
+  const socialScore = socialScoreFromSignals(social);
+  const socialCopy = socialSummary(social);
+
+  const aiSummary = aiScore >= 65
+    ? signals.hasLocalBusinessSchema
+      ? "Your site has baseline AI signals, but structured business data can be strengthened for local recommendations."
+      : "Some AI-readable content exists, but missing structured business data limits how confidently AI can recommend you."
+    : signals.hasLocalBusinessSchema
+      ? "AI systems can partially understand your business, but key details are still missing."
+      : "AI assistants likely cannot confidently recommend you — your business data is not structured for AI.";
 
   return [
     {
@@ -112,9 +128,7 @@ function buildSections(signals: TechnicalSignals): AuditSection[] {
       label: "AI Visibility",
       plainQuestion: "Can AI recommend you?",
       score: aiScore,
-      summary: signals.hasLocalBusinessSchema
-        ? "AI systems can partially understand your business, but key details are still missing."
-        : "AI assistants likely cannot confidently recommend you — your business data is not structured for AI.",
+      summary: aiSummary,
       topFix: signals.hasLocalBusinessSchema
         ? "Strengthen your AI citation layer so ChatGPT and Google AI recommend you first in your area."
         : "Add AI-readable business data so assistants know who you are, what you do, and where you serve.",
@@ -146,9 +160,8 @@ function buildSections(signals: TechnicalSignals): AuditSection[] {
       label: "Social Presence",
       plainQuestion: "Are you visible where people scroll?",
       score: socialScore,
-      summary:
-        "Consistent project content keeps your brand alive — businesses posting weekly get more inbound trust signals.",
-      topFix: "Launch an automated social pipeline with project spotlights and local proof-of-work content.",
+      summary: socialCopy.summary,
+      topFix: socialCopy.topFix,
     },
   ];
 }
@@ -327,6 +340,7 @@ export async function fetchTechnicalSignals(
     hasViewport: false,
     hasH1: false,
     contentWordCount: 0,
+    html: "",
   };
 
   try {
@@ -338,6 +352,7 @@ export async function fetchTechnicalSignals(
     });
     clearTimeout(timeout);
     const html = await res.text();
+    signals.html = html;
     signals.htmlSizeKb = Math.round(html.length / 1024);
 
     const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
@@ -427,6 +442,18 @@ export async function runAuditPipeline(input: {
 
   const secondary = pickSecondaryPackage(sections);
 
+  const social = detectSocialLinks(signals.html);
+  const foundSocial = [
+    social.hasFacebook && "Facebook",
+    social.hasInstagram && "Instagram",
+    social.hasLinkedIn && "LinkedIn",
+    social.hasYouTube && "YouTube",
+    social.hasGoogleBusiness && "Google Business",
+  ].filter(Boolean) as string[];
+  const notLinked = ["Facebook", "Instagram", "LinkedIn", "YouTube", "Google Business"].filter(
+    (p) => !foundSocial.includes(p)
+  );
+
   const progressEvents = [
     `Connecting to ${input.businessName} web infrastructure...`,
     signals.hasLocalBusinessSchema
@@ -441,20 +468,35 @@ export async function runAuditPipeline(input: {
     signals.hasSsl
       ? "Security certificate: valid."
       : "Security certificate: ISSUE DETECTED.",
+    foundSocial.length
+      ? `Social profiles linked on site: ${foundSocial.join(", ")}.`
+      : "Social profiles: none linked on website HTML.",
     "Opportunity scan complete — first-mover window identified.",
-  ];
+  ].filter((line): line is string => Boolean(line && line !== "undefined"));
+
+  const screenshotUrl = `https://image.thum.io/get/width/900/noanimate/${encodeURIComponent(signals.url)}`;
 
   return {
     opportunityIndex,
-    opportunityHeadline: `Most businesses in ${input.zipCode} are not AI-ready yet. Your readiness score is ${opportunityIndex}% — the window is open.`,
+    opportunityHeadline: `Most businesses in ${input.zipCode} are not AI-ready yet. Your infrastructure readiness is ${opportunityIndex}% — the window is open.`,
     sections,
     deficits: buildDeficits(signals),
     packages: { primary, secondary },
     guideSteps: buildGuideSteps(input.businessName, sections, input.zipCode),
     sitePreview: {
       businessName: input.businessName,
+      websiteUrl: signals.url,
+      screenshotUrl,
       beforeAnnotations: before,
       afterAnnotations: after,
+    },
+    socialFindings: {
+      found: foundSocial,
+      notLinked,
+      note:
+        foundSocial.length === 0
+          ? "We only detect profiles linked in your website code. Profiles that exist but aren't linked won't appear here yet."
+          : "Detected from links on your homepage HTML.",
     },
     progressEvents,
   };

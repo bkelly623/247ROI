@@ -33,6 +33,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { BRAND } from "@/lib/audit/config";
 import { normalizeUrl } from "@/lib/audit/utils";
+import { validateGateClient } from "@/lib/audit/gate-validation";
 
 type FlowStep = "entry" | "scanning" | "gate" | "submitting";
 
@@ -129,6 +130,12 @@ export function AuditFlow() {
     } else if (!firstName || !lastName || !phone || !email) {
       setError("All contact fields are required.");
       return;
+    } else {
+      const validationError = validateGateClient({ firstName, lastName, phone, email });
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
     }
 
     setStep("submitting");

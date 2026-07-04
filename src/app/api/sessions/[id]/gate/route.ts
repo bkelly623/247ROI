@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import {
   checkRateLimit,
   getSession,
@@ -8,13 +7,9 @@ import {
 } from "@/lib/audit/sessions";
 import { runAuditPipeline } from "@/lib/audit/audit-engine";
 import { dispatchToAthena } from "@/lib/audit/athena";
+import { gateSchema } from "@/lib/audit/gate-validation";
 
-const gateSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  phone: z.string().min(10),
-  email: z.string().email(),
-});
+const gateSchemaLegacy = gateSchema;
 
 export async function POST(
   req: NextRequest,
@@ -22,7 +17,7 @@ export async function POST(
 ) {
   const { id } = await params;
   try {
-    const body = gateSchema.parse(await req.json());
+    const body = gateSchemaLegacy.parse(await req.json());
     const session = await getSession(id);
     if (!session) {
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
