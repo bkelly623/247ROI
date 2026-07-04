@@ -9,6 +9,12 @@ export interface AthenaJobPayload {
   mode: "organic" | "rep";
   callbackUrl: string;
   botId: string;
+  lead?: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    email: string;
+  };
 }
 
 export async function dispatchToAthena(

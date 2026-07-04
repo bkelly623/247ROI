@@ -59,6 +59,12 @@ export async function POST(
       mode: session.mode,
       callbackUrl,
       botId: "athena_bot_bot_bot",
+      lead: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        phone: body.phone,
+        email: body.email,
+      },
     });
 
     const baseReport = await runAuditPipeline({
