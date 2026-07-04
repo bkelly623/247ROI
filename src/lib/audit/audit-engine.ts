@@ -40,39 +40,42 @@ interface TechnicalSignals {
 function pickSecondaryPackage(
   sections: AuditSection[]
 ): PackageRecommendation {
-  const sorted = [...sections].sort((a, b) => a.score - b.score);
-  const weakest = sorted[0]?.key ?? "ai";
+  const supporting = sections.filter((s) => s.key !== "ai");
+  const weakest = [...supporting].sort((a, b) => a.score - b.score)[0];
+  const emphasisKey = weakest?.key ?? "seo";
 
-  const mapping: Record<AuditSectionKey, { id: string; headline: string }> = {
-    ai: {
-      id: "ai_visibility",
-      headline: "AI Visibility Optimization",
-    },
-    seo: {
-      id: "seo_engine",
-      headline: "SEO Growth Engine",
-    },
-    reputation: {
-      id: "reputation",
-      headline: "Review & Reputation System",
-    },
-    social: {
-      id: "social_authority",
-      headline: "Social Authority Pipeline",
-    },
+  const emphasisCopy: Record<Exclude<AuditSectionKey, "ai">, string> = {
+    seo: "technical SEO, local page structure, and Google indexation",
+    reputation: "automated reviews and trust signals AI models rely on",
+    social: "entity-linked profiles so AI connects your brand across the web",
   };
 
-  const pick = mapping[weakest];
-  const service = SERVICE_CATALOG[pick.id];
+  const key = emphasisKey === "ai" ? "seo" : emphasisKey;
+  const emphasis =
+    emphasisCopy[key as Exclude<AuditSectionKey, "ai">] ?? emphasisCopy.seo;
 
   return {
-    id: pick.id,
-    headline: pick.headline,
-    description: service.description,
+    id: "ai_visibility",
+    headline: "AI Visibility Growth Program",
+    description: `Your phase-two growth engine. We build citation layers, structured data, and AI-readable entity signals — including ${emphasis}. SEO, reputation, and social aren't separate projects; they're layers of one AI visibility strategy.`,
     priceFrame: "custom",
-    ctaLabel: "See If You Qualify",
+    ctaLabel: "See If You Qualify for AI Visibility",
     ctaUrl: BRAND.schedulingUrl,
   };
+}
+
+function weightedReadinessIndex(sections: AuditSection[]): number {
+  const weights: Record<AuditSectionKey, number> = {
+    ai: 0.35,
+    seo: 0.35,
+    reputation: 0.2,
+    social: 0.1,
+  };
+  const total = sections.reduce(
+    (sum, s) => sum + s.score * (weights[s.key] ?? 0.25),
+    0
+  );
+  return Math.round(total);
 }
 
 function buildSections(signals: TechnicalSignals): AuditSection[] {
@@ -425,9 +428,7 @@ export async function runAuditPipeline(input: {
   );
 
   const sections = buildSections(signals);
-  const opportunityIndex = Math.round(
-    sections.reduce((sum, s) => sum + s.score, 0) / sections.length
-  );
+  const opportunityIndex = weightedReadinessIndex(sections);
 
   const { before, after } = buildAnnotations(signals);
 

@@ -73,6 +73,9 @@ export interface AuditReport {
     reasoning: string;
   };
   progressEvents: string[];
+  advisorSteps?: string[];
+  executiveSummary?: string;
+  salesHook?: string;
 }
 
 export interface ScanSession {
@@ -143,10 +146,10 @@ export const SERVICE_CATALOG: Record<
     tiesTo: ["ai", "seo"],
   },
   ai_visibility: {
-    name: "AI Visibility Optimization",
+    name: "AI Visibility Growth Program",
     description:
-      "Make sure AI assistants understand your business, service area, and expertise — so they recommend you first.",
-    tiesTo: ["ai"],
+      "End-to-end AI visibility — citation layers, entity optimization, schema, and integrated SEO, reputation, and social signals so ChatGPT and Google AI recommend you first.",
+    tiesTo: ["ai", "seo", "reputation", "social"],
   },
   seo_engine: {
     name: "SEO Growth Engine",

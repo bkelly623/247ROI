@@ -59,6 +59,9 @@ export function mergeAthenaReport(
     deficits: athenaReport.deficits ?? base.deficits,
     packages: athenaReport.packages ?? base.packages,
     guideSteps: athenaReport.guideSteps ?? base.guideSteps,
+    advisorSteps: athenaReport.advisorSteps ?? base.advisorSteps,
+    executiveSummary: athenaReport.executiveSummary ?? base.executiveSummary,
+    salesHook: athenaReport.salesHook ?? base.salesHook,
     sitePreview: athenaReport.sitePreview ?? base.sitePreview,
     progressEvents: [
       ...base.progressEvents,

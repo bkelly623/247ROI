@@ -6,6 +6,7 @@ import {
   updateSession,
 } from "@/lib/audit/sessions";
 import { runAuditPipeline } from "@/lib/audit/audit-engine";
+import { enrichReportWithLlm } from "@/lib/audit/llm-enrich";
 import { dispatchToAthena } from "@/lib/audit/athena";
 import { gateSchema } from "@/lib/audit/gate-validation";
 
@@ -60,18 +61,23 @@ export async function POST(
       botId: "athena_bot_bot_bot",
     });
 
-    const report = await runAuditPipeline({
+    const baseReport = await runAuditPipeline({
       businessName: session.business_name,
       websiteUrl: session.website_url,
       zipCode: session.zip_code,
     });
 
-    const finalReport = athena.dispatched ? report : report;
+    const report = await enrichReportWithLlm({
+      businessName: session.business_name,
+      websiteUrl: session.website_url,
+      zipCode: session.zip_code,
+      baseReport,
+    });
 
     await updateSession(id, {
       status: "complete",
-      report: finalReport,
-      progress_events: finalReport.progressEvents,
+      report,
+      progress_events: report.progressEvents,
       warm_tier: "warm_a",
       athena_job_id: athena.jobId,
     });
@@ -80,7 +86,7 @@ export async function POST(
       await recordRateLimit(body.phone);
     }
 
-    return NextResponse.json({ sessionId: id, report: finalReport });
+    return NextResponse.json({ sessionId: id, report });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Gate failed";
     return NextResponse.json({ error: message }, { status: 400 });

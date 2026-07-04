@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   CheckCircle2,
-  Lock,
   Phone,
   Shield,
 } from "lucide-react";
@@ -14,7 +13,8 @@ import { FauxTerminal } from "@/components/audit/FauxTerminal";
 import { ScoreRing } from "@/components/audit/ScoreRing";
 import { SectionScores } from "@/components/audit/SectionScores";
 import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
-import { SmartGuide } from "@/components/audit/SmartGuide";
+import { ReportAdvisor } from "@/components/audit/ReportAdvisor";
+import { LockedGrowthModules } from "@/components/audit/LockedGrowthModules";
 import { RevenuePathway } from "@/components/audit/RevenuePathway";
 import { Button } from "@/components/ui/button";
 import {
@@ -233,36 +233,9 @@ export function ReportView({ sessionId }: { sessionId: string }) {
           </Card>
         </div>
 
-        {/* Locked upsell previews */}
-        <div>
-          <h2 className="mb-4 text-xl font-semibold text-zinc-50">
-            Additional Growth Modules
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              "Social Authority Pipeline",
-              "AI Receptionist",
-              "Review Automation",
-            ].map((name) => (
-              <Card key={name} className="relative overflow-hidden border-zinc-800">
-                <div className="blurred-preview p-6 opacity-60">
-                  <div className="h-24 rounded bg-zinc-800" />
-                  <p className="mt-3 font-medium">{name}</p>
-                </div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-950/60">
-                  <Lock className="h-6 w-6 text-amber-400" />
-                  <p className="mt-2 text-xs text-zinc-400">
-                    Unlocks with Foundation
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <LockedGrowthModules />
 
         <RevenuePathway />
-
-        <SmartGuide steps={report.guideSteps} businessName={session.business_name} />
 
         <FauxTerminal lines={report.progressEvents} intervalMs={1200} />
 
@@ -284,6 +257,12 @@ export function ReportView({ sessionId }: { sessionId: string }) {
           </CardContent>
         </Card>
       </main>
+
+      <ReportAdvisor
+        report={report}
+        businessName={session.business_name}
+        onCtaClick={() => trackCta("advisor_call")}
+      />
     </AuditShell>
   );
 }

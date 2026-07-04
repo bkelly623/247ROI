@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
-import ChatWidget from "./components/ChatWidget";
+import ConditionalChatWidget from "./components/ConditionalChatWidget";
 import { SITE_URL } from "@/lib/site";
 import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
@@ -68,7 +68,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen">
         <Providers>{children}</Providers>
-        <ChatWidget />
+        <ConditionalChatWidget />
       </body>
     </html>
   );
