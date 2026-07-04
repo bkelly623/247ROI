@@ -1,4 +1,4 @@
-import { createServiceClient } from "./supabase/server";
+import { createServiceClient, explainSupabaseKeyError } from "./supabase/server";
 import type { AuditReport, ScanSession, SessionStatus, WarmTier } from "./types";
 import { randomUUID } from "crypto";
 
@@ -28,7 +28,7 @@ export async function createSession(input: {
       .insert(row)
       .select("*")
       .single();
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(explainSupabaseKeyError(error.message));
     return mapRow(data);
   }
 
@@ -86,7 +86,7 @@ export async function updateSession(
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(explainSupabaseKeyError(error.message));
     return mapRow(data);
   }
 
