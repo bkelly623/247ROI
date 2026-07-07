@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Phone, Sparkles, Zap } from "lucide-react";
+import { Loader2, Phone, Sparkles, Zap } from "lucide-react";
 import { AuditShell } from "@/components/audit/AuditShell";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,17 +21,19 @@ import { normalizeUrl } from "@/lib/audit/utils";
 export function AuditFlow() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [zipCode, setZipCode] = useState("");
 
-  const startLive = useCallback(async () => {
+  const startAudit = useCallback(async () => {
     setError(null);
     if (!businessName.trim() || !websiteUrl.trim() || !zipCode.trim()) {
       setError("Please fill in all fields.");
       return;
     }
 
+    setLoading(true);
     try {
       const res = await fetch("/api/sessions", {
         method: "POST",
@@ -49,6 +51,7 @@ export function AuditFlow() {
       router.push(`/present/${data.session.id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to start");
+      setLoading(false);
     }
   }, [businessName, websiteUrl, zipCode, router]);
 
@@ -61,14 +64,14 @@ export function AuditFlow() {
               variant="outline"
               className="mb-4 border-primary/30 bg-primary/10 text-primary"
             >
-              Live Query Theater
+              Full Infrastructure Audit
             </Badge>
             <h1 className="text-3xl font-bold tracking-tight text-zinc-50 sm:text-4xl">
               Infrastructure Blueprint
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-zinc-400">
-              Queries run live on screen — Google, ChatGPT, Gemini, Claude — in
-              real time. Screen-share the presentation.
+              Real measurement: PageSpeed Lighthouse, Google rankings, GBP
+              reviews, schema analysis, site crawl.
             </p>
           </div>
 
@@ -79,8 +82,8 @@ export function AuditFlow() {
                 Business Details
               </CardTitle>
               <CardDescription>
-                Hit go — live queries start immediately on the presentation
-                screen.
+                Run before your Meet. Live ChatGPT/Google tests you do in
+                separate tabs on the call.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -115,10 +118,20 @@ export function AuditFlow() {
               <Button
                 size="lg"
                 className="w-full h-14 text-lg font-semibold pulse-glow"
-                onClick={startLive}
+                onClick={startAudit}
+                disabled={loading}
               >
-                Launch Live Presentation
-                <Zap className="h-5 w-5" />
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Starting...
+                  </>
+                ) : (
+                  <>
+                    Run Full Audit
+                    <Zap className="h-5 w-5" />
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>

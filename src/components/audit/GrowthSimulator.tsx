@@ -14,12 +14,14 @@ export function GrowthSimulator({ report }: { report: AuditReport }) {
   const [avgJobValue, setAvgJobValue] = useState(4500);
   const [selectedTier, setSelectedTier] = useState<GrowthTier["id"]>("foundation");
 
-  const baseAi = report.aiMirror?.summary.mentionRate ?? 0;
+  const baseAi = report.sections.find((s) => s.key === "ai")?.score ?? 0;
   const baseGoogle = report.googleLocal?.inMapPack
     ? 85
     : report.googleLocal?.clientPosition
-      ? Math.max(20, 70 - report.googleLocal.clientPosition * 12)
-      : 25;
+      ? Math.max(20, 70 - (report.googleLocal.clientPosition ?? 10) * 12)
+      : report.googleLocal?.configured
+        ? 25
+        : 0;
 
   const metrics = useMemo(() => {
     const tier =

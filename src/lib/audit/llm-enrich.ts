@@ -151,13 +151,15 @@ function mergeEnrichment(
 
 export function buildDefaultAdvisorSteps(report: AuditReport): string[] {
   const ai = report.sections.find((s) => s.key === "ai");
-  const weakest = [...report.sections].sort((a, b) => a.score - b.score)[0];
+  const weakest = [...report.sections]
+    .filter((s) => s.measured && s.score !== null)
+    .sort((a, b) => (a.score ?? 0) - (b.score ?? 0))[0];
 
   return [
     `I've reviewed your infrastructure blueprint. Most businesses in your area aren't AI-ready yet — that's actually good news for you.`,
     `Your overall readiness is ${report.opportunityIndex}%. That means there's real upside if you move before this becomes standard.`,
     ai
-      ? `On AI visibility: you scored ${ai.score}%. ${ai.summary}`
+      ? `On AI readiness: ${ai.score !== null ? `${ai.score}%` : "pending"}. ${ai.summary}`
       : `Your biggest gap is in how AI systems understand your business.`,
     `Here's the play: Smart Site Foundation gets you the infrastructure AI and Google need — starting around $99/mo.`,
     `Phase two is our AI Visibility Growth Program — this covers citation layers, schema, and your ${weakest?.label?.toLowerCase() ?? "search"} gaps as part of one strategy.`,

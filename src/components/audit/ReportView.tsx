@@ -14,8 +14,8 @@ import { ScoreRing } from "@/components/audit/ScoreRing";
 import { SectionScores } from "@/components/audit/SectionScores";
 import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
 import { IndustryPulse } from "@/components/audit/IndustryPulse";
-import { AIMirrorPanel } from "@/components/audit/AIMirrorPanel";
 import { GoogleLocalPanel } from "@/components/audit/GoogleLocalPanel";
+import { AuditMetrics } from "@/components/audit/AuditMetrics";
 import { GrowthSimulator } from "@/components/audit/GrowthSimulator";
 import { ReportAdvisor } from "@/components/audit/ReportAdvisor";
 import { LockedGrowthModules } from "@/components/audit/LockedGrowthModules";
@@ -123,14 +123,9 @@ export function ReportView({ sessionId }: { sessionId: string }) {
 
         <IndustryPulse />
 
-        {report.aiMirror && (
-          <AIMirrorPanel
-            aiMirror={report.aiMirror}
-            businessName={session.business_name}
-          />
-        )}
+        <AuditMetrics report={report} />
 
-        {report.googleLocal && (
+        {report.googleLocal?.configured && (
           <GoogleLocalPanel
             googleLocal={report.googleLocal}
             businessName={session.business_name}

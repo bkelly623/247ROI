@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, updateSession } from "@/lib/audit/sessions";
 import { executeFullAudit } from "@/lib/audit/run-audit";
 
+export const maxDuration = 120;
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

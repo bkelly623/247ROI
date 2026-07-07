@@ -29,11 +29,8 @@ export const ATHENA = {
   botId: "athena_bot_bot_bot",
 } as const;
 
-/** API keys for live probes — add to Vercel env */
+/** Required Vercel env vars for a full accurate audit */
 export const PROBE_KEYS = {
-  openai: "OPENAI_API_KEY",
-  anthropic: "ANTHROPIC_API_KEY",
-  gemini: "GEMINI_API_KEY or GOOGLE_AI_API_KEY",
-  googleLocal: "SERPAPI_KEY or GOOGLE_PLACES_API_KEY",
   pageSpeed: "GOOGLE_PAGESPEED_API_KEY",
+  googleSearch: "SERPAPI_KEY (or GOOGLE_PLACES_API_KEY as fallback)",
 } as const;

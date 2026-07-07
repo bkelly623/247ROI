@@ -16,7 +16,9 @@ export interface AuditSection {
   key: AuditSectionKey;
   label: string;
   plainQuestion: string;
-  score: number;
+  score: number | null;
+  measured: boolean;
+  dataSource: string;
   summary: string;
   topFix: string;
 }
@@ -132,6 +134,42 @@ export interface AuditReport {
   aiMirror?: AIProbeResult;
   googleLocal?: GoogleLocalProbe;
   growthTiers?: GrowthTier[];
+  auditMeta?: {
+    dataSources: {
+      pageSpeed: boolean;
+      googleSearch: boolean;
+      siteCrawl: boolean;
+      missing: string[];
+    };
+    pageSpeed?: {
+      performanceScore: number | null;
+      seoScore: number | null;
+      lcpSeconds: number | null;
+      cls: number | null;
+      fcpSeconds: number | null;
+      speedIndexSeconds: number | null;
+      failedAudits: string[];
+    };
+    technical?: {
+      httpStatus?: number;
+      contentWordCount: number;
+      hasLocalBusinessSchema: boolean;
+      schemaBlocks: number;
+      hasSitemap: boolean;
+      hasRobotsTxt: boolean;
+      lcpSeconds: number | null;
+      cls: number | null;
+    };
+    gbp?: {
+      found: boolean;
+      name?: string;
+      rating?: number;
+      reviewCount?: number;
+      address?: string;
+      phone?: string;
+    };
+    note?: string;
+  };
 }
 
 export interface ScanSession {
