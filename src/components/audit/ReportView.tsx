@@ -1,52 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Phone,
-  Shield,
-} from "lucide-react";
 import { AuditShell } from "@/components/audit/AuditShell";
-import { FauxTerminal } from "@/components/audit/FauxTerminal";
-import { ScoreRing } from "@/components/audit/ScoreRing";
-import { SectionScores } from "@/components/audit/SectionScores";
-import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
-import { IndustryPulse } from "@/components/audit/IndustryPulse";
-import { GoogleLocalPanel } from "@/components/audit/GoogleLocalPanel";
-import { AuditMetrics } from "@/components/audit/AuditMetrics";
-import { GrowthSimulator } from "@/components/audit/GrowthSimulator";
-import { ReportAdvisor } from "@/components/audit/ReportAdvisor";
-import { LockedGrowthModules } from "@/components/audit/LockedGrowthModules";
-import { RevenuePathway } from "@/components/audit/RevenuePathway";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { AuditReport, ScanSession } from "@/lib/audit/types";
 import { BRAND } from "@/lib/audit/config";
+import { AuditLoadingScreen } from "@/components/audit/AuditLoadingScreen";
+import {
+  BlueprintReport,
+  BlueprintReportHeader,
+} from "@/components/audit/BlueprintReport";
 
 export function ReportView({ sessionId }: { sessionId: string }) {
   const [session, setSession] = useState<ScanSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const loadSession = useCallback(async () => {
+    const res = await fetch(`/api/sessions/${sessionId}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Report not found");
+    return data.session as ScanSession;
+  }, [sessionId]);
+
   useEffect(() => {
-    fetch(`/api/sessions/${sessionId}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) throw new Error(data.error);
-        setSession(data.session);
-      })
+    loadSession()
+      .then(setSession)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [sessionId]);
+  }, [loadSession]);
 
   const trackCta = async (action: string) => {
     await fetch(`/api/sessions/${sessionId}/events`, {
@@ -54,25 +38,42 @@ export function ReportView({ sessionId }: { sessionId: string }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "cta_click" }),
     });
-    if (action === "call") {
+    if (action === "call" || action === "primary") {
       window.location.href = BRAND.phoneHref;
     } else if (BRAND.schedulingUrl !== "#schedule") {
       window.open(BRAND.schedulingUrl, "_blank");
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}/run`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Re-run failed");
+      setSession((s) =>
+        s ? { ...s, report: data.report as AuditReport } : s
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Re-run failed");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
-        <p className="text-zinc-400">Loading your blueprint...</p>
-      </div>
-    );
+    return <AuditLoadingScreen />;
   }
 
-  if (error || !session?.report) {
+  if (error && !session?.report) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-950">
-        <p className="text-red-400">{error || "Report not found"}</p>
+        <p className="text-red-400">{error}</p>
         <Button asChild>
           <Link href="/audit">Run New Audit</Link>
         </Button>
@@ -80,206 +81,40 @@ export function ReportView({ sessionId }: { sessionId: string }) {
     );
   }
 
-  const report: AuditReport = session.report;
+  if (!session?.report) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-zinc-950">
+        <p className="text-zinc-400">No report yet — run the audit first.</p>
+        <Button asChild>
+          <Link href={`/present/${sessionId}`}>Run audit</Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <AuditShell compact>
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-        {/* Hero */}
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex-1 space-y-4">
-            <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-              Infrastructure Blueprint Ready
-            </Badge>
-            <h1 className="text-3xl font-bold text-zinc-50 sm:text-4xl">
-              {session.business_name}
-            </h1>
-            <p className="max-w-2xl text-lg text-zinc-400">
-              {report.opportunityHeadline}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button size="lg" onClick={() => trackCta("call")}>
-                <Phone className="h-4 w-4" />
-                Get Your Free Fix Plan Call
-              </Button>
-              <Button size="lg" variant="secondary" asChild>
-                <Link href={`/present/${sessionId}`}>
-                  Screen Share Mode
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-          <Card className="border-zinc-800 lg:w-72">
-            <CardContent className="flex flex-col items-center pt-6">
-              <ScoreRing
-                score={report.opportunityIndex}
-                label="Infrastructure Readiness"
-                sublabel="Lower score = more upside if you act first"
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        <IndustryPulse />
-
-        <AuditMetrics report={report} />
-
-        {report.googleLocal?.configured && (
-          <GoogleLocalPanel
-            googleLocal={report.googleLocal}
-            businessName={session.business_name}
-          />
-        )}
-
-        {/* Critical deficits */}
-        <Card className="border-amber-500/20 bg-amber-500/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-400">
-              <Shield className="h-5 w-5" />
-              Top Priority Fixes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {report.deficits.slice(0, 3).map((d, i) => (
-              <div
-                key={i}
-                className="rounded-lg border border-zinc-800 bg-zinc-950/50 p-4"
-              >
-                <p className="font-medium text-zinc-100">{d.finding}</p>
-                <p className="mt-1 text-sm text-emerald-400/90">→ {d.fix}</p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Four plain scores */}
-        <div>
-          <h2 className="mb-4 text-xl font-semibold text-zinc-50">
-            Your Visibility Breakdown
-          </h2>
-          <SectionScores sections={report.sections} />
-        </div>
-
-        {/* Social findings */}
-        {report.socialFindings && (
-          <Card className="border-border">
-            <CardHeader>
-              <CardTitle className="text-base">What we checked on your website</CardTitle>
-              <CardDescription>{report.socialFindings.note}</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Linked on site</p>
-                {report.socialFindings.found.length ? (
-                  <ul className="space-y-1 text-sm text-primary">
-                    {report.socialFindings.found.map((s) => (
-                      <li key={s}>✓ {s}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">None detected in homepage HTML</p>
-                )}
-              </div>
-              <div>
-                <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Not linked on site</p>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  {report.socialFindings.notLinked.map((s) => (
-                    <li key={s}>○ {s}</li>
-                  ))}
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Site blueprint */}
-        <SiteBlueprint
-          businessName={session.business_name}
-          websiteUrl={session.website_url}
-          screenshotUrl={report.sitePreview.screenshotUrl}
-          before={report.sitePreview.beforeAnnotations}
-          after={report.sitePreview.afterAnnotations}
-        />
-
-        {/* Two-package recommendation */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="border-emerald-500/30 bg-emerald-500/5">
-            <CardHeader>
-              <Badge variant="outline" className="w-fit border-primary/30 bg-primary/10 text-primary">
-                Start Here · Package #1
-              </Badge>
-              <CardTitle>{report.packages.primary.headline}</CardTitle>
-              <CardDescription>
-                {report.packages.primary.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-sm font-medium text-emerald-400">
-                Starting as low as $99/mo
-              </p>
-              <Button className="w-full" onClick={() => trackCta("primary")}>
-                {report.packages.primary.ctaLabel}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border-amber-500/30 bg-amber-500/5">
-            <CardHeader>
-              <Badge variant="outline" className="w-fit border-amber-500/30 bg-amber-500/10 text-amber-400">
-                Your Biggest Opportunity · Package #2
-              </Badge>
-              <CardTitle>{report.packages.secondary.headline}</CardTitle>
-              <CardDescription>
-                {report.packages.secondary.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-sm text-zinc-400">
-                Custom pricing — see if you qualify
-              </p>
-              <Button
-                className="w-full bg-amber-500 text-zinc-950 hover:bg-amber-400"
-                onClick={() => trackCta("secondary")}
-              >
-                {report.packages.secondary.ctaLabel}
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        <LockedGrowthModules />
-
-        <GrowthSimulator report={report} />
-
-        <RevenuePathway />
-
-        <FauxTerminal lines={report.progressEvents} intervalMs={1200} />
-
-        <Card className="border-zinc-800 bg-zinc-900/50">
-          <CardContent className="flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:text-left">
-            <CheckCircle2 className="h-10 w-10 shrink-0 text-emerald-400" />
-            <div className="flex-1">
-              <p className="font-semibold text-zinc-100">
-                Ready to capture the opportunity?
-              </p>
-              <p className="text-sm text-zinc-400">
-                Most businesses in your area aren&apos;t AI-ready yet. Call us for
-                a free fix plan walkthrough — no pressure, no catch.
-              </p>
-            </div>
-            <Button size="lg" onClick={() => trackCta("call")}>
-              {BRAND.phoneDisplay}
-            </Button>
-          </CardContent>
-        </Card>
-      </main>
-
-      <ReportAdvisor
-        report={report}
-        businessName={session.business_name}
-        onCtaClick={() => trackCta("advisor_call")}
+      <BlueprintReportHeader
+        session={session}
+        sessionId={sessionId}
+        variant="report"
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
       />
+      <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6">
+        {error && (
+          <p className="rounded-lg border border-red-500/30 bg-red-500/5 p-3 text-sm text-red-400">
+            {error}
+          </p>
+        )}
+        <BlueprintReport
+          session={session}
+          report={session.report}
+          variant="report"
+          sessionId={sessionId}
+          onCtaClick={trackCta}
+        />
+      </main>
     </AuditShell>
   );
 }

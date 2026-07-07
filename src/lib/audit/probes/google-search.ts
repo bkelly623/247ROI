@@ -1,5 +1,6 @@
 import { businessNameMentioned } from "../infer-service";
 import type { AuditDeficit, GoogleLocalResult } from "../types";
+import { getPlacesKey, getSerpApiKey } from "../env";
 
 export interface GoogleSearchBlock {
   query: string;
@@ -62,29 +63,32 @@ function parseOrganic(
 
 async function serpSearch(
   engine: "google_local" | "google",
-  query: string
-): Promise<Record<string, unknown> | null> {
-  const key = process.env.SERPAPI_KEY;
-  if (!key) return null;
+  query: string,
+  zipCode?: string
+): Promise<{ data?: Record<string, unknown>; error?: string }> {
+  const key = getSerpApiKey();
+  if (!key) return { error: "SERPAPI_KEY not configured" };
 
   const url = new URL("https://serpapi.com/search.json");
   url.searchParams.set("engine", engine);
   url.searchParams.set("q", query);
   url.searchParams.set("api_key", key);
-  if (engine === "google") {
-    url.searchParams.set("location", "United States");
-  }
+  const location = zipCode ? `${zipCode}, United States` : "United States";
+  url.searchParams.set("location", location);
 
-  const res = await fetch(url.toString());
-  if (!res.ok) return null;
-  return res.json();
+  const res = await fetch(url.toString(), { next: { revalidate: 0 } });
+  if (!res.ok) {
+    const text = await res.text();
+    return { error: `SerpAPI ${res.status}: ${text.slice(0, 180)}` };
+  }
+  return { data: await res.json() };
 }
 
 async function placesSearch(
   query: string,
   businessName: string
 ): Promise<GoogleLocalResult[]> {
-  const key = process.env.GOOGLE_PLACES_API_KEY;
+  const key = getPlacesKey();
   if (!key) return [];
 
   const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
@@ -133,15 +137,16 @@ export async function probeGoogleSearch(input: {
     branded: input.businessName,
   };
 
-  const hasSerp = Boolean(process.env.SERPAPI_KEY);
-  const hasPlaces = Boolean(process.env.GOOGLE_PLACES_API_KEY);
+  const hasSerp = Boolean(getSerpApiKey());
+  const hasPlaces = Boolean(getPlacesKey());
+  const errors: string[] = [];
 
   if (!hasSerp && !hasPlaces) {
     return {
       configured: false,
       blocks: [],
       businessListing: { found: false },
-      summary: "Google search not measured — add SERPAPI_KEY or GOOGLE_PLACES_API_KEY.",
+      summary: "Google rankings not measured — add SERPAPI_KEY to Vercel.",
       rawError: "No Google search API configured",
     };
   }
@@ -149,9 +154,10 @@ export async function probeGoogleSearch(input: {
   const blocks: GoogleSearchBlock[] = [];
 
   if (hasSerp) {
-    const localData = await serpSearch("google_local", queries.local);
-    if (localData) {
-      const results = parseLocal(localData, input.businessName);
+    const localRes = await serpSearch("google_local", queries.local, input.zipCode);
+    if (localRes.error) errors.push(localRes.error);
+    if (localRes.data) {
+      const results = parseLocal(localRes.data, input.businessName);
       const hit = results.find((r) => r.isClient);
       blocks.push({
         query: queries.local,
@@ -162,9 +168,10 @@ export async function probeGoogleSearch(input: {
       });
     }
 
-    const organicData = await serpSearch("google", queries.organic);
-    if (organicData) {
-      const results = parseOrganic(organicData, input.businessName, host);
+    const organicRes = await serpSearch("google", queries.organic, input.zipCode);
+    if (organicRes.error) errors.push(organicRes.error);
+    if (organicRes.data) {
+      const results = parseOrganic(organicRes.data, input.businessName, host);
       const hit = results.find((r) => r.isClient);
       blocks.push({
         query: queries.organic,
@@ -191,7 +198,8 @@ export async function probeGoogleSearch(input: {
   let businessListing: GoogleSearchAudit["businessListing"] = { found: false };
 
   if (hasSerp) {
-    const brandData = await serpSearch("google", queries.branded);
+    const brandRes = await serpSearch("google", queries.branded, input.zipCode);
+    const brandData = brandRes.data;
     const kg = brandData?.knowledge_graph as Record<string, unknown> | undefined;
     const local = brandData?.local_results as Record<string, unknown>[] | undefined;
 
@@ -242,11 +250,18 @@ export async function probeGoogleSearch(input: {
     summary += ` GBP: ${businessListing.rating ?? "?"}★ (${businessListing.reviewCount} reviews).`;
   }
 
+  const measured = blocks.some((b) => b.results.length > 0);
+
   return {
-    configured: true,
+    configured: hasSerp || hasPlaces,
     blocks,
     businessListing,
-    summary,
+    summary: measured
+      ? summary
+      : errors[0]
+        ? `Google measurement failed: ${errors[0]}`
+        : "No Google results returned for this market.",
+    rawError: errors[0],
   };
 }
 
@@ -256,7 +271,17 @@ export function googleDeficits(google: GoogleSearchAudit): AuditDeficit[] {
     deficits.push({
       severity: "warning",
       finding: google.summary,
-      fix: "Add SERPAPI_KEY to measure real Google rankings.",
+      fix: "Add SERPAPI_KEY to Vercel as SERPAPI_KEY (exact name), redeploy, re-run audit.",
+      category: "seo",
+    });
+    return deficits;
+  }
+
+  if (google.rawError && !google.blocks.some((b) => b.results.length > 0)) {
+    deficits.push({
+      severity: "warning",
+      finding: `Google measurement failed: ${google.rawError}`,
+      fix: "Verify SERPAPI_KEY in Vercel and check SerpAPI quota.",
       category: "seo",
     });
     return deficits;

@@ -4,7 +4,20 @@ import { TrendingDown, TrendingUp, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { INDUSTRY_STATS } from "@/lib/audit/industry-stats";
 
-export function IndustryPulse() {
+export function IndustryPulse({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <div className="flex flex-wrap gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+        {INDUSTRY_STATS.slice(0, 3).map((stat) => (
+          <div key={stat.label} className="flex items-baseline gap-2">
+            <span className="text-lg font-bold text-zinc-50">{stat.value}</span>
+            <span className="text-xs text-zinc-500">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
       <CardHeader>

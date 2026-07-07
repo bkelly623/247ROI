@@ -1,4 +1,5 @@
 import type { AuditDeficit } from "../types";
+import { getPageSpeedKey } from "../env";
 
 export interface PageSpeedResult {
   configured: boolean;
@@ -20,7 +21,7 @@ export interface PageSpeedResult {
 }
 
 export async function probePageSpeed(url: string): Promise<PageSpeedResult> {
-  const key = process.env.GOOGLE_PAGESPEED_API_KEY;
+  const key = getPageSpeedKey();
   const empty: PageSpeedResult = {
     configured: Boolean(key),
     strategy: "mobile",
@@ -48,15 +49,19 @@ export async function probePageSpeed(url: string): Promise<PageSpeedResult> {
     );
     psiUrl.searchParams.set("url", url);
     psiUrl.searchParams.set("strategy", "mobile");
-    psiUrl.searchParams.set("category", "performance");
-    psiUrl.searchParams.set("category", "seo");
-    psiUrl.searchParams.set("category", "accessibility");
-    psiUrl.searchParams.set("category", "best-practices");
+    psiUrl.searchParams.append("category", "performance");
+    psiUrl.searchParams.append("category", "seo");
+    psiUrl.searchParams.append("category", "accessibility");
+    psiUrl.searchParams.append("category", "best-practices");
     psiUrl.searchParams.set("key", key);
 
-    const res = await fetch(psiUrl.toString());
+    const res = await fetch(psiUrl.toString(), { next: { revalidate: 0 } });
     if (!res.ok) {
-      return { ...empty, rawError: `PageSpeed API returned ${res.status}` };
+      const errJson = await res.json().catch(() => null);
+      const msg =
+        (errJson as { error?: { message?: string } })?.error?.message ??
+        `PageSpeed API returned ${res.status}`;
+      return { ...empty, rawError: msg };
     }
 
     const data = await res.json();

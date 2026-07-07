@@ -15,6 +15,13 @@ export async function POST(
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
+    const body = await req.json().catch(() => ({}));
+    const force = Boolean(body?.force);
+
+    if (session.report && !force) {
+      return NextResponse.json({ sessionId: id, report: session.report });
+    }
+
     await updateSession(id, { status: "scanning" });
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;

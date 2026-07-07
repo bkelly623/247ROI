@@ -81,6 +81,7 @@ export interface GoogleLocalProbe {
   inMapPack: boolean;
   configured: boolean;
   summary: string;
+  rawError?: string;
 }
 
 export interface GrowthTier {
@@ -167,6 +168,10 @@ export interface AuditReport {
       reviewCount?: number;
       address?: string;
       phone?: string;
+    };
+    apiErrors?: {
+      pageSpeed?: string;
+      google?: string;
     };
     note?: string;
   };

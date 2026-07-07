@@ -25,6 +25,7 @@ import {
   probeSiteCrawl,
   siteCrawlDeficits,
 } from "./probes/site-crawl";
+import { ENV_LABELS, getPageSpeedKey, getPlacesKey, getSerpApiKey } from "./env";
 
 export interface AuditDataSources {
   pageSpeed: boolean;
@@ -240,6 +241,7 @@ function toGoogleLocalProbe(
     inMapPack: Boolean(primary?.clientFound && (primary.clientPosition ?? 99) <= 3),
     configured: google.configured,
     summary: google.summary,
+    rawError: google.rawError,
   };
 }
 
@@ -289,15 +291,27 @@ export async function runAuditPipeline(input: {
   ].filter(Boolean) as string[];
 
   const missing: string[] = [];
-  if (!pageSpeed.configured) missing.push("GOOGLE_PAGESPEED_API_KEY");
-  if (!google.configured) missing.push("SERPAPI_KEY or GOOGLE_PLACES_API_KEY");
+  if (!getPageSpeedKey()) missing.push(ENV_LABELS.pageSpeed);
+  if (!getSerpApiKey() && !getPlacesKey()) {
+    missing.push(`${ENV_LABELS.serpApi} or ${ENV_LABELS.places}`);
+  }
+
+  const pageSpeedMeasured =
+    pageSpeed.performanceScore !== null && !pageSpeed.rawError;
+  const googleMeasured = google.blocks.some((b) => b.results.length > 0);
 
   const progressEvents = [
     site.fetched ? `Site crawl: HTTP ${site.httpStatus} — ${site.contentWordCount} words.` : `Site crawl failed: ${site.fetchError}`,
-    pageSpeed.configured
+    pageSpeedMeasured
       ? `Lighthouse mobile: performance ${pageSpeed.performanceScore}/100, SEO ${pageSpeed.seoScore}/100.`
-      : "PageSpeed: NOT MEASURED (API key missing).",
-    google.configured ? `Google: ${google.summary}` : "Google rankings: NOT MEASURED (API key missing).",
+      : pageSpeed.rawError
+        ? `PageSpeed error: ${pageSpeed.rawError}`
+        : "PageSpeed: NOT MEASURED (API key missing).",
+    googleMeasured
+      ? `Google: ${google.summary}`
+      : google.rawError
+        ? `Google error: ${google.rawError}`
+        : "Google rankings: NOT MEASURED (API key missing).",
     site.hasLocalBusinessSchema ? "Schema: LocalBusiness detected." : "Schema: LocalBusiness NOT FOUND.",
     google.businessListing.found
       ? `GBP: ${google.businessListing.rating}★ · ${google.businessListing.reviewCount} reviews.`
@@ -351,12 +365,12 @@ export async function runAuditPipeline(input: {
     googleLocal: toGoogleLocalProbe(google),
     auditMeta: {
       dataSources: {
-        pageSpeed: pageSpeed.configured,
-        googleSearch: google.configured,
+        pageSpeed: pageSpeedMeasured,
+        googleSearch: googleMeasured,
         siteCrawl: site.fetched,
         missing,
       },
-      pageSpeed: pageSpeed.configured ? pageSpeed : undefined,
+      pageSpeed: getPageSpeedKey() ? pageSpeed : undefined,
       technical: site.fetched
         ? {
             httpStatus: site.httpStatus,
@@ -370,7 +384,11 @@ export async function runAuditPipeline(input: {
           }
         : undefined,
       gbp: google.businessListing.found ? google.businessListing : undefined,
-      note: "AI mention testing (ChatGPT/Gemini) is performed live on the sales call, not in this automated audit.",
+      apiErrors: {
+        pageSpeed: pageSpeed.rawError,
+        google: google.rawError,
+      },
+      note: "Live AI tests (ChatGPT/Gemini) are done on your sales call — not in this automated audit.",
     },
   };
 }

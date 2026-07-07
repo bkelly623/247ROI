@@ -3,7 +3,13 @@ import { scoreColor, scoreLabel } from "@/lib/audit/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export function SectionScores({ sections }: { sections: AuditSection[] }) {
+export function SectionScores({
+  sections,
+  compact,
+}: {
+  sections: AuditSection[];
+  compact?: boolean;
+}) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {sections.map((section) => {
@@ -33,7 +39,9 @@ export function SectionScores({ sections }: { sections: AuditSection[] }) {
                 </Badge>
               </div>
               <p className="text-xs text-zinc-500">{section.plainQuestion}</p>
-              <p className="text-[10px] text-zinc-600">{section.dataSource}</p>
+              {!compact && (
+                <p className="text-[10px] text-zinc-600">{section.dataSource}</p>
+              )}
             </CardHeader>
             <CardContent>
               <div className="mb-3 flex items-end gap-2">
