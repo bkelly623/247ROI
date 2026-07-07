@@ -5,9 +5,7 @@ import {
   recordRateLimit,
   updateSession,
 } from "@/lib/audit/sessions";
-import { runAuditPipeline } from "@/lib/audit/audit-engine";
-import { enrichReportWithLlm } from "@/lib/audit/llm-enrich";
-import { dispatchToAthena } from "@/lib/audit/athena";
+import { executeFullAudit } from "@/lib/audit/run-audit";
 import { gateSchema } from "@/lib/audit/gate-validation";
 
 const gateSchemaLegacy = gateSchema;
@@ -51,14 +49,13 @@ export async function POST(
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || req.nextUrl.origin;
     const callbackUrl = `${baseUrl}/api/webhooks/athena`;
 
-    const athena = await dispatchToAthena({
+    const report = await executeFullAudit({
       sessionId: id,
       businessName: session.business_name,
       websiteUrl: session.website_url,
       zipCode: session.zip_code,
       mode: session.mode,
       callbackUrl,
-      botId: "athena_bot_bot_bot",
       lead: {
         firstName: body.firstName,
         lastName: body.lastName,
@@ -67,25 +64,11 @@ export async function POST(
       },
     });
 
-    const baseReport = await runAuditPipeline({
-      businessName: session.business_name,
-      websiteUrl: session.website_url,
-      zipCode: session.zip_code,
-    });
-
-    const report = await enrichReportWithLlm({
-      businessName: session.business_name,
-      websiteUrl: session.website_url,
-      zipCode: session.zip_code,
-      baseReport,
-    });
-
     await updateSession(id, {
       status: "complete",
       report,
       progress_events: report.progressEvents,
       warm_tier: "warm_a",
-      athena_job_id: athena.jobId,
     });
 
     if (session.mode === "organic") {

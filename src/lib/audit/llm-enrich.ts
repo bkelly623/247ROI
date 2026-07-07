@@ -63,11 +63,21 @@ function buildPrompt(input: EnrichInput): string {
     .map((s) => `${s.label}: ${s.score}/100 — ${s.summary}`)
     .join("\n");
 
+  const aiMirror = baseReport.aiMirror
+    ? `AI Mirror: ${baseReport.aiMirror.summary.verdict} (${baseReport.aiMirror.summary.mentionRate}% mention rate)`
+    : "";
+  const googleLocal = baseReport.googleLocal
+    ? `Google Local: ${baseReport.googleLocal.summary}`
+    : "";
+
   return `You are the 247ROI Infrastructure Advisor — an expert who explains audit results to local service business owners (construction, trades, home services) in plain English. No jargon. No fear-mongering. First-mover opportunity framing.
 
 Business: ${businessName}
 Website: ${websiteUrl}
 Zip: ${zipCode}
+
+${aiMirror}
+${googleLocal}
 
 Technical scan results:
 ${sections}

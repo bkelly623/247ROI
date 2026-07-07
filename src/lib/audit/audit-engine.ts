@@ -7,6 +7,7 @@ import type {
   SiteAnnotation,
 } from "./types";
 import { BRAND } from "./config";
+import { GROWTH_TIERS } from "./industry-stats";
 import { SERVICE_CATALOG } from "./types";
 import {
   detectSocialLinks,
@@ -500,6 +501,7 @@ export async function runAuditPipeline(input: {
           : "Detected from links on your homepage HTML.",
     },
     progressEvents,
+    growthTiers: GROWTH_TIERS,
   };
 }
 

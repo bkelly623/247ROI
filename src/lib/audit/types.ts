@@ -32,9 +32,62 @@ export interface PackageRecommendation {
   id: string;
   headline: string;
   description: string;
-  priceFrame: "as_low_as_99" | "custom" | "contact";
+  priceFrame: "as_low_as_99" | "from_297" | "from_497" | "custom" | "contact";
+  priceLabel?: string;
   ctaLabel: string;
   ctaUrl?: string;
+}
+
+export interface AIProbeQuery {
+  provider: "openai" | "anthropic" | "gemini";
+  providerLabel: string;
+  query: string;
+  response?: string;
+  mentionedClient: boolean;
+  status: "ok" | "not_configured" | "error";
+  latencyMs: number;
+}
+
+export interface AIProbeResult {
+  tradeLabel: string;
+  servicePhrase: string;
+  queries: AIProbeQuery[];
+  summary: {
+    totalQueries: number;
+    mentionCount: number;
+    mentionRate: number;
+    configuredProviders: string[];
+    verdict: string;
+  };
+}
+
+export interface GoogleLocalResult {
+  position: number;
+  name: string;
+  rating?: number;
+  reviewCount?: number;
+  address?: string;
+  isClient: boolean;
+}
+
+export interface GoogleLocalProbe {
+  searchQueries: string[];
+  blocks: { query: string; results: GoogleLocalResult[] }[];
+  primaryResults: GoogleLocalResult[];
+  primaryQuery: string;
+  clientPosition: number | null;
+  inMapPack: boolean;
+  configured: boolean;
+  summary: string;
+}
+
+export interface GrowthTier {
+  id: "foundation" | "growth" | "ai_visibility";
+  name: string;
+  priceLabel: string;
+  monthlyPrice: number;
+  lifts: { aiMention: number; googleRank: number; leadCapture: number };
+  features: string[];
 }
 
 export interface SiteAnnotation {
@@ -76,6 +129,9 @@ export interface AuditReport {
   advisorSteps?: string[];
   executiveSummary?: string;
   salesHook?: string;
+  aiMirror?: AIProbeResult;
+  googleLocal?: GoogleLocalProbe;
+  growthTiers?: GrowthTier[];
 }
 
 export interface ScanSession {

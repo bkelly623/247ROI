@@ -13,6 +13,10 @@ import { FauxTerminal } from "@/components/audit/FauxTerminal";
 import { ScoreRing } from "@/components/audit/ScoreRing";
 import { SectionScores } from "@/components/audit/SectionScores";
 import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
+import { IndustryPulse } from "@/components/audit/IndustryPulse";
+import { AIMirrorPanel } from "@/components/audit/AIMirrorPanel";
+import { GoogleLocalPanel } from "@/components/audit/GoogleLocalPanel";
+import { GrowthSimulator } from "@/components/audit/GrowthSimulator";
 import { ReportAdvisor } from "@/components/audit/ReportAdvisor";
 import { LockedGrowthModules } from "@/components/audit/LockedGrowthModules";
 import { RevenuePathway } from "@/components/audit/RevenuePathway";
@@ -99,8 +103,8 @@ export function ReportView({ sessionId }: { sessionId: string }) {
                 Get Your Free Fix Plan Call
               </Button>
               <Button size="lg" variant="secondary" asChild>
-                <Link href="/portal">
-                  Preview Command Center
+                <Link href={`/present/${sessionId}`}>
+                  Screen Share Mode
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -116,6 +120,22 @@ export function ReportView({ sessionId }: { sessionId: string }) {
             </CardContent>
           </Card>
         </div>
+
+        <IndustryPulse />
+
+        {report.aiMirror && (
+          <AIMirrorPanel
+            aiMirror={report.aiMirror}
+            businessName={session.business_name}
+          />
+        )}
+
+        {report.googleLocal && (
+          <GoogleLocalPanel
+            googleLocal={report.googleLocal}
+            businessName={session.business_name}
+          />
+        )}
 
         {/* Critical deficits */}
         <Card className="border-amber-500/20 bg-amber-500/5">
@@ -234,6 +254,8 @@ export function ReportView({ sessionId }: { sessionId: string }) {
         </div>
 
         <LockedGrowthModules />
+
+        <GrowthSimulator report={report} />
 
         <RevenuePathway />
 
