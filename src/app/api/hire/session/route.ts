@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { HIRE_OPENING } from "@/lib/hire/copy";
+import { openingTurn } from "@/lib/hire/sales-engine";
 import { createHireSession } from "@/lib/hire/sessions";
 
 export async function POST(req: Request) {
@@ -16,9 +16,14 @@ export async function POST(req: Request) {
       repToken: body.repToken,
     });
 
+    const opening = openingTurn();
+
     return NextResponse.json({
       sessionId: session.id,
-      opening: HIRE_OPENING,
+      opening: opening.reply,
+      choices: opening.choices,
+      inputMode: opening.inputMode,
+      discovery: opening.discovery,
     });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Could not start audit";

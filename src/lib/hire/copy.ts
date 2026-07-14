@@ -1,23 +1,24 @@
 export const HIRE_OPENING =
-  "We’re finding work in your business that a human shouldn’t still be doing on a computer or phone.\n\nWhat takes the most time like that right now?\n\nIf you’re not sure, say \"not sure.\" If you’re rarely at a desk, say that.";
+  "Tap whatever eats the most time on a computer or phone.\nDon’t overthink it — closest match is fine.";
 
 export const HIRE_PAGE = {
-  eyebrow: "AI employee audit",
-  headline: "Your next hire shouldn’t need a desk.",
-  subhead: "We’ll name the first AI employee worth building — then we can look at revenue next.",
+  eyebrow: "Free AI employee audit",
+  headline: "What’s stealing hours in your business?",
+  subhead:
+    "Pick the grind. We’ll map it, check the real time cost, and show you if an AI employee can own it.",
   phaseLabels: {
-    warming: "Discovery",
-    pain1: "Discovery",
-    time_verify: "The real hours",
-    process: "How it works",
-    pain2_probe: "Almost there",
-    ready: "Your hire",
+    warming: "Step 1 · The work",
+    pain1: "Step 1 · The work",
+    time_verify: "Step 2 · The hours",
+    process: "Step 3 · How it works",
+    pain2_probe: "Step 4 · Fit check",
+    ready: "Your first hire",
   } as Record<string, string>,
-  busy: "Thinking…",
-  placeholder: "Answer here…",
+  busy: "One sec…",
+  placeholder: "Type your answer…",
   placeholderLocked: "Unlock below to continue…",
-  sendHint: "Press Enter to send",
-  /** Shown after hire packet unlock */
+  placeholderOther: "Describe it in plain English…",
+  sendHint: "Tap a button, or type if it’s something else",
   upsellPrompt:
-    "Next optional step: we can look at lead-gen and revenue — missed calls, website, AI visibility, reviews — and rank what would lift profit fastest.",
+    "After this, we can look at leads and revenue — missed calls, website, AI visibility, reviews — and rank what pays fastest.",
 };

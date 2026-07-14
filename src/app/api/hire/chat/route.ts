@@ -95,9 +95,11 @@ export async function POST(req: Request) {
       reply: turn.reply,
       phase: turn.phase,
       discovery: turn.discovery,
-      proposal: turn.readyForGate ? turn.proposal : null,
+      proposal: turn.proposal,
       readyForGate: turn.readyForGate,
       teaserLine: turn.teaserLine,
+      choices: turn.choices ?? null,
+      inputMode: turn.inputMode ?? null,
       sessionId,
       status: updated?.status ?? nextStatus,
     });

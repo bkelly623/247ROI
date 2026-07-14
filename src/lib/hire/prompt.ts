@@ -65,8 +65,8 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
     primary?.time.computedHoursPerWeek ??
     primary?.time.statedHoursPerWeek ??
     8;
-  const low = Math.max(1, Math.round(hours * 0.85));
-  const high = Math.max(low + 1, Math.round(hours * 1.15));
+  const low = Math.max(1, Math.round(hours * 0.7));
+  const high = Math.max(low + 1, Math.round(hours * 0.9));
   const title = primary?.title ?? "Ops";
 
   return {

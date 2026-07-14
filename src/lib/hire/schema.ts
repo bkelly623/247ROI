@@ -78,6 +78,17 @@ export const chatTurnSchema = z.object({
   proposal: hireProposalSchema.nullable(),
   readyForGate: z.boolean(),
   teaserLine: z.string().nullable(),
+  choices: z
+    .array(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+        value: z.string(),
+      })
+    )
+    .nullable()
+    .optional(),
+  inputMode: z.enum(["choices", "text", "both"]).nullable().optional(),
 });
 
 export type ChatTurn = z.infer<typeof chatTurnSchema>;
