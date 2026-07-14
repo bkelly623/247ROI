@@ -40,6 +40,8 @@ export type DiscoveryState = {
   activePainId: string | null;
   seekingSecondPain: boolean;
   notes: string[];
+  /** Rule-engine / LLM shared sales progress */
+  salesStage?: string | null;
 };
 
 export type HireProposal = {
@@ -106,5 +108,6 @@ export function emptyDiscovery(): DiscoveryState {
     activePainId: null,
     seekingSecondPain: false,
     notes: [],
+    salesStage: "open",
   };
 }

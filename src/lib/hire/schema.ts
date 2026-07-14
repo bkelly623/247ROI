@@ -32,6 +32,7 @@ export const discoverySchema = z.object({
   activePainId: z.string().nullable(),
   seekingSecondPain: z.boolean(),
   notes: z.array(z.string()),
+  salesStage: z.string().nullable().optional(),
 });
 
 export const hireProposalSchema = z.object({
