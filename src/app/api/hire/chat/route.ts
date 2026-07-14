@@ -48,10 +48,18 @@ export async function POST(req: Request) {
         : Array.isArray(body.messages)
           ? body.messages
           : [];
-    const discovery: DiscoveryState =
-      session.discovery?.pains?.length || session.discovery?.businessType
-        ? session.discovery
-        : body.discovery ?? emptyDiscovery();
+    // Prefer server discovery whenever we already have progress — including
+    // salesStage/notes (e.g. "not at a desk") before any pain is named.
+    const serverHasProgress = Boolean(
+      session.discovery?.pains?.length ||
+        session.discovery?.businessType ||
+        session.discovery?.salesStage ||
+        session.discovery?.notes?.length ||
+        session.discovery?.role
+    );
+    const discovery: DiscoveryState = serverHasProgress
+      ? session.discovery
+      : body.discovery ?? emptyDiscovery();
 
     const userMessage: HireMessage = {
       role: "user",

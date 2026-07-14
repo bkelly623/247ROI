@@ -157,6 +157,31 @@ export function HireReport({
         <p className="mt-3 text-xs text-zinc-600">{proposal.fitNotes}</p>
       </section>
 
+      <section className="rounded-2xl border border-orange-500/25 bg-orange-500/5 p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+          Optional next audit
+        </p>
+        <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50">
+          Want a revenue pass next?
+        </h2>
+        <p className="mt-2 text-sm text-zinc-400">
+          After the AI employee, we can rank lead-gen and digital presence —
+          missed-call recovery, website, AI visibility, reviews — by fastest
+          path to more profit.
+        </p>
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <Button asChild size="lg" className="h-12 flex-1 font-semibold">
+            <a href={PRIMARY_PHONE_HREF}>
+              Yes — walk me through it
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="h-12 flex-1 border-white/15">
+            <Link href="/calendar">Book a strategy call</Link>
+          </Button>
+        </div>
+      </section>
+
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button asChild size="lg" className="h-12 flex-1 font-semibold">
           <a href={PRIMARY_PHONE_HREF}>
