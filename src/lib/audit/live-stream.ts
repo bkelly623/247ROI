@@ -259,7 +259,9 @@ export async function runLiveAuditStream(
   const session = await getSession(sessionId);
   if (!session) throw new Error("Session not found");
 
-  const { businessName, website_url: websiteUrl, zip_code: zipCode } = session;
+  const businessName = session.business_name;
+  const websiteUrl = session.website_url;
+  const zipCode = session.zip_code;
   const { tradeLabel, servicePhrase } = inferServiceFromName(businessName);
   const queries = buildQueries(zipCode, servicePhrase);
 

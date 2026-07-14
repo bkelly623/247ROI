@@ -49,9 +49,10 @@ function parseOrganic(
   return organic.slice(0, 10).map((item, i) => {
     const title = String(item.title ?? "Unknown");
     const link = String(item.link ?? "");
-    const isClient =
+    const isClient = Boolean(
       businessNameMentioned(title, businessName) ||
-      (websiteHost && link.includes(websiteHost));
+        (websiteHost && link.includes(websiteHost))
+    );
     return {
       position: (item.position as number) ?? i + 1,
       name: title,
