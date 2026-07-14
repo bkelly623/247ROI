@@ -213,17 +213,22 @@ export function runSalesTurn(
     );
   }
 
-  const hasProcess = Boolean(pain && pain.processSteps.length >= 2);
+  const hasProcess = Boolean(
+    pain &&
+      (pain.processSteps.length >= 2 ||
+        (pain.processSteps.length === 1 && pain.processSteps[0].length > 40))
+  );
   if (pain && !hasProcess) {
-    if (last.length > 20) {
+    if (last.length > 20 && !/^(yes|yep|yeah|sure|ok|okay)\b/i.test(last)) {
       const steps = last
-        .split(/[\n.]| then | → /i)
+        .split(/[\n.]| then | → |->|,\s+(?=[a-z])/i)
         .map((s) => s.trim())
         .filter((s) => s.length > 3)
         .slice(0, 8);
       const updated = {
         ...pain,
-        processSteps: steps.length >= 2 ? steps : [last.slice(0, 160)],
+        processSteps:
+          steps.length >= 2 ? steps : [last.slice(0, 200)],
         rawDescription: last,
         confidence: 0.85,
       };
@@ -246,7 +251,11 @@ export function runSalesTurn(
     );
   }
 
-  if (pain && hasProcess && /^(yes|yep|yeah|sure|ok|okay|absolutely|definitely)\b/i.test(lower)) {
+  if (
+    pain &&
+    (hasProcess || d.salesStage === "value") &&
+    /^(yes|yep|yeah|sure|ok|okay|absolutely|definitely)\b/i.test(lower)
+  ) {
     const proposal = proposalFallback(d);
     return base(
       `Hell yes. Unlock the hire plan for ${proposal.employeeName} — you’ll see exactly what it owns day to day.`,
