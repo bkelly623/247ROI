@@ -1,10 +1,11 @@
 export const HIRE_OPENING =
-  "What’s the work in your business that still needs a person staring at a screen or phone — and shouldn’t?\n\nIf you’re not sure, just say so.";
+  "Quick one so I can make this useful — what kind of business are you in?\n\n(Roofing, dental, agency, ecommerce, restaurant… whatever it is.)";
 
 export const HIRE_PAGE = {
   eyebrow: "AI employee audit",
   headline: "Find the first AI hire worth making.",
-  subhead: "A short conversation. Real hours. A clear plan for what we’d automate first.",
+  subhead:
+    "We start with your industry, find where desk time disappears, then show you the AI employee that’d take it.",
   phaseLabels: {
     warming: "Discovery",
     pain1: "Discovery",

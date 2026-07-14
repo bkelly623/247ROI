@@ -2,100 +2,170 @@ import type { DiscoveryState, HireProposal, PainPoint } from "./types";
 import { emptyDiscovery } from "./types";
 export { HIRE_OPENING } from "./copy";
 
-export function buildSystemPrompt(discovery: DiscoveryState): string {
-  return `You are running 247ROI’s AI Employee Audit — a short consultative chat that finds the first AI employee worth building for a small business.
+/** Industry-specific time sinks — for prompt + offline fallback. */
+export function industryExamples(businessType: string | null | undefined): string[] {
+  const t = (businessType || "").toLowerCase();
 
-WHO YOU ARE
-A sharp, calm operator who’s done this a hundred times. You talk like a smart human on a sales call: warm, direct, lightly dry humor when it fits. Never corporate. Never tech-bro. Never try-hard clever. Never condescending.
+  if (/roof|plumb|hvac|electric|contrac|landscap|pest|clean|paint|remodel|construct|handyman/.test(t)) {
+    return [
+      "missed calls / slow lead response",
+      "estimates & follow-ups that never close",
+      "scheduling / dispatch juggling",
+      "invoice chase after the job",
+    ];
+  }
+  if (/dental|medico|clinic|chiro|vet|therapy|physic|optom|health|wellness/.test(t)) {
+    return [
+      "appointment reminders & no-show chase",
+      "intake / insurance paperwork",
+      "patient follow-ups after visits",
+      "inbox and voicemail triage",
+    ];
+  }
+  if (/law|attorney|legal|account|bookkeep|cpa|tax|insur|mortgage|financ|real.?estate|realtor/.test(t)) {
+    return [
+      "client intake & document chase",
+      "follow-ups on proposals / retainers",
+      "scheduling consults",
+      "status updates nobody has time to write",
+    ];
+  }
+  if (/salon|spa|barber|gym|studio|beauty|tattoo/.test(t)) {
+    return [
+      "booking & reschedules",
+      "no-show / rebook texts",
+      "review requests",
+      "membership / package follow-ups",
+    ];
+  }
+  if (/restaurant|cafe|bar|food|cater|hotel|motel|hospitality/.test(t)) {
+    return [
+      "reservations & private-event follow-ups",
+      "vendor / inventory admin",
+      "staff schedule chaos",
+      "review replies & inbox",
+    ];
+  }
+  if (/agency|market|seo|ad.?agency|creative|design|media|pr\b/.test(t)) {
+    return [
+      "proposal writing & scope follow-ups",
+      "client status reporting",
+      "lead nurture that dies in the inbox",
+      "onboarding checklists",
+    ];
+  }
+  if (/e-?comm|shopify|amazon|retail|store|wholesale|d2c/.test(t)) {
+    return [
+      "customer service tickets / DMs",
+      "order exception handling",
+      "review & return follow-ups",
+      "inventory / listing busywork",
+    ];
+  }
+  if (/auto|dealership|mechanic|detail|tire/.test(t)) {
+    return [
+      "service appointment booking",
+      "estimate follow-ups",
+      "reminder texts",
+      "review requests after service",
+    ];
+  }
+  if (/school|tutor|coach|consult|freelance|saas|software|nonprofit|church/.test(t)) {
+    return [
+      "lead / inquiry response",
+      "scheduling calls",
+      "proposal or invoice follow-ups",
+      "onboarding admin",
+    ];
+  }
+
+  return [
+    "follow-ups that fall through the cracks",
+    "inbox / messages / voicemail",
+    "scheduling & rescheduling",
+    "quotes, invoices, or admin busywork",
+  ];
+}
+
+export function buildSystemPrompt(discovery: DiscoveryState): string {
+  const examples = industryExamples(discovery.businessType);
+  const hasIndustry = Boolean(discovery.businessType?.trim());
+  const hasDeskTime = Boolean(
+    discovery.notes?.includes("desk_time_captured") ||
+      discovery.pains.some(
+        (p) =>
+          p.time.statedHoursPerWeek != null || p.time.computedHoursPerWeek != null
+      )
+  );
+
+  return `You are 247ROI’s AI Employee Audit — a conversion machine disguised as a helpful, engaging discovery chat.
+
+WHO YOU REALLY ARE
+A master closer running a consultative audit. Warm. Curious. Confident. Lightly dry humor when it fits. You make the owner feel understood, then inevitable that an AI employee belongs on their team. Never corporate. Never tech-bro. Never pushy-sleazy. Never condescending. Helpful first — always steering toward a hire.
 
 WHAT WE SELL
-Managed AI employees for any SMB. If a human is doing repetitive computer/phone work, that work can often become an AI employee. Trades, clinics, agencies, retail, ecom, professional services, restaurants (back office), law/accounting, etc.
+Managed AI employees for SMB ops: the repeat desk/phone work humans shouldn’t still be grinding. Later (only if this hire dies): revenue passes — missed calls, website, AI visibility, reviews.
 
-AUDIT FLOW (follow naturally — don’t announce step names)
-1. Name the biggest time sink (desk/computer/phone work). If they shrug or aren’t at a desk, help: ask business type, ask who handles the admin, or offer a few common buckets.
-2. Get a time estimate (hours/week is fine). Then lightly verify: minutes per one × how many per week when useful.
-3. Get the process A→Z in their words. Mirror it back briefly so they feel understood. Let them correct you.
-4. Decide if it’s automatable. If yes, estimate time saved (typically ~70–90% of the grind; judgment/money stays human). Explain how it would work in plain English — consumer language, not tech.
-5. Ask if that would be valuable. If yes → set readyForGate true and fill proposal. If no → ask why; handle the objection once. Hard no → soft-pivot to a revenue/digital pass (missed calls, website, AI visibility, reviews) without being pushy.
-6. Optional: one secondary pain, but don’t stall the pitch.
+NON-NEGOTIABLE DISCOVERY ORDER
+Do not skip ahead. Do not invent steps. One question at a time.
 
-RULES
-- One clear question at a time. Short replies (usually under 45 words; up to ~80 when mirroring process or explaining the hire).
-- Greetings ("hi") get a human hello + the first real question — never "Totally normal. What kind of business…"
-- When they clearly name a workflow (estimates, follow-ups, inbox, scheduling, billing, missed calls, data entry, etc.), lock it as pain1 immediately — don’t stall asking for business type first unless you’re truly stuck.
-- Never ask for name, phone, or email (the UI gates that).
-- Update discovery every turn. Merge new facts; don’t wipe prior ones to null unless correcting.
-- When ready to unlock: readyForGate=true, proposal filled, teaserLine like "Quote Runner · 6–9 hrs/week", reply should say we’ve got a first hire and they can unlock the plan.
-- hoursSaved ≈ verified weekly hours × 0.7–0.9 (round to whole hours).
+1) INDUSTRY FIRST
+   - If discovery.businessType is empty: that is question #1. Ask what kind of business / industry.
+   - Greetings (“hi”) → friendly hello + industry question.
+   - As soon as they answer, set discovery.businessType (short label, e.g. "roofing", "dental", "marketing agency").
+   - Next turn must acknowledge the industry and tailor everything after this.
 
-OUTPUT
-Return ONLY valid JSON matching:
+2) DESK / COMPUTER TIME
+   - Only after industry is known.
+   - Ask how much time they (or their team) spend at a desk / on a computer / on the phone doing admin each day or week.
+   - If they say “a lot” — pin a number. “Ballpark hours per week is fine.”
+   - If they’re barely at a desk: ask who handles the computer/paperwork side, then ask THAT person’s time load.
+   - Store hours on pains[0].time.statedHoursPerWeek when you get a number (create a temporary pain titled "Desk / computer time" if needed). Add note "desk_time_captured".
+
+3) WHAT EATS THAT TIME (highest-ROI task)
+   - Only after you have industry + a sense of desk time.
+   - Ask what they’re doing in that time — what takes most of it.
+   - Offer 3–4 INDUSTRY-SPECIFIC examples as help if they shrug (never a wall of 10).
+   - For THIS lead’s industry, good examples include: ${examples.map((e) => `"${e}"`).join(", ")}.
+   - Lock the biggest task as pain1 with a clean title + rawDescription.
+   - Lightly verify: minutes per one × how many per week when useful.
+
+4) PROCESS + MIRROR
+   - Get A→Z in their words. Mirror it back briefly. Let them correct you.
+
+5) VALUE → CLOSE
+   - If automatable: estimate hours saved (~70–90% of the grind; judgment/money stays human).
+   - Explain how the AI employee would do it in plain English (consumer language).
+   - Ask: would that be valuable?
+   - Yes / soft yes → readyForGate=true, fill proposal, teaserLine like "Estimate Closer · 8–11 hrs/week".
+   - No → one objection handle. Hard no → soft pivot to revenue/digital pass.
+
+SALESCRAFT
+- Reflect their words. Make them feel smart for noticing the waste.
+- Industry language when you know it (trades ≠ clinics ≠ agencies).
+- Short replies: usually under 45 words; up to ~90 when mirroring or pitching the hire.
+- Never ask for name / phone / email (UI gate handles that).
+- Never wipe known discovery fields to null.
+- Never jump to “what’s your biggest pain?” before industry + desk time.
+- Current flags: industryKnown=${hasIndustry}, deskTimeKnown=${hasDeskTime}.
+
+OUTPUT — valid JSON only:
 {
   "reply": string,
   "phase": "warming"|"pain1"|"time_verify"|"process"|"pain2_probe"|"ready",
-  "discovery": {
-    "businessName": string|null,
-    "businessType": string|null,
-    "role": string|null,
-    "teamSize": string|null,
-    "pains": [{
-      "id": string,
-      "title": string,
-      "rawDescription": string,
-      "tools": string[],
-      "processSteps": string[],
-      "whoDoesIt": string|null,
-      "whyItHurts": string|null,
-      "time": {
-        "label": string,
-        "minutesPerOccurrence": number|null,
-        "occurrencesPerWeek": number|null,
-        "hiddenMinutesPerOccurrence": number|null,
-        "computedHoursPerWeek": number|null,
-        "statedHoursPerWeek": number|null,
-        "underestimationNote": string|null
-      },
-      "automatable": boolean|null,
-      "confidence": number
-    }],
-    "activePainId": string|null,
-    "seekingSecondPain": boolean,
-    "notes": string[],
-    "salesStage": string|null
-  },
-  "proposal": null | {
-    "employeeName": string,
-    "roleTitle": string,
-    "tagline": string,
-    "hoursSavedPerWeek": {"low": number, "high": number},
-    "monthlyHoursSaved": {"low": number, "high": number},
-    "problemsSolved": string[],
-    "emotionalPayoff": string,
-    "jobFromAtoZ": string[],
-    "howTheyUseIt": {
-      "interface": string,
-      "dailyLoop": string,
-      "approvals": string,
-      "humanHandoffs": string
-    },
-    "implementationSketch": string,
-    "whyThisFirst": string,
-    "secondaryOpportunity": string|null,
-    "fitScore": number,
-    "fitNotes": string,
-    "ctaLabel": string
-  },
+  "discovery": { ...full updated discovery... },
+  "proposal": null | { employeeName, roleTitle, tagline, hoursSavedPerWeek{low,high}, monthlyHoursSaved{low,high}, problemsSolved[], emotionalPayoff, jobFromAtoZ[], howTheyUseIt{interface,dailyLoop,approvals,humanHandoffs}, implementationSketch, whyThisFirst, secondaryOpportunity, fitScore, fitNotes, ctaLabel },
   "readyForGate": boolean,
   "teaserLine": string|null
 }
 
-CURRENT DISCOVERY (source of truth — build on it):
+CURRENT DISCOVERY (build on this — do not erase):
 ${JSON.stringify(discovery)}
 `;
 }
 
 export function proposalFallback(discovery: DiscoveryState): HireProposal {
-  const primary = discovery.pains[0];
+  const primary = discovery.pains.find((p) => p.id === "pain1") ?? discovery.pains[0];
   const hours =
     primary?.time.computedHoursPerWeek ??
     primary?.time.statedHoursPerWeek ??
@@ -103,11 +173,12 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
   const low = Math.max(1, Math.round(hours * 0.7));
   const high = Math.max(low + 1, Math.round(hours * 0.9));
   const title = primary?.title ?? "Ops";
+  const industry = discovery.businessType ? ` for ${discovery.businessType}` : "";
 
   return {
     employeeName: funnyName(title),
     roleTitle: `${title} AI employee`,
-    tagline: "Owns the repeat work so you stop living in it.",
+    tagline: `Owns the repeat work${industry} so humans stop living in it.`,
     hoursSavedPerWeek: { low, high },
     monthlyHoursSaved: { low: low * 4, high: high * 4 },
     problemsSolved: [
@@ -133,11 +204,11 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
     },
     implementationSketch:
       "We map the workflow, plug in your tools, set approval rules, and run it for 30 days against a scorecard.",
-    whyThisFirst: "Biggest clear hours, cleanest automation path.",
+    whyThisFirst: "Biggest clear hours, cleanest automation path for this industry.",
     secondaryOpportunity: discovery.pains[1]?.title ?? null,
     fitScore: primary ? 78 : 55,
     fitNotes: primary
-      ? "Strong first hire based on the workflow you described."
+      ? `Strong first hire${industry} based on the workflow you described.`
       : "Needs a tighter walkthrough before build.",
     ctaLabel: "Book the setup call",
   };
@@ -146,13 +217,14 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
 function funnyName(title: string): string {
   const t = title.toLowerCase();
   if (t.includes("inbox") || t.includes("email")) return "Inbox Scout";
-  if (t.includes("follow")) return "Follow-Up Fox";
+  if (t.includes("follow") || t.includes("chas")) return "Follow-Up Fox";
   if (t.includes("estimat") || t.includes("quote")) return "Quote Runner";
-  if (t.includes("schedul") || t.includes("appoint")) return "Bookie";
+  if (t.includes("schedul") || t.includes("appoint") || t.includes("book")) return "Bookie";
   if (t.includes("invoice") || t.includes("billing")) return "Bill Hound";
   if (t.includes("lead") || t.includes("call")) return "Lead Catcher";
   if (t.includes("report")) return "Report Rat";
   if (t.includes("data") || t.includes("entry")) return "Click Clerk";
+  if (t.includes("desk") || t.includes("computer")) return "Desk Dealer";
   const clean = title.replace(/[^a-zA-Z0-9 ]/g, "").trim().split(/\s+/)[0] || "Desk";
   return `${clean} Bot`;
 }
@@ -164,7 +236,7 @@ export function mergeDiscovery(
 ): DiscoveryState {
   if (!next) return prev;
   const base = emptyDiscovery();
-  const merged: DiscoveryState = {
+  return {
     businessName: next.businessName ?? prev.businessName ?? base.businessName,
     businessType: next.businessType ?? prev.businessType ?? base.businessType,
     role: next.role ?? prev.role ?? base.role,
@@ -175,7 +247,6 @@ export function mergeDiscovery(
     notes: uniqueStrings([...(prev.notes || []), ...(next.notes || [])]),
     salesStage: next.salesStage ?? prev.salesStage ?? "open",
   };
-  return merged;
 }
 
 function mergePains(prev: PainPoint[], next: PainPoint[]): PainPoint[] {
@@ -217,7 +288,6 @@ function mergePains(prev: PainPoint[], next: PainPoint[]): PainPoint[] {
       },
     });
   }
-  // Keep next order when possible, else prev
   const ordered: PainPoint[] = [];
   const seen = new Set<string>();
   for (const n of next) {
