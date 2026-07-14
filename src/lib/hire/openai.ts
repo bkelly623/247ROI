@@ -91,8 +91,7 @@ function offlineTurn(
 
   if (!discovery.businessType && messages.length <= 2) {
     return {
-      reply:
-        "Perfect. What business are you in — and what's the desk work that's hijacking your week? Estimates, follow-ups, inbox? Name the villain.",
+      reply: "Got it.\n\nWhat eats the most time at your desk?",
       phase: "warming",
       discovery: {
         ...discovery,
@@ -107,12 +106,12 @@ function offlineTurn(
   if (discovery.pains.length === 0) {
     const painTitle =
       lower.includes("estimat")
-        ? "Estimates / quotes"
+        ? "Estimates"
         : lower.includes("follow")
-          ? "Lead follow-up"
+          ? "Follow-ups"
           : lower.includes("inbox") || lower.includes("email")
-            ? "Inbox / admin"
-            : last.slice(0, 60) || "Desk admin pile";
+            ? "Inbox"
+            : last.slice(0, 40) || "Desk work";
 
     const nextDiscovery: DiscoveryState = {
       ...discovery,
@@ -142,7 +141,7 @@ function offlineTurn(
     };
 
     return {
-      reply: `Got it — **${painTitle}**. People lowball this by half without meaning to.\n\nHow long does **one** of those take, start to finish — in minutes? And how many do you knock out in a typical week?`,
+      reply: `${painTitle}. Fair.\n\nHow many minutes does ONE take?\nHow many do you do a week?`,
       phase: "time_verify",
       discovery: nextDiscovery,
       proposal: null,
@@ -178,7 +177,7 @@ function offlineTurn(
             occurrencesPerWeek,
             hiddenMinutesPerOccurrence: hidden,
             computedHoursPerWeek: computed,
-            underestimationNote: `Sticker shock: ${minutesPerOccurrence} min × ${occurrencesPerWeek}/wk + ~${hidden} min of hunting/context = ~${computed} hrs/week.`,
+            underestimationNote: `${minutesPerOccurrence} min × ${occurrencesPerWeek}/wk + hunt time ≈ ${computed} hrs/week.`,
           },
           confidence: 0.7,
         },
@@ -187,7 +186,7 @@ function offlineTurn(
     };
 
     return {
-      reply: `Math check: **${minutesPerOccurrence} minutes × ${occurrencesPerWeek}/week**, plus the little “where was that file / who replied” tax… you’re looking at roughly **${computed} hours/week**.\n\nWalk me through the process A→Z. First click to finished. What tools? Where does it get stuck?`,
+      reply: `That math is about ${computed} hours a week.\n\nWalk me through the steps, start to finish.`,
       phase: "process",
       discovery: updated,
       proposal: null,
@@ -208,12 +207,14 @@ function offlineTurn(
       pains: [
         {
           ...pain,
-          processSteps: steps.length ? steps : [
-            "Receive the work item",
-            "Gather missing details",
-            "Build the output",
-            "Send / chase / log",
-          ],
+          processSteps: steps.length
+            ? steps
+            : [
+                "Get the work",
+                "Find missing pieces",
+                "Finish it",
+                "Send / chase",
+              ],
           rawDescription: `${pain.rawDescription}\n${last}`.trim(),
           confidence: 0.85,
         },
@@ -222,8 +223,7 @@ function offlineTurn(
     };
 
     return {
-      reply:
-        "Solid. If we hired an AI employee to eat that workflow, what *else* would still nibble at your week — or are we locking this as hire #1?",
+      reply: "Got it.\n\nAnything else stealing desk time — or is this hire #1?",
       phase: "pain2_probe",
       discovery: updated,
       proposal: null,
@@ -234,11 +234,11 @@ function offlineTurn(
 
   const proposal = proposalFallback(discovery);
   return {
-    reply: `Alright. I've got enough to draft your first hire.\n\n**${proposal.employeeName}** — roughly **${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week** clawed back from the desk.\n\nUnlock the full job description (A→Z, how you use it, what still needs your brain) and we'll put a name on the relief.`,
+    reply: `${proposal.employeeName}.\nAbout ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week back.\n\nUnlock to see the plan.`,
     phase: "ready",
     discovery,
     proposal,
     readyForGate: true,
-    teaserLine: `${proposal.employeeName} · ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week back`,
+    teaserLine: `${proposal.employeeName} · ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week`,
   };
 }

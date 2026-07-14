@@ -3,14 +3,13 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Loader2, Send, Sparkles } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { HireGate } from "@/components/hire/HireGate";
 import type { DiscoveryState, HireMessage, HireProposal } from "@/lib/hire/types";
 import { emptyDiscovery } from "@/lib/hire/types";
-import { HIRE_OPENING } from "@/lib/hire/copy";
+import { HIRE_OPENING, HIRE_PAGE } from "@/lib/hire/copy";
 
 type ChatBubble = HireMessage & { id: string };
 
@@ -31,7 +30,7 @@ export function HireAuditFlow() {
   const [showGate, setShowGate] = useState(false);
   const [teaserLine, setTeaserLine] = useState<string | null>(null);
   const [proposal, setProposal] = useState<HireProposal | null>(null);
-  const [phaseLabel, setPhaseLabel] = useState("Scanning desk load");
+  const [phaseLabel, setPhaseLabel] = useState(HIRE_PAGE.phaseLabels.warming);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -54,7 +53,7 @@ export function HireAuditFlow() {
         }
       } catch (e) {
         if (!cancelled) {
-          setBootError(e instanceof Error ? e.message : "Failed to start audit");
+          setBootError(e instanceof Error ? e.message : "Couldn't start. Refresh.");
         }
       }
     })();
@@ -101,12 +100,8 @@ export function HireAuditFlow() {
 
       if (data.discovery) setDiscovery(data.discovery);
 
-      if (data.phase === "time_verify") setPhaseLabel("Verifying hours (people lie to themselves)");
-      else if (data.phase === "process") setPhaseLabel("Mapping the workflow A→Z");
-      else if (data.phase === "pain2_probe") setPhaseLabel("Hunting a second time thief");
-      else if (data.phase === "ready") setPhaseLabel("Drafting your first hire");
-      else if (data.phase === "pain1") setPhaseLabel("Naming the desk villain");
-      else setPhaseLabel("Warming up the staffing unit");
+      const phase = String(data.phase || "warming");
+      setPhaseLabel(HIRE_PAGE.phaseLabels[phase] || HIRE_PAGE.phaseLabels.warming);
 
       if (data.readyForGate) {
         setProposal(data.proposal);
@@ -119,10 +114,7 @@ export function HireAuditFlow() {
         {
           id: uid(),
           role: "assistant",
-          content:
-            err instanceof Error
-              ? `Glitch on my end: ${err.message}. Try that again.`
-              : "Glitch. Hit me again.",
+          content: "Something glitched. Hit send again.",
         },
       ]);
     } finally {
@@ -141,65 +133,45 @@ export function HireAuditFlow() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="relative flex flex-1 flex-col pt-20">
+      <main className="relative flex flex-1 flex-col pt-16 sm:pt-20">
         <div
-          className="pointer-events-none absolute inset-0 -z-10 opacity-80"
+          className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,106,0,0.18), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 20%, rgba(56,189,248,0.08), transparent 50%)",
+              "radial-gradient(ellipse 70% 45% at 50% -5%, rgba(255,106,0,0.16), transparent 55%)",
           }}
         />
 
-        <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-6 sm:px-6">
-          <header className="mb-6 space-y-3 pt-6 text-center sm:pt-10">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300"
-            >
-              <Bot className="h-3.5 w-3.5" />
-              AI Employee Audit · UNIT-247
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 }}
-              className="font-display text-4xl font-bold tracking-tight text-zinc-50 sm:text-5xl"
-            >
-              247ROI
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mx-auto max-w-xl text-base text-zinc-400 sm:text-lg"
-            >
-              Find the first AI employee that pays for itself. We dig into desk time until the
-              math — and the relief — get honest.
-            </motion.p>
-            <p className="text-xs uppercase tracking-[0.18em] text-zinc-600">{phaseLabel}</p>
+        <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pb-4 sm:px-6">
+          <header className="space-y-2 pb-4 pt-4 text-center sm:pt-6">
+            <p className="text-sm font-medium uppercase tracking-[0.14em] text-orange-400">
+              {HIRE_PAGE.eyebrow}
+            </p>
+            <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-zinc-50 sm:text-5xl">
+              {HIRE_PAGE.headline}
+            </h1>
+            <p className="text-lg text-zinc-400 sm:text-xl">{HIRE_PAGE.subhead}</p>
           </header>
 
-          <div className="flex min-h-[52vh] flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/70 shadow-[0_0_60px_rgba(0,0,0,0.35)] backdrop-blur">
-            <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3 text-xs text-zinc-500">
-              <Sparkles className="h-3.5 w-3.5 text-orange-400" />
-              Live staffing consult · no fluff forms
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/80 shadow-[0_0_80px_rgba(0,0,0,0.4)]">
+            <div className="border-b border-white/10 px-5 py-3 text-center text-sm text-zinc-500">
+              {phaseLabel}
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto px-4 py-5 sm:px-5">
+            <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
               <AnimatePresence initial={false}>
                 {messages.map((m) => (
                   <motion.div
                     key={m.id}
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[92%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[85%] ${
+                      className={`max-w-[95%] whitespace-pre-wrap rounded-3xl px-5 py-4 text-lg leading-snug sm:max-w-[90%] sm:text-xl sm:leading-snug ${
                         m.role === "user"
-                          ? "bg-orange-500 text-white"
-                          : "border border-white/10 bg-white/[0.04] text-zinc-200"
+                          ? "bg-orange-500 font-medium text-white"
+                          : "border border-white/10 bg-white/[0.05] text-zinc-100"
                       }`}
                     >
                       {m.content}
@@ -208,22 +180,20 @@ export function HireAuditFlow() {
                 ))}
               </AnimatePresence>
               {busy && (
-                <div className="flex items-center gap-2 text-xs text-zinc-500">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-orange-400" />
-                  UNIT-247 is poking the wound…
+                <div className="flex items-center gap-2 text-base text-zinc-500">
+                  <Loader2 className="h-4 w-4 animate-spin text-orange-400" />
+                  {HIRE_PAGE.busy}
                 </div>
               )}
-              {bootError && (
-                <p className="text-sm text-red-400">{bootError}</p>
-              )}
+              {bootError && <p className="text-base text-red-400">{bootError}</p>}
               <div ref={bottomRef} />
             </div>
 
             <form
               onSubmit={send}
-              className="border-t border-white/10 bg-black/30 p-3 sm:p-4"
+              className="border-t border-white/10 bg-black/40 p-4 sm:p-5"
             >
-              <div className="flex items-end gap-2">
+              <div className="flex items-end gap-3">
                 <textarea
                   ref={inputRef}
                   rows={2}
@@ -232,33 +202,29 @@ export function HireAuditFlow() {
                   onKeyDown={onKeyDown}
                   disabled={!sessionId || busy || showGate}
                   placeholder={
-                    showGate
-                      ? "Unlock the hire plan to continue…"
-                      : "Tell me what's eating your desk time…"
+                    showGate ? HIRE_PAGE.placeholderLocked : HIRE_PAGE.placeholder
                   }
-                  className="min-h-[52px] flex-1 resize-none rounded-xl border border-white/10 bg-zinc-900/80 px-3 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-orange-500/40 focus:outline-none focus:ring-1 focus:ring-orange-500/30 disabled:opacity-60"
+                  className="min-h-[64px] flex-1 resize-none rounded-2xl border border-white/10 bg-zinc-900 px-4 py-4 text-lg text-zinc-100 placeholder:text-zinc-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/25 disabled:opacity-60 sm:text-xl"
                 />
                 <Button
                   type="submit"
                   size="lg"
                   disabled={!sessionId || busy || !input.trim() || showGate}
-                  className="h-[52px] shrink-0 px-4"
+                  className="h-[64px] w-[64px] shrink-0 rounded-2xl"
+                  aria-label="Send"
                 >
                   {busy ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    <Send className="h-4 w-4" />
+                    <Send className="h-5 w-5" />
                   )}
                 </Button>
               </div>
-              <p className="mt-2 text-[11px] text-zinc-600">
-                Enter to send · Shift+Enter for newline · We verify hours with math, not vibes
-              </p>
+              <p className="mt-3 text-center text-sm text-zinc-600">{HIRE_PAGE.sendHint}</p>
             </form>
           </div>
         </section>
       </main>
-      <Footer />
 
       {showGate && sessionId && (
         <HireGate
@@ -267,7 +233,7 @@ export function HireAuditFlow() {
           employeeName={proposal?.employeeName}
           hoursLabel={
             proposal
-              ? `${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week back`
+              ? `${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week`
               : undefined
           }
           proposal={proposal}

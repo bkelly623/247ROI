@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Lock, Unlock } from "lucide-react";
+import { Loader2, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,40 +70,40 @@ export function HireGate({
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 p-4 backdrop-blur-sm sm:items-center">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/75 p-4 backdrop-blur-sm sm:items-center">
       <div
-        className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 shadow-2xl"
+        className="w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="hire-gate-title"
       >
-        <div className="border-b border-white/10 bg-gradient-to-br from-orange-500/20 via-zinc-900 to-zinc-950 px-5 py-5">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-300">
-            <Lock className="h-3.5 w-3.5" />
-            Hire packet sealed
-          </div>
-          <h2 id="hire-gate-title" className="font-display text-2xl font-bold text-zinc-50">
-            {employeeName
-              ? `${employeeName} is ready for review`
-              : "Your first AI employee is drafted"}
+        <div className="border-b border-white/10 bg-gradient-to-br from-orange-500/20 via-zinc-900 to-zinc-950 px-6 py-6">
+          <p className="mb-2 text-sm font-medium uppercase tracking-wide text-orange-300">
+            Your AI employee is ready
+          </p>
+          <h2
+            id="hire-gate-title"
+            className="font-display text-3xl font-bold leading-tight text-zinc-50"
+          >
+            {employeeName ? `Meet ${employeeName}` : "See your first hire"}
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
-            {teaserLine ||
-              hoursLabel ||
-              "Full A→Z job description, hours clawed back, and how you'll use it day one."}
+          <p className="mt-3 text-lg text-zinc-400">
+            {teaserLine || hoursLabel || "Unlock the plan."}
           </p>
         </div>
 
-        <form onSubmit={submit} className="space-y-3 px-5 py-5">
-          <p className="text-xs text-zinc-500">
-            Drop your details to unlock the hire plan. This also saves your audit so we can
-            actually staff the role — not so we can spam you into oblivion.
+        <form onSubmit={submit} className="space-y-4 px-6 py-6">
+          <p className="text-base text-zinc-500">
+            Leave your info. We save the audit and show the hire plan.
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="hire-first">First name</Label>
+              <Label htmlFor="hire-first" className="text-base">
+                First name
+              </Label>
               <Input
                 id="hire-first"
+                className="h-12 text-base"
                 autoComplete="given-name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -111,9 +111,12 @@ export function HireGate({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="hire-last">Last name</Label>
+              <Label htmlFor="hire-last" className="text-base">
+                Last name
+              </Label>
               <Input
                 id="hire-last"
+                className="h-12 text-base"
                 autoComplete="family-name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -122,9 +125,12 @@ export function HireGate({
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="hire-phone">Mobile</Label>
+            <Label htmlFor="hire-phone" className="text-base">
+              Mobile
+            </Label>
             <Input
               id="hire-phone"
+              className="h-12 text-base"
               type="tel"
               autoComplete="tel"
               value={phone}
@@ -133,9 +139,12 @@ export function HireGate({
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="hire-email">Email</Label>
+            <Label htmlFor="hire-email" className="text-base">
+              Email
+            </Label>
             <Input
               id="hire-email"
+              className="h-12 text-base"
               type="email"
               autoComplete="email"
               value={email}
@@ -143,28 +152,25 @@ export function HireGate({
               placeholder="you@company.com"
             />
           </div>
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && <p className="text-base text-red-400">{error}</p>}
           <Button
             type="submit"
             size="lg"
-            className="h-12 w-full text-base font-semibold"
+            className="h-14 w-full text-lg font-semibold"
             disabled={loading}
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
                 Unlocking…
               </>
             ) : (
               <>
-                Unlock my hire plan
-                <Unlock className="h-4 w-4" />
+                Show my AI employee
+                <Unlock className="h-5 w-5" />
               </>
             )}
           </Button>
-          <p className="text-center text-[11px] text-zinc-600">
-            No password circus. Your audit becomes your lead file.
-          </p>
         </form>
       </div>
     </div>
