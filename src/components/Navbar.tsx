@@ -15,11 +15,11 @@ import {
 } from "@/lib/siteLogo";
 
 const navLinks = [
+  { name: "AI Employee Audit", href: "/hire" },
   { name: "AI Employees", href: "/ai-employees" },
   { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
   { name: "Pricing", href: "/pricing" },
-  { name: "How it works", href: "/#how-it-works" },
 ];
 
 export default function Navbar() {
@@ -82,7 +82,7 @@ export default function Navbar() {
               size="lg"
               className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
             >
-              <Link href="/contact">{CTA_LABEL_NAV}</Link>
+              <Link href="/hire">{CTA_LABEL_NAV}</Link>
             </Button>
           </div>
 
@@ -129,7 +129,7 @@ export default function Navbar() {
                   size="lg"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 font-semibold w-fit"
                 >
-                  <Link href="/contact" onClick={() => setIsOpen(false)}>
+                  <Link href="/hire" onClick={() => setIsOpen(false)}>
                     {CTA_LABEL_NAV}
                   </Link>
                 </Button>

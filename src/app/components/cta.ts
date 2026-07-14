@@ -1,5 +1,6 @@
-/** Primary conversion path: one short diagnostic conversation. */
-export const CALENDAR_PATH = "/contact";
+/** Primary conversion path: AI Employee Audit chat. */
+export const CALENDAR_PATH = "/hire";
+export const HIRE_AUDIT_PATH = "/hire";
 
 /** @deprecated Legacy in-page contact hash. */
 export const BOOKING_ANCHOR = "#contact";

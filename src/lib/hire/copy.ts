@@ -1,0 +1,2 @@
+export const HIRE_OPENING =
+  "Alright. Let's fire the unpaid intern living inside your skull.\n\nI'm the hiring desk at 247ROI. I staff AI employees — weirdly competent digital coworkers that eat the repetitive desk work chewing through your week.\n\nQuick: what kind of business are you running, and what's the single thing at a computer or desk that steals the most hours? Don't polish it. Ramble. I'll do the math.";

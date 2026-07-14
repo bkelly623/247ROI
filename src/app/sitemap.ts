@@ -5,6 +5,7 @@ import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
 
 const INDEXABLE_PATHS = [
   "/",
+  "/hire",
   "/services",
   "/ai-employees",
   "/demo",
