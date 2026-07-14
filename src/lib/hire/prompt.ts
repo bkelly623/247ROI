@@ -14,7 +14,7 @@ export function industryExamples(businessType: string | null | undefined): strin
       "invoice chase after the job",
     ];
   }
-  if (/dental|medico|clinic|chiro|vet|therapy|physic|optom|health|wellness/.test(t)) {
+  if (/dental|clinic|chiro|vet|therapy|physic|optom|medico|medical(?!\s*spa)/.test(t) && !/spa|salon|barber|gym|beauty|tattoo/.test(t)) {
     return [
       "appointment reminders & no-show chase",
       "intake / insurance paperwork",
@@ -30,7 +30,7 @@ export function industryExamples(businessType: string | null | undefined): strin
       "status updates nobody has time to write",
     ];
   }
-  if (/salon|spa|barber|gym|studio|beauty|tattoo/.test(t)) {
+  if (/salon|spa|barber|gym|studio|beauty|tattoo|mespa|medspa/.test(t)) {
     return [
       "booking & reschedules",
       "no-show / rebook texts",
@@ -87,14 +87,61 @@ export function industryExamples(businessType: string | null | undefined): strin
   ];
 }
 
+/** Clean display label so we never say "Great… a mespa!" */
+export function normalizeIndustryLabel(raw: string): string {
+  let s = raw.trim().replace(/\s+/g, " ");
+  s = s.replace(/^(i('?m| am) (in|a|an|the)\s+)/i, "");
+  s = s.replace(/^(we('?re| are) (a|an|the)\s+)/i, "");
+  s = s.replace(/^(a|an|the)\s+/i, "");
+  const lower = s.toLowerCase();
+  const aliases: Record<string, string> = {
+    mespa: "med spa",
+    "me spa": "med spa",
+    medspa: "med spa",
+    "med-spa": "med spa",
+    roof: "roofing",
+    roofer: "roofing",
+    hvac: "HVAC",
+    cpa: "accounting",
+    "real estate": "real estate",
+    ecommerce: "ecommerce",
+    "e-commerce": "ecommerce",
+  };
+  if (aliases[lower]) return aliases[lower];
+  // Title-ish case for short labels
+  if (s.length <= 32) {
+    return s
+      .split(" ")
+      .map((w) => {
+        if (/^(hvac|seo|cpa|ai)$/i.test(w)) return w.toUpperCase();
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+      })
+      .join(" ");
+  }
+  return s;
+}
+
+/** Question 2 after industry — what first, not hours. */
+export function askWhatEatsTime(industryLabel: string): string {
+  const examples = industryExamples(industryLabel).slice(0, 3).join(", ");
+  return `Got it — ${industryLabel}.\nMost owners underestimate what AI can already take off their plate.\n\nWhat’s eating time at a desk or on a computer each week that a human probably shouldn’t still be doing?\n\nIn ${industryLabel}, it’s often ${examples} — or tell me what’s worse.`;
+}
+
 export function buildSystemPrompt(discovery: DiscoveryState): string {
   const examples = industryExamples(discovery.businessType);
   const hasIndustry = Boolean(discovery.businessType?.trim());
-  const hasDeskTime = Boolean(
+  const hasTask = Boolean(
+    discovery.notes?.includes("task_captured") ||
+      discovery.pains.some(
+        (p) => p.id === "pain1" && p.title && !/^desk|computer time$/i.test(p.title)
+      )
+  );
+  const hasTime = Boolean(
     discovery.notes?.includes("desk_time_captured") ||
       discovery.pains.some(
         (p) =>
-          p.time.statedHoursPerWeek != null || p.time.computedHoursPerWeek != null
+          p.id === "pain1" &&
+          (p.time.statedHoursPerWeek != null || p.time.computedHoursPerWeek != null)
       )
   );
 
@@ -107,47 +154,44 @@ WHAT WE SELL
 Managed AI employees for SMB ops: the repeat desk/phone work humans shouldn’t still be grinding. Later (only if this hire dies): revenue passes — missed calls, website, AI visibility, reviews.
 
 NON-NEGOTIABLE DISCOVERY ORDER
-Do not skip ahead. Do not invent steps. One question at a time.
+Do not skip ahead. One clear question per reply.
 
 1) INDUSTRY FIRST
-   - If discovery.businessType is empty: that is question #1. Ask what kind of business / industry.
-   - Greetings (“hi”) → friendly hello + industry question.
-   - As soon as they answer, set discovery.businessType (short label, e.g. "roofing", "dental", "marketing agency").
-   - Next turn must acknowledge the industry and tailor everything after this.
+   - If discovery.businessType is empty → question #1: what kind of business / industry.
+   - Greetings (“hi”) → short hello + industry question.
+   - When they answer: normalize to a clean short label (e.g. "Med spa" not "a mespa", "Roofing" not "i run a roofing company"). Store in discovery.businessType.
+   - Acknowledge cleanly — never mock typos, never echo garbage literally if you can normalize (“med spa”, “roofing”, “HVAC”).
 
-2) DESK / COMPUTER TIME
-   - Only after industry is known.
-   - Ask how much time they (or their team) spend at a desk / on a computer / on the phone doing admin each day or week.
-   - If they say “a lot” — pin a number. “Ballpark hours per week is fine.”
-   - If they’re barely at a desk: ask who handles the computer/paperwork side, then ask THAT person’s time load.
-   - Store hours on pains[0].time.statedHoursPerWeek when you get a number (create a temporary pain titled "Desk / computer time" if needed). Add note "desk_time_captured".
+2) WHAT — the process / work (BEFORE hours)
+   - Only after industry is known AND you do not yet have a real pain1 task.
+   - Frame it as possibility, not homework. Good energy:
+     “Most owners don’t realize how much an AI employee can already take. What’s eating time at a desk or on a computer that a human shouldn’t still be doing?”
+   - Offer 2–3 industry-specific examples as optional help — never dump a questionnaire.
+   - For THIS industry, good examples: ${examples.map((e) => `"${e}"`).join(", ")}.
+   - Lock the biggest task as pain1 (clean title + rawDescription). Add note "task_captured".
+   - If they’re barely at a desk: ask what computer/phone work still happens in the business (or who does it) — still WHAT before HOW LONG.
 
-3) WHAT EATS THAT TIME (highest-ROI task)
-   - Only after you have industry + a sense of desk time.
-   - Ask what they’re doing in that time — what takes most of it.
-   - Offer 3–4 INDUSTRY-SPECIFIC examples as help if they shrug (never a wall of 10).
-   - For THIS lead’s industry, good examples include: ${examples.map((e) => `"${e}"`).join(", ")}.
-   - Lock the biggest task as pain1 with a clean title + rawDescription.
-   - Lightly verify: minutes per one × how many per week when useful.
+3) HOW LONG — time on that work
+   - Only after a real task is named.
+   - Ask hours/week on THAT work (or minutes × times/week). If they say “a lot”, pin a number.
+   - Store on pain1.time.statedHoursPerWeek / computedHoursPerWeek. Add note "desk_time_captured".
 
 4) PROCESS + MIRROR
-   - Get A→Z in their words. Mirror it back briefly. Let them correct you.
+   - A→Z in their words. Mirror briefly. Let them correct you.
 
 5) VALUE → CLOSE
-   - If automatable: estimate hours saved (~70–90% of the grind; judgment/money stays human).
-   - Explain how the AI employee would do it in plain English (consumer language).
-   - Ask: would that be valuable?
-   - Yes / soft yes → readyForGate=true, fill proposal, teaserLine like "Estimate Closer · 8–11 hrs/week".
-   - No → one objection handle. Hard no → soft pivot to revenue/digital pass.
+   - If automatable: ~70–90% of the grind back; judgment/money stays human.
+   - Plain-English how the AI employee would do it.
+   - “Would that be valuable?” Yes → readyForGate=true + proposal. No → one objection. Hard no → soft revenue pivot.
 
 SALESCRAFT
-- Reflect their words. Make them feel smart for noticing the waste.
-- Industry language when you know it (trades ≠ clinics ≠ agencies).
-- Short replies: usually under 45 words; up to ~90 when mirroring or pitching the hire.
-- Never ask for name / phone / email (UI gate handles that).
+- Reflect their words. Make them feel smart for spotting the waste.
+- Industry language when you know it.
+- Short replies: usually under 50 words; up to ~90 when mirroring or pitching.
+- Never ask for name / phone / email.
 - Never wipe known discovery fields to null.
-- Never jump to “what’s your biggest pain?” before industry + desk time.
-- Current flags: industryKnown=${hasIndustry}, deskTimeKnown=${hasDeskTime}.
+- NEVER ask hours before you’ve named the work.
+- Current flags: industryKnown=${hasIndustry}, taskKnown=${hasTask}, timeKnown=${hasTime}.
 
 OUTPUT — valid JSON only:
 {
@@ -238,7 +282,9 @@ export function mergeDiscovery(
   const base = emptyDiscovery();
   return {
     businessName: next.businessName ?? prev.businessName ?? base.businessName,
-    businessType: next.businessType ?? prev.businessType ?? base.businessType,
+    businessType: normalizeIndustryLabel(
+      next.businessType ?? prev.businessType ?? base.businessType ?? ""
+    ) || (next.businessType ?? prev.businessType ?? base.businessType),
     role: next.role ?? prev.role ?? base.role,
     teamSize: next.teamSize ?? prev.teamSize ?? base.teamSize,
     pains: mergePains(prev.pains, next.pains),

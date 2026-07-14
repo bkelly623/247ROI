@@ -1,5 +1,10 @@
 import type { ChatTurn } from "./schema";
-import { industryExamples, proposalFallback } from "./prompt";
+import {
+  askWhatEatsTime,
+  industryExamples,
+  normalizeIndustryLabel,
+  proposalFallback,
+} from "./prompt";
 import type { DiscoveryState, HireMessage, PainPoint } from "./types";
 
 function emptyPain(title: string, raw: string, id = "pain1"): PainPoint {
@@ -30,9 +35,22 @@ function note(d: DiscoveryState, flag: string): DiscoveryState {
   return { ...d, notes: [...d.notes, flag] };
 }
 
+function titleFromText(last: string): string {
+  if (/\bno-?show\b/i.test(last)) return "No-show follow-ups";
+  if (/\breview\b/i.test(last)) return "Review requests";
+  if (/\bestimat|quote|proposal|bid\b/i.test(last)) return "Quotes / estimates";
+  if (/\bfollow|chas(e|ing)\b/i.test(last)) return "Follow-ups";
+  if (/\bmissed.?call|lead|phone|voicemail\b/i.test(last))
+    return "Missed calls / lead response";
+  if (/\binbox|email|message|dm\b/i.test(last)) return "Inbox / messages";
+  if (/\bschedul|book|appoint|dispatch|resched\b/i.test(last)) return "Scheduling";
+  if (/\binvoice|billing|collect\b/i.test(last)) return "Billing admin";
+  return last.slice(0, 48).replace(/[^\w\s/-]/g, "").trim() || "Ops work";
+}
+
 /**
- * Offline fallback — same discovery order as the live salesman prompt.
- * 1) industry → 2) desk time → 3) what eats it → process → value → gate
+ * Offline fallback — same order as the live salesman prompt.
+ * 1) industry → 2) WHAT task → 3) HOW LONG → process → value → gate
  */
 export function runSalesTurn(
   discovery: DiscoveryState,
@@ -68,156 +86,173 @@ export function runSalesTurn(
     }
     if (/\b(not sure|idk|don'?t know)\b/i.test(lower) || last.length < 2) {
       return base(
-        "No overthinking — industry or niche is enough. Roofing? Dental? Agency? Shop? What are you?",
+        "No overthinking — industry or niche is enough. Roofing? Dental? Agency? Med spa? What are you?",
         d
       );
     }
-    const industry = last.slice(0, 80).trim();
-    d = { ...d, businessType: industry, salesStage: "desk_time" };
-    const examples = industryExamples(industry).slice(0, 3).join(", ");
-    return base(
-      `${industry} — perfect.\nHow much time do you (or your team) spend at a desk or on a computer each week — ballpark hours?\n\nIn ${industry}, that time usually goes to stuff like ${examples}.`,
-      d,
-      { phase: "time_verify" }
-    );
+    const industry = normalizeIndustryLabel(last);
+    d = { ...d, businessType: industry, salesStage: "task" };
+    return base(askWhatEatsTime(industry), d, { phase: "pain1" });
   }
 
-  // ——— 2) DESK TIME ———
-  const deskKnown = d.notes.includes("desk_time_captured");
-  if (!deskKnown) {
+  const taskKnown =
+    d.notes.includes("task_captured") ||
+    Boolean(
+      d.pains.find(
+        (p) =>
+          p.id === "pain1" &&
+          p.title &&
+          !/^desk|computer time$/i.test(p.title) &&
+          p.confidence >= 0.55
+      )
+    );
+
+  // ——— 2) WHAT (task) ———
+  if (!taskKnown) {
     if (
       /\b(don'?t|rarely|never).{0,24}(desk|computer)|in the field|on (the )?job\b/i.test(
         lower
       )
     ) {
-      d = { ...d, role: "field_owner", salesStage: "who" };
+      d = { ...d, role: "field_owner" };
+      const examples = industryExamples(d.businessType).slice(0, 3).join(", ");
       return base(
-        "Got it — a lot of owners aren’t glued to a chair.\nWho handles the computer / paperwork side, and about how many hours a week does that take?",
+        `Totally normal for ${d.businessType}.\nWhat computer or phone work still happens in the business — even if someone else does it?\nOften it’s ${examples}.`,
+        d,
+        { phase: "pain1" }
+      );
+    }
+
+    // If they jumped ahead with hours only, nudge to WHAT
+    if (
+      /^\s*\d+(\.\d+)?\s*(hours?|hrs?|h)?\s*(a|per|\/)?\s*(week|wk|day)?\s*$/i.test(
+        last
+      ) ||
+      (/^\s*\d+(\.\d+)?\s*$/.test(last) && Number(last) <= 80)
+    ) {
+      return base(
+        "We’ll get the hours in a second — first I need the work itself.\nWhat’s the desk or computer grind eating the most time?",
+        d,
+        { phase: "pain1" }
+      );
+    }
+
+    if (last.length < 3 || /\b(not sure|idk|don'?t know|whatever|unsure)\b/i.test(lower)) {
+      const examples = industryExamples(d.businessType);
+      return base(
+        `Easy — pick the closest: ${examples.slice(0, 3).join(", ")}, or type your own.`,
+        d,
+        { phase: "pain1" }
+      );
+    }
+
+    const title = titleFromText(last);
+    const pain = emptyPain(title, last, "pain1");
+    pain.confidence = 0.7;
+    d = note(
+      {
+        ...d,
+        pains: [pain, ...d.pains.filter((p) => p.id !== "pain1")],
+        activePainId: "pain1",
+        salesStage: "time",
+      },
+      "task_captured"
+    );
+    return base(
+      `${title} — that’s usually where the quiet hours disappear.\nRoughly how many hours a week go into that?`,
+      d,
+      { phase: "time_verify" }
+    );
+  }
+
+  // ——— 3) HOW LONG ———
+  const pain =
+    d.pains.find((p) => p.id === "pain1") ??
+    d.pains.find((p) => p.id !== "desk") ??
+    d.pains[0];
+  const timeKnown =
+    d.notes.includes("desk_time_captured") ||
+    Boolean(
+      pain &&
+        (pain.time.statedHoursPerWeek != null ||
+          pain.time.computedHoursPerWeek != null ||
+          (pain.time.minutesPerOccurrence != null &&
+            pain.time.occurrencesPerWeek != null))
+    );
+
+  if (pain && !timeKnown) {
+    const dayMatch = lower.match(
+      /(\d+(?:\.\d+)?)\s*(hours?|hrs?)?\s*(a|per|\/)?\s*day/
+    );
+    const weekMatch = lower.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?)/);
+    const minsMatch = lower.match(/(\d+)\s*(min|mins|minutes)/);
+    const countMatch = lower.match(
+      /(\d+)\s*(times|x|\/\s*week|a week|per week)/
+    );
+    const rawNum = last.match(/(\d+(?:\.\d+)?)/);
+
+    if (/\b(a lot|too much|all day|constantly)\b/i.test(lower) && !rawNum) {
+      return base(
+        "“A lot” is usually expensive. Ballpark it — 5 hours a week? 15? 30?",
         d,
         { phase: "time_verify" }
       );
     }
 
-    const dayMatch = lower.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?)?\s*(a|per|\/)?\s*day/);
-    const weekMatch = lower.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?)/);
-    const rawNum = last.match(/(\d+(?:\.\d+)?)/);
     let weekly: number | null = null;
     if (dayMatch) weekly = Number(dayMatch[1]) * 5;
-    else if (weekMatch) weekly = Number(weekMatch[1]);
-    else if (/\b(a lot|too much|all day|constantly)\b/i.test(lower) && !rawNum) {
-      return base(
-        "“A lot” is usually expensive. Give me a number — 10 hours a week? 20? 40?",
-        d,
-        { phase: "time_verify" }
+    else if (minsMatch && countMatch) {
+      weekly = Number(
+        ((Number(minsMatch[1]) * Number(countMatch[1])) / 60).toFixed(1)
       );
-    } else if (rawNum && Number(rawNum[1]) > 0 && Number(rawNum[1]) <= 80) {
+    } else if (weekMatch) weekly = Number(weekMatch[1]);
+    else if (rawNum && Number(rawNum[1]) > 0 && Number(rawNum[1]) <= 80) {
       weekly = Number(rawNum[1]);
     }
 
     if (weekly == null) {
       return base(
-        `In ${d.businessType}, how many hours a week disappear on a computer or phone doing admin — roughly?`,
+        `About how many hours a week does ${pain.title.toLowerCase()} take — rough is fine.`,
         d,
         { phase: "time_verify" }
       );
     }
 
-    const deskPain = emptyPain("Desk / computer time", `${weekly} hrs/week`, "desk");
-    deskPain.time.statedHoursPerWeek = weekly;
-    deskPain.time.computedHoursPerWeek = weekly;
+    const updated = {
+      ...pain,
+      time: {
+        ...pain.time,
+        statedHoursPerWeek: weekly,
+        computedHoursPerWeek: weekly,
+        minutesPerOccurrence: minsMatch ? Number(minsMatch[1]) : pain.time.minutesPerOccurrence,
+        occurrencesPerWeek: countMatch
+          ? Number(countMatch[1])
+          : pain.time.occurrencesPerWeek,
+      },
+      confidence: Math.max(pain.confidence, 0.8),
+    };
     d = note(
       {
         ...d,
-        pains: d.pains.length ? d.pains : [deskPain],
-        salesStage: "task",
+        pains: [updated, ...d.pains.filter((p) => p.id !== updated.id)],
+        salesStage: "process",
       },
       "desk_time_captured"
     );
-    // also stamp hours onto first pain if somehow already there
-    if (d.pains[0] && d.pains[0].id !== "desk") {
-      d.pains = [
-        {
-          ...d.pains[0],
-          time: {
-            ...d.pains[0].time,
-            statedHoursPerWeek: weekly,
-          },
-        },
-        ...d.pains.slice(1),
-      ];
-    }
-
-    const examples = industryExamples(d.businessType);
     return base(
-      `About ${weekly} hours a week — that’s real money.\nWhat are you spending most of that on?\n\nMost ${d.businessType} owners tell me it’s one of these: ${examples.slice(0, 4).join("; ")}.\nOr name whatever’s worse.`,
-      d,
-      { phase: "pain1" }
-    );
-  }
-
-  // ——— 3+) TASK / PROCESS / CLOSE ———
-  let pain =
-    d.pains.find((p) => p.id === "pain1") ??
-    d.pains.find((p) => p.id !== "desk") ??
-    d.pains[0];
-
-  const hasRealTask = Boolean(
-    pain &&
-      pain.id !== "desk" &&
-      !/^desk|computer time$/i.test(pain.title) &&
-      pain.confidence >= 0.5
-  );
-
-  if (!hasRealTask) {
-    if (last.length < 3 || /\b(not sure|idk|don'?t know)\b/i.test(lower)) {
-      const examples = industryExamples(d.businessType);
-      return base(
-        `No problem — pick the closest: ${examples.slice(0, 3).join(", ")}, or type your own.`,
-        d,
-        { phase: "pain1" }
-      );
-    }
-    const title =
-      /\bestimat|quote|proposal|bid\b/i.test(last)
-        ? "Quotes / estimates"
-        : /\bfollow|chas(e|ing)\b/i.test(last)
-          ? "Follow-ups"
-          : /\bmissed.?call|lead|phone|voicemail\b/i.test(last)
-            ? "Missed calls / lead response"
-            : /\binbox|email|message\b/i.test(last)
-              ? "Inbox / messages"
-              : /\bschedul|book|appoint|dispatch\b/i.test(last)
-                ? "Scheduling"
-                : /\binvoice|billing|collect\b/i.test(last)
-                  ? "Billing admin"
-                  : last.slice(0, 48).replace(/[^\w\s/-]/g, "").trim() || "Ops work";
-
-    const weekly =
-      d.pains.find((p) => p.time.statedHoursPerWeek != null)?.time.statedHoursPerWeek ??
-      null;
-    pain = emptyPain(title, last, "pain1");
-    if (weekly != null) {
-      pain.time.statedHoursPerWeek = weekly;
-      pain.confidence = 0.7;
-    }
-    d = {
-      ...d,
-      pains: [pain, ...d.pains.filter((p) => p.id !== "pain1" && p.id !== "desk")],
-      activePainId: "pain1",
-      salesStage: "process",
-    };
-    return base(
-      `${title} — that’s usually a goldmine to automate.\nWalk me through it start to finish: what kicks it off, what happens next, how it ends?`,
+      `${weekly} hours a week on ${updated.title.toLowerCase()} — that’s real money.\nWalk me through it start to finish: what kicks it off, what happens next, how it ends?`,
       d,
       { phase: "process" }
     );
   }
 
+  // ——— 4) PROCESS / CLOSE ———
   const hasProcess = Boolean(
     pain &&
       (pain.processSteps.length >= 2 ||
         (pain.processSteps.length === 1 && pain.processSteps[0].length > 40))
   );
+
   if (pain && !hasProcess) {
     if (last.length > 20 && !/^(yes|yep|yeah|sure|ok|okay)\b/i.test(last)) {
       const steps = last
@@ -227,8 +262,7 @@ export function runSalesTurn(
         .slice(0, 8);
       const updated = {
         ...pain,
-        processSteps:
-          steps.length >= 2 ? steps : [last.slice(0, 200)],
+        processSteps: steps.length >= 2 ? steps : [last.slice(0, 200)],
         rawDescription: last,
         confidence: 0.85,
       };
@@ -239,13 +273,13 @@ export function runSalesTurn(
       };
       const proposal = proposalFallback(d);
       return base(
-        `So: ${updated.processSteps.join(" → ")}.\nI think we can claw back about ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week on that — the grind, not the judgment calls.\n\nIf we built that AI employee for your ${d.businessType} business, would it be valuable?`,
+        `So: ${updated.processSteps.join(" → ")}.\nI think we can claw back about ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week on that — the grind, not the judgment calls.\n\nIf we built that for your ${d.businessType} business, would it be valuable?`,
         d,
         { phase: "ready", proposal }
       );
     }
     return base(
-      "Need a little more of the process — kickoff → middle → done. Even messy bullet points work.",
+      "Need a little more of the process — kickoff → middle → done. Even messy bullets work.",
       d,
       { phase: "process" }
     );
@@ -258,7 +292,7 @@ export function runSalesTurn(
   ) {
     const proposal = proposalFallback(d);
     return base(
-      `Hell yes. Unlock the hire plan for ${proposal.employeeName} — you’ll see exactly what it owns day to day.`,
+      `Perfect. Unlock the hire plan for ${proposal.employeeName} — you’ll see exactly what it owns day to day.`,
       { ...d, salesStage: "pitch" },
       {
         phase: "ready",
@@ -272,23 +306,21 @@ export function runSalesTurn(
   if (pain && hasProcess) {
     const proposal = proposalFallback(d);
     return base(
-      `Based on what you told me, ${proposal.employeeName} could take the repeat weight off ${pain.title}.\nWould that be valuable for your ${d.businessType} shop?`,
+      `Based on what you told me, ${proposal.employeeName} could take the repeat weight off ${pain.title}.\nWould that be valuable for your ${d.businessType} business?`,
       d,
       { phase: "ready", proposal }
     );
   }
 
-  return base(
-    `What’s eating most of the desk time in your ${d.businessType} business right now?`,
-    d,
-    { phase: "pain1" }
-  );
+  return base(askWhatEatsTime(d.businessType || "your industry"), d, {
+    phase: "pain1",
+  });
 }
 
 export function openingTurn(): ChatTurn {
   return {
     reply:
-      "Quick one so I can make this useful — what kind of business are you in?\n\n(Roofing, dental, agency, ecommerce, restaurant… whatever it is.)",
+      "Quick one so I can make this useful — what kind of business are you in?\n\n(Roofing, dental, agency, ecommerce, med spa… whatever it is.)",
     phase: "warming",
     discovery: {
       businessName: null,
