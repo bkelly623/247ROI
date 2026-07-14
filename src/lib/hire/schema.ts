@@ -66,18 +66,20 @@ export const hireProposalSchema = z.object({
 
 export const chatTurnSchema = z.object({
   reply: z.string().min(1),
-  phase: z.enum([
-    "warming",
-    "pain1",
-    "time_verify",
-    "process",
-    "pain2_probe",
-    "ready",
-  ]),
-  discovery: discoverySchema,
-  proposal: hireProposalSchema.nullable(),
-  readyForGate: z.boolean(),
-  teaserLine: z.string().nullable(),
+  phase: z
+    .enum([
+      "warming",
+      "pain1",
+      "time_verify",
+      "process",
+      "pain2_probe",
+      "ready",
+    ])
+    .default("warming"),
+  discovery: discoverySchema.optional(),
+  proposal: hireProposalSchema.nullable().optional().default(null),
+  readyForGate: z.boolean().optional().default(false),
+  teaserLine: z.string().nullable().optional().default(null),
   choices: z
     .array(
       z.object({

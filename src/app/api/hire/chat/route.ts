@@ -98,8 +98,6 @@ export async function POST(req: Request) {
       proposal: turn.proposal,
       readyForGate: turn.readyForGate,
       teaserLine: turn.teaserLine,
-      choices: turn.choices ?? null,
-      inputMode: turn.inputMode ?? null,
       sessionId,
       status: updated?.status ?? nextStatus,
     });

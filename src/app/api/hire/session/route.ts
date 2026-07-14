@@ -21,8 +21,6 @@ export async function POST(req: Request) {
     return NextResponse.json({
       sessionId: session.id,
       opening: opening.reply,
-      choices: opening.choices,
-      inputMode: opening.inputMode,
       discovery: opening.discovery,
     });
   } catch (e) {

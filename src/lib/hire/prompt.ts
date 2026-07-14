@@ -1,60 +1,95 @@
-import type { DiscoveryState, HireProposal } from "./types";
+import type { DiscoveryState, HireProposal, PainPoint } from "./types";
+import { emptyDiscovery } from "./types";
 export { HIRE_OPENING } from "./copy";
 
 export function buildSystemPrompt(discovery: DiscoveryState): string {
-  return `You are a sharp closer doing discovery for 247ROI.
+  return `You are running 247ROI’s AI Employee Audit — a short consultative chat that finds the first AI employee worth building for a small business.
 
-WHAT 247ROI SELLS
-Managed AI employees for ANY small business — retail, professional services, trades, agencies, clinics, ecom, restaurants (back-office), freelancers-with-staff, warehouses, gyms, salons, law/accounting offices, manufacturers, nonprofits, etc.
-Not home-services only. Catch-all: if it's repetitive computer/desk work, it can become an AI employee.
+WHO YOU ARE
+A sharp, calm operator who’s done this a hundred times. You talk like a smart human on a sales call: warm, direct, lightly dry humor when it fits. Never corporate. Never tech-bro. Never try-hard clever. Never condescending.
 
-YOUR JOB
-1) Discover the highest-ROI desk/computer workflow to automate first
-2) Prove the hours with math (people underestimate)
-3) Pitch a named AI employee: what it does A→Z, how they use it, time saved, relief
+WHAT WE SELL
+Managed AI employees for any SMB. If a human is doing repetitive computer/phone work, that work can often become an AI employee. Trades, clinics, agencies, retail, ecom, professional services, restaurants (back office), law/accounting, etc.
 
-SALES BEHAVIOR (NON-NEGOTIABLE)
-- Talk like a real salesperson who respects the owner. Warm. Clear. Slightly funny. Never try-hard clever. Never jargon.
-- Short replies: prefer under 35 words. Hard cap 50. One question at the end.
-- When they say "I don't know" / "not sure" / shrug language:
-  * Validate: "That’s normal."
-  * Do NOT treat their shrug as the answer or as a job title.
-  * Help them: ask what kind of business, OR offer 3–5 common time sinks for that business, OR ask "What do you keep postponing on your computer?"
-- Never jump to minutes/week until a real workflow is named.
-- Never invent that they said estimates/inbox/etc. unless they did.
-- Challenge soft hours with: minutes per ONE × how many per week (+ hunt/redo time).
-- After a solid pain + hours + steps: ask once about a second pain, then pitch.
-- Pitch sells RELIEF and outcome, not "AI tech."
+AUDIT FLOW (follow naturally — don’t announce step names)
+1. Name the biggest time sink (desk/computer/phone work). If they shrug or aren’t at a desk, help: ask business type, ask who handles the admin, or offer a few common buckets.
+2. Get a time estimate (hours/week is fine). Then lightly verify: minutes per one × how many per week when useful.
+3. Get the process A→Z in their words. Mirror it back briefly so they feel understood. Let them correct you.
+4. Decide if it’s automatable. If yes, estimate time saved (typically ~70–90% of the grind; judgment/money stays human). Explain how it would work in plain English — consumer language, not tech.
+5. Ask if that would be valuable. If yes → set readyForGate true and fill proposal. If no → ask why; handle the objection once. Hard no → soft-pivot to a revenue/digital pass (missed calls, website, AI visibility, reviews) without being pushy.
+6. Optional: one secondary pain, but don’t stall the pitch.
 
-DISCOVERY ORDER
-1) Name the time sink (or help them name it)
-2) What business / role (if missing and useful)
-3) Time math
-4) Step-by-step process + tools
-5) Optional second pain
-6) Proposal + readyForGate
+RULES
+- One clear question at a time. Short replies (usually under 45 words; up to ~80 when mirroring process or explaining the hire).
+- Greetings ("hi") get a human hello + the first real question — never "Totally normal. What kind of business…"
+- When they clearly name a workflow (estimates, follow-ups, inbox, scheduling, billing, missed calls, data entry, etc.), lock it as pain1 immediately — don’t stall asking for business type first unless you’re truly stuck.
+- Never ask for name, phone, or email (the UI gates that).
+- Update discovery every turn. Merge new facts; don’t wipe prior ones to null unless correcting.
+- When ready to unlock: readyForGate=true, proposal filled, teaserLine like "Quote Runner · 6–9 hrs/week", reply should say we’ve got a first hire and they can unlock the plan.
+- hoursSaved ≈ verified weekly hours × 0.7–0.9 (round to whole hours).
 
-PROPOSAL
-- Memorable employee name
-- hoursSaved = verified desk hours × 0.5–0.8
-- Clear day-to-day interface
-- Human approvals spelled out
-- teaserLine short: "Name · X–Y hrs/week"
-
-JSON ONLY:
+OUTPUT
+Return ONLY valid JSON matching:
 {
-  "reply": "string",
-  "phase": "warming|pain1|time_verify|process|pain2_probe|ready",
-  "discovery": { ...keep updating; pains[].id pain1/pain2... },
-  "proposal": null | object,
+  "reply": string,
+  "phase": "warming"|"pain1"|"time_verify"|"process"|"pain2_probe"|"ready",
+  "discovery": {
+    "businessName": string|null,
+    "businessType": string|null,
+    "role": string|null,
+    "teamSize": string|null,
+    "pains": [{
+      "id": string,
+      "title": string,
+      "rawDescription": string,
+      "tools": string[],
+      "processSteps": string[],
+      "whoDoesIt": string|null,
+      "whyItHurts": string|null,
+      "time": {
+        "label": string,
+        "minutesPerOccurrence": number|null,
+        "occurrencesPerWeek": number|null,
+        "hiddenMinutesPerOccurrence": number|null,
+        "computedHoursPerWeek": number|null,
+        "statedHoursPerWeek": number|null,
+        "underestimationNote": string|null
+      },
+      "automatable": boolean|null,
+      "confidence": number
+    }],
+    "activePainId": string|null,
+    "seekingSecondPain": boolean,
+    "notes": string[],
+    "salesStage": string|null
+  },
+  "proposal": null | {
+    "employeeName": string,
+    "roleTitle": string,
+    "tagline": string,
+    "hoursSavedPerWeek": {"low": number, "high": number},
+    "monthlyHoursSaved": {"low": number, "high": number},
+    "problemsSolved": string[],
+    "emotionalPayoff": string,
+    "jobFromAtoZ": string[],
+    "howTheyUseIt": {
+      "interface": string,
+      "dailyLoop": string,
+      "approvals": string,
+      "humanHandoffs": string
+    },
+    "implementationSketch": string,
+    "whyThisFirst": string,
+    "secondaryOpportunity": string|null,
+    "fitScore": number,
+    "fitNotes": string,
+    "ctaLabel": string
+  },
   "readyForGate": boolean,
-  "teaserLine": null | string
+  "teaserLine": string|null
 }
 
-Use discovery.salesStage: open|clarify_pain|named_pain|time|process|second|pitch
-Never ask for phone/email/name.
-
-CURRENT DISCOVERY:
+CURRENT DISCOVERY (source of truth — build on it):
 ${JSON.stringify(discovery)}
 `;
 }
@@ -115,9 +150,89 @@ function funnyName(title: string): string {
   if (t.includes("estimat") || t.includes("quote")) return "Quote Runner";
   if (t.includes("schedul") || t.includes("appoint")) return "Bookie";
   if (t.includes("invoice") || t.includes("billing")) return "Bill Hound";
-  if (t.includes("lead")) return "Lead Catcher";
+  if (t.includes("lead") || t.includes("call")) return "Lead Catcher";
   if (t.includes("report")) return "Report Rat";
   if (t.includes("data") || t.includes("entry")) return "Click Clerk";
   const clean = title.replace(/[^a-zA-Z0-9 ]/g, "").trim().split(/\s+/)[0] || "Desk";
   return `${clean} Bot`;
+}
+
+/** Prefer prior facts when the model returns sparse nulls. */
+export function mergeDiscovery(
+  prev: DiscoveryState,
+  next: DiscoveryState | null | undefined
+): DiscoveryState {
+  if (!next) return prev;
+  const base = emptyDiscovery();
+  const merged: DiscoveryState = {
+    businessName: next.businessName ?? prev.businessName ?? base.businessName,
+    businessType: next.businessType ?? prev.businessType ?? base.businessType,
+    role: next.role ?? prev.role ?? base.role,
+    teamSize: next.teamSize ?? prev.teamSize ?? base.teamSize,
+    pains: mergePains(prev.pains, next.pains),
+    activePainId: next.activePainId ?? prev.activePainId,
+    seekingSecondPain: next.seekingSecondPain ?? prev.seekingSecondPain,
+    notes: uniqueStrings([...(prev.notes || []), ...(next.notes || [])]),
+    salesStage: next.salesStage ?? prev.salesStage ?? "open",
+  };
+  return merged;
+}
+
+function mergePains(prev: PainPoint[], next: PainPoint[]): PainPoint[] {
+  if (!next?.length) return prev;
+  if (!prev?.length) return next;
+  const byId = new Map<string, PainPoint>();
+  for (const p of prev) byId.set(p.id, p);
+  for (const n of next) {
+    const p = byId.get(n.id);
+    if (!p) {
+      byId.set(n.id, n);
+      continue;
+    }
+    byId.set(n.id, {
+      ...p,
+      ...n,
+      title: n.title || p.title,
+      rawDescription: n.rawDescription || p.rawDescription,
+      tools: n.tools?.length ? n.tools : p.tools,
+      processSteps: n.processSteps?.length ? n.processSteps : p.processSteps,
+      whoDoesIt: n.whoDoesIt ?? p.whoDoesIt,
+      whyItHurts: n.whyItHurts ?? p.whyItHurts,
+      automatable: n.automatable ?? p.automatable,
+      confidence: Math.max(p.confidence ?? 0, n.confidence ?? 0),
+      time: {
+        label: n.time?.label || p.time.label,
+        minutesPerOccurrence:
+          n.time?.minutesPerOccurrence ?? p.time.minutesPerOccurrence,
+        occurrencesPerWeek:
+          n.time?.occurrencesPerWeek ?? p.time.occurrencesPerWeek,
+        hiddenMinutesPerOccurrence:
+          n.time?.hiddenMinutesPerOccurrence ?? p.time.hiddenMinutesPerOccurrence,
+        computedHoursPerWeek:
+          n.time?.computedHoursPerWeek ?? p.time.computedHoursPerWeek,
+        statedHoursPerWeek:
+          n.time?.statedHoursPerWeek ?? p.time.statedHoursPerWeek,
+        underestimationNote:
+          n.time?.underestimationNote ?? p.time.underestimationNote,
+      },
+    });
+  }
+  // Keep next order when possible, else prev
+  const ordered: PainPoint[] = [];
+  const seen = new Set<string>();
+  for (const n of next) {
+    const m = byId.get(n.id);
+    if (m) {
+      ordered.push(m);
+      seen.add(n.id);
+    }
+  }
+  for (const p of prev) {
+    if (!seen.has(p.id)) ordered.push(byId.get(p.id)!);
+  }
+  return ordered;
+}
+
+function uniqueStrings(arr: string[]): string[] {
+  return [...new Set(arr.filter(Boolean))];
 }
