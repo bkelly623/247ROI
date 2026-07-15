@@ -250,6 +250,10 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
   const industry = discovery.businessType
     ? ` for ${discovery.businessType}`
     : "";
+  const impact = discovery.notes
+    .find((n) => n.startsWith("impact:"))
+    ?.slice(7)
+    .trim();
 
   return {
     employeeName: funnyName(title),
@@ -262,7 +266,9 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
       "Context-switching",
       "Work that slips when nobody owns the pile",
     ],
-    emotionalPayoff: "You get the hours back without babysitting a person.",
+    emotionalPayoff: impact
+      ? `You said you’d put the time toward: ${impact}`
+      : "You get the hours back without babysitting a person.",
     jobFromAtoZ: primary?.processSteps.length
       ? primary.processSteps
       : [

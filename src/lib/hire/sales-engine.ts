@@ -5,7 +5,18 @@ import {
   normalizeIndustryLabel,
   proposalFallback,
 } from "./prompt";
+import { hireLines, pickLine } from "./lines";
 import type { DiscoveryState, HireMessage, PainPoint } from "./types";
+
+function seedFrom(d: DiscoveryState, last: string): string {
+  return `${d.businessType || ""}|${d.salesStage || ""}|${d.notes.length}|${last.slice(0, 12)}`;
+}
+
+function painHours(pain: PainPoint | undefined): number {
+  return (
+    pain?.time.computedHoursPerWeek ?? pain?.time.statedHoursPerWeek ?? 0
+  );
+}
 
 function emptyPain(title: string, raw: string, id = "pain1"): PainPoint {
   return {
@@ -125,27 +136,19 @@ export function runSalesTurn(
 
   // ——— 1) INDUSTRY ———
   if (!d.businessType) {
+    const seed = seedFrom(d, last);
     if (!last || /^(hi|hey|hello|howdy|sup|yo)\b/i.test(last)) {
-      return base("What kind of business are you in?", d);
+      return base(pickLine(hireLines.askIndustry, seed), d);
     }
     if (isVagueIndustry(last) || /\b(not sure|idk)\b/i.test(lower)) {
-      return base(
-        "Fair. We automate desk work that burns real hours each week.\nWhat industry is it — chiro, roofing, agency, spa, something else?",
-        d
-      );
+      return base(pickLine(hireLines.vagueIndustry, seed), d);
     }
     if (/what do you mean|why|huh|wdym/i.test(lower)) {
-      return base(
-        "Just the industry — roofing, dental, chiro, agency, ecommerce… what are you?",
-        d
-      );
+      return base(pickLine(hireLines.clarifyIndustry, seed), d);
     }
     const industry = normalizeIndustryLabel(last);
     if (!industry) {
-      return base(
-        "Need the industry. Chiro? Roofing? Agency? What’s the business?",
-        d
-      );
+      return base(pickLine(hireLines.clarifyIndustry, seed + "x"), d);
     }
     d = { ...d, businessType: industry, salesStage: "task" };
     return base(askWhatEatsTime(industry), d, { phase: "pain1" });
@@ -224,10 +227,10 @@ export function runSalesTurn(
       );
 
       if (title === "Inbox / email") {
-        return base("Email. Hours per week?", d, { phase: "time_verify" });
+        return base("Email. Hours a week?", d, { phase: "time_verify" });
       }
       return base(
-        `${title}. Walk me through how you do it now — start to finish.`,
+        pickLine(hireLines.askProcess, seedFrom(d, last))(title),
         d,
         { phase: "process" }
       );
@@ -277,7 +280,7 @@ export function runSalesTurn(
     }
 
     return base(
-      `${title}. Walk me through how you handle it now — step by step.`,
+      pickLine(hireLines.askProcess, seedFrom(d, last))(title),
       d,
       { phase: "process" }
     );
@@ -424,7 +427,7 @@ export function runSalesTurn(
         salesStage: "time",
       };
       return base(
-        "How many hours a week does that eat?",
+        pickLine(hireLines.askHours, seedFrom(d, last))(updated.title),
         d,
         { phase: "time_verify" }
       );
@@ -514,7 +517,10 @@ export function runSalesTurn(
     d = note(d, "mirrored");
     const proposal = proposalFallback(d);
     return base(
-      `So: ${updated.processSteps.join(" → ")}. About ${weekly} hours a week.\nDo I have that right?`,
+      pickLine(hireLines.confirmMirror, seedFrom(d, last))(
+        updated.processSteps.join(" → "),
+        weekly
+      ),
       { ...d, salesStage: "confirm" },
       { phase: "process", proposal }
     );
@@ -545,7 +551,10 @@ export function runSalesTurn(
       const hrs =
         updated.time.statedHoursPerWeek ?? updated.time.computedHoursPerWeek;
       return base(
-        `So: ${updated.processSteps.join(" → ")}. ~${hrs} hrs/week.\nDo I have that right?`,
+        pickLine(hireLines.confirmMirror, seedFrom(d, last))(
+          updated.processSteps.join(" → "),
+          hrs ?? "?"
+        ),
         d,
         { phase: "process" }
       );
@@ -555,7 +564,7 @@ export function runSalesTurn(
     });
   }
 
-  // ——— CONFIRM / SECOND ORDER / PITCH ———
+  // ——— CONFIRM → short path (hours ≥ 8) skips second-order + micro-commit ———
   if (
     pain &&
     hasProcess &&
@@ -563,30 +572,50 @@ export function runSalesTurn(
     /^(yes|yep|yeah|yup|right|correct|that'?s right|sounds right|exactly)\b/i.test(
       lower
     ) &&
-    !d.notes.includes("second_order")
+    !d.notes.includes("pitched_value")
   ) {
-    d = note({ ...d, salesStage: "second_order" }, "second_order");
-    const hrs =
-      pain.time.statedHoursPerWeek ?? pain.time.computedHoursPerWeek ?? 10;
-    return base(
-      `If most of those ~${hrs} hours came back, what would you do with them?`,
-      d,
-      { phase: "pain2_probe" }
-    );
+    const hrs = painHours(pain);
+    const seed = seedFrom(d, last);
+
+    // Meaningful hours → pitch immediately (shorter funnel)
+    if (hrs >= 8 || d.notes.includes("short_path")) {
+      const proposal = proposalFallback(note(d, "short_path"));
+      const steps = pain.processSteps.length
+        ? pain.processSteps
+            .map((s) => `the system ${s.toLowerCase()}`)
+            .join(", then ")
+        : "the system takes the repeat steps end to end";
+      const pitch = `Think of it like a hire with perfect memory: ${steps}. You keep the judgment calls.`;
+      d = note(
+        note({ ...d, salesStage: "value" }, "pitched_value"),
+        "short_path"
+      );
+      return base(pickLine(hireLines.valuable, seed)(pitch), d, {
+        phase: "ready",
+        proposal,
+      });
+    }
+
+    if (!d.notes.includes("second_order")) {
+      d = note({ ...d, salesStage: "second_order" }, "second_order");
+      return base(pickLine(hireLines.secondOrder, seed)(hrs || 10), d, {
+        phase: "pain2_probe",
+      });
+    }
   }
 
-  if (d.salesStage === "second_order" || (d.notes.includes("second_order") && !d.notes.includes("pitched_value"))) {
+  if (
+    d.salesStage === "second_order" ||
+    (d.notes.includes("second_order") && !d.notes.includes("pitched_value"))
+  ) {
     if (!d.notes.includes("want_solve") && d.salesStage === "second_order") {
       d = note({ ...d, salesStage: "want_solve" }, "want_solve");
-      // store impact lightly
       if (last.length > 2) {
-        d = note(d, `impact:${last.slice(0, 80)}`);
+        d = note(d, `impact:${last.slice(0, 120)}`);
       }
-      return base(
-        "Is that something you actually want solved — or have you accepted it?",
-        d,
-        { phase: "pain2_probe" }
-      );
+      return base(pickLine(hireLines.wantSolve, seedFrom(d, last)), d, {
+        phase: "pain2_probe",
+      });
     }
   }
 
@@ -596,16 +625,15 @@ export function runSalesTurn(
     /^(yes|yep|yeah|sure|i (do|want)|solve|fix)\b/i.test(lower)
   ) {
     const proposal = proposalFallback(d);
-    const steps =
-      pain?.processSteps?.length
-        ? pain.processSteps.map((s) => `the system ${s.toLowerCase()}`).join(", then ")
-        : "the system takes the repeat steps end to end";
+    const steps = pain?.processSteps?.length
+      ? pain.processSteps.map((s) => `the system ${s.toLowerCase()}`).join(", then ")
+      : "the system takes the repeat steps end to end";
+    const pitch = `Think of it like a hire with perfect memory: ${steps}. You keep the judgment calls.`;
     d = note({ ...d, salesStage: "value" }, "pitched_value");
-    return base(
-      `Think of it like a hire with perfect memory: ${steps}. You keep the judgment calls.\nWould building that be valuable?`,
-      d,
-      { phase: "ready", proposal }
-    );
+    return base(pickLine(hireLines.valuable, seedFrom(d, last))(pitch), d, {
+      phase: "ready",
+      proposal,
+    });
   }
 
   if (

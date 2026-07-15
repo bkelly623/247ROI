@@ -5,7 +5,7 @@ import { Loader2, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { validateGateClient } from "@/lib/audit/gate-validation";
+import { validateHireGateClient } from "@/lib/hire/gate";
 import type { DiscoveryState, HireMessage, HireProposal } from "@/lib/hire/types";
 
 type Props = {
@@ -30,16 +30,17 @@ export function HireGate({
   onUnlocked,
 }: Props) {
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const hoursBit = hoursLabel || teaserLine;
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const invalid = validateGateClient({ firstName, lastName, phone, email });
+    const invalid = validateHireGateClient({ firstName, phone, email });
     if (invalid) {
       setError(invalid);
       return;
@@ -52,9 +53,9 @@ export function HireGate({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName,
-          lastName,
+          lastName: "",
           phone,
-          email,
+          email: email.trim(),
           proposal,
           discovery,
           messages,
@@ -79,50 +80,38 @@ export function HireGate({
       >
         <div className="border-b border-white/10 bg-gradient-to-br from-orange-500/20 via-zinc-900 to-zinc-950 px-6 py-6">
           <p className="mb-2 text-sm font-medium uppercase tracking-wide text-orange-300">
-            Your AI employee is ready
+            Hire plan ready
           </p>
           <h2
             id="hire-gate-title"
             className="font-display text-3xl font-bold leading-tight text-zinc-50"
           >
-            {employeeName ? `Meet ${employeeName}` : "See your first hire"}
+            {employeeName ? `Unlock ${employeeName}` : "Unlock your first hire"}
           </h2>
-          <p className="mt-3 text-lg text-zinc-400">
-            {teaserLine || hoursLabel || "Unlock the plan."}
+          <p className="mt-3 text-lg text-zinc-300">
+            {hoursBit
+              ? `${hoursBit} — A→Z job, how you’d use it, hours back.`
+              : "A→Z job, how you’d use it, hours back."}
           </p>
         </div>
 
         <form onSubmit={submit} className="space-y-4 px-6 py-6">
           <p className="text-base text-zinc-500">
-            Leave your info. We save the audit and show the hire plan.
+            Name and mobile so we can save the audit and follow up. Email optional.
           </p>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="hire-first" className="text-base">
-                First name
-              </Label>
-              <Input
-                id="hire-first"
-                className="h-12 text-base"
-                autoComplete="given-name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Sam"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="hire-last" className="text-base">
-                Last name
-              </Label>
-              <Input
-                id="hire-last"
-                className="h-12 text-base"
-                autoComplete="family-name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Rivera"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="hire-first" className="text-base">
+              First name
+            </Label>
+            <Input
+              id="hire-first"
+              className="h-12 text-base"
+              autoComplete="given-name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Sam"
+              autoFocus
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="hire-phone" className="text-base">
@@ -140,7 +129,7 @@ export function HireGate({
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="hire-email" className="text-base">
-              Email
+              Email <span className="font-normal text-zinc-600">(optional)</span>
             </Label>
             <Input
               id="hire-email"
@@ -166,7 +155,7 @@ export function HireGate({
               </>
             ) : (
               <>
-                Show my AI employee
+                Show the hire plan
                 <Unlock className="h-5 w-5" />
               </>
             )}

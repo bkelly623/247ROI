@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { gateSchema } from "@/lib/audit/gate-validation";
+import { hireGateSchema } from "@/lib/hire/gate";
+import { notifyHireUnlock } from "@/lib/hire/notify";
 import {
   createHireSession,
   getHireSession,
@@ -51,19 +52,21 @@ export async function POST(
   const { id } = await params;
   try {
     const raw = await req.json();
-    const contact = gateSchema.parse({
+    const contact = hireGateSchema.parse({
       firstName: raw.firstName,
-      lastName: raw.lastName,
+      lastName: raw.lastName ?? "",
       phone: raw.phone,
-      email: raw.email,
+      email: raw.email ?? "",
     });
 
     let session = await getHireSession(id);
 
-    // Serverless / missing table: allow unlock payload to carry full audit.
-    const proposal = (raw.proposal as HireProposal | undefined) ?? session?.proposal;
-    const discovery = (raw.discovery as DiscoveryState | undefined) ?? session?.discovery;
-    const messages = (raw.messages as HireMessage[] | undefined) ?? session?.messages;
+    const proposal =
+      (raw.proposal as HireProposal | undefined) ?? session?.proposal;
+    const discovery =
+      (raw.discovery as DiscoveryState | undefined) ?? session?.discovery;
+    const messages =
+      (raw.messages as HireMessage[] | undefined) ?? session?.messages;
 
     if (!proposal) {
       return NextResponse.json(
@@ -73,19 +76,20 @@ export async function POST(
     }
 
     if (!session) {
-      session = await createHireSession({ source: raw.source ?? "gate_recover" });
-      // Use the URL id only if create can't preserve it — store under created id
-      // and tell client the authoritative id.
+      session = await createHireSession({
+        source: raw.source ?? "gate_recover",
+      });
     }
 
     const targetId = session.id;
+    const nextDiscovery = discovery ?? session.discovery;
     const updated = await updateHireSession(targetId, {
       first_name: contact.firstName,
-      last_name: contact.lastName,
+      last_name: contact.lastName || "",
       phone: contact.phone,
-      email: contact.email,
+      email: contact.email || "",
       proposal,
-      discovery: discovery ?? session.discovery,
+      discovery: nextDiscovery,
       messages: messages ?? session.messages,
       gate_submitted_at: new Date().toISOString(),
       unlocked_at: new Date().toISOString(),
@@ -93,7 +97,16 @@ export async function POST(
       phase: "unlocked",
     });
 
-    // If original id differed (recovery path), also try write under requested id via update no-op
+    void notifyHireUnlock({
+      sessionId: targetId,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      phone: contact.phone,
+      email: contact.email,
+      discovery: nextDiscovery,
+      proposal,
+    });
+
     if (targetId !== id && updated) {
       return NextResponse.json({
         sessionId: targetId,

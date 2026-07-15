@@ -10,11 +10,57 @@ import { HireGate } from "@/components/hire/HireGate";
 import type { DiscoveryState, HireProposal } from "@/lib/hire/types";
 import { emptyDiscovery } from "@/lib/hire/types";
 import { HIRE_OPENING, HIRE_PAGE } from "@/lib/hire/copy";
+import { getHireProgress } from "@/lib/hire/progress";
 
 type ChatBubble = { id: string; role: "user" | "assistant"; content: string };
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function ProgressBar({ discovery }: { discovery: DiscoveryState }) {
+  const steps = getHireProgress(discovery);
+  return (
+    <div className="border-b border-white/10 px-3 py-3 sm:px-5">
+      <ol className="flex items-center justify-between gap-1">
+        {steps.map((s, i) => (
+          <li key={s.id} className="flex min-w-0 flex-1 items-center gap-1">
+            <div className="flex min-w-0 flex-col items-center gap-1">
+              <span
+                className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
+                  s.done
+                    ? "bg-orange-500 text-white"
+                    : s.current
+                      ? "border border-orange-400/70 text-orange-300"
+                      : "border border-white/15 text-zinc-600"
+                }`}
+              >
+                {s.done ? "✓" : i + 1}
+              </span>
+              <span
+                className={`truncate text-[10px] sm:text-xs ${
+                  s.current
+                    ? "font-medium text-zinc-200"
+                    : s.done
+                      ? "text-zinc-400"
+                      : "text-zinc-600"
+                }`}
+              >
+                {s.label}
+              </span>
+            </div>
+            {i < steps.length - 1 && (
+              <div
+                className={`mb-4 h-px flex-1 ${
+                  s.done ? "bg-orange-500/50" : "bg-white/10"
+                }`}
+              />
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
 }
 
 export function HireAuditFlow() {
@@ -30,7 +76,6 @@ export function HireAuditFlow() {
   const [showGate, setShowGate] = useState(false);
   const [teaserLine, setTeaserLine] = useState<string | null>(null);
   const [proposal, setProposal] = useState<HireProposal | null>(null);
-  const [phaseLabel, setPhaseLabel] = useState(HIRE_PAGE.phaseLabels.warming);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -48,13 +93,17 @@ export function HireAuditFlow() {
         if (!cancelled) {
           setSessionId(data.sessionId);
           if (data.opening) {
-            setMessages([{ id: "opening", role: "assistant", content: data.opening }]);
+            setMessages([
+              { id: "opening", role: "assistant", content: data.opening },
+            ]);
           }
           if (data.discovery) setDiscovery(data.discovery);
         }
       } catch (e) {
         if (!cancelled) {
-          setBootError(e instanceof Error ? e.message : "Couldn't start. Refresh.");
+          setBootError(
+            e instanceof Error ? e.message : "Couldn't start. Refresh."
+          );
         }
       }
     })();
@@ -102,9 +151,6 @@ export function HireAuditFlow() {
       if (data.discovery) setDiscovery(data.discovery);
       if (data.proposal) setProposal(data.proposal);
 
-      const phase = String(data.phase || "warming");
-      setPhaseLabel(HIRE_PAGE.phaseLabels[phase] || HIRE_PAGE.phaseLabels.warming);
-
       if (data.readyForGate) {
         setProposal(data.proposal);
         setTeaserLine(data.teaserLine);
@@ -145,7 +191,7 @@ export function HireAuditFlow() {
         />
 
         <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pb-4 sm:px-6">
-          <header className="space-y-3 pb-5 pt-6 text-center sm:pt-8">
+          <header className="space-y-3 pb-4 pt-6 text-center sm:pt-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
               {HIRE_PAGE.eyebrow}
             </p>
@@ -158,9 +204,7 @@ export function HireAuditFlow() {
           </header>
 
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)]">
-            <div className="border-b border-white/10 px-5 py-3 text-center text-sm text-zinc-500">
-              {phaseLabel}
-            </div>
+            <ProgressBar discovery={discovery} />
 
             <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
               <AnimatePresence initial={false}>
@@ -206,15 +250,17 @@ export function HireAuditFlow() {
                   onKeyDown={onKeyDown}
                   disabled={!sessionId || busy || showGate}
                   placeholder={
-                    showGate ? HIRE_PAGE.placeholderLocked : HIRE_PAGE.placeholder
+                    showGate
+                      ? HIRE_PAGE.placeholderLocked
+                      : HIRE_PAGE.placeholder
                   }
-                  className="min-h-[64px] flex-1 resize-none rounded-2xl border border-white/10 bg-zinc-900 px-4 py-4 text-lg text-zinc-100 placeholder:text-zinc-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/25 disabled:opacity-60 sm:text-xl"
+                  className="min-h-[56px] flex-1 resize-none rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3.5 text-lg text-zinc-100 placeholder:text-zinc-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/25 disabled:opacity-60 sm:min-h-[64px] sm:text-xl"
                 />
                 <Button
                   type="submit"
                   size="lg"
                   disabled={!sessionId || busy || !input.trim() || showGate}
-                  className="h-[64px] w-[64px] shrink-0 rounded-2xl"
+                  className="h-[56px] w-[56px] shrink-0 rounded-2xl sm:h-[64px] sm:w-[64px]"
                   aria-label="Send"
                 >
                   {busy ? (
@@ -224,7 +270,9 @@ export function HireAuditFlow() {
                   )}
                 </Button>
               </div>
-              <p className="mt-3 text-center text-sm text-zinc-600">{HIRE_PAGE.sendHint}</p>
+              <p className="mt-2 text-center text-sm text-zinc-600">
+                {HIRE_PAGE.sendHint}
+              </p>
             </form>
           </div>
         </section>

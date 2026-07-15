@@ -7,12 +7,14 @@ import {
   Clock3,
   HeartHandshake,
   MonitorSmartphone,
+  Phone,
   Sparkles,
   Workflow,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { HireProposal, HireSession } from "@/lib/hire/types";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { PRIMARY_PHONE_DISPLAY } from "@/app/components/cta";
+import { buildHireSmsHref, impactFromNotes } from "@/lib/hire/progress";
 
 export function HireReport({
   session,
@@ -21,7 +23,20 @@ export function HireReport({
   session: HireSession;
   proposal: HireProposal;
 }) {
-  const primary = session.discovery.pains[0];
+  const primary =
+    session.discovery.pains.find((p) => p.id === "pain1") ??
+    session.discovery.pains[0];
+  const impact = impactFromNotes(session.discovery.notes);
+  const hours =
+    primary?.time.computedHoursPerWeek ??
+    primary?.time.statedHoursPerWeek ??
+    null;
+  const smsHref = buildHireSmsHref({
+    industry: session.discovery.businessType,
+    pain: primary?.title,
+    hours,
+    employeeName: proposal.employeeName,
+  });
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-8 sm:px-6">
@@ -33,6 +48,11 @@ export function HireReport({
           Meet {proposal.employeeName}
         </h1>
         <p className="max-w-2xl text-lg text-zinc-400">{proposal.tagline}</p>
+        {impact && (
+          <p className="max-w-2xl text-lg text-orange-200/90">
+            You said you’d use the time for: <span className="text-zinc-100">{impact}</span>
+          </p>
+        )}
         <div className="flex flex-wrap gap-3">
           <div className="rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3">
             <p className="text-xs text-orange-300/80">Hours back / week</p>
@@ -46,14 +66,45 @@ export function HireReport({
               {proposal.monthlyHoursSaved.low}–{proposal.monthlyHoursSaved.high} hrs
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-            <p className="text-xs text-zinc-500">Fit score</p>
-            <p className="font-display text-2xl font-bold text-zinc-100">
-              {proposal.fitScore}/100
-            </p>
-          </div>
+          {session.discovery.businessType && (
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+              <p className="text-xs text-zinc-500">Industry</p>
+              <p className="font-display text-2xl font-bold text-zinc-100">
+                {session.discovery.businessType}
+              </p>
+            </div>
+          )}
         </div>
       </header>
+
+      <section className="rounded-2xl border border-orange-500/30 bg-gradient-to-br from-orange-500/15 to-zinc-950 p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+          Next step
+        </p>
+        <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50 sm:text-2xl">
+          On the call we map {primary?.title?.toLowerCase() || "this workflow"}, show how{" "}
+          {proposal.employeeName} runs it, and decide if we build.
+        </h2>
+        <p className="mt-2 text-sm text-zinc-400">
+          Bring nothing fancy — 15–20 minutes. You’ll know if it makes sense to move forward.
+        </p>
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+          <Button asChild size="lg" className="h-12 flex-1 font-semibold">
+            <a href={smsHref}>
+              <Phone className="h-4 w-4" />
+              Text / call {PRIMARY_PHONE_DISPLAY}
+            </a>
+          </Button>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="h-12 flex-1 border-white/15"
+          >
+            <Link href="/calendar">{proposal.ctaLabel}</Link>
+          </Button>
+        </div>
+      </section>
 
       <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900/80 to-zinc-950 p-6">
         <div className="mb-3 flex items-center gap-2 text-orange-300">
@@ -72,9 +123,9 @@ export function HireReport({
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm text-zinc-400">
             <p className="font-medium text-zinc-200">{primary.title}</p>
             <p className="mt-2">{primary.rawDescription}</p>
-            {primary.time.computedHoursPerWeek != null && (
+            {hours != null && (
               <p className="mt-3 text-orange-300/90">
-                Verified desk load ≈ {primary.time.computedHoursPerWeek} hrs/week
+                Desk load ≈ {hours} hrs/week
                 {primary.time.underestimationNote
                   ? ` — ${primary.time.underestimationNote}`
                   : ""}
@@ -112,7 +163,9 @@ export function HireReport({
               key={`${i}-${step}`}
               className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-300"
             >
-              <span className="font-display text-orange-400">{String(i + 1).padStart(2, "0")}</span>
+              <span className="font-display text-orange-400">
+                {String(i + 1).padStart(2, "0")}
+              </span>
               <span>{step}</span>
             </li>
           ))}
@@ -154,45 +207,26 @@ export function HireReport({
             Roadmap hire #2: {proposal.secondaryOpportunity}
           </p>
         )}
-        <p className="mt-3 text-xs text-zinc-600">{proposal.fitNotes}</p>
       </section>
 
-      <section className="rounded-2xl border border-orange-500/25 bg-orange-500/5 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
-          Optional next audit
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+          Optional later
         </p>
         <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50">
-          Want a revenue pass next?
+          Revenue pass
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          After the AI employee, we can rank lead-gen and digital presence —
-          missed-call recovery, website, AI visibility, reviews — by fastest
-          path to more profit.
+          After this hire, we can rank missed calls, website, AI visibility, and reviews by
+          fastest profit lift.
         </p>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" className="h-12 flex-1 font-semibold">
-            <a href={PRIMARY_PHONE_HREF}>
-              Yes — walk me through it
-              <ArrowRight className="h-4 w-4" />
-            </a>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="h-12 flex-1 border-white/15">
-            <Link href="/calendar">Book a strategy call</Link>
-          </Button>
-        </div>
-      </section>
-
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button asChild size="lg" className="h-12 flex-1 font-semibold">
-          <a href={PRIMARY_PHONE_HREF}>
-            Call / text {PRIMARY_PHONE_DISPLAY}
+        <Button asChild size="lg" variant="outline" className="mt-4 h-11 border-white/15">
+          <a href={smsHref}>
+            Ask about a revenue pass
             <ArrowRight className="h-4 w-4" />
           </a>
         </Button>
-        <Button asChild size="lg" variant="outline" className="h-12 flex-1 border-white/15">
-          <Link href="/calendar">{proposal.ctaLabel}</Link>
-        </Button>
-      </div>
+      </section>
     </div>
   );
 }
