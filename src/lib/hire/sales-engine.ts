@@ -702,7 +702,8 @@ export function runSalesTurn(
 
 export function openingTurn(): ChatTurn {
   return {
-    reply: "What kind of business are you in?",
+    reply:
+      "What kind of business are you in?\n\nOnce I know that, we’ll figure out where an AI employee would actually take work off your plate.",
     phase: "warming",
     discovery: {
       businessName: null,

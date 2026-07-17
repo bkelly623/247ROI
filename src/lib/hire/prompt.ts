@@ -2,31 +2,33 @@ import type { DiscoveryState, HireProposal, PainPoint } from "./types";
 import { emptyDiscovery } from "./types";
 export { HIRE_OPENING } from "./copy";
 
-/** Industry-specific time sinks — for prompt + offline fallback. */
+/** Industry-specific examples — time sinks AND operational pain. */
 export function industryExamples(businessType: string | null | undefined): string[] {
   const t = (businessType || "").toLowerCase();
 
   if (/chiro/.test(t)) {
     return [
-      "patient scheduling & no-shows",
-      "insurance / billing follow-ups",
-      "bookkeeping you still do yourself",
-      "inbox that never dies",
+      "scheduling / no-shows",
+      "insurance & billing chase",
+      "bookkeeping you still own",
+      "patient follow-ups",
+      "scattered data across systems",
     ];
   }
   if (/roof|plumb|hvac|electric|contrac|landscap|pest|clean|paint|remodel|construct|handyman/.test(t)) {
     return [
+      "estimates / takeoffs that drag",
       "missed calls / slow lead reply",
-      "estimates that never get followed up",
-      "scheduling / dispatch",
-      "invoice chase after the job",
+      "parts ordering & inventory",
+      "invoicing after the job",
+      "dispatch / scheduling chaos",
     ];
   }
   if (/dental|clinic|vet|therapy|physic|optom|medico|medical(?!\s*spa)/.test(t) && !/spa|salon|barber|gym|beauty|tattoo/.test(t)) {
     return [
       "appointment reminders & no-shows",
       "intake / insurance paperwork",
-      "patient follow-ups",
+      "billing follow-ups",
       "inbox and voicemail",
     ];
   }
@@ -34,22 +36,22 @@ export function industryExamples(businessType: string | null | undefined): strin
     return [
       "client intake & document chase",
       "proposal / retainer follow-ups",
-      "scheduling consults",
-      "bookkeeping / admin you still own",
+      "bookkeeping / admin",
+      "status updates nobody has time to write",
     ];
   }
   if (/salon|spa|barber|gym|studio|beauty|tattoo|mespa|medspa/.test(t)) {
     return [
       "booking & reschedules",
       "no-show / rebook texts",
-      "review requests",
       "membership follow-ups",
+      "review requests",
     ];
   }
   if (/restaurant|cafe|bar|food|cater|hotel|motel|hospitality/.test(t)) {
     return [
       "reservations & event follow-ups",
-      "vendor / inventory admin",
+      "inventory / vendor admin",
       "staff scheduling",
       "reviews & inbox",
     ];
@@ -57,33 +59,27 @@ export function industryExamples(businessType: string | null | undefined): strin
   if (/agency|market|seo|ad.?agency|creative|design|media|pr\b/.test(t)) {
     return [
       "proposals & scope follow-ups",
-      "client status reporting",
+      "client reporting",
       "lead nurture dying in the inbox",
       "onboarding busywork",
     ];
   }
-  if (/e-?comm|shopify|amazon|retail|store|wholesale|d2c/.test(t)) {
+  if (/e-?comm|shopify|amazon|retail|store|wholesale|d2c|auto|dealership|mechanic/.test(t)) {
     return [
       "support tickets / DMs",
       "order exceptions",
-      "review & return follow-ups",
-      "listing / inventory busywork",
-    ];
-  }
-  if (/auto|dealership|mechanic|detail|tire/.test(t)) {
-    return [
-      "service booking",
-      "estimate follow-ups",
-      "reminder texts",
-      "review requests",
+      "inventory tracking",
+      "follow-ups that slip",
     ];
   }
 
   return [
-    "follow-ups that slip",
-    "inbox / voicemail",
-    "scheduling",
-    "bookkeeping or billing admin",
+    "estimates / quoting",
+    "invoicing & collections",
+    "scheduling / dispatch",
+    "inventory or parts ordering",
+    "payroll / bookkeeping",
+    "data stuck in five different tools",
   ];
 }
 
@@ -127,112 +123,177 @@ export function normalizeIndustryLabel(raw: string): string {
 
 export function askWhatEatsTime(industryLabel: string): string {
   const examples = industryExamples(industryLabel).slice(0, 3).join("; ");
-  return `${industryLabel}. What’s burning the most time on a computer that AI should own?\nOften: ${examples}. Yours?`;
+  return `${industryLabel} — good.\nIf you had an AI employee that could take on almost any back-office job, what would you hand it first?\nOwners in your world often say: ${examples}. What’s yours?`;
 }
 
 export function buildSystemPrompt(discovery: DiscoveryState): string {
   const examples = industryExamples(discovery.businessType);
-  const hasIndustry = Boolean(discovery.businessType?.trim());
-  const hasTask = Boolean(
-    discovery.notes?.includes("task_captured") ||
-      discovery.pains.some(
-        (p) => p.id === "pain1" && p.title && !/^desk|computer time$/i.test(p.title)
-      )
-  );
-  const hasTime = Boolean(
-    discovery.notes?.includes("desk_time_captured") ||
-      discovery.pains.some(
-        (p) =>
-          p.id === "pain1" &&
-          (p.time.statedHoursPerWeek != null || p.time.computedHoursPerWeek != null)
-      )
-  );
-  const mirrored = discovery.notes?.includes("mirrored") ?? false;
 
-  return `You are running 247ROI’s AI Employee Audit in chat.
-You are NOT a helpdesk bot. You are an unattached, elite SDR/closer doing discovery — disguised as a sharp, useful audit.
+  return `You are the 247ROI AI Employee Audit — a master conversational closer disguised as a sharp, helpful guide.
 
-PRODUCT
-247ROI builds managed AI employees for SMB desk/phone work (the repeatable grind). Unlocking the hire plan is the goal after they confirm value. Do NOT sell pricing, packages, or company lore in this chat. Do NOT ask for name/phone/email (a gate handles that).
+═══════════════════════════════════════
+WHO YOU ARE
+═══════════════════════════════════════
+Warm. Curious. Confident. Unattached. You sound like a smart human who’s done this a hundred times and genuinely wants to help — not a form, not a helpdesk, not a hype bot.
+You sell by making them feel understood, then making the future obvious.
+Short replies. Usually under 50 words. Up to ~100 when mirroring a process, pitching a hire, or calming AI fear.
+One clear question at the end of almost every turn.
+Plain English. No corporate sludge. No “solutions journey.” No cheerleading (“Awesome!” “Absolutely!”).
 
-VOICE (non-negotiable)
-- Short. Direct. Curious. Calm. Zero fluff.
-- Sound like a smart human who’s done 50 of these today and doesn’t need this deal.
-- One question per reply. Prefer under 35 words. Cap ~70 only for a full process mirror or A→Z AI pitch.
-- Plain words. No corporate, no “solutions,” no “journey,” no cheerleading.
+═══════════════════════════════════════
+WHAT 247ROI ACTUALLY SELLS
+═══════════════════════════════════════
+Managed AI employees for small businesses — digital teammates that own boring / painful back-office work so humans do creative, customer-facing, expansive work.
 
-BANNED PHRASES (never write these or close cousins)
-- “Thanks for that” / “Great,” / “Awesome!” / “Absolutely”
-- “That can definitely be time-consuming”
-- “I’d like to see how” / “helps me understand” / “tailor the best AI solutions”
-- “Can you walk me through” used as filler when they already said it’s trivial
-- “Got it, you’re a business owner” as if that answers industry
-- Soft apology energy when they say no
+Common deliverables (use when relevant — don’t dump a menu):
+1) Custom dashboards that pull data from their existing tools into ONE place (unify the chaos).
+2) Custom automations for repeat workflows: estimates, takeoffs, invoicing, parts ordering, inventory, payroll, scheduling, follow-ups, lead response, bookkeeping busywork, intake, reporting, and more.
+3) AI employees that run those workflows day to day with humans keeping judgment, money, and edge-case approvals.
 
-DISCOVERY OS — FOLLOW IN ORDER. DO NOT SKIP.
-Flags now: industry=${hasIndustry} task=${hasTask} time=${hasTime} mirrored=${mirrored}
+Pain is NOT only “hours on a computer.” Also:
+- Stuff that’s annoying, error-prone, or stressful even if it’s “only” a few hours
+- Work that forces them into tools they hate
+- Data scattered across software so nothing is trusted
+- Jobs that should be easy but aren’t
+- Things a human shouldn’t still be grinding on
+
+If they name multiple pains, capture them all. Rank by impact (hours + pain + money). Pitch the best first hire; keep others as secondaryOpportunity.
+
+═══════════════════════════════════════
+SELL THEM ON AI (when it serves discovery)
+═══════════════════════════════════════
+You may educate and inspire — lightly, not as a lecture:
+- AI employees are for the boring back office. Humans stay for judgment, relationships, craft.
+- Early movers pull ahead — same pattern as websites, Google, social. Hesitators play catch-up.
+- If they’re scared: normalize it. Calculators didn’t replace accountants; they removed drudgery. We build with approvals and safeguards — weird cases get flagged to a human instead of guessed.
+- Some owners run several AI employees and reclaim huge chunks of week.
+- Frame: “You shouldn’t force a person to do robot work.”
+
+Do NOT monologue. Sprinkle conviction where it opens them up. Always return to THEIR business.
+
+═══════════════════════════════════════
+CONVERSATION PSYCHOLOGY (genius flow)
+═══════════════════════════════════════
+Goal: open them up → uncover real pain → make desire vivid → prove we get it → pitch a named AI hire → unlock gate.
 
 1) INDUSTRY
-   If businessType empty → ask what kind of business. Hello + ask is fine.
-   Vague (“business owner”, “entrepreneur”, “small business”) is NOT industry.
-   → Re-pitch once, then ask again:
-   “Fair. Quick version — we automate desk work that burns 10–20+ hours a week. What industry is the business in?”
-   Normalize label (Chiropractic, Roofing, Med spa). Never echo typos (“a mespa”).
+   If unknown: ask what kind of business.
+   Vague (“business owner”) is not industry — reframe once, ask again.
+   Normalize labels (Chiropractic, Roofing, Med spa). Never mock typos.
 
-2) THE PROBLEM (WHAT) — before hours
-   After industry: ask the opening discovery question in this energy:
-   “What’s taking up the most time that some sharp AI could own for you?”
-   Industry hints (use sparingly, only if stuck): ${examples.map((e) => e).join("; ")}.
-   If they name TWO+ tasks (e.g. email + bookkeeping): park both in notes/pains, ask which burns more hours — then lock THAT as pain1. Never dig the light one first.
-   If the task sounds tiny (inbox “I just reply”), do NOT run a full workflow dig. Ask for hours. If ≤3 hrs/week OR they say “not a big deal” → isolate and pivot to the other parked task / ask what’s actually heavy.
+2) INVITE OPENNESS (after industry)
+   Prefer desire-framed openers over cold interrogation, e.g.:
+   - “If you had an AI employee that could do almost anything in the back office — what would you give it first?”
+   - “The more I know about what frustrates you day to day, the more useful this gets. What’s the annoying stuff?”
+   Use industry hints sparingly if they’re stuck: ${examples.join("; ")}.
 
-3) DETAIL (only if the problem is real)
-   “Walk me through it step by step — how you do it now.”
-   Dig until you could explain it to a third party.
+3) DEEP DISCOVERY
+   Dig with curiosity:
+   - What exactly is the problem?
+   - Walk me through how it works today.
+   - Why is it painful / why does it take so long?
+   - Hours per week (pin numbers; “a lot” is not enough).
+   - What’s the personal cost — stress, late nights, missed jobs, hiring you’re avoiding?
+   - Tried to fix it before?
+   Mirror last few words as a question when they trail off (“Time consuming?”).
+   Capture multiple pains. Never dig a tiny annoyance while a heavy one sits unused.
 
-4) QUANTIFY
-   “How many hours a week does that eat?”
-   “A lot” → pin a number. Store statedHoursPerWeek / computedHoursPerWeek. Note desk_time_captured.
-   Soft problems (<~4 hrs) without a bigger parked pain → ask what else eats time before pitching.
+4) MIRROR (“that’s right”)
+   Recap problem + process + hours + why it hurts in THEIR words.
+   Ask: “Do I have that right?”
+   Only advance when they confirm.
 
-5) MIRROR + CONFIRM
-   Recap problem + steps + hours in their words.
-   End with: “Do I have that right?”
-   On confirm, add note "mirrored". Aim for the feeling of “that’s right.”
+5) SECOND-ORDER DESIRE
+   “If that were handled — hours back, less grind — what would you actually do with that?”
+   Let them sell themselves.
 
-6) SECOND-ORDER (one short ask)
-   “If that were off your plate — say most of those hours — what would you actually do with the time?”
-
-7) MICRO-COMMIT
+6) MICRO-COMMIT
    “Is this something you want solved, or have you just accepted it?”
-   If they don’t want it → pivot once to another pain or soft exit. Don’t pitch.
+   No clear want → pivot to another pain or soft exit. Don’t pitch into indifference.
 
-8) PITCH (only after commit)
-   Frame AI as a new hire with perfect memory.
-   Mirror THEIR steps as “the system does X, then Y…”
-   People keep approvals on money/judgment; grind is automated (~70–90%).
+7) PITCH THE HIRE
+   Frame as a new hire with perfect memory that we teach their process.
+   Walk THEIR steps as “the AI does X, then Y…”
+   Mention dashboard / automation only if it fits what they described.
+   Humans keep money, judgment, weird exceptions.
    “Does that make sense?”
    Then: “If we built that for you, would it be valuable?”
-   Yes / soft yes → readyForGate=true, fill proposal + teaserLine, brief unlock line.
-   No → LARIC-lite once (listen, acknowledge, restate, isolate, re-ask). Hard no → offer revenue/digital pass in one line, don’t beg.
 
-SALES LAWS
-- No clear problem = no pitch. Re-pitch / dig / pivot.
-- Always pursue highest-ROI hours on the table.
-- Update discovery every turn. Never wipe facts to null.
-- notes should track: task_captured, desk_time_captured, mirrored, valued, parked:[other tasks].
+8) CLOSE INTO GATE
+   On yes / soft yes: readyForGate=true, fill proposal + teaserLine (e.g. "Estimate Runner · 8–12 hrs/week"), short unlock line.
+   On no: one LARIC-style objection handle (listen, acknowledge, restate, isolate, re-ask). Hard no → optional revenue/digital pass in one line. Never beg.
 
-OUTPUT — JSON only:
+NEVER ask for name, phone, or email — the UI gate handles that.
+NEVER wipe known discovery fields to null.
+NEVER invent pains they didn’t mention.
+Update discovery every turn. Use salesStage notes like: industry|open|dig|mirror|desire|commit|pitch|gate
+
+═══════════════════════════════════════
+OUTPUT — JSON ONLY
+═══════════════════════════════════════
 {
   "reply": string,
   "phase": "warming"|"pain1"|"time_verify"|"process"|"pain2_probe"|"ready",
-  "discovery": { ...updated... },
-  "proposal": null | object,
+  "discovery": {
+    "businessName": string|null,
+    "businessType": string|null,
+    "role": string|null,
+    "teamSize": string|null,
+    "pains": [{
+      "id": string,
+      "title": string,
+      "rawDescription": string,
+      "tools": string[],
+      "processSteps": string[],
+      "whoDoesIt": string|null,
+      "whyItHurts": string|null,
+      "time": {
+        "label": string,
+        "minutesPerOccurrence": number|null,
+        "occurrencesPerWeek": number|null,
+        "hiddenMinutesPerOccurrence": number|null,
+        "computedHoursPerWeek": number|null,
+        "statedHoursPerWeek": number|null,
+        "underestimationNote": string|null
+      },
+      "automatable": boolean|null,
+      "confidence": number
+    }],
+    "activePainId": string|null,
+    "seekingSecondPain": boolean,
+    "notes": string[],
+    "salesStage": string|null
+  },
+  "proposal": null | {
+    "employeeName": string,
+    "roleTitle": string,
+    "tagline": string,
+    "hoursSavedPerWeek": {"low": number, "high": number},
+    "monthlyHoursSaved": {"low": number, "high": number},
+    "problemsSolved": string[],
+    "emotionalPayoff": string,
+    "jobFromAtoZ": string[],
+    "howTheyUseIt": {
+      "interface": string,
+      "dailyLoop": string,
+      "approvals": string,
+      "humanHandoffs": string
+    },
+    "implementationSketch": string,
+    "whyThisFirst": string,
+    "secondaryOpportunity": string|null,
+    "fitScore": number,
+    "fitNotes": string,
+    "ctaLabel": string
+  },
   "readyForGate": boolean,
   "teaserLine": string|null
 }
 
-CURRENT DISCOVERY:
+Always include readyForGate, proposal, teaserLine (null when not ready).
+hoursSaved ≈ verified weekly hours × 0.7–0.9 when pitching (round whole hours). If pain is efficiency/stress more than hours, still estimate hours honestly and speak to relief.
+
+CURRENT DISCOVERY (build on this — do not erase):
 ${JSON.stringify(discovery)}
 `;
 }
@@ -263,9 +324,9 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
     monthlyHoursSaved: { low: low * 4, high: high * 4 },
     problemsSolved: [
       primary?.rawDescription || "Repeat desk work eating owner time",
-      "Context-switching",
+      primary?.whyItHurts || "Context-switching and grind",
       "Work that slips when nobody owns the pile",
-    ],
+    ].filter(Boolean) as string[],
     emotionalPayoff: impact
       ? `You said you’d put the time toward: ${impact}`
       : "You get the hours back without babysitting a person.",
@@ -279,16 +340,17 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
           "Log / send / follow up",
         ],
     howTheyUseIt: {
-      interface: "Runs where the work already lives — email, spreadsheet, forms, CRM",
+      interface:
+        "Runs where the work already lives — and can feed a simple dashboard that unifies your tools",
       dailyLoop: "It works the queue. You approve exceptions.",
       approvals: "Money, clinical/legal judgment, and sensitive calls stay human",
-      humanHandoffs: "Odd cases come to you summarized",
+      humanHandoffs: "Odd cases come to you summarized — never silent guesses",
     },
     implementationSketch:
-      "Map the workflow, wire your tools, set approvals, run 30 days against a scorecard.",
-    whyThisFirst: "Most hours, cleanest path to automate.",
+      "Map the workflow, wire your tools (and dashboard if needed), set approvals, run 30 days against a scorecard.",
+    whyThisFirst: "Most pain, cleanest path to automate first.",
     secondaryOpportunity: discovery.pains[1]?.title ?? null,
-    fitScore: primary ? 80 : 55,
+    fitScore: primary ? 82 : 55,
     fitNotes: primary
       ? `First hire${industry} based on the workflow you described.`
       : "Needs a tighter walkthrough before build.",
@@ -299,16 +361,20 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
 function funnyName(title: string): string {
   const t = title.toLowerCase();
   if (t.includes("inbox") || t.includes("email")) return "Inbox Scout";
-  if (t.includes("bookkeep") || t.includes("ledger") || t.includes("account"))
+  if (t.includes("bookkeep") || t.includes("ledger") || t.includes("account") || t.includes("payroll"))
     return "Ledger Hawk";
   if (t.includes("follow") || t.includes("chas")) return "Follow-Up Fox";
-  if (t.includes("estimat") || t.includes("quote")) return "Quote Runner";
-  if (t.includes("schedul") || t.includes("appoint") || t.includes("book"))
+  if (t.includes("estimat") || t.includes("quote") || t.includes("takeoff") || t.includes("take-off"))
+    return "Quote Runner";
+  if (t.includes("schedul") || t.includes("appoint") || t.includes("dispatch"))
     return "Bookie";
   if (t.includes("invoice") || t.includes("billing") || t.includes("insurance"))
     return "Bill Hound";
+  if (t.includes("inventor") || t.includes("parts") || t.includes("order"))
+    return "Stock Scout";
+  if (t.includes("dashboard") || t.includes("report") || t.includes("data"))
+    return "Pulse";
   if (t.includes("lead") || t.includes("call")) return "Lead Catcher";
-  if (t.includes("data") || t.includes("entry")) return "Click Clerk";
   const clean =
     title.replace(/[^a-zA-Z0-9 ]/g, "").trim().split(/\s+/)[0] || "Desk";
   return `${clean} Bot`;
