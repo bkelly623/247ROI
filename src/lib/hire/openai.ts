@@ -108,8 +108,8 @@ async function callOpenAI(
     },
     body: JSON.stringify({
       model: process.env.OPENAI_HIRE_MODEL || process.env.OPENAI_MODEL || "gpt-4o",
-      temperature: 0.65,
-      max_tokens: 1800,
+      temperature: 0.82,
+      max_tokens: 2000,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: system },
