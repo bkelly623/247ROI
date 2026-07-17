@@ -6,7 +6,7 @@ const LINES = {
     "What industry is the business in?",
   ],
   vagueIndustry: [
-    "Fair. We automate desk work that burns real hours each week.\nWhat industry — chiro, roofing, agency, spa, something else?",
+    "Fair. We build AI employees that handle almost anything on a computer — sales, follow-up, support, ops, admin.\nWhat industry — chiro, roofing, agency, spa, something else?",
     "Got it — need the industry though.\nChiro, roofing, agency, spa… what are you?",
   ],
   clarifyIndustry: [

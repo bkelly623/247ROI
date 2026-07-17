@@ -1,5 +1,5 @@
 export const HIRE_OPENING =
-  "Quick one — what kind of business are you in?\n\nI’m going to help you spot the work a human shouldn’t still be grinding on… and where an AI employee would actually earn its keep.";
+  "Quick one — what kind of business are you in?\n\nThen I’ll help you spot where an AI employee could take real work off your plate. And to be clear: these aren’t just admin bots — they can do almost anything that happens on a computer. Sales, follow-up, support, ops, you name it.";
 
 export const HIRE_PAGE = {
   eyebrow: "AI employee audit",

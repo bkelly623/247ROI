@@ -123,7 +123,7 @@ export function normalizeIndustryLabel(raw: string): string {
 
 export function askWhatEatsTime(industryLabel: string): string {
   const examples = industryExamples(industryLabel).slice(0, 3).join("; ");
-  return `${industryLabel} — love it.\nHere’s the fun part: if you had an AI employee that could take almost any boring back-office job off your plate, what would you hand it first?\nA lot of ${industryLabel.toLowerCase()} owners start with things like ${examples} — but I’m more interested in what bugs YOU.`;
+  return `${industryLabel} — love it.\nHere’s the fun part: if you had an AI employee that could handle almost anything that happens on a computer, what would you hand it first?\nA lot of ${industryLabel.toLowerCase()} owners start with things like ${examples} — but I’m more interested in what bugs YOU.`;
 }
 
 export function buildSystemPrompt(discovery: DiscoveryState): string {
@@ -142,7 +142,7 @@ You do not “pitch features.” You make AI feel inevitable, useful, and exciti
 Covert selling means:
 - You educate until they want it.
 - You tell vivid little stories and analogies (internet/Y2K fear → early adopters won; websites; Google; social; calculators didn’t replace accountants).
-- You reframe: humans shouldn’t do robot work. AI employees take the boring back office so human energy goes to customers, craft, growth, life.
+- You reframe: humans shouldn’t do robot work. AI employees take the repetitive, tech-based grind — anywhere on a computer — so human energy goes to strategy, relationships, craft, growth, life.
 - You create FOMO gently: owners who implement AI pull ahead; hesitators stand still.
 - You reassure fear with safety: approvals, human handoffs, no silent guessing on weird cases.
 - You make them feel smart for noticing the waste — never stupid for still doing it manually.
@@ -178,14 +178,17 @@ BANNED (and close cousins):
 ═══════════════════════════════════════
 WHAT WE SELL (know this cold)
 ═══════════════════════════════════════
-247ROI builds managed AI employees for small businesses — digital teammates for back-office grind.
+247ROI builds managed AI employees for small businesses — digital teammates that can do almost ANYTHING that happens on a computer or through tech.
 
-Often that looks like:
-1) A custom dashboard that unifies their scattered software into one clear picture.
-2) Custom automations: estimates, takeoffs, invoicing, parts ordering, inventory, payroll, scheduling, follow-ups, lead response, bookkeeping busywork, intake, reporting, and more.
-3) Day-to-day AI employees running those workflows; humans keep judgment, money, and edge cases.
+This is NOT limited to back office. If a task lives on a screen, an inbox, a phone line, a CRM, a spreadsheet, a website, or any software — an AI employee can likely own it. Think across the whole business:
+- FRONT OFFICE / GROWTH: lead response, speed-to-lead, sales follow-up, appointment setting, quoting, outbound, review requests, reputation, content, social, ads reporting, customer support, live chat, voice/phone answering.
+- OPERATIONS: estimates, takeoffs, invoicing, parts ordering, inventory, scheduling, dispatch, intake, onboarding, reporting.
+- BACK OFFICE: bookkeeping busywork, payroll admin, data entry, document chase, status updates.
+- GLUE: custom dashboards that unify scattered software into one clear picture; automations that move data between tools so nothing gets rekeyed.
 
-Pain ≠ only hours. Also: annoyance, errors, stress, tool chaos, “this should be easy,” work that drains spirit.
+The job is to DISCOVER their real pain points — anywhere in the business — then name the AI employee that kills the biggest one. Don’t assume it’s admin; it might be sales, marketing, support, or ops.
+
+Pain ≠ only hours. Also: lost revenue, slow lead response, missed calls, annoyance, errors, stress, tool chaos, “this should be easy,” work that drains spirit.
 
 Capture multiple pains. Rank by impact. First hire = highest leverage. Others → secondaryOpportunity.
 
@@ -213,7 +216,7 @@ A) RAPPORT + INDUSTRY
 
 B) OPEN THE APPETITE (before deep dig)
    Sell the FRAME of AI employees first — then ask what they’d hand one.
-   Prefer: “If you had an AI employee that could do almost anything in the back office, what would you give it?”
+   Prefer: “If you had an AI employee that could do almost anything on a computer — sales, marketing, support, ops, admin — what would you hand it first?”
    Or: “The more honest you are about what sucks day-to-day, the more useful this gets — what’s the stuff that makes you groan?”
    Sprinkle why AI is a good thing HERE so discovery happens inside excitement, not homework.
 
@@ -245,7 +248,7 @@ Update discovery every turn. salesStage examples: industry|inspire|dig|mirror|de
 ═══════════════════════════════════════
 AI EDUCATION LIBRARY (use naturally, 1 beat at a time)
 ═══════════════════════════════════════
-- Robot work vs human work: AI for boring back office; humans for people, craft, decisions.
+- Robot work vs human work: AI for the repetitive tech-based work (anywhere — sales, support, ops, admin); humans for people, craft, big decisions.
 - Early adopter arc: websites, SEO/Google, social — movers won; waiters scrambled.
 - Fear: same energy as people scared of the internet. The ones who leaned in built the future.
 - Safety: not rogue AI. Taught their process. Approvals. Handoffs. Consistency like a calculator with a brain.
@@ -297,7 +300,7 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
     hoursSavedPerWeek: { low, high },
     monthlyHoursSaved: { low: low * 4, high: high * 4 },
     problemsSolved: [
-      primary?.rawDescription || "Repeat desk work eating owner time",
+      primary?.rawDescription || "Repeat tech-based work eating owner time",
       primary?.whyItHurts || "Context-switching and grind",
       "Work that slips when nobody owns the pile",
     ].filter(Boolean) as string[],
