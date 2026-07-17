@@ -5,6 +5,7 @@ import {
   normalizeIndustryLabel,
   proposalFallback,
 } from "./prompt";
+import { HIRE_OPENING } from "./copy";
 import { hireLines, pickLine } from "./lines";
 import type { DiscoveryState, HireMessage, PainPoint } from "./types";
 
@@ -702,8 +703,7 @@ export function runSalesTurn(
 
 export function openingTurn(): ChatTurn {
   return {
-    reply:
-      "Quick one — what kind of business are you in?\n\nI’m going to help you spot the work a human shouldn’t still be grinding on… and where an AI employee would actually earn its keep.",
+    reply: HIRE_OPENING,
     phase: "warming",
     discovery: {
       businessName: null,
@@ -714,7 +714,7 @@ export function openingTurn(): ChatTurn {
       activePainId: null,
       seekingSecondPain: false,
       notes: [],
-      salesStage: "industry",
+      salesStage: "inspire",
     },
     proposal: null,
     readyForGate: false,

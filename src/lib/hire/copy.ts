@@ -1,11 +1,11 @@
 export const HIRE_OPENING =
-  "Quick one — what kind of business are you in?\n\nThen I’ll help you spot where an AI employee could take real work off your plate. And to be clear: these aren’t just admin bots — they can do almost anything that happens on a computer. Sales, follow-up, support, ops, you name it.";
+  "Humans have always invented tools to make life easier.\n\nPen and paper. The telephone. Computers. Websites. Social media. Now AI — and AI employees that can actually do work on a computer for you.\n\nSame story every time: the people who lean in get their life back. The ones who wait play catch-up.\n\nThis isn’t a form. It’s a conversation — and by the end you’ll know exactly where an AI employee could free you up to do the stuff only a human should do.\n\nSo… what kind of business are you in?";
 
 export const HIRE_PAGE = {
   eyebrow: "AI employee audit",
   headline: "Find the work AI should own.",
   subhead:
-    "A real conversation — not a form. We dig into what’s draining you, get you excited about what’s possible, then name the first AI hire worth building.",
+    "A conversation that sells you on what’s possible — then names the first AI hire worth building for your business.",
   busy: "…",
   placeholder: "Your answer…",
   placeholderLocked: "Unlock below…",
