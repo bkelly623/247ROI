@@ -114,15 +114,16 @@ export default function HomePage() {
               <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                 <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
                   <Sparkles className="h-4 w-4" aria-hidden />
-                  AI employees for the work nobody owns
+                  AI employees and workflow automation for service businesses
                 </span>
                 <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.98] sm:text-6xl lg:text-7xl">
-                  Your next employee does not need a chair. It needs a job description.
+                  AI employees that work 24/7 and prove their ROI.
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                  247ROI builds managed AI employees for the work your team keeps meaning to do faster: lead response,
-                  estimating prep, bid intake, inbox/SMS triage, and operational handoffs. Not software you remember to
-                  check. Not chatbot cosplay. A defined role, a weekly scorecard, and human approval where judgment matters.
+                  247ROI builds managed AI employees and workflow automation systems for service businesses: lead
+                  response, follow-up, estimating prep, bid intake, takeoffs, inbox/SMS triage, reporting, and
+                  operational handoffs. Not a chatbot. Not another app to remember. A defined role, connected tools,
+                  human approval points, and a weekly scorecard.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
@@ -138,7 +139,7 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                  Built for service businesses that need speed, discipline, and follow-through before they are ready to add another full-time seat.
+                  Built for contractors and service businesses that need faster response, cleaner follow-up, and less manual admin before adding another full-time seat.
                 </p>
               </motion.div>
 
@@ -193,6 +194,40 @@ export default function HomePage() {
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{label}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
+              <div>
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">What we are</span>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                  247ROI is an AI employee company, not a chatbot vendor.
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  A chatbot talks. A 247ROI AI employee completes a defined workflow: it watches for a trigger, gathers
+                  inputs, follows rules, prepares work product, escalates exceptions, and gets measured by business value.
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {[
+                  ["AI employees for small business", "/ai-employees-for-small-business"],
+                  ["AI employees for service businesses", "/ai-employees-for-service-businesses"],
+                  ["AI workflow automation agency", "/ai-workflow-automation-agency"],
+                  ["AI lead response system", "/ai-lead-response-system"],
+                  ["AI employee ROI calculator", "/ai-employee-roi-calculator"],
+                  ["Managed AI employee roles", "/ai-employees"],
+                ].map(([label, href]) => (
+                  <Link key={label} href={href} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-transform hover:-translate-y-1">
+                    <p className="font-semibold text-foreground">{label}</p>
+                    <p className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                      Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                    </p>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </section>

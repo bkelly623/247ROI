@@ -19,6 +19,11 @@ const footerColumns: {
     title: "Product",
     links: [
       { label: "AI Employees", href: "/ai-employees" },
+      { label: "AI employees for small business", href: "/ai-employees-for-small-business" },
+      { label: "AI employees for service businesses", href: "/ai-employees-for-service-businesses" },
+      { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
+      { label: "AI lead response system", href: "/ai-lead-response-system" },
+      { label: "AI employee ROI calculator", href: "/ai-employee-roi-calculator" },
       { label: "Example workflows", href: "/demo" },
       { label: "Pricing", href: "/pricing" },
       { label: "AI Estimator", href: "/ai-estimator" },

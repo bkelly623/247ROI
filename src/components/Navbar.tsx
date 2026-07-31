@@ -17,6 +17,8 @@ import {
 const navLinks = [
   { name: "AI Employee Audit", href: "/hire" },
   { name: "AI Employees", href: "/ai-employees" },
+  { name: "Workflow Automation", href: "/ai-workflow-automation-agency" },
+  { name: "Lead Response", href: "/ai-lead-response-system" },
   { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
   { name: "Pricing", href: "/pricing" },
