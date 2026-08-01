@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   description:
     "247ROI builds managed AI employees and workflow automation systems for service businesses: lead response, follow-up, estimating prep, bidding, takeoffs, and operations.",
   metadataBase: new URL(SITE_URL),
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "247ROI | AI Employees & Workflow Automation for Service Businesses",
     description:
@@ -64,9 +61,11 @@ export default function RootLayout({
       "AI workflow automation",
       "custom AI agents",
       "AI lead response systems",
-      "AI receptionist for contractors",
       "AI follow-up automation",
       "AI estimator assistant",
+      "AI operations coordinator",
+      "AI inbox automation",
+      "AI admin workflow automation",
       "AI takeoff assistant",
       "contractor workflow automation",
     ],

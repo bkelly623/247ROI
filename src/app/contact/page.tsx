@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Find Your First AI Employee | 247ROI",
   description:
     "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, scorecard, and launch path before anything goes live.",
+  alternates: { canonical: "/contact" },
 };
 
 const auditOutputs = [
@@ -91,8 +92,8 @@ export default function ContactPage() {
                 <span className="text-sm font-semibold uppercase tracking-wider text-primary">Audit brief</span>
                 <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Messy is useful. Vague is not.</h2>
                 <p className="mt-4 text-muted-foreground">
-                  The best audit conversations start with the real bottleneck: screenshots, notes, missed calls, stale
-                  estimates, awkward handoffs, and the work your team keeps postponing.
+                  The best audit conversations start with the real bottleneck: screenshots, notes, stale estimates,
+                  bid invites, inbox threads, awkward handoffs, and the work your team keeps postponing.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">

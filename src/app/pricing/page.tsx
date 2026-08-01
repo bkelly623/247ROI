@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "AI Employee Pricing | 247ROI",
   description:
     "Pricing expectations for 247ROI AI employees: audit-first custom builds for service-business workflows, follow-up, estimating, bidding, and operations.",
+  alternates: { canonical: "/pricing" },
 };
 
 const plans = [
@@ -33,7 +34,7 @@ const plans = [
 ];
 
 const pricingRules = [
-  ["Lower scope", "Follow-up, receptionist, reminders, simple inbox triage, and other narrow roles with clean handoffs."],
+  ["Lower scope", "Follow-up, reminders, intake, simple inbox triage, and other narrow roles with clean handoffs."],
   ["Higher scope", "Estimator, bid, takeoff, multi-tool, or document-heavy roles that need deeper workflow setup."],
   ["Build fee", "Quoted after audit when the setup effort is clear. Qualified pilots may reduce or defer setup to prove value first."],
 ];
@@ -51,9 +52,9 @@ export default function PricingPage() {
               If the AI employee cannot pay for itself, it should not be hired.
             </h1>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-              Pricing follows the role, not a generic software tier. Narrow follow-up and receptionist employees price
-              lower. Estimating, bidding, and document-heavy employees price higher because the job spec, integrations,
-              and human approval rules matter more.
+              Pricing follows the role, not a generic software tier. Narrow follow-up, admin, and intake employees price
+              lower. Estimating, bidding, document-heavy, and multi-system employees price higher because the job spec,
+              integrations, and human approval rules matter more.
             </p>
           </div>
         </section>

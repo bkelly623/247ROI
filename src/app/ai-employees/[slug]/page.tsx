@@ -22,6 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${offer.title} | 247ROI`,
     description: offer.subheadline,
+    alternates: { canonical: offer.route },
   };
 }
 

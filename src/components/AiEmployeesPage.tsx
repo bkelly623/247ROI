@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Calculator, ClipboardCheck, FileSearch, Megaphone, MessageSquareText, PhoneCall } from "lucide-react";
+import { ArrowRight, Calculator, ClipboardCheck, DatabaseZap, FileSearch, Megaphone, MessageSquareText, PhoneCall } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomeSetupCallSection from "@/components/HomeSetupCallSection";
@@ -16,6 +16,7 @@ const iconMap = {
   fileSearch: FileSearch,
   megaphone: Megaphone,
   clipboard: ClipboardCheck,
+  databaseZap: DatabaseZap,
 };
 
 const priorityLabels = {

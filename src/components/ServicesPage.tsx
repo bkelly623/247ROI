@@ -12,8 +12,8 @@ const lanes = [
   {
     title: "Revenue response",
     icon: PhoneCall,
-    body: "Missed calls, inbound forms, SMS, web chat, stale estimates, and speed-to-lead workflows.",
-    examples: ["AI receptionist", "Follow-up agent", "Appointment reminders"],
+    body: "Inbound forms, SMS, web chat, quotes, stale estimates, call summaries, and speed-to-lead workflows.",
+    examples: ["Sales follow-up employee", "Lead intake coordinator", "Appointment reminders"],
   },
   {
     title: "Estimator support",
@@ -30,8 +30,8 @@ const lanes = [
   {
     title: "Inbox operations",
     icon: MessageSquareText,
-    body: "Customer replies, vendor messages, internal handoffs, owner bottlenecks, and daily queues.",
-    examples: ["Inbox triage", "SMS response", "Ops coordinator"],
+    body: "Customer replies, vendor messages, internal handoffs, owner bottlenecks, status updates, and daily queues.",
+    examples: ["Inbox triage", "Admin assistant", "Ops coordinator"],
   },
 ];
 

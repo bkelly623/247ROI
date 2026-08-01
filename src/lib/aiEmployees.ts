@@ -8,7 +8,7 @@ export type AiEmployeeOffer = {
   priceHint: string;
   bestFor: string;
   route: string;
-  icon: "phone" | "message" | "calculator" | "fileSearch" | "megaphone" | "clipboard";
+  icon: "phone" | "message" | "calculator" | "fileSearch" | "megaphone" | "clipboard" | "databaseZap";
   priority: "core" | "contractor" | "growth";
   painPoints: string[];
   handles: string[];
@@ -145,6 +145,38 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
       { title: "Define bid fit", description: "We map job types, geography, margin rules, deadlines, and required documents." },
       { title: "Organize opportunities", description: "The AI screens and summarizes jobs before they hit your team." },
       { title: "Improve bid discipline", description: "We track qualified opportunities, deadlines, and prep time reduced." },
+    ],
+  },
+  {
+    slug: "ai-operations-coordinator",
+    title: "AI Operations Coordinator",
+    shortTitle: "Operations",
+    eyebrow: "Back-office AI employee",
+    headline: "Turn scattered admin work into one managed operating queue.",
+    subheadline:
+      "An AI operations coordinator that watches inboxes, CRMs, calendars, documents, and internal threads so handoffs, updates, summaries, and owner approvals stop disappearing.",
+    priceHint: "Custom build after workflow review",
+    bestFor: "Service businesses where the owner or office manager is the glue between too many tools, messages, records, and daily handoffs.",
+    route: "/ai-employees/ai-operations-coordinator",
+    icon: "databaseZap",
+    priority: "core",
+    painPoints: [
+      "Customer, vendor, and internal messages are spread across too many places",
+      "CRM records, notes, reminders, and documents fall behind",
+      "The owner keeps becoming the status-update machine",
+    ],
+    handles: ["Inbox triage", "CRM update prep", "Calendar and task handoffs", "Daily operating queue", "Approval routing"],
+    outcomes: ["Cleaner daily queue", "Fewer dropped handoffs", "Less owner admin", "More reliable status updates"],
+    goodFit: [
+      "You already run work through multiple systems",
+      "Admin follow-through is slowing revenue work",
+      "A human can approve exceptions and sensitive replies",
+    ],
+    notFit: ["No repeat admin workflow", "No shared system of record", "You want fully autonomous decisions with no oversight"],
+    steps: [
+      { title: "Map the handoffs", description: "We identify where messages, records, calendar items, and tasks currently scatter." },
+      { title: "Build the queue", description: "The AI prepares updates, summaries, records, and next actions for human review." },
+      { title: "Measure operating lift", description: "We track queues cleared, records updated, handoffs completed, and owner hours saved." },
     ],
   },
   {

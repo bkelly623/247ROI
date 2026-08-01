@@ -7,12 +7,12 @@ import {
   ArrowRight,
   BadgeCheck,
   ClipboardCheck,
+  DatabaseZap,
   FileSearch,
   Gauge,
   Mail,
   MessageSquareText,
   Phone,
-  PhoneCall,
   Radar,
   ShieldCheck,
   Sparkles,
@@ -44,10 +44,10 @@ const roles = [
     pain: "Bid invites, requirements, addenda, deadlines, and go/no-go checks become a clean daily queue.",
   },
   {
-    title: "AI Receptionist",
-    href: "/ai-employees/ai-receptionist",
-    icon: PhoneCall,
-    pain: "Overflow and after-hours calls get captured, qualified, summarized, and routed.",
+    title: "Ops Coordinator",
+    href: "/ai-employees/ai-operations-coordinator",
+    icon: DatabaseZap,
+    pain: "Inbox, CRM, calendar, docs, SMS, and internal handoffs turn into one managed operating queue.",
   },
 ];
 
@@ -170,8 +170,8 @@ export default function HomePage() {
                     </div>
                     <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-background/40">
                       <Image
-                        src="/images/dashboard-preview.png"
-                        alt="Example AI employee scorecard dashboard"
+                        src="/images/ai-employee-ops-dashboard.svg"
+                        alt="Example 247ROI AI employee operations dashboard"
                         width={1200}
                         height={800}
                         className="h-auto w-full"
@@ -217,7 +217,7 @@ export default function HomePage() {
                   ["AI employees for service businesses", "/ai-employees-for-service-businesses"],
                   ["AI workflow automation agency", "/ai-workflow-automation-agency"],
                   ["AI lead response system", "/ai-lead-response-system"],
-                  ["AI employee ROI calculator", "/ai-employee-roi-calculator"],
+                  ["Example workflows and outputs", "/demo"],
                   ["Managed AI employee roles", "/ai-employees"],
                 ].map(([label, href]) => (
                   <Link key={label} href={href} className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-transform hover:-translate-y-1">

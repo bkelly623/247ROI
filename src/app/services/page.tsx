@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "AI Employee Services | 247ROI",
   description:
     "Managed AI employees for service businesses: revenue response, estimator support, bid discipline, inbox operations, and measurable handoffs.",
+  alternates: { canonical: "/services" },
 };
 
 export default function ServicesRoutePage() {

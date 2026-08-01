@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">247ROI AI employee operations dashboard</title>
+  <desc id="desc">A sample AI employee dashboard showing workflow queues, human approval steps, and ROI scorecard metrics.</desc>
+  <rect width="1400" height="900" fill="#061316"/>
+  <rect x="48" y="48" width="1304" height="804" rx="28" fill="#0b1c21" stroke="#214148" stroke-width="2"/>
+  <rect x="48" y="48" width="1304" height="86" rx="28" fill="#10272d"/>
+  <rect x="48" y="105" width="1304" height="29" fill="#10272d"/>
+  <text x="88" y="102" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#effdf9">247ROI Command Center</text>
+  <text x="1088" y="99" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#92c7c4">Weekly ROI Scorecard</text>
+
+  <rect x="88" y="174" width="346" height="148" rx="18" fill="#0f2a30" stroke="#244f55"/>
+  <text x="116" y="218" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#49d8c8">FIRST AI EMPLOYEE</text>
+  <text x="116" y="260" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" fill="#ffffff">Estimator Assistant</text>
+  <text x="116" y="292" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#b9d6d3">Prepares quote packets before review</text>
+
+  <rect x="464" y="174" width="236" height="148" rx="18" fill="#0f2a30" stroke="#244f55"/>
+  <text x="492" y="217" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#49d8c8">OWNER HOURS</text>
+  <text x="492" y="268" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#ffffff">12.5</text>
+  <text x="492" y="298" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#b9d6d3">saved this week</text>
+
+  <rect x="730" y="174" width="236" height="148" rx="18" fill="#0f2a30" stroke="#244f55"/>
+  <text x="758" y="217" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#49d8c8">WORK PRODUCT</text>
+  <text x="758" y="268" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#ffffff">31</text>
+  <text x="758" y="298" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#b9d6d3">packets prepared</text>
+
+  <rect x="996" y="174" width="316" height="148" rx="18" fill="#11271f" stroke="#476330"/>
+  <text x="1024" y="217" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#f6c867">APPROVAL QUEUE</text>
+  <text x="1024" y="268" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#ffffff">7</text>
+  <text x="1024" y="298" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#d8d1ad">pricing decisions for humans</text>
+
+  <rect x="88" y="372" width="376" height="392" rx="22" fill="#0b2228" stroke="#244f55"/>
+  <text x="118" y="420" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#ffffff">Workflow Queue</text>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="118" y="456" width="316" height="70" rx="14" fill="#102f36"/>
+    <text x="142" y="485" font-size="17" font-weight="700" fill="#effdf9">New roof repair request</text>
+    <text x="142" y="511" font-size="15" fill="#a7c6c3">Missing slope photos requested</text>
+    <rect x="118" y="546" width="316" height="70" rx="14" fill="#102f36"/>
+    <text x="142" y="575" font-size="17" font-weight="700" fill="#effdf9">Commercial bid invite</text>
+    <text x="142" y="601" font-size="15" fill="#a7c6c3">Deadline and spec risks extracted</text>
+    <rect x="118" y="636" width="316" height="70" rx="14" fill="#102f36"/>
+    <text x="142" y="665" font-size="17" font-weight="700" fill="#effdf9">Stale estimate reply</text>
+    <text x="142" y="691" font-size="15" fill="#a7c6c3">Customer asked for alternate window</text>
+  </g>
+
+  <rect x="506" y="372" width="398" height="392" rx="22" fill="#0b2228" stroke="#244f55"/>
+  <text x="536" y="420" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#ffffff">AI Employee Handoff</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="17">
+    <circle cx="552" cy="475" r="9" fill="#49d8c8"/>
+    <text x="578" y="481" fill="#effdf9">Trigger captured from form, inbox, CRM, or portal</text>
+    <circle cx="552" cy="535" r="9" fill="#49d8c8"/>
+    <text x="578" y="541" fill="#effdf9">Missing inputs requested automatically</text>
+    <circle cx="552" cy="595" r="9" fill="#49d8c8"/>
+    <text x="578" y="601" fill="#effdf9">Packet, checklist, or summary prepared</text>
+    <circle cx="552" cy="655" r="9" fill="#f6c867"/>
+    <text x="578" y="661" fill="#effdf9">Human approves pricing and exceptions</text>
+    <circle cx="552" cy="715" r="9" fill="#49d8c8"/>
+    <text x="578" y="721" fill="#effdf9">Scorecard updates after outcome</text>
+  </g>
+
+  <rect x="946" y="372" width="366" height="392" rx="22" fill="#0b2228" stroke="#244f55"/>
+  <text x="976" y="420" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#ffffff">Systems Connected</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">
+    <rect x="976" y="462" width="132" height="54" rx="14" fill="#102f36" stroke="#28545b"/>
+    <text x="1016" y="496" fill="#effdf9">CRM</text>
+    <rect x="1138" y="462" width="132" height="54" rx="14" fill="#102f36" stroke="#28545b"/>
+    <text x="1174" y="496" fill="#effdf9">Email</text>
+    <rect x="976" y="544" width="132" height="54" rx="14" fill="#102f36" stroke="#28545b"/>
+    <text x="1018" y="578" fill="#effdf9">SMS</text>
+    <rect x="1138" y="544" width="132" height="54" rx="14" fill="#102f36" stroke="#28545b"/>
+    <text x="1168" y="578" fill="#effdf9">Docs</text>
+    <rect x="976" y="626" width="132" height="54" rx="14" fill="#102f36" stroke="#28545b"/>
+    <text x="1000" y="660" fill="#effdf9">Calendar</text>
+    <rect x="1138" y="626" width="132" height="54" rx="14" fill="#102f36" stroke="#28545b"/>
+    <text x="1169" y="660" fill="#effdf9">Portal</text>
+  </g>
+  <path d="M1020 724 H1268" stroke="#49d8c8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M1020 724 H1194" stroke="#f6c867" stroke-width="8" stroke-linecap="round"/>
+  <text x="976" y="754" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#a7c6c3">More connected tools means a clearer job spec, not more chaos.</text>
+</svg>

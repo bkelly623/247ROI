@@ -9,6 +9,7 @@ import {
   Calculator,
   CheckCircle2,
   ClipboardCheck,
+  DatabaseZap,
   FileSearch,
   Megaphone,
   MessageSquareText,
@@ -30,6 +31,7 @@ const iconMap = {
   fileSearch: FileSearch,
   megaphone: Megaphone,
   clipboard: ClipboardCheck,
+  databaseZap: DatabaseZap,
 };
 
 const proofBySlug: Record<
@@ -79,6 +81,15 @@ const proofBySlug: Record<
     deliverables: ["Bid fit summary", "Requirement checklist", "Deadline reminders", "Document tracker"],
     objections: ["You keep final bid control", "Uses your margin and job-fit rules", "Designed to avoid low-quality bid volume"],
     scorecard: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
+  },
+  "ai-operations-coordinator": {
+    metric: "Daily",
+    metricLabel: "operating queue prepared",
+    snapshot: "Inbox items, CRM updates, calendar handoffs, document requests, and approval-needed tasks organized into one queue before the owner starts the day.",
+    workflow: ["Messages arrive across tools", "AI classifies and summarizes the work", "Records and next actions are prepared", "Human approves exceptions and sensitive replies"],
+    deliverables: ["Daily operating queue", "CRM update draft", "Customer/vendor summaries", "Approval-needed list"],
+    objections: ["Uses your actual systems and naming rules", "Does not send sensitive replies without approval", "Designed to reduce owner admin, not hide the work"],
+    scorecard: ["Queues cleared", "Records updated", "Handoffs completed", "Owner hours saved"],
   },
   "ai-takeoff-assistant": {
     metric: "Cleaner",

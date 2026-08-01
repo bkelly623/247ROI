@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   ClipboardCheck,
+  DatabaseZap,
   FileSearch,
   MessageSquareText,
-  PhoneCall,
   ShieldCheck,
   TimerReset,
 } from "lucide-react";
@@ -18,10 +18,10 @@ import { Button } from "@/components/ui/button";
 const examples = [
   {
     icon: MessageSquareText,
-    title: "Lead response employee",
-    trigger: "A roofing lead comes in from a form at 9:47 PM.",
-    output: "The AI sends the first reply, asks qualifying questions, offers inspection windows, tags urgency, and sends the team a clean handoff.",
-    scorecard: ["First touch time", "Replies", "Booked inspections", "Revived estimates"],
+    title: "Sales follow-up employee",
+    trigger: "New leads, old estimates, no-shows, and partial conversations sit across forms, SMS, email, and the CRM.",
+    output: "The AI ranks the queue, sends approved follow-up, asks for missing context, pauses when a human takes over, and reports what moved.",
+    scorecard: ["Replies", "Booked next steps", "Revived estimates", "Human takeovers"],
   },
   {
     icon: ClipboardCheck,
@@ -38,11 +38,26 @@ const examples = [
     scorecard: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
   },
   {
-    icon: PhoneCall,
-    title: "AI receptionist",
-    trigger: "A service call hits after-hours or during a dispatch rush.",
-    output: "The AI answers, captures job details, checks urgency, summarizes the call, and routes the next step.",
-    scorecard: ["Answered calls", "Qualified jobs", "Urgent handoffs", "Booked opportunities"],
+    icon: DatabaseZap,
+    title: "Operations coordinator",
+    trigger: "The owner is the glue between inboxes, calendars, CRMs, shared docs, and internal reminders.",
+    output: "The AI builds the daily queue, prepares summaries, routes exceptions, updates records, and flags work waiting on a person.",
+    scorecard: ["Queues cleared", "Records updated", "Handoffs completed", "Owner hours saved"],
+  },
+];
+
+const sampleOutputs = [
+  {
+    label: "Estimator packet",
+    lines: ["Customer: Hillcrest HOA", "Scope: gutter replacement plus fascia review", "Missing: north elevation photos", "Human approval: final price and warranty language"],
+  },
+  {
+    label: "Bid intake summary",
+    lines: ["Deadline: Friday 2:00 PM", "Fit: service area match, margin unknown", "Risks: alternate spec, insurance certificate", "Next step: estimator review before noon"],
+  },
+  {
+    label: "Daily ops queue",
+    lines: ["4 replies need approval", "3 CRM records updated", "2 estimate follow-ups drafted", "1 billing handoff waiting on owner"],
   },
 ];
 
@@ -62,7 +77,7 @@ export default function DemoPage() {
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
                 The value is not a chat bubble. It is the handoff: the prepared estimate packet, the revived lead,
-                the bid checklist, the urgent call summary, and the weekly scorecard.
+                the bid checklist, the cleaned-up operating queue, and the weekly scorecard.
               </p>
               <div className="mt-8 flex justify-center">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
@@ -114,6 +129,34 @@ export default function DemoPage() {
                   </motion.div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Sample outputs</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                This is what buyers should be able to inspect.
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Every AI employee should leave behind useful artifacts: summaries, packets, queues, drafts, and decisions waiting on human approval.
+              </p>
+            </div>
+            <div className="grid gap-5 lg:grid-cols-3">
+              {sampleOutputs.map((sample) => (
+                <div key={sample.label} className="rounded-3xl border border-white/10 bg-white/[0.035] p-6">
+                  <p className="text-sm font-semibold uppercase tracking-wider text-primary">{sample.label}</p>
+                  <div className="mt-5 space-y-3">
+                    {sample.lines.map((line) => (
+                      <div key={line} className="rounded-2xl border border-white/10 bg-background/40 p-4 text-sm leading-relaxed text-foreground/85">
+                        {line}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>

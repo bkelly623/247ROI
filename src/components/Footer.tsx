@@ -23,13 +23,11 @@ const footerColumns: {
       { label: "AI employees for service businesses", href: "/ai-employees-for-service-businesses" },
       { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
       { label: "AI lead response system", href: "/ai-lead-response-system" },
-      { label: "AI employee ROI calculator", href: "/ai-employee-roi-calculator" },
       { label: "Example workflows", href: "/demo" },
       { label: "Pricing", href: "/pricing" },
       { label: "AI Estimator", href: "/ai-estimator" },
       { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
       { label: "Services", href: "/services" },
-      { label: "Missed-call calculator", href: "/missed-call-calculator" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -75,7 +73,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-sm">
-                Managed AI employees for service businesses: lead response, follow-up, estimating prep, bid discipline, and operational handoffs.
+                Managed AI employees for service businesses: follow-up, estimating prep, bid discipline, inbox/admin workflows, reporting, and operational handoffs.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}
