@@ -25,7 +25,7 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{page.subheadline}</p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                    <Link href="/contact">
+                    <Link href="/hire">
                       Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
@@ -48,7 +48,7 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
                 <div className="mt-6 rounded-2xl border border-primary/25 bg-primary/10 p-4">
                   <p className="text-sm leading-relaxed text-foreground/85">
                     247ROI builds managed AI employees and workflow automations for service businesses that need practical,
-                    measurable output instead of generic AI hype.
+                    inspectable output instead of generic AI hype.
                   </p>
                 </div>
               </div>
@@ -83,10 +83,10 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
           <div className="container mx-auto px-6">
             <div className="mx-auto mb-12 max-w-3xl text-center">
               <span className="text-sm font-semibold uppercase tracking-wider text-primary">What 247ROI builds</span>
-              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Managed AI employees with a job description and scorecard.</h2>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Managed AI employees with a job description, controls, and useful output.</h2>
               <p className="mt-4 text-muted-foreground">
-                The build starts with a defined role, connected inputs, handoff rules, approval points, and the metric
-                that determines whether the employee deserves to stay.
+                The build starts with a defined role, connected inputs, handoff rules, approval points, and the practical
+                evidence that tells us whether the workflow is getting better.
               </p>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -123,10 +123,10 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
               <Sparkles className="mx-auto mb-5 h-8 w-8 text-primary" aria-hidden />
               <h2 className="font-display text-3xl font-bold sm:text-5xl">Find the first AI employee worth building.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                Bring the messy workflow. 247ROI will identify the role, the handoffs, the risks, and the scorecard.
+                Bring the messy workflow. 247ROI will identify the role, the handoffs, the risks, and the success criteria.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/contact">Start the AI Employee Audit</Link>
+                <Link href="/hire">Start the AI Employee Audit</Link>
               </Button>
             </div>
           </div>

@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   description:
     "Dedicated AI employee offers for lead response, follow-up, estimating support, bidding, takeoffs, and operations handoffs.",
   alternates: { canonical: "/ai-employees" },
+  openGraph: {
+    title: "AI Employees for Service Businesses | 247ROI",
+    description:
+      "Dedicated AI employee offers for lead response, follow-up, estimating support, bidding, takeoffs, and operations handoffs.",
+    url: "/ai-employees",
+  },
 };
 
 export default function AiEmployeesRoutePage() {

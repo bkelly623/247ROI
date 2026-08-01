@@ -398,7 +398,7 @@ export function proposalFallback(discovery: DiscoveryState): HireProposal {
       humanHandoffs: "Odd cases come to you summarized — never silent guesses",
     },
     implementationSketch:
-      "Map the workflow, wire your tools (and dashboard if needed), set approvals, run 30 days against a scorecard.",
+      "Map the workflow, wire your tools (and dashboard if needed), set approvals, and test the build against practical success criteria.",
     whyThisFirst: "Most pain, cleanest path to automate first.",
     secondaryOpportunity: discovery.pains[1]?.title ?? null,
     fitScore: primary ? 82 : 55,

@@ -75,11 +75,11 @@ export default function AiEmployeesPage() {
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
                 Every offer below is a real operational employee: a defined trigger, a repeatable task, a human handoff,
-                and a scorecard. Start with the role closest to money.
+                and success criteria. Start with the role causing the clearest bottleneck.
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/contact">Book AI Audit</Link>
+                  <Link href="/hire">Find My First AI Employee</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                   <Link href="/demo">See Examples</Link>
@@ -111,8 +111,8 @@ export default function AiEmployeesPage() {
             <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
               {[
                 ["1", "Pain before platform", "We choose the role from the buyer's current bottleneck, not from a shiny tool list."],
-                ["2", "Narrow before broad", "The first employee gets a constrained job description so it can launch and be measured."],
-                ["3", "Scale after proof", "More employees only get added after the first one saves time, captures revenue, or improves follow-through."],
+                ["2", "Narrow before broad", "The first employee gets a constrained job description so it can launch without becoming a science project."],
+                ["3", "Scale after evidence", "More employees only get added after the first one makes the workflow cleaner, faster, or easier to manage."],
               ].map(([number, title, body]) => (
                 <div key={number} className="rounded-3xl border border-white/10 bg-white/[0.035] p-8">
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">{number}</div>

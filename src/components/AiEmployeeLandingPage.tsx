@@ -43,7 +43,7 @@ const proofBySlug: Record<
     workflow: string[];
     deliverables: string[];
     objections: string[];
-    scorecard: string[];
+    successCriteria: string[];
   }
 > = {
   "ai-receptionist": {
@@ -53,7 +53,7 @@ const proofBySlug: Record<
     workflow: ["Customer calls after hours", "AI answers and qualifies the job", "Urgent calls route to the right person", "Summary lands in your inbox or CRM"],
     deliverables: ["Call transcript and summary", "Urgency tag", "Booking request", "Weekly recovered-call report"],
     objections: ["Uses your service area and job rules", "Hands off when a human should take over", "Can run as overflow, after-hours, or a dedicated line"],
-    scorecard: ["Answered calls", "Qualified jobs", "Urgent handoffs", "Booked opportunities"],
+    successCriteria: ["Answered calls", "Qualified jobs", "Urgent handoffs", "Booked opportunities"],
   },
   "ai-follow-up-agent": {
     metric: "<60s",
@@ -62,7 +62,7 @@ const proofBySlug: Record<
     workflow: ["Lead comes from form, call, ad, or old estimate", "AI sends the first touch instantly", "Prospect answers questions or books", "Human gets the clean handoff"],
     deliverables: ["SMS/email sequences", "Qualification notes", "No-show reminders", "Reactivation campaign"],
     objections: ["Includes opt-out language", "Stops when a human takes over", "Works with CRM, spreadsheet, inbox, or calendar workflows"],
-    scorecard: ["Replies", "Booked appointments", "Revived estimates", "No-shows reduced"],
+    successCriteria: ["Replies", "Booked appointments", "Revived estimates", "No-shows reduced"],
   },
   "ai-estimator": {
     metric: "24h",
@@ -71,7 +71,7 @@ const proofBySlug: Record<
     workflow: ["Customer submits job details", "AI requests missing photos or measurements", "Scope gets organized by line item", "Estimator reviews and sends final quote"],
     deliverables: ["Scope summary", "Photo checklist", "Quote draft", "Follow-up reminders"],
     objections: ["Human approves final pricing", "Uses your templates and pricing logic", "Flags missing inputs before the estimator wastes time"],
-    scorecard: ["Packets prepared", "Turnaround time", "Follow-ups sent", "Owner hours saved"],
+    successCriteria: ["Packets prepared", "Turnaround time", "Follow-ups sent", "Owner review time reduced"],
   },
   "ai-job-bidding-agent": {
     metric: "Go/no-go",
@@ -80,7 +80,7 @@ const proofBySlug: Record<
     workflow: ["Opportunity appears in email or portal", "AI extracts requirements and deadlines", "Fit score is created", "Team gets a bid checklist"],
     deliverables: ["Bid fit summary", "Requirement checklist", "Deadline reminders", "Document tracker"],
     objections: ["You keep final bid control", "Uses your margin and job-fit rules", "Designed to avoid low-quality bid volume"],
-    scorecard: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
+    successCriteria: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
   },
   "ai-operations-coordinator": {
     metric: "Daily",
@@ -89,7 +89,7 @@ const proofBySlug: Record<
     workflow: ["Messages arrive across tools", "AI classifies and summarizes the work", "Records and next actions are prepared", "Human approves exceptions and sensitive replies"],
     deliverables: ["Daily operating queue", "CRM update draft", "Customer/vendor summaries", "Approval-needed list"],
     objections: ["Uses your actual systems and naming rules", "Does not send sensitive replies without approval", "Designed to reduce owner admin, not hide the work"],
-    scorecard: ["Queues cleared", "Records updated", "Handoffs completed", "Owner hours saved"],
+    successCriteria: ["Queues cleared", "Records updated", "Handoffs completed", "Fewer owner bottlenecks"],
   },
   "ai-takeoff-assistant": {
     metric: "Cleaner",
@@ -98,7 +98,7 @@ const proofBySlug: Record<
     workflow: ["Plans/specs arrive", "AI organizes documents and revisions", "Requirements and misses are flagged", "Estimator reviews the prepared notes"],
     deliverables: ["Plan index", "Spec highlights", "Addenda checks", "Measurement prep notes"],
     objections: ["Human verifies final quantities", "Best for repeat plan-review workflows", "Built to reduce prep time, not remove estimator judgment"],
-    scorecard: ["Packets organized", "Issues flagged", "Review time reduced", "Bid readiness"],
+    successCriteria: ["Packets organized", "Issues flagged", "Review time reduced", "Bid readiness"],
   },
   "ai-content-employee": {
     metric: "Daily",
@@ -107,7 +107,7 @@ const proofBySlug: Record<
     workflow: ["Proof and offers are collected", "AI turns them into reusable assets", "Owner approves", "Content feeds outreach and follow-up"],
     deliverables: ["Social posts", "Short scripts", "Offer copy", "Review-led campaigns"],
     objections: ["Uses proof you already have", "Approval stays with your team", "Tied to offers instead of random posting"],
-    scorecard: ["Assets created", "Campaigns launched", "Approval time", "Offer engagement"],
+    successCriteria: ["Assets created", "Campaigns launched", "Approval time", "Reusable sales assets"],
   },
 };
 
@@ -151,7 +151,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                     size="lg"
                     className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90"
                   >
-                    <Link href="/contact">Book AI Audit</Link>
+                    <Link href="/hire">Find My First AI Employee</Link>
                   </Button>
                   <Button
                     asChild
@@ -188,7 +188,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                 </div>
                 <div className="space-y-4">
                   <div className="rounded-xl border border-primary/25 bg-primary/10 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary">Primary score</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-primary">Primary signal</p>
                     <p className="mt-2 font-display text-4xl font-bold">{proof.metric}</p>
                     <p className="mt-1 text-sm leading-relaxed text-foreground/85">{proof.metricLabel}</p>
                   </div>
@@ -216,7 +216,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                 </h2>
                 <p className="mt-4 text-muted-foreground">
                   You should see the operational output before trusting the automation: what gets captured, what gets
-                  handed off, and how performance gets measured.
+                  handed off, and what has to improve for the build to matter.
                 </p>
               </div>
               <div className="grid gap-4">
@@ -340,10 +340,10 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
               <div className="glass rounded-2xl p-8">
                 <div className="mb-5 flex items-center gap-3">
                   <Calculator className="h-5 w-5 text-primary" aria-hidden />
-                  <h2 className="font-display text-2xl font-bold">Weekly scorecard</h2>
+                  <h2 className="font-display text-2xl font-bold">Success criteria</h2>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {proof.scorecard.map((item) => (
+                  {proof.successCriteria.map((item) => (
                     <div key={item} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
                       <p className="text-sm font-medium text-foreground/90">{item}</p>
                     </div>
@@ -393,11 +393,11 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
               <div>
                 <h2 className="font-display text-2xl font-bold">Want this role built for your business?</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Book a short audit and we will map the role, the handoffs, and the scorecard before anything goes live.
+                  Start the audit and we will map the role, the handoffs, the approval checkpoints, and the success criteria before anything goes live.
                 </p>
               </div>
-              <Link href="/contact" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
-                Book AI Audit <ArrowRight className="h-4 w-4" aria-hidden />
+              <Link href="/hire" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
+                Start Audit <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </div>

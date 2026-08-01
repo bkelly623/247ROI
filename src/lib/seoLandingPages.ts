@@ -23,7 +23,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     eyebrow: "AI employees for small business",
     headline: "Hire AI for the work your team keeps missing, delaying, or repeating.",
     subheadline:
-      "247ROI builds managed AI employees with clear job descriptions, connected tools, human approval rules, and weekly ROI scorecards for small businesses.",
+      "247ROI builds managed AI employees with clear job descriptions, connected tools, human approval rules, and practical success criteria for small businesses.",
     primaryKeyword: "AI employees for small business",
     relatedKeywords: [
       "managed AI employees",
@@ -54,7 +54,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       {
         question: "Is an AI employee just a chatbot?",
         answer:
-          "No. A chatbot answers questions. A useful AI employee completes a defined business workflow, works inside rules, connects to tools, produces work product, and gets measured by outcomes.",
+          "No. A chatbot answers questions. A useful AI employee completes a defined business workflow, works inside rules, connects to tools, produces work product, and leaves output your team can inspect.",
       },
       {
         question: "How does 247ROI decide which AI employee to build first?",
@@ -119,7 +119,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     eyebrow: "AI workflow automation agency",
     headline: "Custom AI workflow automation for the work that should not stay manual.",
     subheadline:
-      "We map the workflow, write the job spec, connect the tools, define human approvals, and measure whether the automation creates ROI.",
+      "We map the workflow, write the job spec, connect the tools, define human approvals, and improve the operation without pretending every useful build has a perfect ROI formula.",
     primaryKeyword: "AI workflow automation agency",
     relatedKeywords: [
       "AI automation agency",
@@ -139,7 +139,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       "Custom AI agent job description",
       "Tool integrations and handoff rules",
       "Human approval and exception logic",
-      "ROI scorecard and weekly optimization",
+      "Success criteria and ongoing optimization",
     ],
     faqs: [
       {
@@ -150,7 +150,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       {
         question: "How is 247ROI different from a generic automation tool?",
         answer:
-          "247ROI builds around a business workflow and scorecard. The goal is not to sell a tool; it is to create a managed AI employee that performs a job and proves value.",
+          "247ROI builds around a business workflow, not a tool demo. The goal is to create a managed AI employee that performs a job, leaves useful output, and improves how the business operates.",
       },
       {
         question: "What workflows should be automated first?",
@@ -228,20 +228,20 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       "AI sounds useful, but the business case is unclear.",
       "Owners do not know whether to automate leads, estimates, admin, or reporting first.",
       "Manual work feels expensive but has not been measured.",
-      "Tool subscriptions pile up without a scorecard.",
+      "Tool subscriptions pile up without clear success criteria.",
     ],
     systemBuilds: [
       "Lost revenue estimate from missed or slow leads",
       "Weekly labor hours that can be reduced",
       "Estimate and bid bottleneck value",
       "First AI employee recommendation",
-      "Scorecard for keep-or-kill decisions",
+      "Success criteria for improve-or-stop decisions",
     ],
     faqs: [
       {
         question: "How should AI employee ROI be measured?",
         answer:
-          "Measure AI employee ROI through captured leads, faster first response, revived estimates, saved admin hours, prepared quote packets, protected deadlines, and reduced owner workload.",
+          "When ROI is measurable, use captured leads, faster first response, revived estimates, saved admin hours, prepared quote packets, protected deadlines, and reduced owner workload. For custom dashboards or internal automations, success may be cleaner visibility, fewer dropped handoffs, better decisions, or less manual coordination.",
       },
       {
         question: "What is the first AI employee usually worth building?",
@@ -251,7 +251,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       {
         question: "Does 247ROI guarantee every AI employee will work?",
         answer:
-          "No serious provider should guarantee that every workflow deserves automation. 247ROI uses an audit and scorecard to decide what is worth building and what should stay human.",
+          "No serious provider should guarantee that every workflow deserves automation. 247ROI uses an audit and success criteria to decide what is worth building, what should stay human, and what should be stopped.",
       },
     ],
   },
@@ -294,6 +294,24 @@ export function seoPageJsonLd(page: SeoLandingPage) {
           text: faq.answer,
         },
       })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: SITE_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: page.primaryKeyword,
+          item: `${SITE_URL}/${page.slug}`,
+        },
+      ],
     },
   ];
 }

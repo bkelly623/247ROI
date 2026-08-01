@@ -21,28 +21,28 @@ const examples = [
     title: "Sales follow-up employee",
     trigger: "New leads, old estimates, no-shows, and partial conversations sit across forms, SMS, email, and the CRM.",
     output: "The AI ranks the queue, sends approved follow-up, asks for missing context, pauses when a human takes over, and reports what moved.",
-    scorecard: ["Replies", "Booked next steps", "Revived estimates", "Human takeovers"],
+    checks: ["Replies", "Booked next steps", "Revived estimates", "Human takeovers"],
   },
   {
     icon: ClipboardCheck,
     title: "Estimator assistant",
     trigger: "A contractor receives a job request with scattered photos and missing scope details.",
     output: "The AI requests missing inputs, organizes photos, drafts scope notes, and prepares a review packet before pricing.",
-    scorecard: ["Packets prepared", "Missing inputs found", "Quote turnaround", "Owner hours saved"],
+    checks: ["Packets prepared", "Missing inputs found", "Quote turnaround", "Owner review time reduced"],
   },
   {
     icon: FileSearch,
     title: "Bid assistant",
     trigger: "Bid invites arrive across email, portals, and shared folders.",
     output: "The AI extracts deadlines, requirements, location, trade fit, risks, and a go/no-go checklist for the team.",
-    scorecard: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
+    checks: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
   },
   {
     icon: DatabaseZap,
     title: "Operations coordinator",
     trigger: "The owner is the glue between inboxes, calendars, CRMs, shared docs, and internal reminders.",
     output: "The AI builds the daily queue, prepares summaries, routes exceptions, updates records, and flags work waiting on a person.",
-    scorecard: ["Queues cleared", "Records updated", "Handoffs completed", "Owner hours saved"],
+    checks: ["Queues cleared", "Records updated", "Handoffs completed", "Fewer owner bottlenecks"],
   },
 ];
 
@@ -77,11 +77,11 @@ export default function DemoPage() {
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
                 The value is not a chat bubble. It is the handoff: the prepared estimate packet, the revived lead,
-                the bid checklist, the cleaned-up operating queue, and the weekly scorecard.
+                the bid checklist, the cleaned-up operating queue, and the approval-ready summary.
               </p>
               <div className="mt-8 flex justify-center">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/contact">Book AI Audit</Link>
+                  <Link href="/hire">Find My First AI Employee</Link>
                 </Button>
               </div>
             </motion.div>
@@ -119,7 +119,7 @@ export default function DemoPage() {
                       </div>
                     </div>
                     <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                      {item.scorecard.map((metric) => (
+                      {item.checks.map((metric) => (
                         <div key={metric} className="flex items-center gap-2 text-sm text-muted-foreground">
                           <ShieldCheck className="h-4 w-4 text-primary" aria-hidden />
                           {metric}
@@ -167,20 +167,20 @@ export default function DemoPage() {
               <div className="grid gap-6 lg:grid-cols-[1fr_0.7fr] lg:items-center">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wider text-primary">What happens next</p>
-                  <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Pick one workflow. Build one employee. Measure it brutally.</h2>
+                  <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Pick one workflow. Build one employee. Inspect the output.</h2>
                   <p className="mt-4 text-muted-foreground">
                     The first build should be narrow enough to launch quickly and valuable enough to keep.
                   </p>
                 </div>
                 <div className="space-y-3">
-                  {["Inputs defined", "Human approvals clear", "Weekly scorecard live"].map((text) => (
+                  {["Inputs defined", "Human approvals clear", "Useful output visible"].map((text) => (
                     <div key={text} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-background/35 p-4 text-sm font-semibold">
                       <TimerReset className="h-4 w-4 text-primary" aria-hidden />
                       {text}
                     </div>
                   ))}
-                  <Link href="/contact" className="inline-flex items-center gap-2 font-semibold text-primary underline underline-offset-4">
-                    Book AI Audit <ArrowRight className="h-4 w-4" aria-hidden />
+                  <Link href="/hire" className="inline-flex items-center gap-2 font-semibold text-primary underline underline-offset-4">
+                    Start Audit <ArrowRight className="h-4 w-4" aria-hidden />
                   </Link>
                 </div>
               </div>

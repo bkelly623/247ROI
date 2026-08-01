@@ -391,7 +391,7 @@ export default function MissedCallCalculator({
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.22)] touch-manipulation"
               >
-                <Link href="/contact">Book AI Audit</Link>
+                <Link href="/hire">Find My First AI Employee</Link>
               </Button>
               <Link
                 href="/services"

@@ -27,7 +27,7 @@ const items: { icon: LucideIcon; title: string; description: string }[] = [
   },
   {
     icon: BarChart3,
-    title: "Weekly scorecard",
+    title: "Operating checks",
     description: "Clear KPIs tied to booked jobs — not vague “AI metrics.”",
   },
 ];

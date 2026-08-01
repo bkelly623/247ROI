@@ -9,15 +9,21 @@ import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta"
 export const metadata: Metadata = {
   title: "Find Your First AI Employee | 247ROI",
   description:
-    "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, scorecard, and launch path before anything goes live.",
+    "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, success criteria, and launch path before anything goes live.",
   alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Find Your First AI Employee | 247ROI",
+    description:
+      "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, success criteria, and launch path before anything goes live.",
+    url: "/contact",
+  },
 };
 
 const auditOutputs = [
   "Recommended first AI employee",
   "Workflow triggers and inputs",
   "Human approval points",
-  "Weekly scorecard",
+  "Success criteria",
   "Launch path and pricing fit",
 ];
 
@@ -45,7 +51,7 @@ export default function ContactPage() {
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
                   This is not a demo trap. It is a practical diagnosis of one workflow: the role, the handoffs, the risks,
-                  the human approvals, and the numbers that prove whether the employee should exist.
+                  the human approvals, and the practical evidence that tells us whether the build is useful.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">

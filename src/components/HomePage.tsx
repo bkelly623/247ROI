@@ -52,9 +52,9 @@ const roles = [
 ];
 
 const proofCards = [
-  ["70-80%", "of the repeatable work targeted before human approval"],
-  ["<60 sec", "target first-touch speed when leads hit after hours"],
-  ["30 days", "to prove the role deserves to stay on payroll"],
+  ["One role", "defined before tools, dashboards, or automations are built"],
+  ["Human control", "clear approvals for judgment calls, pricing, and sensitive replies"],
+  ["Useful output", "summaries, queues, packets, drafts, dashboards, and clean handoffs"],
 ];
 
 const pressureCards = [
@@ -97,7 +97,7 @@ const auditChecks = [
   "Where revenue leaks before a human responds",
   "Which tasks repeat enough to automate safely",
   "What the AI can prepare versus what a human must approve",
-  "What numbers prove the employee is worth keeping",
+  "What success looks like when the workflow is working",
 ];
 
 export default function HomePage() {
@@ -116,14 +116,14 @@ export default function HomePage() {
                   <Sparkles className="h-4 w-4" aria-hidden />
                   AI employees and workflow automation for service businesses
                 </span>
-                <h1 className="max-w-4xl font-display text-5xl font-bold leading-[0.98] sm:text-6xl lg:text-7xl">
-                  AI employees that work 24/7 and prove their ROI.
+                <h1 className="max-w-4xl font-display text-4xl font-bold leading-[0.98] sm:text-6xl lg:text-7xl">
+                  Managed AI employees that move work through your business.
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
                   247ROI builds managed AI employees and workflow automation systems for service businesses: lead
                   response, follow-up, estimating prep, bid intake, takeoffs, inbox/SMS triage, reporting, and
                   operational handoffs. Not a chatbot. Not another app to remember. A defined role, connected tools,
-                  human approval points, and a weekly scorecard.
+                  human approval points, and useful work your team can inspect.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
@@ -131,7 +131,7 @@ export default function HomePage() {
                       Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
+                  <Button asChild size="lg" variant="outline" className="hidden min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07] sm:inline-flex">
                     <a href={PRIMARY_PHONE_HREF}>
                       <Phone className="mr-2 h-4 w-4" aria-hidden />
                       {PRIMARY_PHONE_DISPLAY}
@@ -165,7 +165,7 @@ export default function HomePage() {
                     <div className="mt-6 rounded-2xl border border-primary/25 bg-primary/10 p-4">
                       <p className="text-sm font-semibold text-primary">Output</p>
                       <p className="mt-2 text-sm leading-relaxed text-foreground/85">
-                        A recommended first AI employee, the handoff rules, expected weekly scorecard, and whether the role is worth hiring.
+                        A recommended first AI employee, the handoff rules, approval checkpoints, useful outputs, and the simplest way to test the workflow.
                       </p>
                     </div>
                     <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-background/40">
@@ -208,7 +208,7 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-4 text-muted-foreground">
                   A chatbot talks. A 247ROI AI employee completes a defined workflow: it watches for a trigger, gathers
-                  inputs, follows rules, prepares work product, escalates exceptions, and gets measured by business value.
+                  inputs, follows rules, prepares work product, escalates exceptions, and leaves useful evidence behind.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
@@ -259,7 +259,7 @@ export default function HomePage() {
               <span className="text-sm font-semibold uppercase tracking-wider text-primary">Operating model</span>
               <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">A useful AI employee is not a vague assistant.</h2>
               <p className="mt-4 text-muted-foreground">
-                It is a specific role with inputs, rules, exceptions, outputs, and a scorecard. If the job cannot be
+                It is a specific role with inputs, rules, exceptions, outputs, and success criteria. If the job cannot be
                 described, it should not be automated yet.
               </p>
             </div>
@@ -268,7 +268,7 @@ export default function HomePage() {
                 ["1", "Diagnose the leak", "We pick the workflow where speed, follow-up, or prep work is already costing money."],
                 ["2", "Write the job spec", "Inputs, scripts, tools, approval rules, edge cases, and human handoffs get defined up front."],
                 ["3", "Run the employee", "The AI handles repeatable work and escalates the sensitive decisions to a human."],
-                ["4", "Keep or kill", "If the weekly scorecard does not justify the role, we do not pretend it is working."],
+                ["4", "Improve or stop", "If the workflow does not get cleaner, faster, or easier to manage, we do not pretend it is working."],
               ].map(([number, title, body]) => (
                 <div key={number} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">{number}</div>
@@ -284,10 +284,10 @@ export default function HomePage() {
           <div className="container mx-auto px-6">
               <div className="mb-12 max-w-3xl">
                 <span className="text-sm font-semibold uppercase tracking-wider text-primary">First hires</span>
-              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Start with the employee that pays for itself fastest.</h2>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Start with the employee that removes the clearest bottleneck.</h2>
               <p className="mt-4 text-muted-foreground">
                 The first AI employee should be painfully obvious after a short audit. These are the roles most likely to
-                create visible ROI before you expand.
+                make work move faster before you expand.
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -317,7 +317,7 @@ export default function HomePage() {
                   Not AI theater. Work product.
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  A useful AI employee leaves evidence behind: replies, summaries, packets, queues, scorecards, and clean
+                  A useful AI employee leaves evidence behind: replies, summaries, packets, queues, dashboards, and clean
                   human handoffs. That is what gets measured.
                 </p>
               </div>
@@ -355,7 +355,7 @@ export default function HomePage() {
                 {[
                   [ShieldCheck, "Human approval", "Pricing, final bids, exceptions, and sensitive replies stay under human control."],
                   [Workflow, "Operational handoffs", "Every employee produces a clean next step: summary, packet, checklist, route, or reply."],
-                  [Gauge, "Scorecard first", "The role is judged by speed, saved hours, captured leads, prepared packets, or deadlines protected."],
+                  [Gauge, "Success criteria", "The role is judged by the outcome that matters: speed, saved admin time, cleaner handoffs, better visibility, or fewer dropped tasks."],
                   [TimerReset, "Fast launch", "Start with one constrained role instead of trying to automate the whole business at once."],
                 ].map(([Icon, title, body]) => {
                   const CardIcon = Icon as typeof ShieldCheck;
@@ -378,7 +378,7 @@ export default function HomePage() {
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">Next step</p>
               <h2 className="mt-4 font-display text-3xl font-bold sm:text-5xl">Find the first AI employee worth hiring.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                Bring the messy workflow. We will tell you the first role worth building, the scorecard, and what should stay human.
+                Bring the messy workflow. We will tell you the first role worth building, the success criteria, and what should stay human.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">

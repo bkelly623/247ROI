@@ -17,7 +17,7 @@ const steps = [
   {
     icon: ShieldCheck,
     title: "Go live + track results",
-    desc: "You get a simple weekly scorecard: calls answered, missed calls captured, booked jobs, and recovered value.",
+    desc: "You get simple operating checks: calls answered, missed calls captured, booked jobs, and follow-up quality.",
   },
 ];
 

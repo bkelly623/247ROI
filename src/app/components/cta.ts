@@ -29,7 +29,7 @@ export const BUSINESS_LINE_CTA_LABEL = "Call 247ROI";
 export const DEMO_CTA_LABEL = "See Example Workflows";
 export const DEMO_CARD_BUTTON_LABEL = "See Examples";
 
-export const CTA_MICRO = "Includes a 30-day performance guarantee.";
+export const CTA_MICRO = "Starts with one practical workflow.";
 export const DEMO_SUBTEXT = "Call and hear the system — about 30 seconds.";
 
 /** Optional legacy scheduling route replacement. */

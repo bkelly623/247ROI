@@ -6,7 +6,7 @@ import { BadgeCheck, Ban } from "lucide-react";
 const goodFit = [
   "Trades business with steady inbound calls (and missed calls after-hours / during busy times)",
   "You have capacity to take the booked jobs",
-  "You want fewer dropped leads, faster response, and a simple weekly scorecard",
+  "You want fewer dropped leads, faster response, and clear operating checks",
 ];
 
 const notFit = [

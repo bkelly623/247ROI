@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   description:
     "Pricing expectations for 247ROI AI employees: audit-first custom builds for service-business workflows, follow-up, estimating, bidding, and operations.",
   alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "AI Employee Pricing | 247ROI",
+    description:
+      "Pricing expectations for 247ROI AI employees: audit-first custom builds for service-business workflows, follow-up, estimating, bidding, and operations.",
+    url: "/pricing",
+  },
 };
 
 const plans = [
@@ -17,18 +23,18 @@ const plans = [
     name: "Audit",
     price: "First decision",
     body: "For deciding which AI employee deserves to exist before committing to a system.",
-    bullets: ["Workflow diagnosis", "Role recommendation", "Approval boundaries", "Scorecard definition"],
+    bullets: ["Workflow diagnosis", "Role recommendation", "Approval boundaries", "Success criteria"],
   },
   {
     name: "First Employee",
     price: "$750-$2,500/mo",
-    body: "For one constrained AI employee built around a real workflow and measured weekly.",
-    bullets: ["One AI job role", "Scripts and handoffs", "Tool/workflow setup", "Weekly performance scorecard"],
+    body: "For one constrained AI employee built around a real workflow, useful output, and clear human checkpoints.",
+    bullets: ["One AI job role", "Scripts and handoffs", "Tool/workflow setup", "Operating checks"],
   },
   {
     name: "AI Department",
-    price: "After proof",
-    body: "For businesses ready to stack multiple AI employees after the first role proves ROI.",
+    price: "After first build",
+    body: "For businesses ready to stack multiple AI employees after the first role makes the operation cleaner.",
     bullets: ["Multiple roles", "Shared operating rules", "Cross-workflow reporting", "Ongoing optimization"],
   },
 ];
@@ -36,7 +42,7 @@ const plans = [
 const pricingRules = [
   ["Lower scope", "Follow-up, reminders, intake, simple inbox triage, and other narrow roles with clean handoffs."],
   ["Higher scope", "Estimator, bid, takeoff, multi-tool, or document-heavy roles that need deeper workflow setup."],
-  ["Build fee", "Quoted after audit when the setup effort is clear. Qualified pilots may reduce or defer setup to prove value first."],
+  ["Build fee", "Quoted after audit when the setup effort is clear. Qualified pilots may reduce or defer setup when the first workflow is narrow."],
 ];
 
 export default function PricingPage() {
@@ -49,7 +55,7 @@ export default function PricingPage() {
           <div className="container relative z-10 mx-auto px-6 text-center">
             <span className="text-sm font-semibold uppercase tracking-wider text-primary">Pricing</span>
             <h1 className="mx-auto mt-4 max-w-4xl font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-              If the AI employee cannot pay for itself, it should not be hired.
+              Pricing follows the work, not the hype.
             </h1>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
               Pricing follows the role, not a generic software tier. Narrow follow-up, admin, and intake employees price
@@ -82,7 +88,7 @@ export default function PricingPage() {
               <h2 className="font-display text-2xl font-bold">What changes the price</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 A receptionist, estimator assistant, and bid assistant are not the same hire. The audit ties price to the
-                first role, the systems involved, and the evidence that proves the employee is working.
+                first role, the systems involved, the approval points, and the evidence that the workflow is improving.
               </p>
               <div className="mt-7 grid gap-3 text-left md:grid-cols-3">
                 {pricingRules.map(([label, body]) => (
@@ -93,7 +99,7 @@ export default function PricingPage() {
                 ))}
               </div>
               <Button asChild size="lg" className="mt-7 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/contact">
+                <Link href="/hire">
                   Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                 </Link>
               </Button>

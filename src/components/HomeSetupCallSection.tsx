@@ -47,8 +47,8 @@ export default function HomeSetupCallSection() {
             </p>
             <div className="mt-7 flex flex-col gap-3">
               <Button asChild size="lg" className="justify-center rounded-full bg-primary px-7 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/contact">
-                  Book AI Audit <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                <Link href="/hire">
+                  Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="justify-center rounded-full border-white/15 bg-white/[0.03] px-7 text-foreground hover:bg-white/[0.07]">

@@ -24,12 +24,12 @@ export default function CTA() {
               Bring one messy workflow. Leave with the first AI employee to build.
             </h2>
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              We will identify the role, the handoffs, the human approval points, and the scorecard before anything goes live.
+              We will identify the role, the handoffs, the human approval points, and the success criteria before anything goes live.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/contact">Book AI Audit</Link>
+                <Link href="/hire">Find My First AI Employee</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                 <a href={PRIMARY_PHONE_HREF}>

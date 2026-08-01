@@ -25,6 +25,7 @@ const footerColumns: {
       { label: "AI lead response system", href: "/ai-lead-response-system" },
       { label: "Example workflows", href: "/demo" },
       { label: "Pricing", href: "/pricing" },
+      { label: "About", href: "/about" },
       { label: "AI Estimator", href: "/ai-estimator" },
       { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
       { label: "Services", href: "/services" },
@@ -34,8 +35,9 @@ const footerColumns: {
   {
     title: "Company",
     links: [
+      { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
-      { label: "AI audit", href: "/contact" },
+      { label: "AI audit", href: "/hire" },
       { label: "Support", href: "mailto:contact@247roi.com" },
     ],
   },

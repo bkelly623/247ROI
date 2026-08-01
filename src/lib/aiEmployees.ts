@@ -48,7 +48,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     steps: [
       { title: "Map the calls", description: "We define service area, urgent jobs, common questions, and handoff rules." },
       { title: "Connect the line", description: "We wire overflow, after-hours, or a dedicated number into the AI receptionist." },
-      { title: "Track recovered value", description: "You get weekly scorecards tied to captured calls and booked opportunities." },
+      { title: "Review captured demand", description: "You see calls answered, jobs qualified, urgent handoffs, and booked opportunities." },
     ],
   },
   {

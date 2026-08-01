@@ -39,7 +39,7 @@ const process = [
   ["Audit", "We inspect one workflow and decide whether an AI employee is actually worth building."],
   ["Build", "We create the scripts, prompts, tool connections, human approvals, and handoff format."],
   ["Run", "The AI employee handles repeatable work while humans stay in control of sensitive decisions."],
-  ["Measure", "You get a simple scorecard: speed, volume, saved time, prepared work, and recovered opportunities."],
+  ["Improve", "We review the output, tighten the rules, and expand only when the workflow gets cleaner."],
 ];
 
 export default function ServicesPage() {
@@ -62,7 +62,7 @@ export default function ServicesPage() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/contact">Book AI Audit</Link>
+                  <Link href="/hire">Find My First AI Employee</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                   <Link href="/pricing">View Pricing</Link>
@@ -104,7 +104,7 @@ export default function ServicesPage() {
                 <span className="text-sm font-semibold uppercase tracking-wider text-primary">Delivery model</span>
                 <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">The job spec comes before the automation.</h2>
                 <p className="mt-4 text-muted-foreground">
-                  If the workflow cannot be described, measured, and handed off, it is not ready for an AI employee.
+                  If the workflow cannot be described, controlled, and handed off, it is not ready for an AI employee.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -132,8 +132,8 @@ export default function ServicesPage() {
                   </div>
                 </div>
                 <p className="text-muted-foreground">
-                  The fastest route to ROI is not automating everything. It is choosing the bottleneck closest to revenue,
-                  proving that one employee works, then expanding only after the numbers justify it.
+                  The fastest route is not automating everything. It is choosing one bottleneck, making that workflow
+                  easier to run, then expanding only when the first build has earned trust.
                 </p>
               </div>
             </div>

@@ -21,7 +21,7 @@ import MissedCallCalculator from "@/app/components/MissedCallCalculator";
 import { Button } from "@/components/ui/button";
 import { BOOK_SETUP_CALL_LINK_CLASSNAME, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
-const applyHref = "/contact";
+const applyHref = "/hire";
 const plumbingDemoHref = PRIMARY_PHONE_HREF;
 
 const problemCards = [
@@ -140,7 +140,7 @@ function PrimaryCtas({ center = false }: { center?: boolean }) {
         size="lg"
         className="min-h-[3.65rem] rounded-full bg-primary px-7 text-base font-semibold text-primary-foreground shadow-[0_0_42px_hsl(174_72%_56%/0.32)] hover:bg-primary/90 hover:shadow-[0_0_60px_hsl(174_72%_56%/0.42)] sm:px-9"
       >
-        <Link href={applyHref}>Book AI Audit</Link>
+        <Link href={applyHref}>Find My First AI Employee</Link>
       </Button>
       <Button
         asChild
@@ -343,7 +343,7 @@ export default function PlumbingLandingPage() {
                     size="lg"
                     className="min-h-[3.65rem] rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-[0_0_42px_hsl(174_72%_56%/0.32)] hover:bg-primary/90"
                   >
-                    <Link href={applyHref}>Book AI Audit</Link>
+                    <Link href={applyHref}>Find My First AI Employee</Link>
                   </Button>
                 </motion.div>
 

@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
   <title id="title">247ROI AI employee operations dashboard</title>
-  <desc id="desc">A sample AI employee dashboard showing workflow queues, human approval steps, and ROI scorecard metrics.</desc>
+  <desc id="desc">A sample AI employee dashboard showing workflow queues, human approval steps, and operating signals.</desc>
   <rect width="1400" height="900" fill="#061316"/>
   <rect x="48" y="48" width="1304" height="804" rx="28" fill="#0b1c21" stroke="#214148" stroke-width="2"/>
   <rect x="48" y="48" width="1304" height="86" rx="28" fill="#10272d"/>
   <rect x="48" y="105" width="1304" height="29" fill="#10272d"/>
   <text x="88" y="102" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#effdf9">247ROI Command Center</text>
-  <text x="1088" y="99" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#92c7c4">Weekly ROI Scorecard</text>
+  <text x="1088" y="99" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#92c7c4">Operating Snapshot</text>
 
   <rect x="88" y="174" width="346" height="148" rx="18" fill="#0f2a30" stroke="#244f55"/>
   <text x="116" y="218" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#49d8c8">FIRST AI EMPLOYEE</text>
@@ -54,7 +54,7 @@
     <circle cx="552" cy="655" r="9" fill="#f6c867"/>
     <text x="578" y="661" fill="#effdf9">Human approves pricing and exceptions</text>
     <circle cx="552" cy="715" r="9" fill="#49d8c8"/>
-    <text x="578" y="721" fill="#effdf9">Scorecard updates after outcome</text>
+    <text x="578" y="721" fill="#effdf9">Output review updates the workflow</text>
   </g>
 
   <rect x="946" y="372" width="366" height="392" rx="22" fill="#0b2228" stroke="#244f55"/>

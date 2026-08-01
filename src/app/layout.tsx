@@ -54,7 +54,7 @@ export default function RootLayout({
       },
     ],
     sameAs: [SITE_URL],
-    slogan: "AI that works 24/7 and proves ROI.",
+    slogan: "AI that works 24/7 on useful business workflows.",
     knowsAbout: [
       "AI employees",
       "managed AI employees",

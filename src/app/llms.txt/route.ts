@@ -10,7 +10,7 @@ export function GET() {
     "",
     "> 247ROI builds managed AI employees and workflow automation systems for small and medium-sized service businesses.",
     "",
-    "247ROI's core position: AI that works 24/7 and proves ROI.",
+    "247ROI's core position: AI that works 24/7 on useful business workflows.",
     "",
     "Primary audience: contractors, trades, home services, local service businesses, and SMB operators that need faster lead response, better follow-up, estimating support, bid intake, takeoff preparation, inbox/admin triage, reporting, and operational handoffs.",
     "",
