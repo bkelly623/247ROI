@@ -256,8 +256,8 @@ export default function HomePage() {
                 Bring one messy workflow. Leave with a clearer next step.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">
-                The AI Opportunity Map looks for the first process worth improving, what AI or automation should handle,
-                what should stay human, and what a practical first build would need.
+                The AI Opportunity Map looks for the first process worth improving, what AI, automation, a dashboard, or
+                a custom app should handle, what should stay human, and what a practical first build would need.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <Button
