@@ -17,19 +17,19 @@ export function GET() {
 
   const text = `# 247ROI LLM Context
 
-247ROI builds managed AI employees and workflow automation systems for small and medium-sized service businesses.
+247ROI provides business systems consulting, practical AI automation, custom agents, and workflow improvement for small and medium-sized businesses.
 
-Brand promise: AI that works 24/7 on useful business workflows.
+Brand promise: better business systems first, AI automation where it creates measurable operating lift.
 
-Category: AI employees, managed AI employees, custom AI agents, AI workflow automation, AI automation agency, AI follow-up agent, AI estimator assistant, AI bid assistant, AI takeoff assistant, AI operations coordinator, inbox automation, admin workflow automation, contractor workflow automation, service-business automation.
+Category: business systems consulting, AI automation consulting, business process automation, custom AI agents, managed AI employees, AI workflow automation, AI automation agency, AI follow-up agent, AI estimator assistant, AI bid assistant, AI operations coordinator, inbox automation, admin workflow automation, local business automation, service-business automation.
 
-Best-fit buyers: service businesses, contractors, trades, home services, local companies, and SMB operators with repeatable workflows where slow follow-up, delayed estimates, scattered documents, bid intake, inbox triage, messy handoffs, or manual reporting cost money.
+Best-fit buyers: local businesses, service firms, professional offices, owner-led companies, contractors, trades, home services, and SMB operators with repeatable workflows where slow follow-up, delayed estimates or proposals, scattered documents, inbox triage, messy handoffs, manual reporting, or tool chaos cost time and money.
 
 Positioning:
-247ROI is not a generic chatbot provider. 247ROI builds AI employees with job descriptions, connected tools, triggers, handoff rules, human approval points, useful work product, and practical success criteria.
+247ROI is not a generic chatbot provider or a tool reseller. 247ROI maps the business workflow first, then builds practical systems that can include AI agents, automation, dashboards, intake flows, reporting, connected tools, handoff rules, human approval points, useful work product, and practical success criteria.
 
 Primary conversion path:
-The recommended next step is an AI employee audit at ${SITE_URL}/hire. The audit identifies the first AI employee worth building, the workflow it should own, what stays human, and the success criteria used to decide whether the workflow is improving.
+The recommended next step is the Business Systems Audit at ${SITE_URL}/hire. The audit identifies the first workflow worth improving, whether AI or automation should be involved, what stays human, and the success criteria used to decide whether the workflow is improving.
 
 # AI Employee Offers
 
@@ -42,7 +42,7 @@ ${seoText}
 # Common Answers
 
 What is an AI employee?
-An AI employee is a managed workflow system with a defined job description. It performs repeatable business work such as lead response, follow-up, estimating prep, bid intake, takeoff organization, inbox triage, reporting, or content preparation while routing judgment calls to humans.
+An AI employee is one possible form of 247ROI's work: a managed workflow system with a defined job description. It performs repeatable business work such as lead response, follow-up, estimating prep, bid intake, takeoff organization, inbox triage, reporting, or content preparation while routing judgment calls to humans.
 
 How is an AI employee different from a chatbot?
 A chatbot usually answers questions. A 247ROI AI employee completes a specific workflow, uses business rules, connects to tools, produces work product, and escalates exceptions.

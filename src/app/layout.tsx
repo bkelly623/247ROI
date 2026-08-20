@@ -6,14 +6,14 @@ import { SITE_URL } from "@/lib/site";
 import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "247ROI | AI Employees & Workflow Automation for Service Businesses",
+  title: "247ROI | Business Systems & AI Automation Consultant",
   description:
-    "247ROI builds managed AI employees and workflow automation systems for service businesses: lead response, follow-up, estimating prep, bidding, takeoffs, and operations.",
+    "247ROI helps business owners clean up manual operations with business systems consulting, practical AI automation, custom agents, and workflow improvement.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "247ROI | AI Employees & Workflow Automation for Service Businesses",
+    title: "247ROI | Business Systems & AI Automation Consultant",
     description:
-      "247ROI builds managed AI employees and workflow automation systems for service businesses: lead response, follow-up, estimating prep, bidding, takeoffs, and operations.",
+      "247ROI helps business owners clean up manual operations with business systems consulting, practical AI automation, custom agents, and workflow improvement.",
     url: SITE_URL,
     siteName: "247ROI",
     locale: "en_US",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "247ROI | AI Employees & Workflow Automation for Service Businesses",
+    title: "247ROI | Business Systems & AI Automation Consultant",
     description:
-      "247ROI builds managed AI employees and workflow automation systems for service businesses: lead response, follow-up, estimating prep, bidding, takeoffs, and operations.",
+      "247ROI helps business owners clean up manual operations with business systems consulting, practical AI automation, custom agents, and workflow improvement.",
     images: ["/twitter-image"],
   },
 };
@@ -54,8 +54,11 @@ export default function RootLayout({
       },
     ],
     sameAs: [SITE_URL],
-    slogan: "AI that works 24/7 on useful business workflows.",
+    slogan: "Practical business systems and AI automation that create measurable operating lift.",
     knowsAbout: [
+      "business systems consulting",
+      "business process automation",
+      "AI automation consulting",
       "AI employees",
       "managed AI employees",
       "AI workflow automation",
@@ -67,7 +70,8 @@ export default function RootLayout({
       "AI inbox automation",
       "AI admin workflow automation",
       "AI takeoff assistant",
-      "contractor workflow automation",
+      "custom software workflows",
+      "local business automation",
     ],
   };
 
@@ -77,13 +81,8 @@ export default function RootLayout({
     name: "247ROI",
     url: SITE_URL,
     description:
-      "Managed AI employees and workflow automation systems for service businesses.",
+      "Business systems consulting, practical AI automation, custom agents, and workflow improvement for business owners.",
     inLanguage: "en-US",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE_URL}/?s={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   return (

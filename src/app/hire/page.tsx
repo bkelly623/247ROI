@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { HireAuditFlow } from "@/components/hire/HireAuditFlow";
 
 export const metadata: Metadata = {
-  title: "AI Employee Audit | 247ROI",
+  title: "Business Systems Audit | 247ROI",
   description:
-    "A real conversation to uncover what an AI employee should own in your business — then unlock a clear first hire plan.",
+    "Find the first workflow worth improving with AI, automation, or a cleaner business system. Get a practical diagnostic before anything is built.",
   alternates: { canonical: "/hire" },
   openGraph: {
-    title: "AI Employee Audit | 247ROI",
+    title: "Business Systems Audit | 247ROI",
     description:
-      "A real conversation to uncover what an AI employee should own in your business — then unlock a clear first hire plan.",
+      "Find the first workflow worth improving with AI, automation, or a cleaner business system. Get a practical diagnostic before anything is built.",
     url: "/hire",
   },
 };

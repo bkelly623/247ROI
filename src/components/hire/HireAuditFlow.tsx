@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Send } from "lucide-react";
+import { CheckCircle2, Loader2, Send } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { HireGate } from "@/components/hire/HireGate";
@@ -113,7 +113,8 @@ export function HireAuditFlow() {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const scroller = bottomRef.current?.parentElement;
+    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
   }, [messages, busy, showGate]);
 
   async function send(e?: FormEvent) {
@@ -181,7 +182,7 @@ export function HireAuditFlow() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="relative flex flex-1 flex-col pt-16 sm:pt-20">
+      <main className="relative flex flex-1 flex-col pt-24 sm:pt-28">
         <div
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
@@ -190,23 +191,45 @@ export function HireAuditFlow() {
           }}
         />
 
-        <section className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 pb-4 sm:px-6">
-          <header className="space-y-3 pb-4 pt-6 text-center sm:pt-8">
+        <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-5 sm:px-6">
+          <header className="space-y-3 pb-5 pt-4 text-center sm:pt-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
               {HIRE_PAGE.eyebrow}
             </p>
-            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-zinc-50 sm:text-5xl">
+            <h1 className="mx-auto max-w-2xl font-display text-3xl font-bold leading-[1.08] tracking-tight text-zinc-50 sm:text-5xl">
               {HIRE_PAGE.headline}
             </h1>
-            <p className="mx-auto max-w-md text-base text-zinc-400 sm:text-lg">
+            <p className="mx-auto max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
               {HIRE_PAGE.subhead}
+            </p>
+            <ul className="mx-auto grid max-w-xl grid-cols-1 gap-2 pt-2 text-left sm:grid-cols-2">
+              {HIRE_PAGE.proofPoints.map((point) => (
+                <li
+                  key={point}
+                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-zinc-300"
+                >
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-orange-400" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mx-auto max-w-lg text-sm leading-relaxed text-zinc-500">
+              {HIRE_PAGE.microcopy}
             </p>
           </header>
 
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)]">
+          <div className="mb-4 grid gap-2 text-sm text-zinc-400 sm:grid-cols-3">
+            {["No obligation", "Useful even if we do not build", "Human judgment stays in control"].map((item) => (
+              <div key={item} className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-center">
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)] sm:rounded-3xl">
             <ProgressBar discovery={discovery} />
 
-            <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
+            <div className="flex-1 space-y-4 overflow-y-auto px-4 py-5 sm:px-6 sm:py-7">
               <AnimatePresence initial={false}>
                 {messages.map((m) => (
                   <motion.div
@@ -216,7 +239,7 @@ export function HireAuditFlow() {
                     className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[92%] whitespace-pre-wrap rounded-3xl px-5 py-4 text-lg leading-snug sm:text-xl ${
+                      className={`max-w-[94%] whitespace-pre-wrap rounded-2xl px-4 py-3.5 text-base leading-relaxed sm:max-w-[88%] sm:rounded-3xl sm:px-5 sm:py-4 sm:text-lg ${
                         m.role === "user"
                           ? "bg-orange-500 font-medium text-white"
                           : "border border-white/10 bg-white/[0.05] text-zinc-100"
@@ -239,7 +262,7 @@ export function HireAuditFlow() {
 
             <form
               onSubmit={send}
-              className="border-t border-white/10 bg-black/40 p-4 sm:p-5"
+              className="border-t border-white/10 bg-black/40 p-3 sm:p-5"
             >
               <div className="flex items-end gap-3">
                 <textarea
@@ -254,13 +277,13 @@ export function HireAuditFlow() {
                       ? HIRE_PAGE.placeholderLocked
                       : HIRE_PAGE.placeholder
                   }
-                  className="min-h-[56px] flex-1 resize-none rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3.5 text-lg text-zinc-100 placeholder:text-zinc-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/25 disabled:opacity-60 sm:min-h-[64px] sm:text-xl"
+                  className="min-h-[52px] flex-1 resize-none rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/25 disabled:opacity-60 sm:min-h-[64px] sm:text-lg"
                 />
                 <Button
                   type="submit"
                   size="lg"
                   disabled={!sessionId || busy || !input.trim() || showGate}
-                  className="h-[56px] w-[56px] shrink-0 rounded-2xl sm:h-[64px] sm:w-[64px]"
+                  className="h-[52px] w-[52px] shrink-0 rounded-2xl sm:h-[64px] sm:w-[64px]"
                   aria-label="Send"
                 >
                   {busy ? (
@@ -270,7 +293,7 @@ export function HireAuditFlow() {
                   )}
                 </Button>
               </div>
-              <p className="mt-2 text-center text-sm text-zinc-600">
+              <p className="mt-2 text-center text-xs text-zinc-600 sm:text-sm">
                 {HIRE_PAGE.sendHint}
               </p>
             </form>

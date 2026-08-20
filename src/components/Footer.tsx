@@ -16,20 +16,31 @@ const footerColumns: {
   links: { label: string; href: string }[];
 }[] = [
   {
-    title: "Product",
+    title: "Systems",
     links: [
-      { label: "AI Employees", href: "/ai-employees" },
-      { label: "AI employees for small business", href: "/ai-employees-for-small-business" },
-      { label: "AI employees for service businesses", href: "/ai-employees-for-service-businesses" },
+      { label: "Services", href: "/services" },
+      { label: "Business systems audit", href: "/hire" },
+      { label: "Example workflows", href: "/demo" },
       { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
       { label: "AI lead response system", href: "/ai-lead-response-system" },
-      { label: "Example workflows", href: "/demo" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "About", href: "/about" },
+    ],
+  },
+  {
+    title: "AI Agents",
+    links: [
+      { label: "AI agent roles", href: "/ai-employees" },
+      { label: "AI employees for small business", href: "/ai-employees-for-small-business" },
+      { label: "AI employees for service businesses", href: "/ai-employees-for-service-businesses" },
       { label: "AI Estimator", href: "/ai-estimator" },
       { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
-      { label: "Services", href: "/services" },
-      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Examples",
+    links: [
+      { label: "Articles", href: "/articles" },
+      { label: "ROI calculator", href: "/ai-employee-roi-calculator" },
+      { label: "Missed-call calculator", href: "/missed-call-calculator" },
     ],
   },
   {
@@ -37,7 +48,7 @@ const footerColumns: {
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
-      { label: "AI audit", href: "/hire" },
+      { label: "Systems audit", href: "/hire" },
       { label: "Support", href: "mailto:contact@247roi.com" },
     ],
   },
@@ -75,7 +86,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-sm">
-                Managed AI employees for service businesses: follow-up, estimating prep, bid discipline, inbox/admin workflows, reporting, and operational handoffs.
+                Business systems consulting, practical AI automation, custom agents, and workflow improvement for owners who want cleaner operations.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}
@@ -117,7 +128,7 @@ export default function Footer() {
           className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4"
         >
           <p className="text-muted-foreground text-sm">© {new Date().getFullYear()} 247ROI. All rights reserved.</p>
-          <p className="text-muted-foreground text-xs">Built for service businesses that want faster operations.</p>
+          <p className="text-muted-foreground text-xs">Built for businesses that want cleaner systems and faster operations.</p>
         </motion.div>
       </div>
     </footer>

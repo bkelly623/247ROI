@@ -1,5 +1,5 @@
 export const HIRE_OPENING =
-  "So… what if I could help you grow your business?\n\nTake the boring back-office stuff off your plate? Chase the leads you keep forgetting? Untangle some of the complexity that keeps you up at night?\n\nHere’s the idea: think of me as an AI employee you’re about to hire. You tell me what you need, you train me on how you like it done, and I get to work — quietly getting better every week.\n\nSo let’s start simple. What kind of business are you in — and what are the biggest headaches right now? (And if you’re not sure what your biggest problems are, just say so — we’ll find them together.)";
+  "Welcome to the 247ROI Systems Audit.\n\nThis is a guided discovery conversation for business owners who know too much work is still being chased manually.\n\nThe goal is simple: identify one workflow that is worth improving first. That might mean an AI agent, an automation, a better handoff system, a cleaner intake process, or a simple operating dashboard.\n\nWe will look for where time, money, leads, follow-up, admin, or visibility are leaking. Then we will separate what software can prepare or handle from what should stay under human control.\n\nStart with the basics: what kind of business are you in, and what work keeps getting delayed, repeated, missed, or stuck on your plate?";
 
 /**
  * Alternative opener — the “tech arc” story. Kept for A/B testing once
@@ -9,10 +9,18 @@ export const HIRE_OPENING_TECH_ARC =
   "Humans have always invented tools to make life easier.\n\nPen and paper. The telephone. Computers. Websites. Social media. Now AI — and AI employees that can actually do work on a computer for you.\n\nSame story every time: the people who lean in get their life back. The ones who wait play catch-up.\n\nThis isn’t a form. It’s a conversation — and by the end you’ll know exactly where an AI employee could free you up to do the stuff only a human should do.\n\nSo… what kind of business are you in?";
 
 export const HIRE_PAGE = {
-  eyebrow: "AI employee audit",
-  headline: "Meet the AI employee you could hire.",
+  eyebrow: "Business Systems Audit",
+  headline: "Find the first workflow worth fixing.",
   subhead:
-    "Have a real conversation with it. Tell it your headaches, see what it could take off your plate — then decide if it’s worth bringing on.",
+    "A guided discovery tool for finding where AI, automation, or a cleaner business system could save time and reduce owner bottlenecks.",
+  proofPoints: [
+    "Best first workflow",
+    "Plain-English system map",
+    "Time-savings estimate",
+    "Practical next step",
+  ],
+  microcopy:
+    "Built for local businesses, service firms, professional offices, and teams with repetitive screen-based work.",
   busy: "…",
   placeholder: "Your answer…",
   placeholderLocked: "Unlock below…",

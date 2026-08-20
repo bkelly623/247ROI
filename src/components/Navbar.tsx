@@ -15,10 +15,9 @@ import {
 } from "@/lib/siteLogo";
 
 const navLinks = [
-  { name: "AI Audit", href: "/hire" },
-  { name: "AI Employees", href: "/ai-employees" },
+  { name: "Systems Audit", href: "/hire" },
+  { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
-  { name: "Pricing", href: "/pricing" },
   { name: "About", href: "/about" },
 ];
 
@@ -49,19 +48,11 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden lg:flex items-center gap-5 xl:gap-7 relative flex-1 justify-end min-w-0">
-              <div
-                className="absolute inset-0 -inset-x-12 -inset-y-4 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 35%, transparent 75%)",
-                  filter: "blur(18px)",
-                }}
-              />
               {navLinks.map((link, index) => (
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-sm font-medium relative z-10 drop-shadow-[0_0_12px_rgba(255,255,255,0.6)] whitespace-nowrap"
+                  className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-sm font-medium relative z-10 whitespace-nowrap"
                   initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.06 * index, duration: 0.35 }}
@@ -81,7 +72,7 @@ export default function Navbar() {
               <Button
                 asChild
                 size="lg"
-                className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold shadow-[0_0_24px_hsl(174_72%_56%/0.25)] whitespace-nowrap"
+                className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold whitespace-nowrap"
               >
                 <Link href="/hire">{CTA_LABEL_NAV}</Link>
               </Button>

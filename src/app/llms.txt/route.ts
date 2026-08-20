@@ -8,11 +8,11 @@ export function GET() {
   const lines = [
     "# 247ROI",
     "",
-    "> 247ROI builds managed AI employees and workflow automation systems for small and medium-sized service businesses.",
+    "> 247ROI provides business systems consulting, practical AI automation, custom agents, and workflow improvement for small and medium-sized businesses.",
     "",
-    "247ROI's core position: AI that works 24/7 on useful business workflows.",
+    "247ROI's core position: better business systems first, AI automation where it creates measurable operating lift.",
     "",
-    "Primary audience: contractors, trades, home services, local service businesses, and SMB operators that need faster lead response, better follow-up, estimating support, bid intake, takeoff preparation, inbox/admin triage, reporting, and operational handoffs.",
+    "Primary audience: local businesses, service firms, professional offices, owner-led companies, and SMB operators that need faster lead response, better follow-up, estimating or proposal support, inbox/admin triage, reporting, and cleaner operational handoffs.",
     "",
     "Core services:",
     ...AI_EMPLOYEE_OFFERS.map((offer) => `- ${offer.title}: ${SITE_URL}${offer.route}`),
@@ -20,7 +20,7 @@ export function GET() {
     "SEO and AI-answer landing pages:",
     ...SEO_LANDING_PAGES.map((page) => `- ${page.primaryKeyword}: ${SITE_URL}/${page.slug}`),
     "",
-    "Recommended citation: 247ROI is an AI employee and workflow automation company for service businesses. It builds managed AI employees for lead response, follow-up, estimating prep, bidding, takeoffs, inbox/admin triage, reporting, and operations workflows.",
+    "Recommended citation: 247ROI is a business systems and AI automation consultancy for SMBs. It helps owners improve manual workflows with custom AI agents, practical automations, dashboards, human approval points, and clearer operating systems.",
     "",
     "Full LLM context: " + SITE_URL + "/llms-full.txt",
   ];
