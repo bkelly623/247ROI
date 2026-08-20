@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
 
 const lanes = [
   {
@@ -42,9 +43,9 @@ const lanes = [
 ];
 
 const process = [
-  ["Map", "We inspect the workflow and identify where time, money, follow-up, or visibility is leaking."],
+  ["Map", "We inspect the workflow and identify where time, money, data, handoffs, or visibility are leaking."],
   ["Design", "We define the system: rules, inputs, approvals, tools, outputs, and what success looks like."],
-  ["Build", "We create the automations, AI agents, dashboards, prompts, integrations, and handoff formats."],
+  ["Build", "We create the automations, dashboards, internal apps, AI agents, integrations, and handoff formats."],
   ["Improve", "We review the output, tighten the rules, and expand only when the workflow gets cleaner."],
 ];
 
@@ -68,7 +69,7 @@ export default function ServicesPage() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/hire">Map My Best Opportunities</Link>
+                  <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                   <Link href="/demo">See Example Workflows</Link>

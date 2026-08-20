@@ -1,35 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Mail, Phone, ShieldCheck } from "lucide-react";
+import { Mail, Phone, ShieldCheck } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "Find Your First AI Employee | 247ROI",
+  title: "Start Your AI Opportunity Map | 247ROI",
   description:
-    "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, success criteria, and launch path before anything goes live.",
+    "Find the bottleneck worth fixing first. Identify whether your workflow needs automation, a dashboard, an internal app, an AI agent, or a cleaner process.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "Find Your First AI Employee | 247ROI",
+    title: "Start Your AI Opportunity Map | 247ROI",
     description:
-      "Find the first AI employee worth building with 247ROI. Identify the workflow, human approval points, success criteria, and launch path before anything goes live.",
+      "Find the bottleneck worth fixing first. Identify whether your workflow needs automation, a dashboard, an internal app, an AI agent, or a cleaner process.",
     url: "/contact",
   },
 };
 
 const auditOutputs = [
-  "Recommended first AI employee",
-  "Workflow triggers and inputs",
+  "First bottleneck worth fixing",
+  "Recommended system type",
   "Human approval points",
   "Success criteria",
-  "Launch path and pricing fit",
+  "Build path and free quote",
 ];
 
 const briefPrompts = [
   "What work keeps getting delayed, missed, or repeated?",
-  "Where does a lead, estimate, bid, message, or handoff stall?",
+  "Where does data, an estimate, bid, message, report, or handoff stall?",
   "Who approves final pricing, bids, exceptions, or sensitive replies?",
 ];
 
@@ -44,14 +44,15 @@ export default function ContactPage() {
             <div className="grid gap-10 lg:grid-cols-[1fr_0.82fr] lg:items-center">
               <div>
                 <span className="mb-5 inline-flex rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                  AI employee audit
+                  AI Opportunity Map
                 </span>
                 <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                  Bring the bottleneck. We will decide if an AI employee deserves the job.
+                  Bring the bottleneck. We will decide what kind of system is worth building.
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  This is not a demo trap. It is a practical diagnosis of one workflow: the role, the handoffs, the risks,
-                  the human approvals, and the practical evidence that tells us whether the build is useful.
+                  This is not a demo trap. It is a practical diagnosis of one workflow: the handoffs, the risks, the
+                  data, the approvals, and whether the right fix is automation, a dashboard, an app, an AI agent, or a
+                  cleaner process.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
@@ -61,14 +62,14 @@ export default function ContactPage() {
                     </a>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
-                    <a href="mailto:contact@247roi.com?subject=AI%20Employee%20Audit">
+                    <a href="mailto:contact@247roi.com?subject=AI%20Opportunity%20Map">
                       <Mail className="mr-2 h-4 w-4" aria-hidden />
                       Email contact@247roi.com
                     </a>
                   </Button>
                 </div>
                 <p className="mt-5 text-sm text-muted-foreground">
-                  Best first message: “I want an AI employee for [workflow]. Right now it breaks when [specific failure].”
+                  Best first message: “I want to improve [workflow]. Right now it breaks when [specific failure].”
                 </p>
               </div>
 
@@ -83,8 +84,8 @@ export default function ContactPage() {
                     </div>
                   ))}
                 </div>
-                <Link href="/pricing" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
-                  View pricing expectations <ArrowRight className="h-4 w-4" aria-hidden />
+                <Link href="/hire" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
+                  Start the map
                 </Link>
               </div>
             </div>

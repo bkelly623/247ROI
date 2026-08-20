@@ -24,7 +24,7 @@ export default function ChatWidget() {
       role: "assistant",
       content: "Tell me the workflow you want an AI employee to help with.",
     },
-    { role: "assistant", content: "Good fits: missed calls, follow-up, estimating support, bidding prep, inbox/SMS response, and operations handoffs.", style: "hint" },
+    { role: "assistant", content: "Good fits: scattered data, repeated computer work, estimating support, bidding prep, inbox/admin queues, reporting, and operations handoffs.", style: "hint" },
   ]);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -126,7 +126,7 @@ export default function ChatWidget() {
                       <p className="font-display font-semibold text-[15px] text-foreground tracking-tight truncate">
                         <span className="gradient-text">247ROI</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground tracking-wide">AI employee audit</p>
+                      <p className="text-[11px] text-muted-foreground tracking-wide">AI Opportunity Map</p>
                     </div>
                   </div>
                   <button

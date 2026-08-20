@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, ShieldCheck, Workflow } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
 
 export const metadata: Metadata = {
   title: "About 247ROI | Business Systems & AI Consulting",
@@ -27,7 +28,7 @@ const beliefs = [
 
 const buildRules = [
   ["One system first", "Start with a valuable workflow before stacking more automation."],
-  ["Useful output", "The system should produce replies, packets, summaries, queues, dashboards, or approval-ready work."],
+  ["Useful output", "The system should produce dashboards, apps, queues, reports, summaries, or approval-ready work."],
   ["Clear controls", "Every build needs rules for what the AI can do and what must wait for a human."],
   ["Improve or stop", "If the workflow does not get cleaner, faster, or easier to manage, the build needs to change."],
 ];
@@ -53,7 +54,7 @@ export default function AboutPage() {
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                   <Link href="/hire">
-                    Map My Best Opportunities <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                    {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
@@ -73,9 +74,9 @@ export default function AboutPage() {
                   Not a chatbot vendor. Not a tool subscription.
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  247ROI designs practical systems around real work: leads, estimates, bids, inboxes, documents,
-                  approvals, reporting, dashboards, and follow-up. The goal is not to add another app. The goal is to
-                  remove friction from the operation.
+                  247ROI designs practical systems around real work: scattered data, repeated computer tasks, estimates,
+                  bids, inboxes, documents, approvals, reporting, dashboards, and internal apps. The goal is not to add
+                  another tool. The goal is to remove friction from the operation.
                 </p>
               </div>
               <div className="grid gap-4">

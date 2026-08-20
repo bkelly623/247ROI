@@ -44,7 +44,7 @@ export default function TwitterImage() {
           </div>
 
           <div style={{ fontSize: 30, opacity: 0.88, maxWidth: 980, lineHeight: 1.3 }}>
-            Lead response, follow-up, estimating support, bidding prep, and operational handoffs.
+            Custom automations, dashboards, internal apps, AI agents, and operational handoffs.
           </div>
         </div>
 

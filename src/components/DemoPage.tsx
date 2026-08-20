@@ -2,26 +2,26 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  ClipboardCheck,
-  DatabaseZap,
-  FileSearch,
-  MessageSquareText,
-  ShieldCheck,
-  TimerReset,
-} from "lucide-react";
+import { ArrowRight, Bot, ClipboardCheck, DatabaseZap, FileSearch, PanelsTopLeft, ShieldCheck, TimerReset } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
 
 const examples = [
   {
-    icon: MessageSquareText,
-    title: "Sales follow-up employee",
-    trigger: "New leads, old estimates, no-shows, and partial conversations sit across forms, SMS, email, and the CRM.",
-    output: "The AI ranks the queue, sends approved follow-up, asks for missing context, pauses when a human takes over, and reports what moved.",
-    checks: ["Replies", "Booked next steps", "Revived estimates", "Human takeovers"],
+    icon: DatabaseZap,
+    title: "Owner dashboard",
+    trigger: "Revenue, jobs, tasks, messages, and reports live across several apps and spreadsheets.",
+    output: "The system pulls the important signals into one operating view so the owner can see what needs attention.",
+    checks: ["Data unified", "Stale items visible", "Manual reporting reduced", "Next actions clear"],
+  },
+  {
+    icon: PanelsTopLeft,
+    title: "Internal workflow app",
+    trigger: "The team tracks a workflow through texts, spreadsheets, emails, and memory because no off-the-shelf tool fits.",
+    output: "A simple app gives everyone one place to submit, review, approve, and track the work.",
+    checks: ["One intake path", "Approvals tracked", "Status visible", "Less chasing"],
   },
   {
     icon: ClipboardCheck,
@@ -38,8 +38,8 @@ const examples = [
     checks: ["Qualified bids", "Deadlines protected", "Poor-fit jobs skipped", "Prep time reduced"],
   },
   {
-    icon: DatabaseZap,
-    title: "Operations coordinator",
+    icon: Bot,
+    title: "Operations agent",
     trigger: "The owner is the glue between inboxes, calendars, CRMs, shared docs, and internal reminders.",
     output: "The AI builds the daily queue, prepares summaries, routes exceptions, updates records, and flags work waiting on a person.",
     checks: ["Queues cleared", "Records updated", "Handoffs completed", "Fewer owner bottlenecks"],
@@ -73,15 +73,15 @@ export default function DemoPage() {
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="mx-auto max-w-4xl text-center">
               <span className="text-sm font-semibold uppercase tracking-wider text-primary">Example workflows</span>
               <h1 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                See what an AI employee actually produces.
+                See what a practical business system can produce.
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                The value is not a chat bubble. It is the handoff: the prepared estimate packet, the revived lead,
-                the bid checklist, the cleaned-up operating queue, and the approval-ready summary.
+                The value is not a chat bubble. It is the useful output: the dashboard, internal app, prepared estimate
+                packet, bid checklist, cleaned-up operating queue, and approval-ready summary.
               </p>
               <div className="mt-8 flex justify-center">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/hire">Find My First AI Employee</Link>
+                  <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
                 </Button>
               </div>
             </motion.div>
@@ -141,7 +141,8 @@ export default function DemoPage() {
                 This is what buyers should be able to inspect.
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Every AI employee should leave behind useful artifacts: summaries, packets, queues, drafts, and decisions waiting on human approval.
+                Every system should leave behind useful artifacts: dashboards, apps, summaries, packets, queues, drafts,
+                and decisions waiting on human approval.
               </p>
             </div>
             <div className="grid gap-5 lg:grid-cols-3">
@@ -167,7 +168,7 @@ export default function DemoPage() {
               <div className="grid gap-6 lg:grid-cols-[1fr_0.7fr] lg:items-center">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-wider text-primary">What happens next</p>
-                  <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Pick one workflow. Build one employee. Inspect the output.</h2>
+                  <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Pick one workflow. Build one useful system. Inspect the output.</h2>
                   <p className="mt-4 text-muted-foreground">
                     The first build should be narrow enough to launch quickly and valuable enough to keep.
                   </p>

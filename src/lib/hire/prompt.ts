@@ -123,7 +123,7 @@ export function normalizeIndustryLabel(raw: string): string {
 
 export function askWhatEatsTime(industryLabel: string): string {
   const examples = industryExamples(industryLabel).slice(0, 3).join("; ");
-  return `${industryLabel} — useful starting point.\nMost businesses do not need an AI overhaul. They need one obvious workflow to stop leaking time, attention, or revenue.\nIn your world, that is often ${examples}. Which one of those feels closest — or is there a different daily bottleneck that annoys you more?`;
+  return `${industryLabel} — useful starting point.\nMost businesses do not need an AI overhaul. They need one obvious bottleneck where a better system could save time, improve visibility, or create ROI.\nIn your world, that is often ${examples}. Which one of those feels closest — or is there a different daily bottleneck that annoys you more?`;
 }
 
 export function buildSystemPrompt(discovery: DiscoveryState): string {

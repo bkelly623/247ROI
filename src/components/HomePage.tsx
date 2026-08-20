@@ -20,7 +20,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { HERO_PRIMARY_CTA_LABEL, PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const problems = [
   "The same computer work gets repeated every week.",
@@ -99,7 +99,7 @@ export default function HomePage() {
                     className="min-h-[3.5rem] rounded-full bg-orange-500 px-7 font-semibold text-white hover:bg-orange-600"
                   >
                     <Link href="/hire">
-                      Map My Best Opportunities <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                      {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
                   <Button
@@ -158,7 +158,7 @@ export default function HomePage() {
 
         <section className="border-b border-zinc-200 bg-white py-14">
           <div className="container mx-auto px-5 sm:px-6">
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {[
                 ["Business systems", "We start by understanding how work gets done, where it breaks, and what outcome matters."],
                 ["Automation", "We automate valuable computer work: data movement, document steps, approvals, reminders, and handoffs."],
@@ -265,7 +265,7 @@ export default function HomePage() {
                   size="lg"
                   className="min-h-[3.5rem] rounded-full bg-orange-500 px-8 font-semibold text-white hover:bg-orange-600"
                 >
-                  <Link href="/hire">Map My Best Opportunities</Link>
+                  <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
                 </Button>
                 <Button
                   asChild

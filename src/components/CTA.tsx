@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { HERO_PRIMARY_CTA_LABEL, PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export default function CTA() {
   return (
@@ -24,12 +24,12 @@ export default function CTA() {
               Bring one messy workflow. Leave with the first system worth improving.
             </h2>
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              We will identify the workflow, the AI or automation opportunity, the human approval points, and the success criteria before anything gets built.
+              We will identify the bottleneck, the practical system to build first, the human approval points, and the success criteria before anything gets built.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">Map My Best Opportunities</Link>
+                <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                 <a href={PRIMARY_PHONE_HREF}>
