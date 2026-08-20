@@ -22,7 +22,7 @@ const footerColumns: {
       { label: "Business systems audit", href: "/hire" },
       { label: "Example workflows", href: "/demo" },
       { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
-      { label: "AI lead response system", href: "/ai-lead-response-system" },
+      { label: "ROI calculator", href: "/ai-employee-roi-calculator" },
     ],
   },
   {
@@ -86,7 +86,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-sm">
-                Business systems consulting, AI agents, practical automation, custom software, and workflow improvement for owners who want cleaner operations.
+                Custom automations, dashboards, internal apps, AI agents, and business systems for owners who want cleaner operations and visible ROI.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}

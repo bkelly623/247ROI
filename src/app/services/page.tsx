@@ -4,12 +4,12 @@ import ServicesPage from "@/components/ServicesPage";
 export const metadata: Metadata = {
   title: "Business Systems, AI Agents & Automation Services | 247ROI",
   description:
-    "Business systems consulting, AI agents, workflow automation, custom software, dashboards, and operational improvement for growing companies.",
+    "Custom workflow automations, dashboards, internal apps, AI agents, and business systems for owners and operators who need cleaner operations.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Business Systems, AI Agents & Automation Services | 247ROI",
     description:
-      "Business systems consulting, AI agents, workflow automation, custom software, dashboards, and operational improvement for growing companies.",
+      "Custom workflow automations, dashboards, internal apps, AI agents, and business systems for owners and operators who need cleaner operations.",
     url: "/services",
   },
 };

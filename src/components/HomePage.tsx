@@ -23,10 +23,10 @@ import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const problems = [
-  "Leads sit too long before anyone responds.",
-  "Follow-up depends on memory and spare time.",
-  "Important details live across inboxes, docs, texts, CRMs, and spreadsheets.",
-  "The owner becomes the approval path for everything.",
+  "The same computer work gets repeated every week.",
+  "Important data is scattered across apps, spreadsheets, inboxes, and memory.",
+  "Owners and managers chase updates instead of seeing one clear operating picture.",
+  "Useful work gets stuck because the system depends on one overloaded person.",
 ];
 
 const systemWork = [
@@ -43,7 +43,7 @@ const systemWork = [
   {
     icon: Network,
     title: "Build the working layer",
-    body: "We connect forms, inboxes, CRMs, docs, dashboards, AI agents, automations, and human review points.",
+    body: "We connect apps, data, dashboards, AI agents, automations, and human review points into one practical workflow.",
   },
   {
     icon: Gauge,
@@ -53,17 +53,17 @@ const systemWork = [
 ];
 
 const examples = [
-  "A lead response system that replies quickly, gathers context, and routes the right next step.",
-  "An estimate-prep workflow that organizes notes, photos, missing details, and quote-ready summaries.",
-  "An inbox and admin queue that turns scattered messages into clear tasks, drafts, and approvals.",
-  "A reporting workflow that gives the owner visibility without chasing updates from every tool.",
+  "A custom dashboard that pulls scattered numbers into one clear operating view.",
+  "A workflow automation that moves data between tools instead of making the team copy and paste.",
+  "A custom internal app that gives owners one place to review jobs, tasks, approvals, and next steps.",
+  "An AI agent that prepares summaries, drafts, research, reports, or handoffs for a human to approve.",
 ];
 
 const trustItems = [
-  "Human approval stays in place for pricing, sensitive replies, and judgment calls.",
-  "You get visible work product: summaries, drafts, packets, queues, reports, and handoff notes.",
-  "The first project is scoped around one useful workflow, not a vague company-wide AI overhaul.",
-  "If a workflow is not ready for automation, the audit should say that clearly.",
+  "Start with one bottleneck worth fixing before expanding into a larger operating system.",
+  "Use the software, apps, documents, and data the business already depends on where possible.",
+  "Keep human approval in place for pricing, sensitive decisions, exceptions, and judgment calls.",
+  "Deliver visible work product: dashboards, queues, reports, apps, drafts, summaries, and handoff notes.",
 ];
 
 export default function HomePage() {
@@ -89,8 +89,8 @@ export default function HomePage() {
                   Build better business systems with AI, automation, and custom software.
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300 sm:text-xl">
-                  247ROI helps owners and operators find the manual work, missed follow-up, scattered tools, and
-                  bottlenecks worth fixing first - then builds practical systems that save time and create ROI.
+                  247ROI helps owners and operators find the bottlenecks worth fixing first - then builds practical
+                  systems that save time and create ROI.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button
@@ -115,8 +115,8 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-400">
-                  Built for face-to-face business relationships: clear enough to explain in one conversation and useful
-                  enough to become a real next step after the meeting.
+                  Custom automations, AI agents, dashboards, and internal apps for the work currently trapped across
+                  software, spreadsheets, inboxes, and memory.
                 </p>
               </motion.div>
 
@@ -161,8 +161,9 @@ export default function HomePage() {
             <div className="grid gap-5 md:grid-cols-3">
               {[
                 ["Business systems", "We start by understanding how work gets done, where it breaks, and what outcome matters."],
-                ["AI agents", "We build constrained digital workers for research, triage, follow-up, reporting, and prepared work."],
-                ["Automation", "We connect tools, handoffs, dashboards, and approvals so the system keeps moving."],
+                ["Automation", "We automate valuable computer work: data movement, document steps, approvals, reminders, and handoffs."],
+                ["Dashboards & apps", "We build simple internal tools that unify scattered data and make the next action visible."],
+                ["AI agents", "We build constrained digital workers for research, triage, drafting, reporting, and prepared work."],
               ].map(([title, body]) => (
                 <div key={title} className="border-l-2 border-orange-500 pl-5">
                   <h2 className="font-display text-2xl font-bold">{title}</h2>
@@ -183,8 +184,8 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-zinc-600">
                   The tools can include AI agents, automations, custom software, dashboards, prompts, SOPs, and human
-                  approval steps. The point is not the tool. The point is cleaner operations, faster movement, and less
-                  work trapped in someone&apos;s head.
+                  approval steps. The point is not the tool. The point is cleaner operations, useful visibility, and less
+                  work trapped inside scattered software or someone&apos;s head.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -231,9 +232,8 @@ export default function HomePage() {
                   No magic pitch. No black box.
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-zinc-600">
-                  The site should support networking, not pressure people into buying on the spot. The audit gives them a
-                  useful diagnostic and gives us a real discovery path for AI, automation, software, and operational
-                  improvement.
+                  Every build starts with a real workflow, a clear owner, and a visible output. The goal is a system the
+                  business can trust because it makes the work easier to see, run, and improve.
                 </p>
               </div>
               <div className="space-y-4">

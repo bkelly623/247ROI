@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CheckCircle2, ClipboardCheck, FileSearch, MessageSquareText, PhoneCall, Workflow } from "lucide-react";
+import { CheckCircle2, ClipboardCheck, DatabaseZap, FileSearch, PanelsTopLeft, Workflow, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -10,16 +10,22 @@ import { Button } from "@/components/ui/button";
 
 const lanes = [
   {
-    title: "Lead and revenue systems",
-    icon: PhoneCall,
-    body: "Inbound forms, SMS, web chat, call summaries, quote requests, stale opportunities, and speed-to-lead workflows.",
-    examples: ["Lead intake agent", "Follow-up automation", "Opportunity reactivation"],
+    title: "Custom workflow automations",
+    icon: Zap,
+    body: "Automations for recurring computer work: moving data, preparing documents, routing approvals, updating records, and triggering next steps.",
+    examples: ["Data handoff automation", "Document workflow", "Approval routing"],
   },
   {
-    title: "Admin and document systems",
-    icon: ClipboardCheck,
-    body: "Intake forms, photo requests, scope notes, quote packets, missing details, summaries, and approval-ready drafts.",
-    examples: ["Quote packet builder", "Document assistant", "Approval queue"],
+    title: "Custom dashboards",
+    icon: DatabaseZap,
+    body: "Dashboards that pull scattered data from apps, spreadsheets, CRMs, forms, and team updates into one useful operating view.",
+    examples: ["Owner dashboard", "Job status view", "Revenue and ops tracker"],
+  },
+  {
+    title: "Internal apps and portals",
+    icon: PanelsTopLeft,
+    body: "Simple custom apps for the workflows generic software does not handle cleanly: intake, review, approvals, tracking, and reporting.",
+    examples: ["Review portal", "Workflow hub", "Client or team app"],
   },
   {
     title: "Research and decision support",
@@ -28,10 +34,10 @@ const lanes = [
     examples: ["Research agent", "Bid assistant", "Decision brief"],
   },
   {
-    title: "Operations visibility",
-    icon: MessageSquareText,
-    body: "Inbox triage, customer replies, vendor messages, internal handoffs, owner bottlenecks, reporting, and daily queues.",
-    examples: ["Inbox triage", "Ops coordinator", "Dashboard workflow"],
+    title: "AI agents for business work",
+    icon: ClipboardCheck,
+    body: "Constrained AI agents that prepare summaries, drafts, reports, research, records, and handoffs while humans keep approval authority.",
+    examples: ["Admin agent", "Reporting agent", "Ops coordinator"],
   },
 ];
 
@@ -57,8 +63,8 @@ export default function ServicesPage() {
                 Business systems built with AI agents, automation, and custom software.
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                247ROI helps businesses turn messy screen-based work into controlled systems: faster follow-up, cleaner
-                admin, better handoffs, useful dashboards, and AI agents that prepare real work for humans to approve.
+                247ROI builds custom automations, dashboards, internal apps, and AI agents around the work already
+                happening across your software, spreadsheets, inboxes, documents, and team memory.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
@@ -74,7 +80,7 @@ export default function ServicesPage() {
 
         <section className="border-b border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
-            <div className="grid gap-5 lg:grid-cols-4">
+            <div className="grid gap-5 lg:grid-cols-5">
               {lanes.map((lane, index) => {
                 const Icon = lane.icon;
                 return (
@@ -133,9 +139,9 @@ export default function ServicesPage() {
                   </div>
                 </div>
                 <p className="text-muted-foreground">
-                  The fastest route is not automating everything. It is choosing one bottleneck, making that workflow
-                  easier to run, then expanding into agents, automations, dashboards, and physical automation when the
-                  first system has earned trust.
+                  The fastest route is not automating everything. It is choosing one bottleneck, building the practical
+                  system that makes it easier to run, then expanding into automations, dashboards, apps, AI agents, and
+                  physical automation when the first system has earned trust.
                 </p>
               </div>
             </div>
