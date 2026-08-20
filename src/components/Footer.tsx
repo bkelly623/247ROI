@@ -19,7 +19,7 @@ const footerColumns: {
     title: "Systems",
     links: [
       { label: "Services", href: "/services" },
-      { label: "Business systems audit", href: "/hire" },
+      { label: "AI Opportunity Map", href: "/hire" },
       { label: "Example workflows", href: "/demo" },
       { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
       { label: "AI lead response system", href: "/ai-lead-response-system" },

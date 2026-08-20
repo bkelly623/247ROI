@@ -15,7 +15,7 @@ import {
 } from "@/lib/siteLogo";
 
 const navLinks = [
-  { name: "Systems Audit", href: "/hire" },
+  { name: "AI Opportunity Map", href: "/hire" },
   { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
   { name: "About", href: "/about" },

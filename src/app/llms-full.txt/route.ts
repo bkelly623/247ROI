@@ -29,7 +29,7 @@ Positioning:
 247ROI is not a generic chatbot provider or a tool reseller. 247ROI maps the business workflow first, then builds practical systems that can include AI agents, automation, dashboards, intake flows, reporting, connected tools, handoff rules, human approval points, useful work product, and practical success criteria.
 
 Primary conversion path:
-The recommended next step is the Business Systems Audit at ${SITE_URL}/hire. The audit identifies the first workflow worth improving, whether AI or automation should be involved, what stays human, and the success criteria used to decide whether the workflow is improving.
+The recommended next step is the AI Opportunity Map at ${SITE_URL}/hire. It identifies where AI can save time or create ROI first, whether automation should be involved, what stays human, and the success criteria used to decide whether the workflow is improving.
 
 # AI Employee Offers
 

@@ -83,14 +83,14 @@ export default function HomePage() {
               >
                 <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">
                   <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                  Business systems + AI automation
+                  Brendan Kelly / AI systems consultant
                 </p>
                 <h1 className="mt-6 max-w-4xl font-display text-4xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
-                  Practical systems for businesses that run on too much manual work.
+                  Get more work done without adding more people.
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300 sm:text-xl">
-                  247ROI helps business owners turn messy daily operations into clearer systems, useful automations,
-                  and AI-assisted workflows that save time without removing human judgment.
+                  247ROI helps business owners turn repetitive follow-up, admin, reporting, customer communication,
+                  and software busywork into practical AI-assisted systems that save time and protect judgment.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button
@@ -99,7 +99,7 @@ export default function HomePage() {
                     className="min-h-[3.5rem] rounded-full bg-orange-500 px-7 font-semibold text-white hover:bg-orange-600"
                   >
                     <Link href="/hire">
-                      Start the Systems Audit <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                      Find My AI Opportunities <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
                   <Button
@@ -115,8 +115,8 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-400">
-                  Built for face-to-face business relationships: clear enough to explain in one conversation, practical
-                  enough to be useful after the meeting.
+                  Built for face-to-face business relationships: clear enough to explain in one conversation, useful
+                  enough to remember after the meeting.
                 </p>
               </motion.div>
 
@@ -129,7 +129,7 @@ export default function HomePage() {
                 <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">First step</p>
-                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Find the system worth fixing first.</h2>
+                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Find where AI can create ROI first.</h2>
                   </div>
                   <BriefcaseBusiness className="h-8 w-8 text-orange-400" aria-hidden />
                 </div>
@@ -255,8 +255,8 @@ export default function HomePage() {
                 Bring one messy workflow. Leave with a clearer next step.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">
-                The systems audit looks for the first process worth improving, what AI or automation should handle, what
-                should stay human, and what a practical first build would need.
+                The AI Opportunity Map looks for the first process worth improving, what AI or automation should handle,
+                what should stay human, and what a practical first build would need.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <Button
@@ -264,7 +264,7 @@ export default function HomePage() {
                   size="lg"
                   className="min-h-[3.5rem] rounded-full bg-orange-500 px-8 font-semibold text-white hover:bg-orange-600"
                 >
-                  <Link href="/hire">Start the Systems Audit</Link>
+                  <Link href="/hire">Find My AI Opportunities</Link>
                 </Button>
                 <Button
                   asChild
