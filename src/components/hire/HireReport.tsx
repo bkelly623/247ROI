@@ -42,10 +42,10 @@ export function HireReport({
     <div className="mx-auto max-w-3xl space-y-8 px-4 py-8 sm:px-6">
       <header className="space-y-4 animate-fade-in">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-400">
-          Hire packet unlocked
+          Opportunity map unlocked
         </p>
         <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-50 sm:text-5xl">
-          Meet {proposal.employeeName}
+          Your first system opportunity: {proposal.employeeName}
         </h1>
         <p className="max-w-2xl text-lg text-zinc-400">{proposal.tagline}</p>
         {impact && (
@@ -83,7 +83,7 @@ export function HireReport({
         </p>
         <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50 sm:text-2xl">
           On the call we map {primary?.title?.toLowerCase() || "this workflow"}, show how{" "}
-          {proposal.employeeName} runs it, and decide if we build.
+          {proposal.employeeName} would work in your actual business, and decide if the first version is worth building.
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
           Bring nothing fancy — 15–20 minutes. You’ll know if it makes sense to move forward.
@@ -155,7 +155,7 @@ export function HireReport({
       <section className="space-y-3">
         <div className="flex items-center gap-2 text-zinc-300">
           <Workflow className="h-5 w-5 text-sky-400" />
-          <h2 className="font-display text-lg font-semibold">Job description A→Z</h2>
+          <h2 className="font-display text-lg font-semibold">System workflow A→Z</h2>
         </div>
         <ol className="space-y-2">
           {proposal.jobFromAtoZ.map((step, i) => (
@@ -198,13 +198,13 @@ export function HireReport({
       <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <div className="mb-2 flex items-center gap-2 text-orange-300">
           <Sparkles className="h-5 w-5" />
-          <h2 className="font-display text-lg font-semibold">Why this hire first</h2>
+          <h2 className="font-display text-lg font-semibold">Why this system first</h2>
         </div>
         <p className="text-zinc-300">{proposal.whyThisFirst}</p>
         <p className="mt-3 text-sm text-zinc-500">{proposal.implementationSketch}</p>
         {proposal.secondaryOpportunity && (
           <p className="mt-3 text-sm text-zinc-400">
-            Roadmap hire #2: {proposal.secondaryOpportunity}
+            Roadmap opportunity #2: {proposal.secondaryOpportunity}
           </p>
         )}
       </section>
@@ -214,10 +214,10 @@ export function HireReport({
           Optional later
         </p>
         <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50">
-          Revenue pass
+          Revenue pass after the first system
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          After this hire, we can rank missed calls, website, AI visibility, and reviews by
+          After this system, we can rank missed calls, website, AI visibility, and reviews by
           fastest profit lift.
         </p>
         <Button asChild size="lg" variant="outline" className="mt-4 h-11 border-white/15">

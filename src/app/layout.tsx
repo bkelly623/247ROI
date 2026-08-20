@@ -6,14 +6,14 @@ import { SITE_URL } from "@/lib/site";
 import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "247ROI | Business Systems & AI Automation Consultant",
+  title: "247ROI | Business Systems, AI Agents & Automation",
   description:
-    "247ROI helps business owners clean up manual operations with business systems consulting, practical AI automation, custom agents, and workflow improvement.",
+    "247ROI helps business owners build better business systems with AI agents, automation, custom software, and workflow improvement.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "247ROI | Business Systems & AI Automation Consultant",
+    title: "247ROI | Business Systems, AI Agents & Automation",
     description:
-      "247ROI helps business owners clean up manual operations with business systems consulting, practical AI automation, custom agents, and workflow improvement.",
+      "247ROI helps business owners build better business systems with AI agents, automation, custom software, and workflow improvement.",
     url: SITE_URL,
     siteName: "247ROI",
     locale: "en_US",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "247ROI | Business Systems & AI Automation Consultant",
+    title: "247ROI | Business Systems, AI Agents & Automation",
     description:
-      "247ROI helps business owners clean up manual operations with business systems consulting, practical AI automation, custom agents, and workflow improvement.",
+      "247ROI helps business owners build better business systems with AI agents, automation, custom software, and workflow improvement.",
     images: ["/twitter-image"],
   },
 };
@@ -54,11 +54,13 @@ export default function RootLayout({
       },
     ],
     sameAs: [SITE_URL],
-    slogan: "Practical business systems and AI automation that create measurable operating lift.",
+    slogan: "Better business systems using AI agents, automation, and custom software.",
     knowsAbout: [
       "business systems consulting",
       "business process automation",
       "AI automation consulting",
+      "business systems audit",
+      "AI opportunity map",
       "AI employees",
       "managed AI employees",
       "AI workflow automation",
@@ -71,6 +73,7 @@ export default function RootLayout({
       "AI admin workflow automation",
       "AI takeoff assistant",
       "custom software workflows",
+      "robotics integration planning",
       "local business automation",
     ],
   };
@@ -81,7 +84,7 @@ export default function RootLayout({
     name: "247ROI",
     url: SITE_URL,
     description:
-      "Business systems consulting, practical AI automation, custom agents, and workflow improvement for business owners.",
+      "Business systems consulting, AI agents, automation, custom software, and workflow improvement for business owners.",
     inLanguage: "en-US",
   };
 

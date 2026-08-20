@@ -32,23 +32,23 @@ const problems = [
 const systemWork = [
   {
     icon: SearchCheck,
-    title: "Map the business",
-    body: "We find where work slows down, which handoffs break, and what is actually worth improving first.",
+    title: "Audit the workflow",
+    body: "We look at how work really moves across people, software, documents, inboxes, and approvals.",
   },
   {
     icon: ClipboardList,
-    title: "Design the system",
-    body: "We define the workflow, inputs, rules, approvals, tools, outputs, and success measure before anything is built.",
+    title: "Choose the right system",
+    body: "Some problems need automation. Some need an AI agent. Some need a cleaner process before either will work.",
   },
   {
     icon: Network,
-    title: "Build the automation",
-    body: "We connect the practical pieces: forms, inboxes, CRMs, docs, reminders, reporting, AI agents, and human review points.",
+    title: "Build the working layer",
+    body: "We connect forms, inboxes, CRMs, docs, dashboards, AI agents, automations, and human review points.",
   },
   {
     icon: Gauge,
-    title: "Operate and improve",
-    body: "We watch the output, tighten the process, and expand only when the first system is making work cleaner.",
+    title: "Improve what works",
+    body: "We measure the output, tighten the rules, and expand only when the system is saving time or creating ROI.",
   },
 ];
 
@@ -83,14 +83,14 @@ export default function HomePage() {
               >
                 <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">
                   <Sparkles className="h-3.5 w-3.5" aria-hidden />
-                  Brendan Kelly / AI systems consultant
+                  Brendan Kelly / Business Systems & AI Consultant
                 </p>
                 <h1 className="mt-6 max-w-4xl font-display text-4xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
-                  Get more work done without adding more people.
+                  Build better business systems with AI, automation, and custom software.
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300 sm:text-xl">
-                  247ROI helps business owners turn repetitive follow-up, admin, reporting, customer communication,
-                  and software busywork into practical AI-assisted systems that save time and protect judgment.
+                  247ROI helps owners and operators find the manual work, missed follow-up, scattered tools, and
+                  bottlenecks worth fixing first - then builds practical systems that save time and create ROI.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button
@@ -99,7 +99,7 @@ export default function HomePage() {
                     className="min-h-[3.5rem] rounded-full bg-orange-500 px-7 font-semibold text-white hover:bg-orange-600"
                   >
                     <Link href="/hire">
-                      Find My AI Opportunities <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                      Map My Best Opportunities <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
                   <Button
@@ -115,8 +115,8 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-400">
-                  Built for face-to-face business relationships: clear enough to explain in one conversation, useful
-                  enough to remember after the meeting.
+                  Built for face-to-face business relationships: clear enough to explain in one conversation and useful
+                  enough to become a real next step after the meeting.
                 </p>
               </motion.div>
 
@@ -129,7 +129,7 @@ export default function HomePage() {
                 <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">First step</p>
-                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Find where AI can create ROI first.</h2>
+                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Find the first system worth improving.</h2>
                   </div>
                   <BriefcaseBusiness className="h-8 w-8 text-orange-400" aria-hidden />
                 </div>
@@ -160,9 +160,9 @@ export default function HomePage() {
           <div className="container mx-auto px-5 sm:px-6">
             <div className="grid gap-5 md:grid-cols-3">
               {[
-                ["Consulting", "We start by understanding the business, not selling a tool."],
-                ["Systems", "We clean up the path work already takes across people, software, and decisions."],
-                ["Automation", "We use AI where it can prepare, organize, respond, summarize, or route work reliably."],
+                ["Business systems", "We start by understanding how work gets done, where it breaks, and what outcome matters."],
+                ["AI agents", "We build constrained digital workers for research, triage, follow-up, reporting, and prepared work."],
+                ["Automation", "We connect tools, handoffs, dashboards, and approvals so the system keeps moving."],
               ].map(([title, body]) => (
                 <div key={title} className="border-l-2 border-orange-500 pl-5">
                   <h2 className="font-display text-2xl font-bold">{title}</h2>
@@ -177,14 +177,14 @@ export default function HomePage() {
           <div className="container mx-auto px-5 sm:px-6">
             <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">What 247ROI does</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">What 247ROI builds</p>
                 <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
-                  We build the operating layer between your people and your software.
+                  We build business systems for the work that lives between people, software, and decisions.
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-zinc-600">
-                  The label can be business systems, AI automation, custom agents, or AI employees. The real work is the
-                  same: make the business easier to run, easier to see, and less dependent on someone remembering every
-                  small task.
+                  The tools can include AI agents, automations, custom software, dashboards, prompts, SOPs, and human
+                  approval steps. The point is not the tool. The point is cleaner operations, faster movement, and less
+                  work trapped in someone&apos;s head.
                 </p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -232,7 +232,8 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-zinc-600">
                   The site should support networking, not pressure people into buying on the spot. The audit gives them a
-                  useful diagnostic and gives us a real discovery path.
+                  useful diagnostic and gives us a real discovery path for AI, automation, software, and operational
+                  improvement.
                 </p>
               </div>
               <div className="space-y-4">
@@ -264,7 +265,7 @@ export default function HomePage() {
                   size="lg"
                   className="min-h-[3.5rem] rounded-full bg-orange-500 px-8 font-semibold text-white hover:bg-orange-600"
                 >
-                  <Link href="/hire">Find My AI Opportunities</Link>
+                  <Link href="/hire">Map My Best Opportunities</Link>
                 </Button>
                 <Button
                   asChild

@@ -66,7 +66,7 @@ export default function HireReportPage() {
         {loading && (
           <div className="flex min-h-[50vh] items-center justify-center gap-2 text-zinc-500">
             <Loader2 className="h-5 w-5 animate-spin text-orange-400" />
-            Loading hire packet…
+            Loading opportunity map…
           </div>
         )}
 
@@ -74,7 +74,7 @@ export default function HireReportPage() {
           <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-6 py-20 text-center">
             <p className="text-red-400">{error}</p>
             <Button asChild>
-              <Link href="/hire">Start a new audit</Link>
+              <Link href="/hire">Start the finder</Link>
             </Button>
           </div>
         )}
@@ -86,10 +86,10 @@ export default function HireReportPage() {
         {!loading && needGate && !unlocked && (
           <div className="mx-auto max-w-lg px-6 py-20 text-center">
             <h1 className="font-display text-3xl font-bold text-zinc-50">
-              Your hire plan is sealed
+              Your opportunity map is sealed
             </h1>
             <p className="mt-3 text-zinc-400">
-              Unlock it with your details — then we can actually staff the role.
+              Unlock it with your details, then we can map the system against your actual workflow.
             </p>
           </div>
         )}

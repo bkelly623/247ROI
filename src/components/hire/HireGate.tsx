@@ -80,24 +80,24 @@ export function HireGate({
       >
         <div className="border-b border-white/10 bg-gradient-to-br from-orange-500/20 via-zinc-900 to-zinc-950 px-6 py-6">
           <p className="mb-2 text-sm font-medium uppercase tracking-wide text-orange-300">
-            Hire plan ready
+            Opportunity map ready
           </p>
           <h2
             id="hire-gate-title"
             className="font-display text-3xl font-bold leading-tight text-zinc-50"
           >
-            {employeeName ? `Unlock ${employeeName}` : "Unlock your first hire"}
+            {employeeName ? `Unlock ${employeeName}` : "Unlock your system map"}
           </h2>
           <p className="mt-3 text-lg text-zinc-300">
             {hoursBit
-              ? `${hoursBit} — A→Z job, how you’d use it, hours back.`
-              : "A→Z job, how you’d use it, hours back."}
+              ? `${hoursBit} - workflow, system shape, handoffs, and where the first version should start.`
+              : "Workflow, system shape, handoffs, and where the first version should start."}
           </p>
         </div>
 
         <form onSubmit={submit} className="space-y-4 px-6 py-6">
           <p className="text-base text-zinc-500">
-            Name and mobile so we can save the audit and follow up. Email optional.
+            Name and mobile so we can save the map and follow up. Email optional.
           </p>
           <div className="space-y-1.5">
             <Label htmlFor="hire-first" className="text-base">
@@ -155,7 +155,7 @@ export function HireGate({
               </>
             ) : (
               <>
-                Show the hire plan
+                Show my opportunity map
                 <Unlock className="h-5 w-5" />
               </>
             )}

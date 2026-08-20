@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { HireAuditFlow } from "@/components/hire/HireAuditFlow";
 
 export const metadata: Metadata = {
-  title: "AI Opportunity Map | 247ROI",
+  title: "Business Systems Audit & AI Opportunity Map | 247ROI",
   description:
-    "Find where AI can save time or create ROI in your business first. Get a practical opportunity map before buying another tool.",
+    "Find the first business system worth improving with AI, automation, custom software, or better workflow design.",
   alternates: { canonical: "/hire" },
   openGraph: {
-    title: "AI Opportunity Map | 247ROI",
+    title: "Business Systems Audit & AI Opportunity Map | 247ROI",
     description:
-      "Find where AI can save time or create ROI in your business first. Get a practical opportunity map before buying another tool.",
+      "Find the first business system worth improving with AI, automation, custom software, or better workflow design.",
     url: "/hire",
   },
 };

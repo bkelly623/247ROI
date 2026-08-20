@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import ServicesPage from "@/components/ServicesPage";
 
 export const metadata: Metadata = {
-  title: "AI Employee Services | 247ROI",
+  title: "Business Systems, AI Agents & Automation Services | 247ROI",
   description:
-    "Managed AI employees for service businesses: revenue response, estimator support, bid discipline, inbox operations, dashboards, and clean handoffs.",
+    "Business systems consulting, AI agents, workflow automation, custom software, dashboards, and operational improvement for growing companies.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "AI Employee Services | 247ROI",
+    title: "Business Systems, AI Agents & Automation Services | 247ROI",
     description:
-      "Managed AI employees for service businesses: revenue response, estimator support, bid discipline, inbox operations, dashboards, and clean handoffs.",
+      "Business systems consulting, AI agents, workflow automation, custom software, dashboards, and operational improvement for growing companies.",
     url: "/services",
   },
 };

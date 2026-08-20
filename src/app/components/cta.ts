@@ -1,4 +1,4 @@
-/** Primary conversion path: AI Employee Audit chat. */
+/** Primary conversion path: Business Systems Audit / AI Opportunity Map chat. */
 export const CALENDAR_PATH = "/hire";
 export const HIRE_AUDIT_PATH = "/hire";
 
@@ -17,8 +17,8 @@ export const AI_RECEPTIONIST_CTA_PHONE_DISPLAY = "(866) 360-2529";
 export const DEMO_PHONE_HREF = AI_RECEPTIONIST_CTA_PHONE_HREF;
 export const DEMO_PHONE_DISPLAY = AI_RECEPTIONIST_CTA_PHONE_DISPLAY;
 
-export const CTA_LABEL_NAV = "Find AI Opportunities";
-export const HERO_PRIMARY_CTA_LABEL = "Find My AI Opportunities";
+export const CTA_LABEL_NAV = "Map Opportunities";
+export const HERO_PRIMARY_CTA_LABEL = "Map My Best Opportunities";
 
 /** Under-CTA contact link — must read as a real hyperlink (shared class). */
 export const BOOK_SETUP_CALL_LINK_CLASSNAME =
@@ -29,7 +29,7 @@ export const BUSINESS_LINE_CTA_LABEL = "Call 247ROI";
 export const DEMO_CTA_LABEL = "See Example Workflows";
 export const DEMO_CARD_BUTTON_LABEL = "See Examples";
 
-export const CTA_MICRO = "Starts with one practical workflow.";
+export const CTA_MICRO = "Starts with one practical business system.";
 export const DEMO_SUBTEXT = "Call and hear the system — about 30 seconds.";
 
 /** Optional legacy scheduling route replacement. */

@@ -21,15 +21,15 @@ export default function CTA() {
           <div className="glass-strong rounded-3xl border border-white/[0.08] p-10 text-center sm:p-14">
             <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-primary">Next step</p>
             <h2 className="mb-5 font-display text-3xl font-bold sm:text-4xl lg:text-5xl">
-              Bring one messy workflow. Leave with the first AI employee to build.
+              Bring one messy workflow. Leave with the first system worth improving.
             </h2>
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              We will identify the role, the handoffs, the human approval points, and the success criteria before anything goes live.
+              We will identify the workflow, the AI or automation opportunity, the human approval points, and the success criteria before anything gets built.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">Find My First AI Employee</Link>
+                <Link href="/hire">Map My Best Opportunities</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                 <a href={PRIMARY_PHONE_HREF}>

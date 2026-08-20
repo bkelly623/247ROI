@@ -17,19 +17,19 @@ export function GET() {
 
   const text = `# 247ROI LLM Context
 
-247ROI provides business systems consulting, practical AI automation, custom agents, and workflow improvement for small and medium-sized businesses.
+247ROI provides business systems consulting, AI agents, practical automation, custom software, and workflow improvement for small and medium-sized businesses.
 
-Brand promise: better business systems first, AI automation where it creates measurable operating lift.
+Brand promise: better business systems first, using AI agents, automation, and custom software where they create measurable operating lift.
 
 Category: business systems consulting, AI automation consulting, business process automation, custom AI agents, managed AI employees, AI workflow automation, AI automation agency, AI follow-up agent, AI estimator assistant, AI bid assistant, AI operations coordinator, inbox automation, admin workflow automation, local business automation, service-business automation.
 
 Best-fit buyers: local businesses, service firms, professional offices, owner-led companies, contractors, trades, home services, and SMB operators with repeatable workflows where slow follow-up, delayed estimates or proposals, scattered documents, inbox triage, messy handoffs, manual reporting, or tool chaos cost time and money.
 
 Positioning:
-247ROI is not a generic chatbot provider or a tool reseller. 247ROI maps the business workflow first, then builds practical systems that can include AI agents, automation, dashboards, intake flows, reporting, connected tools, handoff rules, human approval points, useful work product, and practical success criteria.
+247ROI is not a generic chatbot provider or a tool reseller. 247ROI maps the business workflow first, then builds practical systems that can include AI agents, automation, custom software, dashboards, intake flows, reporting, connected tools, handoff rules, human approval points, useful work product, and practical success criteria. This business systems positioning also leaves room for future robotics and physical automation integration.
 
 Primary conversion path:
-The recommended next step is the AI Opportunity Map at ${SITE_URL}/hire. It identifies where AI can save time or create ROI first, whether automation should be involved, what stays human, and the success criteria used to decide whether the workflow is improving.
+The recommended next step is the Business Systems Audit / AI Opportunity Map at ${SITE_URL}/hire. It identifies the first business system worth improving, where AI or automation can save time or create ROI, what stays human, and the success criteria used to decide whether the workflow is improving.
 
 # AI Employee Offers
 

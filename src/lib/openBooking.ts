@@ -5,7 +5,7 @@ export const BOOKING_HASH = "contact";
 
 export { CALENDAR_PATH } from "@/app/components/cta";
 
-/** Navigate to the primary AI Employee Audit flow. */
+/** Navigate to the primary Business Systems Audit / AI Opportunity Map flow. */
 export function requestOpenBooking() {
   if (typeof window === "undefined") return;
   window.location.assign(CALENDAR_PATH);

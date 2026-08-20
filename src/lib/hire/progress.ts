@@ -14,7 +14,7 @@ export type ProgressStep = {
   current: boolean;
 };
 
-/** Visible checklist: Industry → Problem → Hours → Fit → Hire */
+/** Visible checklist: Industry -> Problem -> Hours -> Fit -> Map */
 export function getHireProgress(discovery: DiscoveryState): ProgressStep[] {
   const stage = discovery.salesStage || "industry";
   const hasIndustry = Boolean(discovery.businessType);
@@ -54,8 +54,8 @@ export function getHireProgress(discovery: DiscoveryState): ProgressStep[] {
     { id: "industry", label: "Industry", done: hasIndustry },
     { id: "problem", label: "Problem", done: hasTask },
     { id: "hours", label: "Hours", done: hasHours },
-    { id: "fit", label: "Fit", done: hasFit },
-    { id: "hire", label: "Hire", done: hasHire && stage === "pitch" },
+    { id: "fit", label: "ROI fit", done: hasFit },
+    { id: "hire", label: "System map", done: hasHire && stage === "pitch" },
   ];
 
   return order.map((s) => ({
@@ -78,11 +78,11 @@ export function buildHireSmsHref(input: {
   employeeName?: string | null;
 }): string {
   const bits = [
-    "AI employee audit",
+    "AI Opportunity Map",
     input.industry ? `Industry: ${input.industry}` : null,
     input.pain ? `Pain: ${input.pain}` : null,
     input.hours != null ? `Hours/wk: ${input.hours}` : null,
-    input.employeeName ? `Hire: ${input.employeeName}` : null,
+    input.employeeName ? `System: ${input.employeeName}` : null,
   ].filter(Boolean);
   const body = encodeURIComponent(bits.join(" · "));
   return `sms:+19175727734?body=${body}`;

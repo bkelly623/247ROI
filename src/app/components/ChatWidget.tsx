@@ -76,7 +76,7 @@ export default function ChatWidget() {
       const data = (await res.json()) as { reply?: string };
       const reply =
         data.reply ??
-        `Sorry — I couldn't respond right now. Start the AI Employee Audit at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`;
+        `Sorry — I couldn't respond right now. Start the Business Systems Audit / AI Opportunity Map at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`;
 
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch {
@@ -84,7 +84,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content: `Something went wrong. Start the AI Employee Audit at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`,
+          content: `Something went wrong. Start the Business Systems Audit / AI Opportunity Map at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`,
         },
       ]);
     } finally {

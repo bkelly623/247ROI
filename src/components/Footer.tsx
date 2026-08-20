@@ -19,7 +19,7 @@ const footerColumns: {
     title: "Systems",
     links: [
       { label: "Services", href: "/services" },
-      { label: "AI Opportunity Map", href: "/hire" },
+      { label: "Business systems audit", href: "/hire" },
       { label: "Example workflows", href: "/demo" },
       { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
       { label: "AI lead response system", href: "/ai-lead-response-system" },
@@ -48,7 +48,7 @@ const footerColumns: {
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
-      { label: "Systems audit", href: "/hire" },
+      { label: "AI Opportunity Map", href: "/hire" },
       { label: "Support", href: "mailto:contact@247roi.com" },
     ],
   },
@@ -86,7 +86,7 @@ export default function Footer() {
                 />
               </Link>
               <p className="text-muted-foreground text-sm max-w-sm">
-                Business systems consulting, practical AI automation, custom agents, and workflow improvement for owners who want cleaner operations.
+                Business systems consulting, AI agents, practical automation, custom software, and workflow improvement for owners who want cleaner operations.
               </p>
               <a
                 href={PRIMARY_PHONE_HREF}

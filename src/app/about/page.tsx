@@ -6,28 +6,28 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "About 247ROI | AI Employees for Service Businesses",
+  title: "About 247ROI | Business Systems & AI Consulting",
   description:
-    "247ROI builds managed AI employees and workflow automation systems for service businesses that need cleaner operations, faster response, and useful AI output.",
+    "247ROI builds business systems with AI agents, automation, custom software, and workflow improvement for companies that need cleaner operations.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About 247ROI | AI Employees for Service Businesses",
+    title: "About 247ROI | Business Systems & AI Consulting",
     description:
-      "247ROI builds managed AI employees and workflow automation systems for service businesses that need cleaner operations, faster response, and useful AI output.",
+      "247ROI builds business systems with AI agents, automation, custom software, and workflow improvement for companies that need cleaner operations.",
     url: "/about",
   },
 };
 
 const beliefs = [
-  "The workflow matters more than the model.",
-  "A useful AI employee needs a job description, not a vague mandate.",
+  "The business system matters more than the tool.",
+  "A useful AI agent needs a job description, rules, controls, and visible output.",
   "Humans should keep control of judgment calls, pricing, bids, exceptions, and sensitive replies.",
-  "Some automations create direct ROI. Others create cleaner visibility, fewer dropped handoffs, and less owner drag.",
+  "Some systems create direct ROI. Others create cleaner visibility, fewer dropped handoffs, and less owner drag.",
 ];
 
 const buildRules = [
-  ["One role first", "Start with a constrained workflow before stacking more automation."],
-  ["Useful output", "The AI should produce replies, packets, summaries, queues, dashboards, or approval-ready work."],
+  ["One system first", "Start with a valuable workflow before stacking more automation."],
+  ["Useful output", "The system should produce replies, packets, summaries, queues, dashboards, or approval-ready work."],
   ["Clear controls", "Every build needs rules for what the AI can do and what must wait for a human."],
   ["Improve or stop", "If the workflow does not get cleaner, faster, or easier to manage, the build needs to change."],
 ];
@@ -43,17 +43,17 @@ export default function AboutPage() {
             <div className="mx-auto max-w-4xl text-center">
               <span className="text-sm font-semibold uppercase tracking-wider text-primary">About 247ROI</span>
               <h1 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                AI employees for service businesses that need work to move.
+                Business systems for companies that need work to move.
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                247ROI builds managed AI employees and workflow automations for contractors, trades, home services,
-                local companies, and SMB operators. The focus is practical: faster response, cleaner handoffs, less
-                manual admin, better operating visibility, and AI output a human can trust.
+                247ROI is led by Brendan Kelly, a Business Systems & AI Consultant helping local companies, service
+                firms, professional offices, and SMB operators use AI, automation, and custom software to clean up real
+                operational work.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                   <Link href="/hire">
-                    Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                    Map My Best Opportunities <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
@@ -73,9 +73,9 @@ export default function AboutPage() {
                   Not a chatbot vendor. Not a tool subscription.
                 </h2>
                 <p className="mt-4 text-muted-foreground">
-                  247ROI designs AI employees around real work: leads, estimates, bids, inboxes, documents, approvals,
-                  reporting, and dashboards. The goal is not to add another app. The goal is to remove friction from the
-                  operation.
+                  247ROI designs practical systems around real work: leads, estimates, bids, inboxes, documents,
+                  approvals, reporting, dashboards, and follow-up. The goal is not to add another app. The goal is to
+                  remove friction from the operation.
                 </p>
               </div>
               <div className="grid gap-4">
@@ -98,8 +98,8 @@ export default function AboutPage() {
                 Enterprise quality starts with discipline.
               </h2>
               <p className="mt-4 text-muted-foreground">
-                The best AI systems are not broad demos. They are narrow, controlled, observable workflows that earn more
-                responsibility over time.
+                The best business systems are not broad demos. They are narrow, controlled, observable workflows that
+                earn more responsibility over time.
               </p>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -120,11 +120,11 @@ export default function AboutPage() {
               <ShieldCheck className="mx-auto mb-5 h-8 w-8 text-primary" aria-hidden />
               <h2 className="font-display text-3xl font-bold sm:text-5xl">The right first build should be obvious.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                If the audit cannot identify a real workflow, clear human controls, and useful output, the project is not
+                If the map cannot identify a real workflow, clear human controls, and useful output, the project is not
                 ready yet.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">Start the AI Employee Audit</Link>
+                <Link href="/hire">Start the AI Opportunity Map</Link>
               </Button>
             </div>
           </div>
