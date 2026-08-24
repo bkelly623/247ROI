@@ -17,8 +17,8 @@ export const AI_RECEPTIONIST_CTA_PHONE_DISPLAY = "(866) 360-2529";
 export const DEMO_PHONE_HREF = AI_RECEPTIONIST_CTA_PHONE_HREF;
 export const DEMO_PHONE_DISPLAY = AI_RECEPTIONIST_CTA_PHONE_DISPLAY;
 
-export const CTA_LABEL_NAV = "Find Bottlenecks";
-export const HERO_PRIMARY_CTA_LABEL = "Find My First System Opportunity";
+export const CTA_LABEL_NAV = "Start AI Opportunity Audit";
+export const HERO_PRIMARY_CTA_LABEL = "Start AI Opportunity Audit";
 
 /** Under-CTA contact link — must read as a real hyperlink (shared class). */
 export const BOOK_SETUP_CALL_LINK_CLASSNAME =

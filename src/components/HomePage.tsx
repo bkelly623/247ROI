@@ -29,6 +29,21 @@ const problems = [
   "Useful work gets stuck because the system depends on one overloaded person.",
 ];
 
+const auditOutcomes = [
+  {
+    title: "The bottleneck worth fixing first",
+    body: "We identify where time, revenue, handoffs, or decisions are leaking instead of pretending every process needs AI.",
+  },
+  {
+    title: "The right kind of system",
+    body: "You get a practical direction: automation, AI agent, dashboard, internal app, integration, process cleanup, or leave it human.",
+  },
+  {
+    title: "The first build to consider",
+    body: "You leave with a clear first system idea, success criteria, approval points, and what would need to connect.",
+  },
+];
+
 const systemWork = [
   {
     icon: SearchCheck,
@@ -86,11 +101,11 @@ export default function HomePage() {
                   Brendan Kelly / Business Systems & AI Consultant
                 </p>
                 <h1 className="mt-6 max-w-4xl font-display text-4xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
-                  Build better business systems with AI, automation, and custom software.
+                  Find the bottleneck worth fixing first. Then build the system that creates ROI.
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300 sm:text-xl">
-                  247ROI helps owners and operators find the bottlenecks worth fixing first - then builds practical
-                  systems that save time and create ROI.
+                  247ROI helps owners and operators turn messy computer-based work into practical systems: custom
+                  automations, dashboards, internal apps, AI agents, and approval workflows.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button
@@ -126,8 +141,8 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-400">
-                  Custom automations, AI agents, dashboards, and internal apps for the work currently trapped across
-                  software, spreadsheets, inboxes, and memory.
+                  Start with the AI Opportunity Audit. No generic pitch, no tool-first diagnosis, and no black-box AI
+                  promise.
                 </p>
               </motion.div>
 
@@ -140,7 +155,7 @@ export default function HomePage() {
                 <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">First step</p>
-                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Find the first system worth improving.</h2>
+                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Run the AI Opportunity Audit.</h2>
                   </div>
                   <BriefcaseBusiness className="h-8 w-8 text-orange-400" aria-hidden />
                 </div>
@@ -181,6 +196,33 @@ export default function HomePage() {
                   <p className="mt-2 text-sm leading-relaxed text-zinc-600">{body}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-zinc-200 bg-zinc-50 py-20">
+          <div className="container mx-auto px-5 sm:px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.76fr_1.24fr] lg:items-start">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">
+                  AI Opportunity Audit
+                </p>
+                <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
+                  The first step is not buying AI. It is finding the work AI should touch.
+                </h2>
+                <p className="mt-5 text-lg leading-relaxed text-zinc-600">
+                  Most automation fails because the workflow is unclear, the owner is overloaded, or the handoffs are
+                  hidden inside inboxes and spreadsheets. The audit turns that mess into a concrete first move.
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                {auditOutcomes.map((item) => (
+                  <div key={item.title} className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+                    <h3 className="font-display text-xl font-bold text-zinc-950">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-zinc-600">{item.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
