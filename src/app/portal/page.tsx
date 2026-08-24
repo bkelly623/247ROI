@@ -105,7 +105,7 @@ export default function PortalPage() {
           <CardContent className="flex flex-col items-center gap-4 py-8 sm:flex-row">
             <Phone className="h-8 w-8 text-primary" />
             <div className="flex-1 text-center sm:text-left">
-              <p className="font-semibold">This is what $99/mo clients see every day.</p>
+              <p className="font-semibold">This is what activated clients see every day.</p>
               <p className="text-sm text-muted-foreground">
                 Preview mode — activate Foundation to go live.
               </p>

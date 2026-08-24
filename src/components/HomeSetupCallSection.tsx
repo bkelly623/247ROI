@@ -21,7 +21,7 @@ export default function HomeSetupCallSection() {
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7 sm:p-10">
             <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
               <SearchCheck className="h-4 w-4" aria-hidden />
-              AI Opportunity Map
+              AI Opportunity Audit
             </span>
             <h2 className="font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
               Find the bottleneck worth fixing first.

@@ -59,7 +59,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Stop letting warm leads cool off.",
     subheadline:
       "An AI follow-up employee that texts, emails, qualifies, reminds, and reactivates leads so more inquiries become appointments.",
-    priceHint: "$750-$2,500/month after scope",
+    priceHint: "Free quote after workflow review",
     bestFor: "Businesses with form fills, missed calls, estimates, or old leads that need faster second and third touches.",
     route: "/ai-employees/ai-follow-up-agent",
     icon: "message",
@@ -91,7 +91,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Get estimates out before the buyer goes cold.",
     subheadline:
       "An AI estimating assistant that collects job details, organizes photos, drafts scope notes, and prepares quote-ready summaries for contractor review.",
-    priceHint: "Custom build after workflow review",
+    priceHint: "Free quote after workflow review",
     bestFor: "Contractors losing speed and margin because estimates take too long to prepare or follow up.",
     route: "/ai-employees/ai-estimator",
     icon: "calculator",
@@ -123,7 +123,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Find, qualify, and prepare more jobs worth bidding.",
     subheadline:
       "An AI bidding assistant that monitors opportunities, screens fit, gathers requirements, and prepares bid checklists before your team spends time on the wrong jobs.",
-    priceHint: "Custom build for bid-driven contractors",
+    priceHint: "Free quote for bid-driven contractors",
     bestFor: "Contractors, subs, and service firms that need more disciplined bid intake and prequalification.",
     route: "/ai-employees/ai-job-bidding-agent",
     icon: "clipboard",
@@ -155,7 +155,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Turn scattered admin work into one managed operating queue.",
     subheadline:
       "An AI operations coordinator that watches inboxes, CRMs, calendars, documents, and internal threads so handoffs, updates, summaries, and owner approvals stop disappearing.",
-    priceHint: "Custom build after workflow review",
+    priceHint: "Free quote after workflow review",
     bestFor: "Service businesses where the owner or office manager is the glue between too many tools, messages, records, and daily handoffs.",
     route: "/ai-employees/ai-operations-coordinator",
     icon: "databaseZap",
@@ -187,7 +187,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Turn plans into cleaner takeoff prep.",
     subheadline:
       "An AI takeoff assistant that organizes plan sets, extracts key requirements, flags missing details, and prepares measurement notes for estimator review.",
-    priceHint: "Custom build for construction workflows",
+    priceHint: "Free quote for construction workflows",
     bestFor: "Construction and specialty trade teams buried in plans, specs, revisions, and preconstruction admin.",
     route: "/ai-employees/ai-takeoff-assistant",
     icon: "fileSearch",
@@ -219,7 +219,7 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     headline: "Turn jobs, proof, and offers into daily market presence.",
     subheadline:
       "An AI content employee that turns your services, customer questions, reviews, photos, and offers into posts, scripts, campaigns, and follow-up assets.",
-    priceHint: "$750-$2,500/month after scope",
+    priceHint: "Free quote after workflow review",
     bestFor: "Businesses that need more consistent content without pulling the owner into a blank-page content grind.",
     route: "/ai-employees/ai-content-employee",
     icon: "megaphone",

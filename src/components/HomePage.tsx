@@ -98,7 +98,13 @@ export default function HomePage() {
                     size="lg"
                     className="min-h-[3.5rem] rounded-full bg-orange-500 px-7 font-semibold text-white hover:bg-orange-600"
                   >
-                    <Link href="/hire">
+                    <Link
+                      href="/hire"
+                      data-track-event="cta_click"
+                      data-track-label={HERO_PRIMARY_CTA_LABEL}
+                      data-track-destination="/hire"
+                      data-track-source="homepage_hero"
+                    >
                       {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
@@ -108,7 +114,12 @@ export default function HomePage() {
                     variant="outline"
                     className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.04] px-7 text-white hover:bg-white/[0.09]"
                   >
-                    <a href={PRIMARY_PHONE_HREF}>
+                    <a
+                      href={PRIMARY_PHONE_HREF}
+                      data-track-event="phone_click"
+                      data-track-label="homepage_hero_phone"
+                      data-track-source="homepage_hero"
+                    >
                       <Phone className="mr-2 h-4 w-4" aria-hidden />
                       {PRIMARY_PHONE_DISPLAY}
                     </a>
@@ -256,7 +267,7 @@ export default function HomePage() {
                 Bring one messy workflow. Leave with a clearer next step.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">
-                The AI Opportunity Map looks for the first process worth improving, what AI, automation, a dashboard, or
+                The AI Opportunity Audit looks for the first process worth improving, what AI, automation, a dashboard, or
                 a custom app should handle, what should stay human, and what a practical first build would need.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -265,7 +276,15 @@ export default function HomePage() {
                   size="lg"
                   className="min-h-[3.5rem] rounded-full bg-orange-500 px-8 font-semibold text-white hover:bg-orange-600"
                 >
-                  <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
+                  <Link
+                    href="/hire"
+                    data-track-event="cta_click"
+                    data-track-label={HERO_PRIMARY_CTA_LABEL}
+                    data-track-destination="/hire"
+                    data-track-source="homepage_bottom"
+                  >
+                    {HERO_PRIMARY_CTA_LABEL}
+                  </Link>
                 </Button>
                 <Button
                   asChild
@@ -273,7 +292,12 @@ export default function HomePage() {
                   variant="outline"
                   className="min-h-[3.5rem] rounded-full border-zinc-300 bg-white px-8 text-zinc-950 hover:bg-zinc-100"
                 >
-                  <a href="mailto:contact@247roi.com">
+                  <a
+                    href="mailto:contact@247roi.com"
+                    data-track-event="email_click"
+                    data-track-label="homepage_bottom_email"
+                    data-track-source="homepage_bottom"
+                  >
                     <Mail className="mr-2 h-4 w-4" aria-hidden />
                     contact@247roi.com
                   </a>

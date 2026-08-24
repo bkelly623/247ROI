@@ -78,7 +78,7 @@ export function buildHireSmsHref(input: {
   employeeName?: string | null;
 }): string {
   const bits = [
-    "AI Opportunity Map",
+    "AI Opportunity Audit",
     input.industry ? `Industry: ${input.industry}` : null,
     input.pain ? `Pain: ${input.pain}` : null,
     input.hours != null ? `Hours/wk: ${input.hours}` : null,

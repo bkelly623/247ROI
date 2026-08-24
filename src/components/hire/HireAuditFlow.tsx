@@ -11,6 +11,7 @@ import type { DiscoveryState, HireProposal } from "@/lib/hire/types";
 import { emptyDiscovery } from "@/lib/hire/types";
 import { HIRE_OPENING, HIRE_PAGE } from "@/lib/hire/copy";
 import { getHireProgress } from "@/lib/hire/progress";
+import { trackSiteEvent } from "@/lib/analytics/client";
 
 type ChatBubble = { id: string; role: "user" | "assistant"; content: string };
 
@@ -92,6 +93,11 @@ export function HireAuditFlow() {
         if (!res.ok) throw new Error(data.error || "Could not start");
         if (!cancelled) {
           setSessionId(data.sessionId);
+          trackSiteEvent({
+            eventName: "hire_session_started",
+            source: "hire_page",
+            sessionId: data.sessionId,
+          });
           if (data.opening) {
             setMessages([
               { id: "opening", role: "assistant", content: data.opening },
@@ -125,6 +131,14 @@ export function HireAuditFlow() {
     setInput("");
     setBusy(true);
     setMessages((prev) => [...prev, { id: uid(), role: "user", content: text }]);
+    trackSiteEvent({
+      eventName: "hire_chat_message_sent",
+      source: "hire_page",
+      sessionId,
+      metadata: {
+        messageCount: messages.length + 1,
+      },
+    });
 
     try {
       const res = await fetch("/api/hire/chat", {
@@ -156,6 +170,15 @@ export function HireAuditFlow() {
         setProposal(data.proposal);
         setTeaserLine(data.teaserLine);
         setShowGate(true);
+        trackSiteEvent({
+          eventName: "hire_gate_shown",
+          source: "hire_page",
+          sessionId: data.sessionId ?? sessionId,
+          metadata: {
+            phase: data.phase,
+            hasProposal: Boolean(data.proposal),
+          },
+        });
       }
     } catch {
       setMessages((prev) => [

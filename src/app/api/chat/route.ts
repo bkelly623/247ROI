@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const key = resolveOpenAIKey();
   if (!key) {
     return NextResponse.json({
-      reply: `The fastest next step is simple: start the Business Systems Audit / AI Opportunity Map at /hire, call or text ${PRIMARY_DISPLAY}, or email contact@247roi.com. Good first message: "I want to improve [workflow]."`,
+      reply: `The fastest next step is simple: start the Business Systems Audit / AI Opportunity Audit at /hire, call or text ${PRIMARY_DISPLAY}, or email contact@247roi.com. Good first message: "I want to improve [workflow]."`,
     });
   }
 
@@ -38,7 +38,7 @@ Positioning: 247ROI helps owners and operators find the bottlenecks worth fixing
 
 Promise: cleaner operations and measurable operating lift, not fake full autonomy. Explain that AI and automation can take repetitive work off the team's plate while humans keep approval on pricing, bids, exceptions, and sensitive decisions.
 
-Best next step: ask what workflow is slow, messy, or leaking revenue, then direct qualified visitors to start the Business Systems Audit / AI Opportunity Map at /hire, call/text the primary business line, or email contact@247roi.com.
+Best next step: ask what workflow is slow, messy, or leaking revenue, then direct qualified visitors to start the Business Systems Audit / AI Opportunity Audit at /hire, call/text the primary business line, or email contact@247roi.com.
 
 Phone number:
 - Primary business (call/text): ${PRIMARY_DISPLAY} → ${PRIMARY_TEL}
@@ -66,7 +66,7 @@ Never mention any other phone numbers. Do not mention GoHighLevel, Automagixx, d
       const err = await res.text();
       console.error("OpenAI error", res.status, err);
       return NextResponse.json({
-        reply: `Something went wrong. Start the Business Systems Audit / AI Opportunity Map at /hire, or call/text ${PRIMARY_DISPLAY} with the workflow you want to improve.`,
+        reply: `Something went wrong. Start the Business Systems Audit / AI Opportunity Audit at /hire, or call/text ${PRIMARY_DISPLAY} with the workflow you want to improve.`,
       });
     }
 
@@ -75,12 +75,12 @@ Never mention any other phone numbers. Do not mention GoHighLevel, Automagixx, d
     };
     const reply = data.choices?.[0]?.message?.content?.trim();
     return NextResponse.json({
-      reply: reply || `Start the Business Systems Audit / AI Opportunity Map at /hire, or call/text ${PRIMARY_DISPLAY} with the workflow you want to improve.`,
+      reply: reply || `Start the Business Systems Audit / AI Opportunity Audit at /hire, or call/text ${PRIMARY_DISPLAY} with the workflow you want to improve.`,
     });
   } catch (e) {
     console.error(e);
     return NextResponse.json({
-      reply: `I could not respond just now. Start the Business Systems Audit / AI Opportunity Map at /hire, or call/text ${PRIMARY_DISPLAY} with the workflow you want to improve.`,
+      reply: `I could not respond just now. Start the Business Systems Audit / AI Opportunity Audit at /hire, or call/text ${PRIMARY_DISPLAY} with the workflow you want to improve.`,
     });
   }
 }

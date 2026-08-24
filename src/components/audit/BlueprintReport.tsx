@@ -315,11 +315,10 @@ export function BlueprintReport({
             Recommended first step
           </p>
           <h2 className="mt-2 text-2xl font-bold text-zinc-50">
-            Smart Site Foundation — from $99/mo
+            Smart Site Foundation
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm text-zinc-400">
-            Fixes the infrastructure gaps measured above. Growth ($297) and AI
-            Visibility ($497+) build on this foundation.
+            Fixes the infrastructure gaps measured above. Your recommended next step includes a free quote for the right scope.
           </p>
           <Button size="lg" className="mt-6 h-14 px-8 text-lg" asChild>
             <a href={BRAND.phoneHref}>
@@ -341,9 +340,7 @@ export function BlueprintReport({
               </p>
             </CardHeader>
             <CardContent>
-              <p className="mb-4 text-sm font-medium text-emerald-400">
-                Starting as low as $99/mo
-              </p>
+              <p className="mb-4 text-sm font-medium text-emerald-400">Free quote after audit</p>
               <Button className="w-full" onClick={() => onCtaClick?.("primary")}>
                 {report.packages.primary.ctaLabel}
               </Button>

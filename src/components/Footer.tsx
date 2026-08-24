@@ -48,7 +48,7 @@ const footerColumns: {
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
-      { label: "AI Opportunity Map", href: "/hire" },
+      { label: "AI Opportunity Audit", href: "/hire" },
       { label: "Support", href: "mailto:contact@247roi.com" },
     ],
   },

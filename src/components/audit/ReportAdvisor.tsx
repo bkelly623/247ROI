@@ -160,7 +160,7 @@ export function ReportAdvisor({
 
             {isLast && (
               <p className="text-center text-[10px] text-muted-foreground">
-                Smart Site from $99/mo · AI Visibility Program custom
+                Free quote after the fix plan call
               </p>
             )}
           </div>

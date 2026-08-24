@@ -20,9 +20,9 @@ const iconMap = {
 };
 
 const priorityLabels = {
-  core: "Best first hire",
-  contractor: "High-ticket workflow",
-  growth: "Expansion role",
+  core: "Common use case",
+  contractor: "High-value workflow",
+  growth: "Growth workflow",
 };
 
 function OfferCard({ offer, index }: { offer: AiEmployeeOffer; index: number }) {
@@ -68,21 +68,22 @@ export default function AiEmployeesPage() {
           <div className="container relative z-10 mx-auto px-6">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="mx-auto max-w-4xl text-center">
               <span className="mb-5 inline-flex rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                AI employee menu
+                Custom AI employee software
               </span>
               <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Pick the job role. Not the buzzword.
+                If it happens on a computer, we can probably build AI around it.
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                Every offer below is a real operational employee: a defined trigger, a repeatable task, a human handoff,
-                and success criteria. Start with the role causing the clearest bottleneck.
+                247ROI builds custom AI employees around your actual workflow: inboxes, CRMs, spreadsheets, documents,
+                portals, estimates, bids, follow-up, reporting, and messy handoffs. The examples below are starting
+                points, not a fixed menu.
               </p>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                   <Link href="/hire">Find My First AI Employee</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
-                  <Link href="/demo">See Examples</Link>
+                  <Link href="/articles">See Use Cases</Link>
                 </Button>
               </div>
             </motion.div>
@@ -92,10 +93,11 @@ export default function AiEmployeesPage() {
         <section className="border-b border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
             <div className="mx-auto mb-12 max-w-3xl text-center">
-              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Roles</span>
-              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">First hire candidates</h2>
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Use-case patterns</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Examples of what custom AI employees can handle</h2>
               <p className="mt-4 text-muted-foreground">
-                If the audit cannot identify one of these as a clear first build, the project probably is not ready.
+                These pages help buyers understand the category. Your build can be narrower, broader, or completely
+                different if the workflow is valuable enough.
               </p>
             </div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -110,9 +112,9 @@ export default function AiEmployeesPage() {
           <div className="container mx-auto px-6">
             <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
               {[
-                ["1", "Pain before platform", "We choose the role from the buyer's current bottleneck, not from a shiny tool list."],
-                ["2", "Narrow before broad", "The first employee gets a constrained job description so it can launch without becoming a science project."],
-                ["3", "Scale after evidence", "More employees only get added after the first one makes the workflow cleaner, faster, or easier to manage."],
+                ["1", "Custom before canned", "We start with how your business actually works, then design the AI system around the tools, files, approvals, and handoffs already in play."],
+                ["2", "Workflow before role", "The name matters less than the job: what triggers the work, what output is produced, and what still needs human judgment."],
+                ["3", "Evidence before expansion", "We expand only after the first workflow gets cleaner, faster, or easier to manage."],
               ].map(([number, title, body]) => (
                 <div key={number} className="rounded-3xl border border-white/10 bg-white/[0.035] p-8">
                   <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">{number}</div>

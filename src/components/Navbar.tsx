@@ -15,7 +15,7 @@ import {
 } from "@/lib/siteLogo";
 
 const navLinks = [
-  { name: "AI Opportunity Map", href: "/hire" },
+  { name: "AI Opportunity Audit", href: "/hire" },
   { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
   { name: "About", href: "/about" },
@@ -52,6 +52,10 @@ export default function Navbar() {
                 <motion.a
                   key={link.name}
                   href={link.href}
+                  data-track-event="nav_link_click"
+                  data-track-label={link.name}
+                  data-track-destination={link.href}
+                  data-track-source="navbar"
                   className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-sm font-medium relative z-10 whitespace-nowrap"
                   initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -64,6 +68,9 @@ export default function Navbar() {
 
               <a
                 href={PRIMARY_PHONE_HREF}
+                data-track-event="phone_click"
+                data-track-label="navbar_phone"
+                data-track-source="navbar"
                 className="relative z-10 flex items-center gap-2 font-display font-semibold text-foreground tabular-nums tracking-tight text-sm xl:text-base hover:text-primary transition-colors whitespace-nowrap shrink-0"
               >
                 <Phone className="w-4 h-4 text-primary shrink-0" aria-hidden />
@@ -74,7 +81,15 @@ export default function Navbar() {
                 size="lg"
                 className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold whitespace-nowrap"
               >
-                <Link href="/hire">{CTA_LABEL_NAV}</Link>
+                <Link
+                  href="/hire"
+                  data-track-event="cta_click"
+                  data-track-label={CTA_LABEL_NAV}
+                  data-track-destination="/hire"
+                  data-track-source="navbar"
+                >
+                  {CTA_LABEL_NAV}
+                </Link>
               </Button>
             </div>
 
@@ -129,6 +144,10 @@ export default function Navbar() {
                     <Link
                       key={link.name}
                       href={link.href}
+                      data-track-event="nav_link_click"
+                      data-track-label={link.name}
+                      data-track-destination={link.href}
+                      data-track-source="mobile_nav"
                       className="rounded-lg px-4 py-4 text-lg font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
                       onClick={() => setIsOpen(false)}
                     >
@@ -137,6 +156,9 @@ export default function Navbar() {
                   ))}
                   <a
                     href={PRIMARY_PHONE_HREF}
+                    data-track-event="phone_click"
+                    data-track-label="mobile_nav_phone"
+                    data-track-source="mobile_nav"
                     className="mt-2 flex items-center gap-3 rounded-lg px-4 py-4 font-display text-lg font-semibold text-foreground tabular-nums transition-colors hover:bg-white/[0.06]"
                     onClick={() => setIsOpen(false)}
                   >
@@ -150,7 +172,14 @@ export default function Navbar() {
                 size="lg"
                 className="min-h-[3.5rem] w-full rounded-full bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90"
               >
-                <Link href="/hire" onClick={() => setIsOpen(false)}>
+                <Link
+                  href="/hire"
+                  data-track-event="cta_click"
+                  data-track-label={CTA_LABEL_NAV}
+                  data-track-destination="/hire"
+                  data-track-source="mobile_nav"
+                  onClick={() => setIsOpen(false)}
+                >
                   {CTA_LABEL_NAV}
                 </Link>
               </Button>

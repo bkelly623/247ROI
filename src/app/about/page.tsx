@@ -125,7 +125,7 @@ export default function AboutPage() {
                 ready yet.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">Start the AI Opportunity Map</Link>
+                <Link href="/hire">Start the AI Opportunity Audit</Link>
               </Button>
             </div>
           </div>

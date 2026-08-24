@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { validateHireGateClient } from "@/lib/hire/gate";
 import type { DiscoveryState, HireMessage, HireProposal } from "@/lib/hire/types";
+import { trackSiteEvent } from "@/lib/analytics/client";
 
 type Props = {
   sessionId: string;
@@ -47,6 +48,15 @@ export function HireGate({
     }
 
     setLoading(true);
+    trackSiteEvent({
+      eventName: "hire_gate_submit",
+      source: "hire_gate",
+      sessionId,
+      metadata: {
+        hasEmail: Boolean(email.trim()),
+        hasProposal: Boolean(proposal),
+      },
+    });
     try {
       const res = await fetch(`/api/hire/${sessionId}`, {
         method: "POST",
@@ -63,6 +73,11 @@ export function HireGate({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not unlock");
+      trackSiteEvent({
+        eventName: "hire_report_unlocked",
+        source: "hire_gate",
+        sessionId: data.sessionId || sessionId,
+      });
       onUnlocked(data.sessionId || sessionId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unlock failed");

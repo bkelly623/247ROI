@@ -343,8 +343,8 @@ export async function runAuditPipeline(input: {
       `Live AI visibility test: run ChatGPT/Gemini on the call (not in this report).`,
       `Google local: ${google.summary}`,
       `Weakest measured pillar: ${weakest?.label ?? "N/A"} — ${weakest?.topFix ?? ""}`,
-      `Smart Site Foundation ($99/mo) fixes infrastructure gaps found in this audit.`,
-      `Growth ($297/mo) and AI Visibility ($497+/mo) build on the foundation.`,
+      `Smart Site Foundation fixes infrastructure gaps found in this audit.`,
+      `Growth and AI Visibility build on the foundation. Quotes are free after the audit.`,
     ],
     sitePreview: {
       businessName: input.businessName,

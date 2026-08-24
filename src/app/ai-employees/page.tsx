@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import AiEmployeesPage from "@/components/AiEmployeesPage";
 
 export const metadata: Metadata = {
-  title: "AI Employees for Service Businesses | 247ROI",
+  title: "Custom AI Employees for Service Businesses | 247ROI",
   description:
-    "Dedicated AI employee offers for lead response, follow-up, estimating support, bidding, takeoffs, and operations handoffs.",
+    "247ROI builds custom AI employee software for almost any computer-based workflow: lead response, follow-up, estimating support, bidding, takeoffs, inboxes, reporting, and operations.",
   alternates: { canonical: "/ai-employees" },
   openGraph: {
-    title: "AI Employees for Service Businesses | 247ROI",
+    title: "Custom AI Employees for Service Businesses | 247ROI",
     description:
-      "Dedicated AI employee offers for lead response, follow-up, estimating support, bidding, takeoffs, and operations handoffs.",
+      "247ROI builds custom AI employee software for almost any computer-based workflow: lead response, follow-up, estimating support, bidding, takeoffs, inboxes, reporting, and operations.",
     url: "/ai-employees",
   },
 };

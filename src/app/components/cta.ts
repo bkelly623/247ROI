@@ -1,4 +1,4 @@
-/** Primary conversion path: Business Systems Audit / AI Opportunity Map chat. */
+/** Primary conversion path: Business Systems Audit / AI Opportunity Audit chat. */
 export const CALENDAR_PATH = "/hire";
 export const HIRE_AUDIT_PATH = "/hire";
 

@@ -76,7 +76,7 @@ export default function ChatWidget() {
       const data = (await res.json()) as { reply?: string };
       const reply =
         data.reply ??
-        `Sorry — I couldn't respond right now. Start the Business Systems Audit / AI Opportunity Map at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`;
+        `Sorry — I couldn't respond right now. Start the Business Systems Audit / AI Opportunity Audit at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`;
 
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch {
@@ -84,7 +84,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content: `Something went wrong. Start the Business Systems Audit / AI Opportunity Map at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`,
+          content: `Something went wrong. Start the Business Systems Audit / AI Opportunity Audit at /hire, or call or text ${PRIMARY_PHONE_DISPLAY}.`,
         },
       ]);
     } finally {
@@ -126,7 +126,7 @@ export default function ChatWidget() {
                       <p className="font-display font-semibold text-[15px] text-foreground tracking-tight truncate">
                         <span className="gradient-text">247ROI</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground tracking-wide">AI Opportunity Map</p>
+                      <p className="text-[11px] text-muted-foreground tracking-wide">AI Opportunity Audit</p>
                     </div>
                   </div>
                   <button

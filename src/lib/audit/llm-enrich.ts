@@ -86,7 +86,7 @@ Deficits:
 ${baseReport.deficits.map((d) => `- ${d.finding}`).join("\n")}
 
 247ROI product ladder:
-1. Smart Site Foundation (~$99/mo) — AI-ready website infrastructure. ALWAYS package #1.
+1. Smart Site Foundation — AI-ready website infrastructure. ALWAYS package #1. Quotes are free after the audit.
 2. AI Visibility Growth Program (custom) — umbrella service: AI citation layer, schema, entity optimization, PLUS the weakest supporting pillar (SEO indexing, reputation/reviews, or social entity linking). NEVER pitch social posting as primary for contractors — frame as AI entity consistency.
 
 Return ONLY valid JSON (no markdown):
@@ -161,7 +161,7 @@ export function buildDefaultAdvisorSteps(report: AuditReport): string[] {
     ai
       ? `On AI readiness: ${ai.score !== null ? `${ai.score}%` : "pending"}. ${ai.summary}`
       : `Your biggest gap is in how AI systems understand your business.`,
-    `Here's the play: Smart Site Foundation gets you the infrastructure AI and Google need — starting around $99/mo.`,
+    `Here's the play: Smart Site Foundation gets you the infrastructure AI and Google need. The quote is free after the audit.`,
     `Phase two is our AI Visibility Growth Program — this covers citation layers, schema, and your ${weakest?.label?.toLowerCase() ?? "search"} gaps as part of one strategy.`,
     `This isn't about posting more on Instagram. It's about making sure ChatGPT and Google AI can find and recommend you.`,
     `Want the fastest path? Book a free fix plan call — we'll show you exactly what to fix first. No pressure.`,

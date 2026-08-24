@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 import { getTranscriptsIndex } from "@/lib/transcripts";
 import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
+import { ARTICLE_PATHS } from "@/lib/articles";
 import { SEO_LANDING_PAGE_PATHS } from "@/lib/seoLandingPages";
 
 const INDEXABLE_PATHS = [
@@ -11,7 +12,7 @@ const INDEXABLE_PATHS = [
   "/ai-employees",
   "/demo",
   "/contact",
-  "/pricing",
+  "/articles",
   "/about",
   "/missed-call-calculator",
   "/llms.txt",
@@ -48,11 +49,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified,
   }));
 
+  const articleUrls = ARTICLE_PATHS.map((path) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+  }));
+
   const transcripts = await getTranscriptsIndex();
   const transcriptUrls = transcripts.map((t) => ({
     url: `${SITE_URL}/transcripts/${t.slug}`,
     lastModified,
   }));
 
-  return [...baseUrls, ...aiEmployeeUrls, ...seoLandingUrls, ...transcriptUrls];
+  return [...baseUrls, ...aiEmployeeUrls, ...seoLandingUrls, ...articleUrls, ...transcriptUrls];
 }

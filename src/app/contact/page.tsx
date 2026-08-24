@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export const metadata: Metadata = {
-  title: "Start Your AI Opportunity Map | 247ROI",
+  title: "Start Your AI Opportunity Audit | 247ROI",
   description:
     "Find the bottleneck worth fixing first. Identify whether your workflow needs automation, a dashboard, an internal app, an AI agent, or a cleaner process.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "Start Your AI Opportunity Map | 247ROI",
+    title: "Start Your AI Opportunity Audit | 247ROI",
     description:
       "Find the bottleneck worth fixing first. Identify whether your workflow needs automation, a dashboard, an internal app, an AI agent, or a cleaner process.",
     url: "/contact",
@@ -44,7 +44,7 @@ export default function ContactPage() {
             <div className="grid gap-10 lg:grid-cols-[1fr_0.82fr] lg:items-center">
               <div>
                 <span className="mb-5 inline-flex rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                  AI Opportunity Map
+                  AI Opportunity Audit
                 </span>
                 <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
                   Bring the bottleneck. We will decide what kind of system is worth building.

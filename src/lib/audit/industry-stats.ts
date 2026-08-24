@@ -31,8 +31,8 @@ export const GROWTH_TIERS: GrowthTier[] = [
   {
     id: "foundation",
     name: "Smart Site Foundation",
-    priceLabel: "$99/mo",
-    monthlyPrice: 99,
+    priceLabel: "Free quote",
+    monthlyPrice: 0,
     lifts: { aiMention: 15, googleRank: 1, leadCapture: 10 },
     features: [
       "AI-ready site infrastructure",
@@ -44,8 +44,8 @@ export const GROWTH_TIERS: GrowthTier[] = [
   {
     id: "growth",
     name: "Growth Automation",
-    priceLabel: "$297/mo",
-    monthlyPrice: 297,
+    priceLabel: "Free quote",
+    monthlyPrice: 0,
     lifts: { aiMention: 25, googleRank: 2, leadCapture: 20 },
     features: [
       "Everything in Foundation",
@@ -58,8 +58,8 @@ export const GROWTH_TIERS: GrowthTier[] = [
   {
     id: "ai_visibility",
     name: "AI Visibility Program",
-    priceLabel: "From $497/mo",
-    monthlyPrice: 497,
+    priceLabel: "Free quote",
+    monthlyPrice: 0,
     lifts: { aiMention: 45, googleRank: 3, leadCapture: 35 },
     features: [
       "Everything in Growth",

@@ -1,7 +1,7 @@
 import type { DiscoveryState, HireProposal } from "./types";
 import { impactFromNotes } from "./progress";
 
-/** Fire-and-forget lead alert when someone unlocks a hire packet. */
+/** Fire-and-forget lead alert when someone unlocks the lead magnet. */
 export async function notifyHireUnlock(input: {
   sessionId: string;
   firstName: string;
@@ -23,7 +23,7 @@ export async function notifyHireUnlock(input: {
     pain?.time.computedHoursPerWeek ?? pain?.time.statedHoursPerWeek ?? null;
 
   const text = [
-    `New hire audit unlock`,
+    `New First AI Employee Finder unlock`,
     `${input.firstName}${input.lastName ? ` ${input.lastName}` : ""} · ${input.phone}`,
     input.email ? `Email: ${input.email}` : null,
     input.discovery.businessType
