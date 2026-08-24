@@ -1,6 +1,5 @@
 import { createHash } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient, explainSupabaseKeyError } from "@/lib/audit/supabase/server";
 
 type EventBody = {
   eventName?: string;
@@ -36,9 +35,11 @@ function clientIp(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const supabase = createServiceClient();
-  if (!supabase) {
-    return NextResponse.json({ ok: false, skipped: "supabase_unconfigured" });
+  const ingestUrl = process.env.COMMAND_CENTER_EVENTS_URL;
+  const ingestSecret = process.env.COMMAND_CENTER_EVENTS_SECRET;
+
+  if (!ingestUrl || !ingestSecret) {
+    return NextResponse.json({ ok: false, skipped: "command_center_events_unconfigured" });
   }
 
   let body: EventBody = {};
@@ -58,21 +59,33 @@ export async function POST(req: NextRequest) {
       ? body.metadata
       : {};
 
-  const { error } = await supabase.from("site_events").insert({
-    event_name: eventName,
+  const payload = {
+    eventName,
     path: clean(body.path, 500),
     url: clean(body.url, 1000),
     referrer: clean(body.referrer, 1000),
     source: clean(body.source, 120),
-    session_id: clean(body.sessionId, 160),
-    visitor_id: clean(body.visitorId, 160),
-    ip_hash: hashIp(clientIp(req)),
-    user_agent: clean(req.headers.get("user-agent"), 500),
+    sessionId: clean(body.sessionId, 160),
+    visitorId: clean(body.visitorId, 160),
+    ipHash: hashIp(clientIp(req)),
+    userAgent: clean(req.headers.get("user-agent"), 500),
     metadata,
+  };
+
+  const response = await fetch(ingestUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-247roi-events-secret": ingestSecret,
+    },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  }).catch((error: unknown) => {
+    console.warn("command-center event forward failed:", error);
+    return null;
   });
 
-  if (error) {
-    console.warn("site_events insert failed:", explainSupabaseKeyError(error.message));
+  if (!response?.ok) {
     return NextResponse.json({ ok: false, error: "event_not_recorded" });
   }
 
