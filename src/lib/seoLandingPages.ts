@@ -166,6 +166,60 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     ],
   },
   {
+    slug: "ai-agents-for-business",
+    title: "Custom AI Agents for Business | 247ROI",
+    description:
+      "247ROI builds custom AI agents for business workflows such as inbox triage, research, reporting, CRM updates, follow-up, document handling, and operational handoffs.",
+    eyebrow: "Custom AI agents for business",
+    headline: "Build an AI agent around one real business job, not a vague demo.",
+    subheadline:
+      "247ROI designs custom AI agents with clear inputs, connected tools, useful work product, human approval rules, and success criteria tied to the workflow they are supposed to improve.",
+    primaryKeyword: "custom AI agents for business",
+    relatedKeywords: [
+      "AI agents for small business",
+      "business AI agents",
+      "custom AI agent development",
+      "AI workflow agents",
+      "managed AI agents for business",
+    ],
+    buyerProblems: [
+      "The team needs research, summaries, drafts, reports, or CRM updates prepared before a human can act.",
+      "Important details sit across inboxes, documents, spreadsheets, portals, notes, and software tools.",
+      "Generic AI tools create output, but they do not own a defined workflow or leave a reliable handoff.",
+      "Owners want AI help without giving it authority over pricing, sensitive messages, or final decisions.",
+    ],
+    systemBuilds: [
+      "AI inbox triage agent for routing, summaries, and draft replies",
+      "AI reporting agent that turns scattered updates into owner-ready briefs",
+      "AI research agent for vendor, prospect, market, or bid preparation",
+      "AI CRM update agent for cleaner records and next-step prompts",
+      "AI follow-up agent for leads, estimates, stale opportunities, and reminders",
+      "Human approval rules, logs, and exception paths for sensitive work",
+    ],
+    faqs: [
+      {
+        question: "What is a custom AI agent for business?",
+        answer:
+          "A custom AI agent is a workflow system built around a defined business job. It can read inputs, prepare work product, update records, draft messages, summarize details, research options, or route next steps while following business rules and escalating judgment calls.",
+      },
+      {
+        question: "What business workflows are good fits for AI agents?",
+        answer:
+          "Good first fits include inbox triage, lead follow-up, CRM updates, weekly reporting, research, bid preparation, estimate support, document review, meeting briefs, and operations handoffs where a human still reviews important decisions.",
+      },
+      {
+        question: "How is a custom AI agent different from ChatGPT?",
+        answer:
+          "ChatGPT is a general tool. A custom AI agent is designed around a business workflow, connected inputs, expected output, approval rules, logs, and a clear definition of what useful work looks like.",
+      },
+      {
+        question: "Does 247ROI let AI agents make final decisions?",
+        answer:
+          "Not for sensitive work. 247ROI designs human approval points for pricing, final customer messages, legal or financial judgment, unusual exceptions, and anything the business should not delegate blindly.",
+      },
+    ],
+  },
+  {
     slug: "ai-workflow-automation-agency",
     title: "AI Workflow Automation Agency | 247ROI",
     description:
