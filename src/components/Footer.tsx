@@ -20,24 +20,19 @@ const footerColumns: {
     links: [
       { label: "Services", href: "/services" },
       { label: "Business systems audit", href: "/hire" },
-      { label: "Business process automation", href: "/business-process-automation-consultant" },
       { label: "Example workflows", href: "/demo" },
-      { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
-      { label: "ROI calculator", href: "/ai-employee-roi-calculator" },
     ],
   },
   {
     title: "AI Agents",
     links: [
       { label: "AI agent roles", href: "/ai-employees" },
-      { label: "AI employees for small business", href: "/ai-employees-for-small-business" },
-      { label: "AI employees for service businesses", href: "/ai-employees-for-service-businesses" },
       { label: "AI Estimator", href: "/ai-estimator" },
       { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
     ],
   },
   {
-    title: "Examples",
+    title: "Tools",
     links: [
       { label: "Articles", href: "/articles" },
       { label: "ROI calculator", href: "/ai-employee-roi-calculator" },
