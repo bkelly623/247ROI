@@ -20,6 +20,7 @@ const footerColumns: {
     links: [
       { label: "Services", href: "/services" },
       { label: "Business systems audit", href: "/hire" },
+      { label: "Business process automation", href: "/business-process-automation-consultant" },
       { label: "Example workflows", href: "/demo" },
       { label: "AI workflow automation", href: "/ai-workflow-automation-agency" },
       { label: "ROI calculator", href: "/ai-employee-roi-calculator" },

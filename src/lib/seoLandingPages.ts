@@ -16,6 +16,60 @@ export type SeoLandingPage = {
 
 export const SEO_LANDING_PAGES: SeoLandingPage[] = [
   {
+    slug: "business-process-automation-consultant",
+    title: "Business Process Automation Consultant | 247ROI",
+    description:
+      "247ROI helps SMB owners find the business process worth automating first, then builds practical automations, dashboards, internal apps, and AI agents around real workflows.",
+    eyebrow: "Business process automation consultant",
+    headline: "Automate the process that is actually slowing the business down.",
+    subheadline:
+      "247ROI works with owners and operators to find the first operational bottleneck worth fixing, then builds the practical system around it: automation, dashboard, internal app, AI agent, integration, or cleaner workflow.",
+    primaryKeyword: "business process automation consultant",
+    relatedKeywords: [
+      "workflow automation consultant",
+      "small business automation consultant",
+      "business systems consultant",
+      "business process automation for small business",
+      "custom business automation",
+    ],
+    buyerProblems: [
+      "The same computer work gets repeated every week, but nobody has time to redesign it.",
+      "Important work lives across inboxes, spreadsheets, CRMs, forms, calendars, portals, and memory.",
+      "Managers chase updates because there is no clean operating picture.",
+      "Automation attempts stall because the workflow was never mapped tightly enough.",
+    ],
+    systemBuilds: [
+      "Workflow audit and bottleneck map",
+      "Custom automation for repeated admin and data movement",
+      "Internal dashboard for owner and manager visibility",
+      "AI agent for research, triage, drafting, reporting, or follow-up",
+      "Human approval rules for pricing, sensitive messages, exceptions, and judgment calls",
+      "Iteration plan based on saved time, cleaner handoffs, conversion, or revenue protection",
+    ],
+    faqs: [
+      {
+        question: "What does a business process automation consultant do?",
+        answer:
+          "A business process automation consultant identifies repeatable workflows that waste time, lose revenue, or create operational drag, then designs systems that reduce manual work. For 247ROI, that system might be an automation, dashboard, internal app, AI agent, integration, or a cleaner approval workflow.",
+      },
+      {
+        question: "What should a small business automate first?",
+        answer:
+          "Start with the bottleneck closest to money, wasted labor, owner attention, or dropped handoffs. Common first targets include lead response, follow-up, reporting, CRM updates, bid intake, estimate prep, inbox triage, document handling, and weekly operational reporting.",
+      },
+      {
+        question: "How is 247ROI different from buying another automation tool?",
+        answer:
+          "247ROI starts with the business process, not the software category. The goal is to understand how the work actually moves today, where it breaks, what should stay human, and what practical system would create visible ROI.",
+      },
+      {
+        question: "Can AI be part of business process automation?",
+        answer:
+          "Yes, when the workflow needs language, judgment support, summarization, classification, drafting, research, or flexible handoffs. AI should be constrained by rules, useful output, logs, and human approval where decisions are sensitive.",
+      },
+    ],
+  },
+  {
     slug: "ai-employees-for-small-business",
     title: "AI Employees for Small Business | 247ROI",
     description:
