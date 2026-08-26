@@ -220,6 +220,60 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     ],
   },
   {
+    slug: "ai-visibility-optimization",
+    title: "AI Visibility Optimization | 247ROI",
+    description:
+      "247ROI helps businesses improve AI visibility with clearer entity signals, answer-ready pages, technical SEO, schema, citations, and recurring answer-engine checks.",
+    eyebrow: "AI visibility optimization",
+    headline: "Make your business easier for search engines and AI answer engines to understand.",
+    subheadline:
+      "247ROI improves AI visibility by tightening the public signals around what you do, who you serve, which problems you solve, and why your pages deserve to be cited in search and AI-generated answers.",
+    primaryKeyword: "AI visibility optimization",
+    relatedKeywords: [
+      "generative engine optimization consultant",
+      "AI search optimization",
+      "ChatGPT visibility optimization",
+      "AI answer engine optimization",
+      "GEO consultant",
+    ],
+    buyerProblems: [
+      "The business has useful services, but search engines and AI tools cannot easily explain what makes it relevant.",
+      "Pages describe the company in broad terms without answer-ready sections for real buyer questions.",
+      "Schema, sitemap coverage, internal links, citations, and entity signals are incomplete or inconsistent.",
+      "Nobody is checking whether ChatGPT, Gemini, Perplexity, Google, or Bing actually surface the business for priority prompts.",
+    ],
+    systemBuilds: [
+      "AI visibility audit for priority services, locations, audiences, and answer-engine prompts",
+      "Entity clarity pass across homepage, service pages, metadata, schema, sitemap, robots, and llms files",
+      "Answer-ready pages that map buyer questions to practical, specific service explanations",
+      "Internal link structure that connects authority pages, service pages, and the audit conversion path",
+      "Citation and proof plan for directories, profiles, articles, case examples, and trusted third-party mentions",
+      "Recurring AI visibility checks with prompt snapshots, gaps, next actions, and page improvements",
+    ],
+    faqs: [
+      {
+        question: "What is AI visibility optimization?",
+        answer:
+          "AI visibility optimization is the work of making a business easier to understand, trust, and cite across search engines and AI answer engines. It combines technical SEO, clear service pages, structured data, entity consistency, useful citations, and recurring checks of the prompts buyers actually ask.",
+      },
+      {
+        question: "Is AI visibility optimization different from SEO?",
+        answer:
+          "It builds on SEO instead of replacing it. Strong crawlable pages, clear metadata, internal links, schema, and trustworthy citations still matter. AI visibility adds answer-ready structure and prompt-level monitoring so the business can improve how it appears in AI-generated recommendations and explanations.",
+      },
+      {
+        question: "How does 247ROI improve visibility in ChatGPT and AI search?",
+        answer:
+          "247ROI starts by clarifying the business entity, service category, buyer problems, proof, pages, and crawlable context. Then it tracks priority prompts and improves the public signals that answer engines can use: focused pages, schema, llms files, internal links, citations, examples, and consistent profiles.",
+      },
+      {
+        question: "Can anyone guarantee that a business will be recommended by AI tools?",
+        answer:
+          "No. AI platforms control their own ranking, retrieval, and answer behavior. The practical goal is to improve the signals those systems can find and evaluate, then measure prompt visibility over time and keep improving the pages and citations that support the business.",
+      },
+    ],
+  },
+  {
     slug: "ai-workflow-automation-agency",
     title: "AI Workflow Automation Agency | 247ROI",
     description:
