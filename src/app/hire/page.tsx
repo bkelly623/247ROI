@@ -43,6 +43,53 @@ const firstFitWorkflows = [
   },
 ];
 
+const sampleReports = [
+  {
+    title: "Slow lead response",
+    diagnosis:
+      "New inquiries arrive from calls, forms, ads, and referrals, but the next step depends on someone noticing, replying, and remembering to follow up.",
+    system:
+      "A lead-response system captures every inquiry, drafts the first reply, routes the lead, creates the follow-up task, and keeps the owner aware of stalled opportunities.",
+    approvals:
+      "Humans approve pricing, promises, edge cases, and anything that could change the customer relationship.",
+    metric: "Speed-to-lead, missed-call recovery, booked appointments, and stale-lead follow-up rate.",
+    firstMove: "Map every lead source and define the first 10 minutes after an inquiry arrives.",
+  },
+  {
+    title: "Spreadsheet reporting",
+    diagnosis:
+      "The business knows the numbers exist, but they live across exports, inboxes, spreadsheets, and software dashboards nobody checks consistently.",
+    system:
+      "A dashboard pulls the important signals into one operating view: lead flow, revenue, follow-ups, open work, team bottlenecks, and weekly exceptions.",
+    approvals:
+      "Humans keep ownership of interpretation, priorities, and decisions; the system prepares the picture.",
+    metric: "Weekly reporting time, owner questions answered, missed exceptions, and decision speed.",
+    firstMove: "Choose the five numbers that would change what the owner does this week.",
+  },
+  {
+    title: "Inbox triage",
+    diagnosis:
+      "Important requests, documents, reminders, and customer updates get mixed with low-value email, creating constant context switching.",
+    system:
+      "An inbox assistant classifies messages, extracts next actions, drafts replies, updates records, and escalates anything sensitive or unusual.",
+    approvals:
+      "Humans approve customer-facing replies, financial details, legal language, and anything the system marks as uncertain.",
+    metric: "Inbox time, response lag, missed tasks, handoff quality, and owner interruptions.",
+    firstMove: "Define the categories that matter and the messages that must never be handled silently.",
+  },
+  {
+    title: "Estimate follow-up",
+    diagnosis:
+      "Quotes go out, then the business relies on memory, sticky notes, or a CRM task someone has to chase manually.",
+    system:
+      "An estimate follow-up system watches sent quotes, drafts useful follow-ups, flags high-value opportunities, and keeps sales conversations from dying quietly.",
+    approvals:
+      "Humans approve discounts, scope changes, unusual objections, and final commitments.",
+    metric: "Follow-up completion rate, quote-to-close rate, average response time, and recovered deals.",
+    firstMove: "Document what happens from quote sent to won, lost, or forgotten.",
+  },
+];
+
 const notAFit = [
   "The workflow is rare, vague, or not repeated enough to justify a system.",
   "The business wants AI to make final pricing, legal, financial, or sensitive decisions without review.",
@@ -104,6 +151,58 @@ export default function HirePage() {
         <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }} />
       ))}
       <HireAuditFlow />
+
+      <section className="border-t border-zinc-800 bg-zinc-950 px-5 py-16 text-zinc-100 sm:px-6 sm:py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-400">
+                Example outputs
+              </p>
+              <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
+                The audit should leave you with a system shape, not a vague AI idea.
+              </h2>
+            </div>
+            <div>
+              <p className="text-base leading-relaxed text-zinc-400 sm:text-lg">
+                These are shortened examples of the kind of answer the audit is trying to produce:
+                what is broken, what system could fix it, what stays human, and how success gets measured.
+              </p>
+              <Link
+                href="#audit"
+                className="mt-5 inline-flex rounded-full bg-orange-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-orange-600"
+              >
+                Start the audit
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-4 lg:grid-cols-2">
+            {sampleReports.map((report) => (
+              <article key={report.title} className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+                <h3 className="font-display text-2xl font-bold text-zinc-50">{report.title}</h3>
+                <div className="mt-5 grid gap-4">
+                  {[
+                    ["Diagnosis", report.diagnosis],
+                    ["System shape", report.system],
+                    ["Human control", report.approvals],
+                    ["Measure", report.metric],
+                    ["First move", report.firstMove],
+                  ].map(([label, body]) => (
+                    <div key={label} className="border-l-2 border-orange-500/50 pl-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-300">
+                        {label}
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-zinc-400">{body}</p>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-zinc-800 bg-zinc-950 px-5 py-16 text-zinc-100 sm:px-6 sm:py-20">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>

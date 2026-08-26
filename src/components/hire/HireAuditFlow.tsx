@@ -1,9 +1,22 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
+import {
+  ArrowUpRight,
+  BarChart3,
+  CheckCircle2,
+  FileText,
+  HelpCircle,
+  Inbox,
+  Loader2,
+  Mail,
+  PhoneCall,
+  Send,
+  ScrollText,
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { HireGate } from "@/components/hire/HireGate";
@@ -12,8 +25,18 @@ import { emptyDiscovery } from "@/lib/hire/types";
 import { HIRE_OPENING, HIRE_PAGE } from "@/lib/hire/copy";
 import { getHireProgress } from "@/lib/hire/progress";
 import { trackSiteEvent } from "@/lib/analytics/client";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 type ChatBubble = { id: string; role: "user" | "assistant"; content: string };
+
+const triageIcons: Record<string, typeof PhoneCall> = {
+  leads: PhoneCall,
+  admin: Inbox,
+  visibility: BarChart3,
+  bids: ScrollText,
+  docs: FileText,
+  unsure: HelpCircle,
+};
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -123,20 +146,21 @@ export function HireAuditFlow() {
     scroller?.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
   }, [messages, busy, showGate]);
 
-  async function send(e?: FormEvent) {
+  async function send(e?: FormEvent, overrideText?: string) {
     e?.preventDefault();
-    const text = input.trim();
+    const text = (overrideText ?? input).trim();
     if (!text || busy || !sessionId || showGate) return;
 
     setInput("");
     setBusy(true);
     setMessages((prev) => [...prev, { id: uid(), role: "user", content: text }]);
     trackSiteEvent({
-      eventName: "hire_chat_message_sent",
+      eventName: overrideText ? "hire_triage_selected" : "hire_chat_message_sent",
       source: "hire_page",
       sessionId,
       metadata: {
         messageCount: messages.length + 1,
+        triage: Boolean(overrideText),
       },
     });
 
@@ -214,7 +238,7 @@ export function HireAuditFlow() {
           }}
         />
 
-        <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-5 sm:px-6">
+        <section id="audit" className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-5 sm:px-6">
           <header className="space-y-3 pb-5 pt-4 text-center sm:pt-8">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
               {HIRE_PAGE.eyebrow}
@@ -248,6 +272,122 @@ export function HireAuditFlow() {
               </div>
             ))}
           </div>
+
+          <div className="mb-4 rounded-2xl border border-orange-500/20 bg-orange-500/[0.06] p-4 sm:rounded-3xl sm:p-5">
+            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">
+                  {HIRE_PAGE.routingEyebrow}
+                </p>
+                <h2 className="mt-2 font-display text-xl font-bold leading-tight text-zinc-50 sm:text-2xl">
+                  {HIRE_PAGE.routingTitle}
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
+                  {HIRE_PAGE.routingBody}
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
+                <a
+                  href={PRIMARY_PHONE_HREF}
+                  onClick={() =>
+                    sessionId &&
+                    trackSiteEvent({
+                      eventName: "hire_direct_call_clicked",
+                      source: "hire_page",
+                      sessionId,
+                    })
+                  }
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition hover:bg-orange-600"
+                >
+                  <PhoneCall className="h-4 w-4" />
+                  Call {PRIMARY_PHONE_DISPLAY}
+                </a>
+                <a
+                  href="mailto:contact@247roi.com?subject=AI%20Opportunity%20Audit"
+                  onClick={() =>
+                    sessionId &&
+                    trackSiteEvent({
+                      eventName: "hire_direct_email_clicked",
+                      source: "hire_page",
+                      sessionId,
+                    })
+                  }
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.03] px-4 text-sm font-semibold text-zinc-100 transition hover:border-orange-400/70 hover:text-orange-200"
+                >
+                  <Mail className="h-4 w-4" />
+                  Email
+                </a>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+              {HIRE_PAGE.routingProof.map((item) => (
+                <div key={item} className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-zinc-300">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-orange-300" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <Link
+              href="/services"
+              onClick={() =>
+                sessionId &&
+                trackSiteEvent({
+                  eventName: "hire_services_route_clicked",
+                  source: "hire_page",
+                  sessionId,
+                })
+              }
+              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-orange-300 hover:text-orange-200"
+            >
+              See service paths
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          {messages.length <= 1 && !showGate && (
+            <div className="mb-4 rounded-2xl border border-white/10 bg-zinc-950/70 p-4 sm:rounded-3xl sm:p-5">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+                    {HIRE_PAGE.triageEyebrow}
+                  </p>
+                  <h2 className="mt-2 font-display text-xl font-bold leading-tight text-zinc-50 sm:text-2xl">
+                    {HIRE_PAGE.triageTitle}
+                  </h2>
+                </div>
+                <p className="max-w-md text-sm leading-6 text-zinc-500">
+                  {HIRE_PAGE.triageNote}
+                </p>
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                {HIRE_PAGE.triageChoices.map((choice) => {
+                  const Icon = triageIcons[choice.id] ?? HelpCircle;
+
+                  return (
+                    <button
+                      key={choice.id}
+                      type="button"
+                      disabled={!sessionId || busy}
+                      onClick={() => void send(undefined, choice.message)}
+                      className="group flex min-h-28 items-start gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-orange-400 transition group-hover:bg-orange-500 group-hover:text-white">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-zinc-100">
+                          {choice.title}
+                        </span>
+                        <span className="mt-1 block text-sm leading-5 text-zinc-500">
+                          {choice.body}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)] sm:rounded-3xl">
             <ProgressBar discovery={discovery} />

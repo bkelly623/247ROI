@@ -25,4 +25,61 @@ export const HIRE_PAGE = {
   placeholder: "Your answer…",
   placeholderLocked: "Unlock below…",
   sendHint: "Enter to send",
+  triageEyebrow: "Start fast",
+  triageTitle: "Pick the bottleneck closest to the money or the owner.",
+  triageNote:
+    "This gives the audit useful context immediately. You can still describe the messy version in your own words after it opens the right path.",
+  routingEyebrow: "Already know you need help?",
+  routingTitle: "Talk to 247ROI directly or use the audit to sharpen the first project.",
+  routingBody:
+    "The useful call is not a generic AI demo. Bring one messy workflow and we will decide what should be automated, what needs a dashboard or internal app, and what should stay human.",
+  routingProof: [
+    "Diagnosis before build",
+    "Human approvals stay explicit",
+    "Systems can include automations, dashboards, apps, integrations, or agents",
+  ],
+  triageChoices: [
+    {
+      id: "leads",
+      title: "Leads and follow-up",
+      body: "Missed calls, slow replies, stale estimates, no-shows, or prospects falling out of the pipeline.",
+      message:
+        "The bottleneck I want to look at first is leads and follow-up: missed calls, slow replies, stale estimates, or prospects falling out of the pipeline.",
+    },
+    {
+      id: "admin",
+      title: "Inbox and admin",
+      body: "Repeated work across email, calendars, customer records, documents, portals, or spreadsheets.",
+      message:
+        "The bottleneck I want to look at first is inbox and admin work: repeated work across email, calendars, customer records, documents, portals, or spreadsheets.",
+    },
+    {
+      id: "visibility",
+      title: "Dashboards and reporting",
+      body: "The business runs on scattered updates, unclear numbers, manual reports, or too many status questions.",
+      message:
+        "The bottleneck I want to look at first is dashboards and reporting: scattered updates, unclear numbers, manual reports, or too many status questions.",
+    },
+    {
+      id: "bids",
+      title: "Estimates and bids",
+      body: "Quoting, takeoffs, proposal prep, pricing handoffs, revisions, or follow-up after the estimate goes out.",
+      message:
+        "The bottleneck I want to look at first is estimates and bids: quoting, takeoffs, proposal prep, pricing handoffs, revisions, or follow-up.",
+    },
+    {
+      id: "docs",
+      title: "Research and documents",
+      body: "Summaries, drafts, research, intake notes, job files, SOPs, handoff packets, or client-facing reports.",
+      message:
+        "The bottleneck I want to look at first is research and documents: summaries, drafts, intake notes, job files, SOPs, handoff packets, or reports.",
+    },
+    {
+      id: "unsure",
+      title: "Not sure yet",
+      body: "There are several annoying workflows and the first job is figuring out which one is worth fixing.",
+      message:
+        "I'm not sure which workflow is the best first target yet. There are several annoying bottlenecks, and I want help figuring out which one is most worth fixing.",
+    },
+  ],
 };
