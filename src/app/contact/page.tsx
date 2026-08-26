@@ -62,7 +62,7 @@ export default function ContactPage() {
                     </a>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
-                    <a href="mailto:contact@247roi.com?subject=AI%20Opportunity%20Map">
+                    <a href="mailto:contact@247roi.com?subject=AI%20Opportunity%20Audit">
                       <Mail className="mr-2 h-4 w-4" aria-hidden />
                       Email contact@247roi.com
                     </a>
@@ -85,7 +85,7 @@ export default function ContactPage() {
                   ))}
                 </div>
                 <Link href="/hire" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
-                  Start the map
+                  Start the audit
                 </Link>
               </div>
             </div>

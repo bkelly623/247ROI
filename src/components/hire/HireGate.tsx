@@ -170,7 +170,7 @@ export function HireGate({
               </>
             ) : (
               <>
-                Show my opportunity map
+                Show my opportunity audit
                 <Unlock className="h-5 w-5" />
               </>
             )}

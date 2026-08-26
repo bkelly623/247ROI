@@ -60,7 +60,7 @@ export default function RootLayout({
       "business process automation",
       "AI automation consulting",
       "business systems audit",
-      "AI opportunity map",
+      "AI Opportunity Audit",
       "AI employees",
       "managed AI employees",
       "AI workflow automation",

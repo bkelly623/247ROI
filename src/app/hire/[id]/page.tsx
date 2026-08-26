@@ -66,7 +66,7 @@ export default function HireReportPage() {
         {loading && (
           <div className="flex min-h-[50vh] items-center justify-center gap-2 text-zinc-500">
             <Loader2 className="h-5 w-5 animate-spin text-orange-400" />
-            Loading opportunity map…
+            Loading opportunity audit…
           </div>
         )}
 
@@ -86,7 +86,7 @@ export default function HireReportPage() {
         {!loading && needGate && !unlocked && (
           <div className="mx-auto max-w-lg px-6 py-20 text-center">
             <h1 className="font-display text-3xl font-bold text-zinc-50">
-              Your opportunity map is sealed
+              Your opportunity audit is sealed
             </h1>
             <p className="mt-3 text-zinc-400">
               Unlock it with your details, then we can map the system against your actual workflow.

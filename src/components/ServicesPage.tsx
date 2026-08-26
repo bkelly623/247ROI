@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CheckCircle2, ClipboardCheck, DatabaseZap, FileSearch, PanelsTopLeft, Workflow, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, ClipboardCheck, DatabaseZap, FileSearch, PanelsTopLeft, Workflow, Zap } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -47,6 +47,39 @@ const process = [
   ["Design", "We define the system: rules, inputs, approvals, tools, outputs, and what success looks like."],
   ["Build", "We create the automations, dashboards, internal apps, AI agents, integrations, and handoff formats."],
   ["Improve", "We review the output, tighten the rules, and expand only when the workflow gets cleaner."],
+];
+
+const servicePages = [
+  {
+    title: "AI automation consultant for small business",
+    href: "/ai-automation-consultant-small-business",
+    body: "For owners who know repeated computer work is wasting time but need help deciding what AI should touch first.",
+  },
+  {
+    title: "Business process automation consultant",
+    href: "/business-process-automation-consultant",
+    body: "For workflows where data, documents, approvals, and next steps keep moving by copy, paste, and memory.",
+  },
+  {
+    title: "Custom AI agents for business",
+    href: "/ai-agents-for-business",
+    body: "For defined jobs such as inbox triage, reporting, CRM updates, research, drafting, and follow-up.",
+  },
+  {
+    title: "Custom business dashboard",
+    href: "/custom-business-dashboard",
+    body: "For owners who need one operating view instead of reports rebuilt from scattered tools every week.",
+  },
+  {
+    title: "Internal tools for small business",
+    href: "/internal-tools-for-small-business",
+    body: "For teams that have outgrown spreadsheet workarounds and need focused workflow software.",
+  },
+  {
+    title: "Generative engine optimization consultant",
+    href: "/generative-engine-optimization-consultant",
+    body: "For businesses that want clearer entity signals, answer-ready pages, schema, citations, and AI visibility checks.",
+  },
 ];
 
 export default function ServicesPage() {
@@ -145,6 +178,36 @@ export default function ServicesPage() {
                   physical automation when the first system has earned trust.
                 </p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="mx-auto mb-10 max-w-3xl text-center">
+              <span className="text-sm font-semibold uppercase tracking-wider text-primary">Focused service pages</span>
+              <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                Different bottlenecks need different build paths.
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                These pages break down the common entry points for owners comparing AI, automation, dashboards,
+                internal tools, and AI visibility work.
+              </p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {servicePages.map((page) => (
+                <Link
+                  key={page.href}
+                  href={page.href}
+                  className="group rounded-2xl border border-white/10 bg-white/[0.035] p-5 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                >
+                  <h3 className="font-display text-xl font-bold">{page.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{page.body}</p>
+                  <span className="mt-5 inline-flex items-center text-sm font-semibold text-primary">
+                    Read page <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                  </span>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

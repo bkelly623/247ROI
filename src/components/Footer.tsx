@@ -20,21 +20,24 @@ const footerColumns: {
     links: [
       { label: "Services", href: "/services" },
       { label: "Business systems audit", href: "/hire" },
-      { label: "Example workflows", href: "/demo" },
+      { label: "Process automation", href: "/business-process-automation-consultant" },
+      { label: "Internal tools", href: "/internal-tools-for-small-business" },
     ],
   },
   {
     title: "AI Agents",
     links: [
       { label: "AI agent roles", href: "/ai-employees" },
+      { label: "Custom AI agents", href: "/ai-agents-for-business" },
+      { label: "AI automation consultant", href: "/ai-automation-consultant-small-business" },
       { label: "AI Estimator", href: "/ai-estimator" },
-      { label: "AI Follow-Up", href: "/ai-follow-up-agent" },
     ],
   },
   {
     title: "Tools",
     links: [
       { label: "Articles", href: "/articles" },
+      { label: "Custom dashboards", href: "/custom-business-dashboard" },
       { label: "ROI calculator", href: "/ai-employee-roi-calculator" },
       { label: "Missed-call calculator", href: "/missed-call-calculator" },
     ],
@@ -45,7 +48,8 @@ const footerColumns: {
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
       { label: "AI Opportunity Audit", href: "/hire" },
-      { label: "Support", href: "mailto:contact@247roi.com" },
+      { label: "AI visibility", href: "/ai-visibility-optimization" },
+      { label: "GEO consultant", href: "/generative-engine-optimization-consultant" },
     ],
   },
   {

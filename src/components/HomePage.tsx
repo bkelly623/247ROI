@@ -8,6 +8,7 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   ClipboardList,
+  ExternalLink,
   FileText,
   Gauge,
   Mail,
@@ -79,6 +80,39 @@ const trustItems = [
   "Use the software, apps, documents, and data the business already depends on where possible.",
   "Keep human approval in place for pricing, sensitive decisions, exceptions, and judgment calls.",
   "Deliver visible work product: dashboards, queues, reports, apps, drafts, summaries, and handoff notes.",
+];
+
+const serviceRoutes = [
+  {
+    title: "AI automation consultant",
+    href: "/ai-automation-consultant-small-business",
+    body: "Find the computer work AI should handle first, then build a practical system around it.",
+  },
+  {
+    title: "Custom AI agents",
+    href: "/ai-agents-for-business",
+    body: "Build constrained agents for research, triage, drafting, reporting, CRM updates, and handoffs.",
+  },
+  {
+    title: "Custom dashboards",
+    href: "/custom-business-dashboard",
+    body: "Pull scattered operating data into one owner-ready view with alerts and weekly summaries.",
+  },
+  {
+    title: "Internal tools",
+    href: "/internal-tools-for-small-business",
+    body: "Replace fragile spreadsheet workflows with focused apps, queues, approvals, and records.",
+  },
+  {
+    title: "Business process automation",
+    href: "/business-process-automation-consultant",
+    body: "Map repeated work, clean up handoffs, and automate the bottleneck with the clearest payoff.",
+  },
+  {
+    title: "AI visibility optimization",
+    href: "/ai-visibility-optimization",
+    body: "Make the business easier for Google, AI answer engines, and buyers to understand and cite.",
+  },
 ];
 
 export default function HomePage() {
@@ -252,6 +286,38 @@ export default function HomePage() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-zinc-200 bg-white py-20">
+          <div className="container mx-auto px-5 sm:px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">Service paths</p>
+                <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
+                  Start with the problem, then choose the system.
+                </h2>
+                <p className="mt-5 text-lg leading-relaxed text-zinc-600">
+                  247ROI can build with AI, automation, dashboards, internal apps, or visibility systems. The audit
+                  decides which path should come first.
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {serviceRoutes.map((route) => (
+                  <Link
+                    key={route.href}
+                    href={route.href}
+                    className="group rounded-lg border border-zinc-200 bg-zinc-50 p-5 transition-colors hover:border-orange-300 hover:bg-orange-50"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-display text-xl font-bold text-zinc-950">{route.title}</h3>
+                      <ExternalLink className="mt-1 h-4 w-4 shrink-0 text-orange-600 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                    </div>
+                    <p className="mt-3 text-sm leading-relaxed text-zinc-600">{route.body}</p>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
