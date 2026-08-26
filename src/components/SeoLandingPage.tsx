@@ -3,10 +3,12 @@ import { ArrowRight, BadgeCheck, SearchCheck, Sparkles, Target } from "lucide-re
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import type { SeoLandingPage as SeoLandingPageType } from "@/lib/seoLandingPages";
+import { SEO_LANDING_PAGES, type SeoLandingPage as SeoLandingPageType } from "@/lib/seoLandingPages";
 import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
 
 export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
+  const relatedPages = SEO_LANDING_PAGES.filter((candidate) => page.relatedPageSlugs?.includes(candidate.slug));
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -118,13 +120,39 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
           </div>
         </section>
 
+        {relatedPages.length > 0 ? (
+          <section className="border-b border-border/40 py-16 md:py-20">
+            <div className="container mx-auto px-6">
+              <div className="mx-auto max-w-5xl">
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Related pages</span>
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  {relatedPages.map((relatedPage) => (
+                    <Link
+                      key={relatedPage.slug}
+                      href={`/${relatedPage.slug}`}
+                      className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                    >
+                      <p className="text-sm font-semibold text-primary">{relatedPage.primaryKeyword}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{relatedPage.description}</p>
+                      <span className="mt-4 inline-flex items-center text-sm font-semibold text-foreground">
+                        Read page <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         <section className="py-20 md:py-24">
           <div className="container mx-auto px-6">
             <div className="mx-auto max-w-5xl rounded-3xl border border-primary/25 bg-primary/10 p-8 text-center sm:p-12">
               <Sparkles className="mx-auto mb-5 h-8 w-8 text-primary" aria-hidden />
               <h2 className="font-display text-3xl font-bold sm:text-5xl">See what AI can do inside your business.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                Bring the messy workflow. 247ROI will identify the role, the handoffs, the risks, and the success criteria.
+                Bring the computer work people are still doing by hand. 247ROI will identify what can be automated,
+                what should stay human, and what is worth building first.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                 <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>

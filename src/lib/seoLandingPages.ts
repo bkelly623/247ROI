@@ -12,6 +12,7 @@ export type SeoLandingPage = {
   buyerProblems: string[];
   systemBuilds: string[];
   faqs: { question: string; answer: string }[];
+  relatedPageSlugs?: string[];
 };
 
 export const SEO_LANDING_PAGES: SeoLandingPage[] = [
@@ -414,6 +415,240 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
         question: "Does 247ROI guarantee every AI employee will work?",
         answer:
           "No serious provider should guarantee that every workflow deserves automation. 247ROI uses an audit and success criteria to decide what is worth building, what should stay human, and what should be stopped.",
+      },
+    ],
+  },
+  {
+    slug: "ai-automation-consultant-small-business",
+    title: "AI Automation Consultant for Small Business | 247ROI",
+    description:
+      "247ROI helps small businesses identify the computer work AI should handle first, then builds custom automations, AI agents, dashboards, internal apps, and connected systems.",
+    eyebrow: "AI automation consultant for small business",
+    headline: "Stop paying people to repeat computer work software can handle.",
+    subheadline:
+      "247ROI helps owners find the highest-value work to automate first, then builds practical AI and software systems around the way the business actually operates.",
+    primaryKeyword: "AI automation consultant for small business",
+    relatedKeywords: [
+      "small business AI automation",
+      "AI automation for small business",
+      "AI business automation consultant",
+      "custom AI automation consultant",
+      "small business automation consultant",
+    ],
+    relatedPageSlugs: [
+      "business-process-automation-consultant",
+      "ai-agents-for-business",
+      "internal-tools-for-small-business",
+      "custom-business-dashboard",
+    ],
+    buyerProblems: [
+      "Employees spend hours moving information between inboxes, spreadsheets, CRMs, calendars, portals, and documents.",
+      "The owner knows work is being repeated, but has not separated low-value admin from work that still needs judgment.",
+      "The business has tried off-the-shelf tools, but the process still depends on manual follow-up and memory.",
+      "Important opportunities slow down because nobody has a clean system for intake, routing, reporting, or follow-through.",
+    ],
+    systemBuilds: [
+      "AI automation audit focused on the computer work with the clearest time or revenue impact",
+      "Custom automations that move data, prepare work, route handoffs, and reduce repeated admin",
+      "AI agents for research, summaries, drafting, inbox triage, CRM updates, reporting, and follow-up",
+      "Dashboards and internal apps when visibility or workflow control matters more than another automation",
+      "Human approval rules for pricing, customer messages, exceptions, and sensitive decisions",
+      "A first-build roadmap that starts small enough to ship and measure",
+    ],
+    faqs: [
+      {
+        question: "What does an AI automation consultant do for a small business?",
+        answer:
+          "An AI automation consultant identifies repeatable computer work that can be handled or prepared by AI, automation, dashboards, internal apps, or custom software. The goal is not to add a tool. The goal is to remove low-value manual work while keeping humans in control of important decisions.",
+      },
+      {
+        question: "What should a small business automate first with AI?",
+        answer:
+          "Start with work that is repeated often, close to revenue, or expensive in owner attention. Common first targets include lead response, follow-up, inbox triage, CRM updates, reporting, estimate prep, bid intake, scheduling handoffs, data entry, and weekly operating dashboards.",
+      },
+      {
+        question: "Can 247ROI automate anything done on a computer?",
+        answer:
+          "247ROI can evaluate nearly any computer-based business process: admin, sales, operations, reporting, marketing, websites, SEO, social content systems, dashboards, internal tools, and custom apps. The audit decides what is actually worth building first.",
+      },
+      {
+        question: "Is AI automation safe for customer-facing work?",
+        answer:
+          "It can be when the system has clear rules, logs, escalation paths, and human approval for sensitive messages, pricing, unusual requests, or final decisions. 247ROI designs AI automation around those control points.",
+      },
+    ],
+  },
+  {
+    slug: "generative-engine-optimization-consultant",
+    title: "Generative Engine Optimization Consultant | 247ROI",
+    description:
+      "247ROI helps businesses improve visibility in AI answers with crawlable pages, entity clarity, schema, citations, internal links, and recurring prompt checks.",
+    eyebrow: "Generative engine optimization consultant",
+    headline: "Make your business easier for AI answers to find, understand, and cite.",
+    subheadline:
+      "247ROI combines practical SEO, AI visibility checks, schema, citations, and answer-ready pages so search engines and AI tools can explain what your business does.",
+    primaryKeyword: "generative engine optimization consultant",
+    relatedKeywords: [
+      "GEO consultant",
+      "AI search consultant",
+      "AI answer engine optimization",
+      "ChatGPT visibility consultant",
+      "generative engine optimization services",
+    ],
+    relatedPageSlugs: ["ai-visibility-optimization", "business-process-automation-consultant", "ai-agents-for-business"],
+    buyerProblems: [
+      "The business depends on search, but AI answers and summaries are changing how people discover providers.",
+      "The site has broad service copy without clear answers to the questions buyers actually ask.",
+      "Entity signals are scattered across the website, profiles, citations, reviews, content, and schema.",
+      "Nobody is checking whether AI systems can accurately describe the business or recommend it for the right prompts.",
+    ],
+    systemBuilds: [
+      "Prompt map for the buyer questions the business wants to appear in",
+      "Answer-ready service pages with direct explanations, FAQs, and useful examples",
+      "Schema, metadata, sitemap, robots, llms.txt, and internal-link cleanup",
+      "Citation and profile consistency plan across trusted third-party sources",
+      "Recurring AI visibility snapshots across ChatGPT, Gemini, Perplexity, Google, and Bing-style surfaces",
+      "Page improvement backlog based on what AI answers miss or misunderstand",
+    ],
+    faqs: [
+      {
+        question: "What is generative engine optimization?",
+        answer:
+          "Generative engine optimization is the work of improving the public signals that AI answer engines can use when explaining, citing, or recommending a business. It overlaps with SEO, but adds prompt testing, entity clarity, answer-ready pages, structured data, citations, and recurring checks.",
+      },
+      {
+        question: "Is GEO different from SEO?",
+        answer:
+          "GEO builds on SEO. Search engines and AI systems still need crawlable pages, useful content, links, metadata, schema, and trusted citations. GEO adds a focus on how AI systems answer buyer questions and whether the business is understood correctly.",
+      },
+      {
+        question: "Can a consultant guarantee AI recommendations?",
+        answer:
+          "No. AI platforms control their own retrieval and ranking. A practical GEO consultant improves the signals that can be discovered, cited, and trusted, then measures prompt visibility over time.",
+      },
+      {
+        question: "What should a business fix first for AI visibility?",
+        answer:
+          "Start with clear service pages, consistent business entity information, crawlable answers to buyer questions, relevant schema, internal links, accurate profiles, and citations from sources that search and AI systems can verify.",
+      },
+    ],
+  },
+  {
+    slug: "custom-business-dashboard",
+    title: "Custom Business Dashboard | 247ROI",
+    description:
+      "247ROI builds custom business dashboards that help owners see leads, sales, operations, follow-up, bottlenecks, and weekly performance without chasing spreadsheets.",
+    eyebrow: "Custom business dashboard",
+    headline: "See the business without chasing updates across ten places.",
+    subheadline:
+      "247ROI builds owner-ready dashboards and reporting systems that pull the right information into one practical operating view.",
+    primaryKeyword: "custom business dashboard",
+    relatedKeywords: [
+      "custom dashboard for small business",
+      "business dashboard development",
+      "owner dashboard",
+      "AI dashboard automation",
+      "small business reporting dashboard",
+    ],
+    relatedPageSlugs: [
+      "internal-tools-for-small-business",
+      "ai-automation-consultant-small-business",
+      "business-process-automation-consultant",
+    ],
+    buyerProblems: [
+      "Important numbers live across spreadsheets, CRMs, inboxes, forms, calendars, accounting tools, and memory.",
+      "Managers spend too much time asking for updates instead of seeing what needs attention.",
+      "Reports are built manually every week and still arrive too late to change anything.",
+      "The business cannot clearly see lead flow, follow-up, job status, bottlenecks, or team output in one place.",
+    ],
+    systemBuilds: [
+      "Owner dashboard for leads, pipeline, jobs, follow-up, revenue signals, and task queues",
+      "Automated reporting from spreadsheets, CRMs, forms, calendars, and operating tools",
+      "AI-generated summaries that explain what changed and what needs attention",
+      "Exception flags for stale leads, overdue handoffs, missing records, and delayed jobs",
+      "Internal app views for the team when a dashboard needs workflow controls, not just charts",
+      "Weekly improvement loop based on what owners actually use to make decisions",
+    ],
+    faqs: [
+      {
+        question: "What is a custom business dashboard?",
+        answer:
+          "A custom business dashboard is a reporting system built around the way a business operates. It pulls the right data into one view so owners and managers can see priorities, bottlenecks, follow-up, job status, and performance without rebuilding reports manually.",
+      },
+      {
+        question: "When does a small business need a custom dashboard?",
+        answer:
+          "A custom dashboard makes sense when important work is hard to see, reports take too long to prepare, teams rely on spreadsheets, or the owner has to ask multiple people and tools for basic operating answers.",
+      },
+      {
+        question: "Can AI help with business dashboards?",
+        answer:
+          "Yes. AI can summarize changes, flag exceptions, draft weekly operating briefs, explain trends, and prepare next-step notes. The dashboard should still make the source data and logic inspectable.",
+      },
+      {
+        question: "Is a dashboard enough, or does the business need an internal app?",
+        answer:
+          "If the problem is visibility, a dashboard may be enough. If people also need to update records, route work, approve steps, or manage a process, an internal app may be the better build.",
+      },
+    ],
+  },
+  {
+    slug: "internal-tools-for-small-business",
+    title: "Internal Tools for Small Business | 247ROI",
+    description:
+      "247ROI builds internal tools for small businesses that have outgrown spreadsheets, disconnected apps, manual routing, and repeated computer work.",
+    eyebrow: "Internal tools for small business",
+    headline: "Replace the workaround your business accidentally started depending on.",
+    subheadline:
+      "247ROI builds focused internal tools, dashboards, automations, and AI-assisted workflows for small businesses that need software shaped around the way they actually work.",
+    primaryKeyword: "internal tools for small business",
+    relatedKeywords: [
+      "custom internal tools",
+      "small business internal app",
+      "custom business software",
+      "spreadsheet replacement app",
+      "internal workflow app",
+    ],
+    relatedPageSlugs: [
+      "custom-business-dashboard",
+      "ai-automation-consultant-small-business",
+      "business-process-automation-consultant",
+      "ai-agents-for-business",
+    ],
+    buyerProblems: [
+      "A spreadsheet became the operating system, but it is fragile, slow, and hard to trust.",
+      "Work depends on people copying data between tools, messages, portals, and documents.",
+      "The team needs a simple app for intake, routing, approvals, status, notes, and reporting.",
+      "Off-the-shelf software is either too rigid, too expensive, or still leaves the business doing manual work around it.",
+    ],
+    systemBuilds: [
+      "Internal app for intake, status tracking, approvals, notes, tasks, and handoffs",
+      "Spreadsheet replacement with cleaner permissions, fields, workflows, and reporting",
+      "Automation layer that connects forms, CRM, calendars, email, docs, and operating tools",
+      "AI-assisted summaries, draft messages, research, document review, and reporting where useful",
+      "Dashboard views for owners, managers, and operators",
+      "Iterative build plan that starts with the smallest useful version",
+    ],
+    faqs: [
+      {
+        question: "What are internal tools for small business?",
+        answer:
+          "Internal tools are custom apps, dashboards, automations, or workflow systems used by the team inside the business. They help manage intake, approvals, reporting, operations, handoffs, records, and repeated computer work.",
+      },
+      {
+        question: "When should a small business build an internal tool?",
+        answer:
+          "Build an internal tool when the current process depends on spreadsheets, copy-paste work, missed handoffs, disconnected apps, manual reports, or workarounds that are slowing the business down.",
+      },
+      {
+        question: "Are internal tools expensive?",
+        answer:
+          "They do not have to start as large software projects. The best first version usually handles one valuable workflow, uses the tools the business already has where possible, and expands after the team proves it saves time or improves visibility.",
+      },
+      {
+        question: "Can AI be part of an internal business tool?",
+        answer:
+          "Yes. AI can prepare summaries, drafts, classifications, research, reports, and recommendations inside an internal tool while humans keep approval over sensitive decisions.",
       },
     ],
   },
