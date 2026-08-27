@@ -33,6 +33,12 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       "business process automation for small business",
       "custom business automation",
     ],
+    relatedPageSlugs: [
+      "workflow-automation-consultant",
+      "ai-automation-consultant-small-business",
+      "custom-business-dashboard",
+      "internal-tools-for-small-business",
+    ],
     buyerProblems: [
       "The same computer work gets repeated every week, but nobody has time to redesign it.",
       "Important work lives across inboxes, spreadsheets, CRMs, forms, calendars, portals, and memory.",
@@ -67,6 +73,67 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
         question: "Can AI be part of business process automation?",
         answer:
           "Yes, when the workflow needs language, judgment support, summarization, classification, drafting, research, or flexible handoffs. AI should be constrained by rules, useful output, logs, and human approval where decisions are sensitive.",
+      },
+    ],
+  },
+  {
+    slug: "workflow-automation-consultant",
+    title: "Workflow Automation Consultant | 247ROI",
+    description:
+      "247ROI helps SMB owners map messy workflows, find the first automation worth building, and connect apps, data, approvals, dashboards, and AI agents around real work.",
+    eyebrow: "Workflow automation consultant",
+    headline: "Fix the workflow before adding another tool.",
+    subheadline:
+      "247ROI helps owners and operators turn repeated computer work, scattered handoffs, and manual follow-up into practical workflow automation systems with clear rules, outputs, and human approval points.",
+    primaryKeyword: "workflow automation consultant",
+    relatedKeywords: [
+      "workflow automation for small business",
+      "business workflow automation",
+      "AI workflow automation consultant",
+      "custom workflow automation",
+      "process automation consultant",
+    ],
+    relatedPageSlugs: [
+      "business-process-automation-consultant",
+      "ai-automation-consultant-small-business",
+      "ai-agents-for-business",
+      "internal-tools-for-small-business",
+      "custom-business-dashboard",
+    ],
+    buyerProblems: [
+      "People copy the same information between inboxes, spreadsheets, CRMs, forms, calendars, portals, and documents.",
+      "Approvals, reminders, customer updates, and internal handoffs depend on memory instead of a visible system.",
+      "The business bought tools, but the work still gets delayed because the workflow between those tools is unclear.",
+      "Owners want automation, but need to know what should stay human before anything gets connected.",
+    ],
+    systemBuilds: [
+      "Workflow map that shows inputs, decisions, handoffs, exceptions, and owner approval points",
+      "Automation layer for repeated data movement, document prep, routing, reminders, and status updates",
+      "AI agent support for summaries, drafts, classifications, research, reporting, and next-step prep",
+      "Dashboard or internal app when the team needs visibility, queues, records, or approval controls",
+      "Human-in-the-loop rules for pricing, sensitive messages, exceptions, and final decisions",
+      "Measurement plan tied to saved hours, faster response, fewer dropped handoffs, or cleaner operating visibility",
+    ],
+    faqs: [
+      {
+        question: "What does a workflow automation consultant do?",
+        answer:
+          "A workflow automation consultant maps how work moves through a business, identifies repeated steps and weak handoffs, then designs automation around the process. The work can include app integrations, dashboards, internal tools, AI agents, approval rules, reporting, and follow-up systems.",
+      },
+      {
+        question: "Which workflows should a small business automate first?",
+        answer:
+          "Start with workflows that happen often, waste owner attention, slow revenue, or create dropped handoffs. Common first targets include lead response, estimate follow-up, inbox triage, CRM updates, data entry, document prep, status reporting, scheduling, and weekly operating reports.",
+      },
+      {
+        question: "Can workflow automation use AI?",
+        answer:
+          "Yes, when the workflow needs language, summaries, classification, drafting, research, or flexible next-step prep. 247ROI keeps AI constrained by clear inputs, output formats, logs, exception paths, and human approval for sensitive decisions.",
+      },
+      {
+        question: "How is workflow automation different from business process automation?",
+        answer:
+          "Workflow automation usually focuses on the movement of work between people, tools, approvals, and next steps. Business process automation is the broader operating-system view. 247ROI uses both ideas to decide whether the right first build is automation, an AI agent, a dashboard, an internal app, an integration, or process cleanup.",
       },
     ],
   },

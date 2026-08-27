@@ -21,6 +21,7 @@ const footerColumns: {
       { label: "Services", href: "/services" },
       { label: "Business systems audit", href: "/hire" },
       { label: "Process automation", href: "/business-process-automation-consultant" },
+      { label: "Workflow automation", href: "/workflow-automation-consultant" },
       { label: "Internal tools", href: "/internal-tools-for-small-business" },
     ],
   },

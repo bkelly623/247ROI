@@ -104,6 +104,11 @@ const serviceRoutes = [
     body: "Replace fragile spreadsheet workflows with focused apps, queues, approvals, and records.",
   },
   {
+    title: "Workflow automation consultant",
+    href: "/workflow-automation-consultant",
+    body: "Turn repeated computer work, handoffs, approvals, and follow-up into a workflow people can actually trust.",
+  },
+  {
     title: "Business process automation",
     href: "/business-process-automation-consultant",
     body: "Map repeated work, clean up handoffs, and automate the bottleneck with the clearest payoff.",

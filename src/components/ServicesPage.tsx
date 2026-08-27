@@ -61,6 +61,11 @@ const servicePages = [
     body: "For workflows where data, documents, approvals, and next steps keep moving by copy, paste, and memory.",
   },
   {
+    title: "Workflow automation consultant",
+    href: "/workflow-automation-consultant",
+    body: "For businesses where repeated work crosses inboxes, spreadsheets, apps, approvals, and follow-up.",
+  },
+  {
     title: "Custom AI agents for business",
     href: "/ai-agents-for-business",
     body: "For defined jobs such as inbox triage, reporting, CRM updates, research, drafting, and follow-up.",
