@@ -61,6 +61,25 @@ const sampleOutputs = [
   },
 ];
 
+const proofLadder = [
+  {
+    label: "Workflow proof",
+    body: "Map the current handoff, show where work stalls, and define what the system must produce before any build starts.",
+  },
+  {
+    label: "Output proof",
+    body: "Ship an inspectable artifact: dashboard, queue, packet, draft, report, record update, or approval view.",
+  },
+  {
+    label: "Control proof",
+    body: "Keep final pricing, sensitive messages, unusual exceptions, and customer commitments under human approval.",
+  },
+  {
+    label: "Performance proof",
+    body: "Measure the workflow against saved time, faster response, cleaner handoffs, fewer dropped tasks, or better visibility.",
+  },
+];
+
 export default function DemoPage() {
   return (
     <div className="min-h-screen bg-background">
@@ -158,6 +177,34 @@ export default function DemoPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border/40 py-20 md:py-24">
+          <div className="container mx-auto px-6">
+            <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+              <div>
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Proof ladder</span>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">
+                  Trust is earned by showing the work, not by promising magic.
+                </h2>
+                <p className="mt-4 text-muted-foreground">
+                  Every useful system should make the workflow, output, controls, and improvement visible. That is the
+                  standard before a build earns more responsibility.
+                </p>
+                <Link href="/what-should-my-business-automate-first" className="mt-6 inline-flex items-center gap-2 font-semibold text-primary underline underline-offset-4">
+                  Use the bottleneck checklist <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {proofLadder.map((item) => (
+                  <div key={item.label} className="rounded-3xl border border-white/10 bg-white/[0.035] p-6">
+                    <p className="text-sm font-semibold uppercase tracking-wider text-primary">{item.label}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
