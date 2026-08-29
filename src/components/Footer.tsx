@@ -38,6 +38,7 @@ const footerColumns: {
     title: "Tools",
     links: [
       { label: "Articles", href: "/articles" },
+      { label: "What to automate first", href: "/what-should-my-business-automate-first" },
       { label: "Custom dashboards", href: "/custom-business-dashboard" },
       { label: "ROI calculator", href: "/ai-employee-roi-calculator" },
       { label: "Missed-call calculator", href: "/missed-call-calculator" },

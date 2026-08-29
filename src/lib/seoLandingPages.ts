@@ -17,6 +17,67 @@ export type SeoLandingPage = {
 
 export const SEO_LANDING_PAGES: SeoLandingPage[] = [
   {
+    slug: "what-should-my-business-automate-first",
+    title: "What Should My Business Automate First? | 247ROI",
+    description:
+      "247ROI helps owners decide what to automate first by scoring bottlenecks against revenue, labor, owner attention, workflow clarity, and human control.",
+    eyebrow: "Automation starting point",
+    headline: "Find the first workflow worth automating before buying another tool.",
+    subheadline:
+      "247ROI helps owners and operators identify whether the right first build is AI, automation, a dashboard, an internal app, an integration, or a cleaner workflow.",
+    primaryKeyword: "what should my business automate first",
+    relatedKeywords: [
+      "small business automation checklist",
+      "business automation audit",
+      "AI automation for small business",
+      "workflow automation for small business",
+      "business process automation checklist",
+    ],
+    relatedPageSlugs: [
+      "business-process-automation-consultant",
+      "workflow-automation-consultant",
+      "ai-automation-consultant-small-business",
+      "custom-business-dashboard",
+      "internal-tools-for-small-business",
+    ],
+    buyerProblems: [
+      "The business knows manual computer work is expensive, but the first automation target is unclear.",
+      "Leads, reports, estimates, inboxes, tasks, records, and handoffs live across too many tools.",
+      "Owners are comparing AI tools without knowing which workflow would create the clearest payoff.",
+      "Previous automation attempts stalled because the process, approvals, and exceptions were not mapped first.",
+    ],
+    systemBuilds: [
+      "Bottleneck map for repeated computer work, revenue leakage, owner drag, and visibility gaps",
+      "First-build recommendation across automation, AI agent, dashboard, internal app, integration, or process cleanup",
+      "Workflow scorecard for frequency, value, clarity, control, and expected proof",
+      "Human approval rules for pricing, sensitive messages, exceptions, and final decisions",
+      "Simple success metric tied to saved hours, faster response, cleaner handoffs, or better operating visibility",
+      "Next-step path into the AI Opportunity Audit when the workflow is worth deeper diagnosis",
+    ],
+    faqs: [
+      {
+        question: "What should my business automate first?",
+        answer:
+          "Start with the workflow closest to money, wasted labor, owner attention, customer delay, or operational visibility. Common first targets include lead response, follow-up, reporting, inbox triage, CRM updates, estimate prep, bid intake, data entry, and weekly status handoffs.",
+      },
+      {
+        question: "How do I choose between AI, automation, a dashboard, and an internal app?",
+        answer:
+          "Use the workflow to choose the system. Predictable repeated steps usually fit automation. Visibility gaps usually need dashboards. Team workflows often need internal tools. Reading, drafting, summarizing, triage, research, and flexible handoff prep may need an AI agent.",
+      },
+      {
+        question: "Can 247ROI help if I do not know where to start?",
+        answer:
+          "Yes. The AI Opportunity Audit is designed for that exact question. It identifies the first bottleneck worth fixing, what kind of system fits, what should stay human, and what proof would show the build is working.",
+      },
+      {
+        question: "Should messy workflows be automated?",
+        answer:
+          "Not blindly. Messy workflows often need mapping and cleanup before automation. 247ROI looks for clear inputs, outputs, rules, ownership, exceptions, and approval points before recommending a build.",
+      },
+    ],
+  },
+  {
     slug: "business-process-automation-consultant",
     title: "Business Process Automation Consultant | 247ROI",
     description:

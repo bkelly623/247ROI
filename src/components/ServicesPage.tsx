@@ -51,6 +51,11 @@ const process = [
 
 const servicePages = [
   {
+    title: "What should my business automate first?",
+    href: "/what-should-my-business-automate-first",
+    body: "For owners who need a practical bottleneck filter before choosing AI, automation, dashboards, internal apps, or process cleanup.",
+  },
+  {
     title: "AI automation consultant for small business",
     href: "/ai-automation-consultant-small-business",
     body: "For owners who know repeated computer work is wasting time but need help deciding what AI should touch first.",

@@ -84,6 +84,11 @@ const trustItems = [
 
 const serviceRoutes = [
   {
+    title: "What to automate first",
+    href: "/what-should-my-business-automate-first",
+    body: "Use a practical bottleneck filter before choosing AI, automation, dashboards, internal apps, or process cleanup.",
+  },
+  {
     title: "AI automation consultant",
     href: "/ai-automation-consultant-small-business",
     body: "Find the computer work AI should handle first, then build a practical system around it.",

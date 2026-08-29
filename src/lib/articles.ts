@@ -24,6 +24,134 @@ export type Article = {
 
 export const ARTICLES: Article[] = [
   {
+    slug: "what-should-my-business-automate-first",
+    title: "What Should My Business Automate First? A Practical Bottleneck Checklist",
+    description:
+      "A plain-English checklist for owners deciding whether AI, automation, a dashboard, an internal app, or a cleaner process should be the first business systems build.",
+    eyebrow: "Automation checklist",
+    primaryKeyword: "what should my business automate first",
+    secondaryKeywords: [
+      "small business automation checklist",
+      "business automation audit",
+      "AI automation for small business",
+      "workflow automation for small business",
+      "business process automation checklist",
+    ],
+    buyer:
+      "Owners and operators with repeated computer work, scattered data, slow follow-up, manual reporting, or overloaded managers.",
+    readTime: "7 min read",
+    publishedAt: "2026-08-29",
+    updatedAt: "2026-08-29",
+    summary:
+      "The first automation should not be the flashiest idea. It should be the bottleneck closest to money, wasted labor, owner attention, customer delay, or operational visibility.",
+    keyTakeaways: [
+      "Start with a bottleneck, not a tool. The right answer might be AI, automation, a dashboard, an internal app, an integration, or process cleanup.",
+      "The strongest first candidates happen often, have clear inputs and outputs, and create visible time savings or revenue protection.",
+      "Keep humans in control of pricing, sensitive messages, exceptions, and final decisions until the workflow has earned trust.",
+    ],
+    sections: [
+      {
+        heading: "The useful question is not what can AI do",
+        body: [
+          "A small business can automate a lot of computer work. That does not mean it should start everywhere.",
+          "The useful question is narrower: which bottleneck is costing the business enough time, attention, revenue, or visibility that a first system would clearly matter?",
+          "That first system might include AI. It might be a dashboard. It might be a workflow automation. It might be a simple internal app that replaces a fragile spreadsheet. The point is to choose the build around the work, not around the newest software category.",
+        ],
+      },
+      {
+        heading: "Use this scoring filter",
+        body: [
+          "A workflow is a strong first automation candidate when it scores well on frequency, value, clarity, and control.",
+          "Frequency means the work happens every day or every week. Value means the workflow is close to revenue, labor cost, customer experience, owner attention, or decision quality. Clarity means the inputs, rules, outputs, and handoffs can be described. Control means humans can review the parts that still need judgment.",
+        ],
+        bullets: [
+          "Frequency: does this happen often enough to matter?",
+          "Value: does it protect revenue, save labor, speed response, or reduce owner drag?",
+          "Clarity: can the inputs, outputs, rules, exceptions, and handoffs be mapped?",
+          "Control: can sensitive decisions stay human while the system prepares the work?",
+        ],
+      },
+      {
+        heading: "Start closest to money or owner attention",
+        body: [
+          "The best first automation usually sits close to one of two expensive problems: revenue leakage or owner bottlenecks.",
+          "Revenue leakage includes slow lead response, missed calls, stale estimates, weak follow-up, delayed proposals, and bid opportunities that never get reviewed cleanly. Owner bottlenecks include reporting, inbox triage, manual coordination, status chasing, and decisions that wait because the right information is scattered.",
+        ],
+        bullets: [
+          "New leads wait because nobody can respond quickly.",
+          "Estimates or proposals go quiet after the first conversation.",
+          "Managers rebuild reports from spreadsheets every week.",
+          "The owner has to ask three people and two systems to know what is happening.",
+          "Good opportunities sit in inboxes, portals, documents, or shared drives without a clear next step.",
+        ],
+      },
+      {
+        heading: "Match the bottleneck to the system type",
+        body: [
+          "Different bottlenecks need different systems. Calling everything an AI agent makes the work sound more advanced than it is and less clear than it should be.",
+          "If the problem is repeated data movement, use automation. If the problem is visibility, use a dashboard. If the problem is a messy team workflow, build an internal tool. If the problem needs reading, summarizing, drafting, classifying, or research, add an AI agent. If the problem is inconsistent rules, clean the process before automating it.",
+        ],
+        bullets: [
+          "Automation: moving data, routing work, sending reminders, updating records, and triggering next steps.",
+          "Dashboard: pulling scattered numbers into one owner-ready view with exception flags.",
+          "Internal app: intake, approvals, queues, status, notes, tasks, and workflow controls.",
+          "AI agent: summaries, drafts, triage, research, reporting, document review, and prepared handoffs.",
+          "Process cleanup: unclear ownership, missing rules, inconsistent approvals, or workflows that are too messy to trust yet.",
+        ],
+      },
+      {
+        heading: "What should stay human",
+        body: [
+          "The first version should not give software authority over decisions the business would not delegate to a new employee on day one.",
+          "That usually means AI can prepare the work, organize details, draft options, and flag exceptions while a human approves pricing, final messages, unusual requests, financial judgment, legal judgment, hiring decisions, and commitments to customers or vendors.",
+        ],
+      },
+      {
+        heading: "A good first build is small enough to prove",
+        body: [
+          "The first build should create proof quickly. A practical target is one workflow, one clear output, one owner of the result, and one success metric.",
+          "Examples: reduce weekly reporting prep from four hours to thirty minutes, respond to every web lead within two minutes, create a daily bid-review queue, prepare quote-ready customer summaries, or give the owner one dashboard that shows stale follow-up and blocked work.",
+        ],
+      },
+      {
+        heading: "The 247ROI recommendation",
+        body: [
+          "Bring the workflow that feels expensive, annoying, or invisible. 247ROI maps it, scores the bottleneck, and recommends the first system worth building.",
+          "The answer may be AI. It may be automation. It may be a dashboard, internal app, integration, or cleaner handoff system. The goal is not to use AI everywhere. The goal is to build the first practical system that saves time or creates ROI.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "What should a small business automate first?",
+        answer:
+          "Start with the workflow closest to money, wasted labor, owner attention, customer delay, or operational visibility. Good first targets include lead response, follow-up, reporting, inbox triage, CRM updates, estimate prep, bid intake, data entry, and weekly status handoffs.",
+      },
+      {
+        question: "How do I know if a workflow is ready for automation?",
+        answer:
+          "A workflow is ready when it happens often, has meaningful value, has clear inputs and outputs, and can keep human approval for sensitive decisions or unusual exceptions.",
+      },
+      {
+        question: "Should I start with AI or regular automation?",
+        answer:
+          "Start with the bottleneck, then choose the system. Use regular automation for predictable steps and data movement. Use AI when the work needs reading, summarizing, drafting, classifying, research, or flexible handoff preparation.",
+      },
+      {
+        question: "What if my process is messy?",
+        answer:
+          "That is common. The first step may be mapping and cleaning the workflow before automating it. A good system needs clear rules, ownership, inputs, outputs, exceptions, and approval points.",
+      },
+    ],
+    relatedLinks: [
+      { label: "AI Opportunity Audit", href: "/hire" },
+      { label: "Business process automation consultant", href: "/business-process-automation-consultant" },
+      { label: "Workflow automation consultant", href: "/workflow-automation-consultant" },
+      { label: "Custom AI agents for business", href: "/ai-agents-for-business" },
+      { label: "Custom business dashboard", href: "/custom-business-dashboard" },
+    ],
+  },
+  {
     slug: "contractor-bid-intake-automation",
     title: "Contractor Bid Intake Automation: How AI Can Clean Up Bid Invites Before Estimators Waste Time",
     description:
