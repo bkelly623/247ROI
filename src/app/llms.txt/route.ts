@@ -14,6 +14,8 @@ export function GET() {
     "",
     "Primary audience: local businesses, service firms, professional offices, owner-led companies, and SMB operators whose work is slowed by repeated computer tasks, scattered data, disconnected apps, owner bottlenecks, messy admin, reporting gaps, or unclear operational handoffs.",
     "",
+    "Referral partner guide: " + SITE_URL + "/referral-partners",
+    "",
     "Core services:",
     ...AI_EMPLOYEE_OFFERS.map((offer) => `- ${offer.title}: ${SITE_URL}${offer.route}`),
     "",

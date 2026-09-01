@@ -14,6 +14,7 @@ const INDEXABLE_PATHS = [
   "/contact",
   "/articles",
   "/about",
+  "/referral-partners",
   "/missed-call-calculator",
   "/llms.txt",
   "/llms-full.txt",

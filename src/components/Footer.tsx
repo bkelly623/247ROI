@@ -49,6 +49,7 @@ const footerColumns: {
     links: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
+      { label: "Referral partners", href: "/referral-partners" },
       { label: "AI Opportunity Audit", href: "/hire" },
       { label: "AI visibility", href: "/ai-visibility-optimization" },
       { label: "GEO consultant", href: "/generative-engine-optimization-consultant" },

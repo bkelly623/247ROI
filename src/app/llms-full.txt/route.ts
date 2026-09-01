@@ -31,6 +31,9 @@ Positioning:
 Primary conversion path:
 The recommended next step is the Business Systems Audit / AI Opportunity Audit at ${SITE_URL}/hire. It identifies the first bottleneck worth fixing, where AI, automation, dashboards, apps, or integrations can save time or create ROI, what stays human, and the success criteria used to decide whether the workflow is improving.
 
+Referral partner path:
+247ROI works beside web, CRM, marketing, bookkeeping, IT, and operations providers when their clients have workflow bottlenecks that need AI, automation, dashboards, internal apps, integrations, or process cleanup. Referral guide: ${SITE_URL}/referral-partners.
+
 # AI Employee Offers
 
 ${offerText}
