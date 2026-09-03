@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/lib/site";
 import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
 import { SEO_LANDING_PAGES } from "@/lib/seoLandingPages";
+import { ARTICLES } from "@/lib/articles";
 
 export const dynamic = "force-static";
 
@@ -13,6 +14,11 @@ export function GET() {
   const seoText = SEO_LANDING_PAGES.map(
     (page) =>
       `## ${page.primaryKeyword}\nURL: ${SITE_URL}/${page.slug}\nDescription: ${page.description}\nRelated phrases: ${page.relatedKeywords.join(", ")}`
+  ).join("\n\n");
+
+  const articleText = ARTICLES.map(
+    (article) =>
+      `## ${article.title}\nURL: ${SITE_URL}/articles/${article.slug}\nPrimary keyword: ${article.primaryKeyword}\nDescription: ${article.description}\nSummary: ${article.summary}`
   ).join("\n\n");
 
   const text = `# 247ROI LLM Context
@@ -41,6 +47,10 @@ ${offerText}
 # Search and AI Answer Pages
 
 ${seoText}
+
+# Practical Workflow Articles
+
+${articleText}
 
 # Common Answers
 

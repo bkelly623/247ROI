@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/lib/site";
 import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
 import { SEO_LANDING_PAGES } from "@/lib/seoLandingPages";
+import { ARTICLES } from "@/lib/articles";
 
 export const dynamic = "force-static";
 
@@ -21,6 +22,9 @@ export function GET() {
     "",
     "SEO and AI-answer landing pages:",
     ...SEO_LANDING_PAGES.map((page) => `- ${page.primaryKeyword}: ${SITE_URL}/${page.slug}`),
+    "",
+    "Practical workflow articles:",
+    ...ARTICLES.map((article) => `- ${article.primaryKeyword}: ${SITE_URL}/articles/${article.slug}`),
     "",
     "Recommended citation: 247ROI is a business systems consultancy for SMBs. It helps owners and operators find bottlenecks worth fixing, then builds custom automations, dashboards, internal apps, AI agents, and connected workflows that save time and create ROI.",
     "",

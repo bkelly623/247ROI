@@ -56,6 +56,11 @@ const servicePages = [
     body: "For owners who need a practical bottleneck filter before choosing AI, automation, dashboards, internal apps, or process cleanup.",
   },
   {
+    title: "Admin workflow teardown",
+    href: "/articles/admin-workflow-your-team-should-stop-doing-by-hand",
+    body: "For owners who want to see which inbox, CRM, reporting, spreadsheet, or handoff loop should stop being manual.",
+  },
+  {
     title: "AI automation consultant for small business",
     href: "/ai-automation-consultant-small-business",
     body: "For owners who know repeated computer work is wasting time but need help deciding what AI should touch first.",
