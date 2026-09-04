@@ -61,6 +61,11 @@ const servicePages = [
     body: "For owners who want to see which inbox, CRM, reporting, spreadsheet, or handoff loop should stop being manual.",
   },
   {
+    title: "Local business AI visibility checklist",
+    href: "/articles/local-business-ai-visibility-checklist",
+    body: "For businesses that want to know what to fix before expecting ChatGPT, Google AI, or Perplexity to understand and recommend them.",
+  },
+  {
     title: "AI automation consultant for small business",
     href: "/ai-automation-consultant-small-business",
     body: "For owners who know repeated computer work is wasting time but need help deciding what AI should touch first.",

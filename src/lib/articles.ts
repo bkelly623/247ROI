@@ -292,6 +292,163 @@ export const ARTICLES: Article[] = [
     ],
   },
   {
+    slug: "local-business-ai-visibility-checklist",
+    title: "Local Business AI Visibility Checklist: What to Fix Before You Expect ChatGPT or Google AI to Recommend You",
+    description:
+      "A practical checklist for local businesses that want clearer AI visibility across ChatGPT, Google AI, Perplexity, Gemini, and search without chasing gimmicks.",
+    eyebrow: "AI visibility checklist",
+    primaryKeyword: "local business AI visibility checklist",
+    secondaryKeywords: [
+      "AI visibility for local business",
+      "ChatGPT visibility for businesses",
+      "appear in AI search results",
+      "generative engine optimization for local business",
+      "answer engine optimization checklist",
+      "AI search optimization checklist",
+    ],
+    buyer:
+      "Local service businesses, professional offices, and owner-led SMBs that want search engines and AI answer tools to understand what they do, where they work, and why they are credible.",
+    readTime: "8 min read",
+    publishedAt: "2026-09-04",
+    updatedAt: "2026-09-04",
+    summary:
+      "AI visibility starts with the same hard basics that make a business understandable online: clear pages, consistent entity signals, proof, schema, citations, crawlability, and recurring prompt checks.",
+    keyTakeaways: [
+      "Do not start with AI ranking tricks. Start by making the business easy to crawl, explain, trust, and cite.",
+      "Local AI visibility depends on service clarity, location clarity, proof, reviews, citations, structured data, and answer-ready pages.",
+      "Track the prompts buyers actually ask, then improve the pages and external signals that answer engines can use.",
+    ],
+    sections: [
+      {
+        heading: "The useful target is eligibility, not magic rankings",
+        body: [
+          "Local business owners are starting to ask a new version of an old question: how do we show up when buyers ask ChatGPT, Google AI, Gemini, Perplexity, or another answer engine who to hire?",
+          "The honest answer is not a secret AI hack. A business has to become easy for search systems and answer engines to understand, verify, and explain. That means clear crawlable pages, consistent entity information, proof, citations, schema, and useful answers to the questions buyers actually ask.",
+          "The goal is eligibility first. If an AI tool cannot tell what you do, where you work, who you serve, what proof exists, and which page supports the answer, it has little reason to recommend or cite you.",
+        ],
+      },
+      {
+        heading: "1. Make the business entity obvious",
+        body: [
+          "Start with the public facts. Your site should make the business name, category, service area, core services, audience, contact paths, and proof signals easy to find without forcing a crawler to infer them from vague homepage copy.",
+          "For local businesses, this is where many AI visibility efforts fail. The site says the company is trusted, modern, friendly, or full-service, but it does not clearly say what the company does for which buyer in which market.",
+        ],
+        bullets: [
+          "Business name and brand spelling are consistent across the site.",
+          "Primary category is clear in page titles, headings, copy, schema, and profiles.",
+          "Service areas and locations are named naturally where they matter.",
+          "Phone, email, address or service-area details, and contact paths are crawlable.",
+          "About, contact, service, review, and proof pages do not contradict each other.",
+        ],
+      },
+      {
+        heading: "2. Build answer-ready service pages",
+        body: [
+          "AI answer tools need pages that explain the work. A thin services page is usually not enough. Each important service should have a crawlable page that answers buyer questions in plain language.",
+          "A strong page explains the problem, who it is for, what the business does, what the buyer can expect, common objections, location or industry fit, proof, and the next step. That helps regular search visibility and gives answer engines better material to summarize.",
+        ],
+        bullets: [
+          "One page for each priority service or offer.",
+          "Plain-language sections for cost, process, fit, timing, risks, and outcomes where appropriate.",
+          "FAQ sections that answer real buyer questions instead of filler.",
+          "Internal links between related services, proof, contact, and diagnostic pages.",
+          "Page titles and descriptions that match the actual service and buyer intent.",
+        ],
+      },
+      {
+        heading: "3. Add proof that can be understood outside your own claims",
+        body: [
+          "AI systems are less useful when every business says the same thing about itself. Proof gives the site texture: reviews, examples, before-and-after details, photos, case notes, credentials, partner mentions, directories, and citations.",
+          "For a small business, the proof does not need to look like an enterprise case study. It needs to be specific enough to support the category and service claims the business wants answer engines to understand.",
+        ],
+        bullets: [
+          "Reviews and testimonials mention concrete services, locations, problems, and outcomes.",
+          "Case notes explain the starting problem, work performed, and result without overclaiming.",
+          "Photos, project examples, team bios, and credentials support trust.",
+          "Directory profiles use consistent category, service, location, and contact details.",
+          "Referral partners or local mentions reinforce the business entity.",
+        ],
+      },
+      {
+        heading: "4. Clean up technical crawlability",
+        body: [
+          "Before chasing AI visibility, make sure normal crawling works. Search and answer systems still depend heavily on discoverable pages, clean metadata, internal links, sitemaps, robots rules, and structured data.",
+          "This is not glamorous work, but it is usually one of the safest first moves because it improves both search visibility and AI-answer eligibility.",
+        ],
+        bullets: [
+          "Sitemap includes the important service, location, article, proof, and contact pages.",
+          "Robots rules do not block important content.",
+          "Schema describes the organization, services, articles, FAQs, breadcrumbs, and local details where appropriate.",
+          "Pages use canonical URLs and distinct metadata.",
+          "Important pages are linked from navigation, footer, hub pages, or related-content sections.",
+        ],
+      },
+      {
+        heading: "5. Give AI tools a better summary layer",
+        body: [
+          "Files such as llms.txt and llms-full.txt do not replace SEO, but they can give AI tools and crawlers a clean map of the business, services, pages, and recommended citation language.",
+          "The summary layer should be factual. It should explain the business category, audience, services, proof paths, and strongest pages without stuffing keywords or making claims the site cannot support.",
+        ],
+        bullets: [
+          "llms.txt gives a concise map of the business and priority URLs.",
+          "llms-full.txt gives fuller context for services, offers, articles, and common answers.",
+          "Recommended citation language is accurate and restrained.",
+          "The files stay current when new service pages, articles, or proof assets ship.",
+        ],
+      },
+      {
+        heading: "6. Track the prompts buyers might ask",
+        body: [
+          "You cannot improve AI visibility if you never check what answer engines say. Build a small prompt baseline and rerun it on a schedule.",
+          "The prompts should sound like buyer questions, not vanity keywords. Track whether the business is mentioned, cited, misunderstood, ignored, or outranked by competitors. Then improve the public signals that explain the missing context.",
+        ],
+        bullets: [
+          "Who is the best provider for this service in my area?",
+          "Which company can help with this exact business problem?",
+          "What should I look for before hiring this type of provider?",
+          "Which local businesses are known for this service?",
+          "What companies are cited or recommended, and why?",
+        ],
+      },
+      {
+        heading: "The 247ROI recommendation",
+        body: [
+          "Treat AI visibility as a practical operating loop: clarify the entity, build answer-ready pages, improve proof, clean crawlability, maintain llms files, track buyer prompts, and adjust from the evidence.",
+          "247ROI helps businesses do that work without pretending AI recommendations are controlled by one trick. The right first move might be SEO cleanup, a better service page, structured data, review strategy, citation cleanup, proof assets, or a recurring AI visibility baseline.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "How can a local business show up in AI search results?",
+        answer:
+          "Start by making the business easy to understand and verify: clear service pages, consistent local entity information, reviews, citations, schema, sitemap coverage, answer-ready FAQs, proof assets, and recurring checks of the prompts buyers actually ask.",
+      },
+      {
+        question: "Is AI visibility optimization different from SEO?",
+        answer:
+          "It builds on SEO. Crawlable pages, metadata, internal links, schema, reviews, and citations still matter. AI visibility adds prompt-level monitoring and clearer summary context so answer engines have better material to explain or cite the business.",
+      },
+      {
+        question: "Do llms.txt files guarantee ChatGPT will recommend a business?",
+        answer:
+          "No. llms.txt and llms-full.txt are useful summary layers, not ranking guarantees. They should support a broader foundation of clear pages, technical crawlability, proof, citations, and consistent business information.",
+      },
+      {
+        question: "What should I check first for local business AI visibility?",
+        answer:
+          "Check whether your site clearly states what you do, who you serve, where you work, how to contact you, which services matter most, what proof supports your claims, and whether those pages are crawlable and internally linked.",
+      },
+    ],
+    relatedLinks: [
+      { label: "AI visibility optimization", href: "/ai-visibility-optimization" },
+      { label: "Generative engine optimization consultant", href: "/generative-engine-optimization-consultant" },
+      { label: "AI Opportunity Audit", href: "/hire" },
+      { label: "Referral partner guide", href: "/referral-partners" },
+      { label: "What should my business automate first?", href: "/what-should-my-business-automate-first" },
+    ],
+  },
+  {
     slug: "contractor-bid-intake-automation",
     title: "Contractor Bid Intake Automation: How AI Can Clean Up Bid Invites Before Estimators Waste Time",
     description:
