@@ -122,7 +122,7 @@ export default function ServicesPage() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
+                  <Link href="/ai-opportunity-audit">{HERO_PRIMARY_CTA_LABEL}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                   <Link href="/demo">See Example Workflows</Link>

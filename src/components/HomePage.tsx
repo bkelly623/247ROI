@@ -158,10 +158,10 @@ export default function HomePage() {
                     className="min-h-[3.5rem] rounded-full bg-orange-500 px-7 font-semibold text-white hover:bg-orange-600"
                   >
                     <Link
-                      href="/hire"
+                      href="/ai-opportunity-audit"
                       data-track-event="cta_click"
                       data-track-label={HERO_PRIMARY_CTA_LABEL}
-                      data-track-destination="/hire"
+                      data-track-destination="/ai-opportunity-audit"
                       data-track-source="homepage_hero"
                     >
                       {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
@@ -395,10 +395,10 @@ export default function HomePage() {
                   className="min-h-[3.5rem] rounded-full bg-orange-500 px-8 font-semibold text-white hover:bg-orange-600"
                 >
                   <Link
-                    href="/hire"
+                    href="/ai-opportunity-audit"
                     data-track-event="cta_click"
                     data-track-label={HERO_PRIMARY_CTA_LABEL}
-                    data-track-destination="/hire"
+                    data-track-destination="/ai-opportunity-audit"
                     data-track-source="homepage_bottom"
                   >
                     {HERO_PRIMARY_CTA_LABEL}

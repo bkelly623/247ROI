@@ -19,7 +19,7 @@ const footerColumns: {
     title: "Systems",
     links: [
       { label: "Services", href: "/services" },
-      { label: "Business systems audit", href: "/hire" },
+      { label: "Business systems audit", href: "/ai-opportunity-audit" },
       { label: "Process automation", href: "/business-process-automation-consultant" },
       { label: "Workflow automation", href: "/workflow-automation-consultant" },
       { label: "Internal tools", href: "/internal-tools-for-small-business" },
@@ -53,7 +53,7 @@ const footerColumns: {
       { label: "Brendan Kelly", href: "/brendan-kelly" },
       { label: "Contact", href: "/contact" },
       { label: "Referral partners", href: "/referral-partners" },
-      { label: "AI Opportunity Audit", href: "/hire" },
+      { label: "AI Opportunity Audit", href: "/ai-opportunity-audit" },
       { label: "AI visibility", href: "/ai-visibility-optimization" },
       { label: "GEO consultant", href: "/generative-engine-optimization-consultant" },
     ],

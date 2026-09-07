@@ -78,7 +78,7 @@ Each page should include:
 - implementation checklist
 - FAQs
 - schema
-- links to `/hire`, `/ai-employees`, `/demo`, and related pages
+- links to `/ai-opportunity-audit`, `/ai-employees`, `/demo`, and related pages
 - one concise CTA to the AI Employee Audit
 
 Recommended format:
@@ -160,7 +160,7 @@ This makes content useful even before it ranks.
 Every new page should:
 
 - link to the relevant cluster/pillar page
-- link to `/hire`
+- link to `/ai-opportunity-audit`
 - link to `/ai-employees`
 - link to `/demo` when an example exists
 - receive links from 2-4 existing related pages

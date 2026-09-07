@@ -228,7 +228,7 @@ Every generated web page should have:
 - human approval rules
 - useful outputs
 - FAQ section
-- internal links to `/hire`, `/ai-employees`, `/demo`, and the most relevant related pages
+- internal links to `/ai-opportunity-audit`, `/ai-employees`, `/demo`, and the most relevant related pages
 - schema where appropriate
 
 Every generated video concept should have:
@@ -246,7 +246,7 @@ Avoid:
 - claiming every build has direct ROI
 - overusing “scorecard”
 - thin AI-generated posts with no operational insight
-- pages that compete with the primary `/hire` conversion path
+- pages that compete with the primary `/ai-opportunity-audit` conversion path
 
 ## Suggested First 20 Pages
 

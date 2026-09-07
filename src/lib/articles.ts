@@ -144,7 +144,7 @@ export const ARTICLES: Article[] = [
       },
     ],
     relatedLinks: [
-      { label: "AI Opportunity Audit", href: "/hire" },
+      { label: "AI Opportunity Audit", href: "/ai-opportunity-audit" },
       { label: "Admin workflow teardown", href: "/articles/admin-workflow-your-team-should-stop-doing-by-hand" },
       { label: "Business process automation consultant", href: "/business-process-automation-consultant" },
       { label: "Workflow automation consultant", href: "/workflow-automation-consultant" },
@@ -284,7 +284,7 @@ export const ARTICLES: Article[] = [
       },
     ],
     relatedLinks: [
-      { label: "AI Opportunity Audit", href: "/hire" },
+      { label: "AI Opportunity Audit", href: "/ai-opportunity-audit" },
       { label: "Business process automation consultant", href: "/business-process-automation-consultant" },
       { label: "Workflow automation consultant", href: "/workflow-automation-consultant" },
       { label: "Internal tools for small business", href: "/internal-tools-for-small-business" },
@@ -443,7 +443,7 @@ export const ARTICLES: Article[] = [
     relatedLinks: [
       { label: "AI visibility optimization", href: "/ai-visibility-optimization" },
       { label: "Generative engine optimization consultant", href: "/generative-engine-optimization-consultant" },
-      { label: "AI Opportunity Audit", href: "/hire" },
+      { label: "AI Opportunity Audit", href: "/ai-opportunity-audit" },
       { label: "Referral partner guide", href: "/referral-partners" },
       { label: "What should my business automate first?", href: "/what-should-my-business-automate-first" },
     ],
@@ -577,7 +577,7 @@ export const ARTICLES: Article[] = [
       { label: "Custom AI employees", href: "/ai-employees" },
       { label: "Contractor bid assistant", href: "/contractor-bid-assistant" },
       { label: "AI workflow automation agency", href: "/ai-workflow-automation-agency" },
-      { label: "Find My First AI Employee", href: "/hire" },
+      { label: "Find My First AI Employee", href: "/ai-opportunity-audit" },
     ],
   },
 ];

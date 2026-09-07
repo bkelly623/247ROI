@@ -110,7 +110,7 @@ export function HireAuditFlow() {
         const res = await fetch("/api/hire/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ source: "hire_page" }),
+          body: JSON.stringify({ source: "ai_opportunity_audit_page" }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not start");
@@ -118,7 +118,7 @@ export function HireAuditFlow() {
           setSessionId(data.sessionId);
           trackSiteEvent({
             eventName: "hire_session_started",
-            source: "hire_page",
+            source: "ai_opportunity_audit_page",
             sessionId: data.sessionId,
           });
           if (data.opening) {
@@ -156,7 +156,7 @@ export function HireAuditFlow() {
     setMessages((prev) => [...prev, { id: uid(), role: "user", content: text }]);
     trackSiteEvent({
       eventName: overrideText ? "hire_triage_selected" : "hire_chat_message_sent",
-      source: "hire_page",
+      source: "ai_opportunity_audit_page",
       sessionId,
       metadata: {
         messageCount: messages.length + 1,
@@ -196,7 +196,7 @@ export function HireAuditFlow() {
         setShowGate(true);
         trackSiteEvent({
           eventName: "hire_gate_shown",
-          source: "hire_page",
+          source: "ai_opportunity_audit_page",
           sessionId: data.sessionId ?? sessionId,
           metadata: {
             phase: data.phase,
@@ -293,7 +293,7 @@ export function HireAuditFlow() {
                     sessionId &&
                     trackSiteEvent({
                       eventName: "hire_direct_call_clicked",
-                      source: "hire_page",
+                      source: "ai_opportunity_audit_page",
                       sessionId,
                     })
                   }
@@ -308,7 +308,7 @@ export function HireAuditFlow() {
                     sessionId &&
                     trackSiteEvent({
                       eventName: "hire_direct_email_clicked",
-                      source: "hire_page",
+                      source: "ai_opportunity_audit_page",
                       sessionId,
                     })
                   }
@@ -333,7 +333,7 @@ export function HireAuditFlow() {
                 sessionId &&
                 trackSiteEvent({
                   eventName: "hire_services_route_clicked",
-                  source: "hire_page",
+                  source: "ai_opportunity_audit_page",
                   sessionId,
                 })
               }
@@ -478,7 +478,7 @@ export function HireAuditFlow() {
           discovery={discovery}
           messages={messages.map(({ role, content }) => ({ role, content }))}
           onUnlocked={(id) => {
-            router.push(`/hire/${id}`);
+            router.push(`/ai-opportunity-audit/${id}`);
           }}
         />
       )}

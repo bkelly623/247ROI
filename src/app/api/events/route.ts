@@ -12,6 +12,20 @@ type EventBody = {
   metadata?: Record<string, unknown>;
 };
 
+const INTERNAL_USER_AGENT_PATTERNS = [
+  "247ROI-AuditBot",
+  "Athena",
+  "OpenClaw",
+  "HeadlessChrome",
+  "Playwright",
+  "Puppeteer",
+  "curl/",
+  "Wget/",
+  "python-requests/",
+  "node-fetch",
+  "undici",
+];
+
 function clean(value: unknown, max = 500) {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
@@ -32,6 +46,37 @@ function clientIp(req: NextRequest) {
     req.headers.get("x-real-ip") ||
     null
   );
+}
+
+function listFromEnv(name: string) {
+  return (process.env[name] ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+function classifyInternalTraffic(ip: string | null, userAgent: string | null) {
+  const internalIps = listFromEnv("ANALYTICS_INTERNAL_IPS");
+  const internalIpHashes = listFromEnv("ANALYTICS_INTERNAL_IP_HASHES");
+  const userAgentPatterns = [
+    ...INTERNAL_USER_AGENT_PATTERNS,
+    ...listFromEnv("ANALYTICS_INTERNAL_USER_AGENT_PATTERNS"),
+  ];
+  const ipHash = hashIp(ip);
+
+  if (ip && internalIps.includes(ip)) {
+    return { excludedFromMetrics: true, exclusionReason: "internal_ip", ipHash };
+  }
+
+  if (ipHash && internalIpHashes.includes(ipHash)) {
+    return { excludedFromMetrics: true, exclusionReason: "internal_ip_hash", ipHash };
+  }
+
+  if (userAgent && userAgentPatterns.some((pattern) => userAgent.includes(pattern))) {
+    return { excludedFromMetrics: true, exclusionReason: "internal_user_agent", ipHash };
+  }
+
+  return { excludedFromMetrics: false, exclusionReason: null, ipHash };
 }
 
 export async function POST(req: NextRequest) {
@@ -59,6 +104,10 @@ export async function POST(req: NextRequest) {
       ? body.metadata
       : {};
 
+  const ip = clientIp(req);
+  const userAgent = clean(req.headers.get("user-agent"), 500);
+  const trafficClass = classifyInternalTraffic(ip, userAgent);
+
   const payload = {
     eventName,
     path: clean(body.path, 500),
@@ -67,9 +116,15 @@ export async function POST(req: NextRequest) {
     source: clean(body.source, 120),
     sessionId: clean(body.sessionId, 160),
     visitorId: clean(body.visitorId, 160),
-    ipHash: hashIp(clientIp(req)),
-    userAgent: clean(req.headers.get("user-agent"), 500),
-    metadata,
+    ipHash: trafficClass.ipHash,
+    userAgent,
+    metadata: {
+      ...metadata,
+      trafficClass: {
+        excludedFromMetrics: trafficClass.excludedFromMetrics,
+        exclusionReason: trafficClass.exclusionReason,
+      },
+    },
   };
 
   const response = await fetch(ingestUrl, {

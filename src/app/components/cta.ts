@@ -1,6 +1,6 @@
 /** Primary conversion path: Business Systems Audit / AI Opportunity Audit chat. */
-export const CALENDAR_PATH = "/hire";
-export const HIRE_AUDIT_PATH = "/hire";
+export const CALENDAR_PATH = "/ai-opportunity-audit";
+export const HIRE_AUDIT_PATH = "/ai-opportunity-audit";
 
 /** @deprecated Legacy in-page contact hash. */
 export const BOOKING_ANCHOR = "#contact";

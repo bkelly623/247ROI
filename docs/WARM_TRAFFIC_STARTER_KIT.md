@@ -124,7 +124,7 @@ https://www.get247roi.com/what-should-my-business-automate-first
 
 - visits to `/what-should-my-business-automate-first`
 - CTA clicks from that page
-- `/hire` starts after visiting that page
+- `/ai-opportunity-audit` starts after visiting that page
 - replies from direct shares
 - warm introductions generated
 - objections or exact owner language worth folding into the next page

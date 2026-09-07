@@ -84,7 +84,7 @@ export default function ContactPage() {
                     </div>
                   ))}
                 </div>
-                <Link href="/hire" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
+                <Link href="/ai-opportunity-audit" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
                   Start the audit
                 </Link>
               </div>

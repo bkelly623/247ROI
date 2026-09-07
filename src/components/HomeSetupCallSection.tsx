@@ -47,7 +47,7 @@ export default function HomeSetupCallSection() {
             </p>
             <div className="mt-7 flex flex-col gap-3">
               <Button asChild size="lg" className="justify-center rounded-full bg-primary px-7 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">
+                <Link href="/ai-opportunity-audit">
                   {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                 </Link>
               </Button>

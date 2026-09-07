@@ -28,7 +28,7 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{page.subheadline}</p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                    <Link href="/hire">
+                    <Link href="/ai-opportunity-audit">
                       {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
@@ -155,7 +155,7 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
                 what should stay human, and what is worth building first.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
+                <Link href="/ai-opportunity-audit">{HERO_PRIMARY_CTA_LABEL}</Link>
               </Button>
             </div>
           </div>

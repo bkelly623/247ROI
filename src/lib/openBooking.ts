@@ -1,6 +1,6 @@
 import { CALENDAR_PATH } from "@/app/components/cta";
 
-/** Legacy homepage anchor id. New conversion path is `/hire`. */
+/** Legacy homepage anchor id. New conversion path is `/ai-opportunity-audit`. */
 export const BOOKING_HASH = "contact";
 
 export { CALENDAR_PATH } from "@/app/components/cta";

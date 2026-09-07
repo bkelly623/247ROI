@@ -27,6 +27,6 @@ export function requestBookCallFocus(pathname: string | null | undefined): void 
   if (isHomePathname(path)) {
     scrollBookCallIntoView();
   } else {
-    window.location.assign("/hire");
+    window.location.assign("/ai-opportunity-audit");
   }
 }

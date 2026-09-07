@@ -346,4 +346,4 @@ No. The recommended version keeps final quantities, exclusions, pricing, and sub
 - `/contractor-bid-assistant`
 - `/ai-employees-for-service-businesses`
 - `/ai-workflow-automation-agency`
-- `/hire`
+- `/ai-opportunity-audit`

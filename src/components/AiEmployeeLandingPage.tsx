@@ -151,7 +151,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                     size="lg"
                     className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90"
                   >
-                    <Link href="/hire">Find My First AI Employee</Link>
+                    <Link href="/ai-opportunity-audit">Find My First AI Employee</Link>
                   </Button>
                   <Button
                     asChild
@@ -396,7 +396,7 @@ export default function AiEmployeeLandingPage({ offer }: { offer: AiEmployeeOffe
                   Start the audit and we will map the role, the handoffs, the approval checkpoints, and the success criteria before anything goes live.
                 </p>
               </div>
-              <Link href="/hire" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
+              <Link href="/ai-opportunity-audit" className="inline-flex shrink-0 items-center gap-2 font-semibold text-primary underline underline-offset-4">
                 Start Audit <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>

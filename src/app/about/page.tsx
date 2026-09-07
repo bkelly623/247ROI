@@ -60,7 +60,7 @@ export default function AboutPage() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/hire">
+                  <Link href="/ai-opportunity-audit">
                     {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                   </Link>
                 </Button>
@@ -132,7 +132,7 @@ export default function AboutPage() {
                 ready yet.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">Start the AI Opportunity Audit</Link>
+                <Link href="/ai-opportunity-audit">Start the AI Opportunity Audit</Link>
               </Button>
             </div>
           </div>

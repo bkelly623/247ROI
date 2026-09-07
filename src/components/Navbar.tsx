@@ -15,7 +15,7 @@ import {
 } from "@/lib/siteLogo";
 
 const navLinks = [
-  { name: "AI Opportunity Audit", href: "/hire" },
+  { name: "AI Opportunity Audit", href: "/ai-opportunity-audit" },
   { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
   { name: "About", href: "/about" },
@@ -82,10 +82,10 @@ export default function Navbar() {
                 className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold whitespace-nowrap"
               >
                 <Link
-                  href="/hire"
+                  href="/ai-opportunity-audit"
                   data-track-event="cta_click"
                   data-track-label={CTA_LABEL_NAV}
-                  data-track-destination="/hire"
+                  data-track-destination="/ai-opportunity-audit"
                   data-track-source="navbar"
                 >
                   {CTA_LABEL_NAV}
@@ -173,10 +173,10 @@ export default function Navbar() {
                 className="min-h-[3.5rem] w-full rounded-full bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90"
               >
                 <Link
-                  href="/hire"
+                  href="/ai-opportunity-audit"
                   data-track-event="cta_click"
                   data-track-label={CTA_LABEL_NAV}
-                  data-track-destination="/hire"
+                  data-track-destination="/ai-opportunity-audit"
                   data-track-source="mobile_nav"
                   onClick={() => setIsOpen(false)}
                 >

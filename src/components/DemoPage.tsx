@@ -100,7 +100,7 @@ export default function DemoPage() {
               </p>
               <div className="mt-8 flex justify-center">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/hire">{HERO_PRIMARY_CTA_LABEL}</Link>
+                  <Link href="/ai-opportunity-audit">{HERO_PRIMARY_CTA_LABEL}</Link>
                 </Button>
               </div>
             </motion.div>
@@ -227,7 +227,7 @@ export default function DemoPage() {
                       {text}
                     </div>
                   ))}
-                  <Link href="/hire" className="inline-flex items-center gap-2 font-semibold text-primary underline underline-offset-4">
+                  <Link href="/ai-opportunity-audit" className="inline-flex items-center gap-2 font-semibold text-primary underline underline-offset-4">
                     Start Audit <ArrowRight className="h-4 w-4" aria-hidden />
                   </Link>
                 </div>

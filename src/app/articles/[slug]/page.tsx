@@ -97,7 +97,7 @@ export default async function ArticlePage({ params }: PageProps) {
                   <span>Primary keyword: {article.primaryKeyword}</span>
                 </div>
                 <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/hire">
+                  <Link href="/ai-opportunity-audit">
                     Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                   </Link>
                 </Button>
@@ -172,7 +172,7 @@ export default async function ArticlePage({ params }: PageProps) {
                       Want to see the version of this inside your business?
                     </p>
                     <Button asChild className="mt-4 w-full rounded-full bg-primary font-semibold text-primary-foreground hover:bg-primary/90">
-                      <Link href="/hire">Find My First AI Employee</Link>
+                      <Link href="/ai-opportunity-audit">Find My First AI Employee</Link>
                     </Button>
                   </div>
                 </aside>

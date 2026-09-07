@@ -7,7 +7,7 @@ import { SEO_LANDING_PAGE_PATHS } from "@/lib/seoLandingPages";
 
 const INDEXABLE_PATHS = [
   "/",
-  "/hire",
+  "/ai-opportunity-audit",
   "/services",
   "/ai-employees",
   "/demo",

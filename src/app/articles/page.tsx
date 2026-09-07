@@ -40,7 +40,7 @@ export default function ArticlesPage() {
                 can handle, what humans still approve, and where custom software can save time.
               </p>
               <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/hire">
+                <Link href="/ai-opportunity-audit">
                   Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                 </Link>
               </Button>
