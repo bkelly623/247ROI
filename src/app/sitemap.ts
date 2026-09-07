@@ -29,7 +29,6 @@ const INDEXABLE_PATHS = [
   "/terms-of-service",
   "/consent",
   "/guarantee",
-  "/terms",
   "/transcripts",
 ];
 

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seo:check-sitemap": "node scripts/check-sitemap-urls.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
