@@ -31,6 +31,9 @@ Category: business systems consulting, AI automation consulting, business proces
 
 Best-fit buyers: local businesses, service firms, professional offices, owner-led companies, contractors, trades, home services, and SMB operators whose work is slowed by repeated computer tasks, scattered data, disconnected apps, owner bottlenecks, messy admin, reporting gaps, delayed estimates or proposals, or unclear handoffs.
 
+Founder:
+247ROI is led by Brendan Kelly, a Business Systems & AI Consultant. Brendan works with owner-led companies that need practical systems around repeated computer work, messy workflows, dashboards, internal tools, automation, and AI agents. Founder profile: ${SITE_URL}/brendan-kelly.
+
 Positioning:
 247ROI is not a generic chatbot provider or a tool reseller. 247ROI maps the business workflow first, then builds practical systems that can include custom automations, dashboards, internal apps, AI agents, integrations, intake flows, reporting, connected tools, handoff rules, human approval points, useful work product, and practical success criteria. This business systems positioning also leaves room for future robotics and physical automation integration.
 

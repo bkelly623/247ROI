@@ -50,6 +50,7 @@ const footerColumns: {
     title: "Company",
     links: [
       { label: "About", href: "/about" },
+      { label: "Brendan Kelly", href: "/brendan-kelly" },
       { label: "Contact", href: "/contact" },
       { label: "Referral partners", href: "/referral-partners" },
       { label: "AI Opportunity Audit", href: "/hire" },

@@ -51,6 +51,13 @@ export default function AboutPage() {
                 firms, professional offices, and SMB operators use AI, automation, and custom software to clean up real
                 operational work.
               </p>
+              <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground">
+                Read the dedicated{" "}
+                <Link href="/brendan-kelly" className="font-semibold text-primary underline underline-offset-4">
+                  Brendan Kelly founder profile
+                </Link>{" "}
+                for the person-level entity signal behind 247ROI.
+              </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
                   <Link href="/hire">
