@@ -4,10 +4,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { SEO_LANDING_PAGES, type SeoLandingPage as SeoLandingPageType } from "@/lib/seoLandingPages";
+import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
 import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
 
 export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
   const relatedPages = SEO_LANDING_PAGES.filter((candidate) => page.relatedPageSlugs?.includes(candidate.slug));
+  const relatedOffers = AI_EMPLOYEE_OFFERS.filter((offer) => page.relatedOfferSlugs?.includes(offer.slug));
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,6 +121,37 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
             </div>
           </div>
         </section>
+
+        {relatedOffers.length > 0 ? (
+          <section className="border-b border-border/40 py-16 md:py-20">
+            <div className="container mx-auto px-6">
+              <div className="mx-auto max-w-5xl">
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Role examples</span>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Start with a job description the business can inspect.</h2>
+                <p className="mt-4 max-w-3xl text-muted-foreground">
+                  Each AI employee should have a defined workflow, expected output, human approval rules, and a metric
+                  that shows whether the system is improving the business.
+                </p>
+                <div className="mt-8 grid gap-4 md:grid-cols-2">
+                  {relatedOffers.map((offer) => (
+                    <Link
+                      key={offer.slug}
+                      href={offer.route}
+                      className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-primary/40 hover:bg-primary/10"
+                    >
+                      <p className="text-sm font-semibold text-primary">{offer.title}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/85">{offer.bestFor}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{offer.subheadline}</p>
+                      <span className="mt-4 inline-flex items-center text-sm font-semibold text-foreground">
+                        See role <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {relatedPages.length > 0 ? (
           <section className="border-b border-border/40 py-16 md:py-20">

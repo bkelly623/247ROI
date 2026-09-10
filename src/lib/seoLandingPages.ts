@@ -13,6 +13,7 @@ export type SeoLandingPage = {
   systemBuilds: string[];
   faqs: { question: string; answer: string }[];
   relatedPageSlugs?: string[];
+  relatedOfferSlugs?: string[];
 };
 
 export const SEO_LANDING_PAGES: SeoLandingPage[] = [
@@ -200,13 +201,13 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
   },
   {
     slug: "ai-employees-for-small-business",
-    title: "AI Employees for Small Business | 247ROI",
+    title: "AI Employees for Small Business Workflows | 247ROI",
     description:
-      "247ROI builds managed AI employees for small businesses that need faster lead response, follow-up, estimating prep, inbox triage, reporting, and workflow automation.",
+      "247ROI builds managed AI employees for small business workflows: lead response, follow-up, estimating prep, inbox triage, CRM updates, reporting, and operations handoffs.",
     eyebrow: "AI employees for small business",
-    headline: "Hire AI for the work your team keeps missing, delaying, or repeating.",
+    headline: "AI employees for the small-business work that keeps slipping.",
     subheadline:
-      "247ROI builds managed AI employees with clear job descriptions, connected tools, human approval rules, and practical success criteria for small businesses.",
+      "247ROI builds role-based AI employees around real small-business workflows: leads, estimates, inboxes, CRM records, reporting, admin queues, and owner approvals.",
     primaryKeyword: "AI employees for small business",
     relatedKeywords: [
       "managed AI employees",
@@ -214,25 +215,36 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       "AI workers for small business",
       "AI automation for small business",
       "custom AI agents for business",
+      "AI operations coordinator",
+      "AI workflow automation for small business",
     ],
+    relatedPageSlugs: [
+      "ai-agents-for-business",
+      "workflow-automation-consultant",
+      "business-process-automation-consultant",
+      "ai-employees-for-service-businesses",
+      "ai-automation-consultant-small-business",
+    ],
+    relatedOfferSlugs: ["ai-operations-coordinator", "ai-follow-up-agent", "ai-estimator", "ai-receptionist"],
     buyerProblems: [
-      "New leads wait too long before someone responds.",
-      "Follow-up depends on whoever has time that day.",
-      "Owners are buried in inboxes, estimates, summaries, and handoffs.",
-      "Software exists, but nobody owns the daily workflow.",
+      "New leads, missed calls, and form fills wait too long before someone follows up.",
+      "CRM records, inboxes, estimates, reminders, and customer notes are scattered across too many places.",
+      "Owners and office managers become the operating queue because nobody owns the daily handoffs.",
+      "Generic AI tools create drafts, but the business still needs connected inputs, rules, approvals, and useful output.",
     ],
     systemBuilds: [
-      "AI lead response employee",
-      "AI follow-up employee",
-      "AI estimating prep employee",
-      "AI inbox and admin employee",
-      "AI reporting and dashboard employee",
+      "AI operations coordinator for inbox triage, CRM update prep, daily queues, and status handoffs",
+      "AI lead response employee for missed calls, form fills, urgent routing, and intake summaries",
+      "AI follow-up employee for new leads, stale estimates, reminders, and reactivation",
+      "AI estimating prep employee for job details, photos, quote-ready notes, and review packets",
+      "AI reporting and dashboard employee for weekly owner summaries, pipeline visibility, and exception flags",
+      "Human approval rules for pricing, final customer messages, sensitive decisions, and unusual exceptions",
     ],
     faqs: [
       {
         question: "What is an AI employee for a small business?",
         answer:
-          "An AI employee is a managed workflow system with a specific job description. It handles repeatable tasks such as lead response, follow-up, estimating prep, bid intake, inbox triage, or reporting while escalating judgment calls to a human.",
+          "An AI employee is a managed workflow system with a specific job description. It handles repeatable small-business work such as lead response, follow-up, estimating prep, bid intake, inbox triage, CRM updates, reporting, or daily handoffs while escalating judgment calls to a human.",
       },
       {
         question: "Is an AI employee just a chatbot?",
@@ -242,7 +254,17 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       {
         question: "How does 247ROI decide which AI employee to build first?",
         answer:
-          "247ROI starts with an audit of where time or revenue leaks today, then recommends the first AI employee most likely to save labor, capture revenue, or improve follow-through.",
+          "247ROI starts with the workflow closest to money, wasted labor, owner attention, customer delay, or operational visibility. The first AI employee is usually the role most likely to save hours, capture revenue, improve follow-through, or clean up the operating queue.",
+      },
+      {
+        question: "What small-business roles make the strongest first AI employees?",
+        answer:
+          "The strongest first roles are usually operations coordinator, lead response, follow-up, estimating prep, inbox triage, CRM update prep, and reporting. These roles have repeated inputs, clear outputs, and practical proof such as faster response, fewer dropped handoffs, cleaner records, or saved owner time.",
+      },
+      {
+        question: "Can an AI employee work inside my existing tools?",
+        answer:
+          "Usually, yes. 247ROI designs the workflow around the tools already carrying the work: inboxes, forms, CRMs, calendars, spreadsheets, documents, dashboards, and internal systems. The goal is not another loose AI tool; it is a managed workflow with connected inputs and approval points.",
       },
     ],
   },
@@ -263,6 +285,8 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       "AI estimator for contractors",
       "contractor workflow automation",
     ],
+    relatedPageSlugs: ["ai-employees-for-small-business", "ai-lead-response-system", "workflow-automation-consultant"],
+    relatedOfferSlugs: ["ai-receptionist", "ai-follow-up-agent", "ai-estimator", "ai-operations-coordinator"],
     buyerProblems: [
       "Calls and form leads arrive while the team is on jobs.",
       "Estimates take too long to prepare and follow up.",
