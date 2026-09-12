@@ -138,20 +138,44 @@ export async function runHireChatTurn(input: {
   discovery: DiscoveryState;
 }): Promise<ChatTurn> {
   const system = buildSystemPrompt(input.discovery);
+  const fallback = runSalesTurn(input.discovery, input.messages);
 
   try {
     const text = await callOpenAI(system, input.messages);
     if (text) {
       const raw = extractJson(text);
       const turn = normalizeTurn(raw, input.discovery);
-      if (turn?.reply) return turn;
+      if (turn?.reply) {
+        const fallbackDiscovery = fallback.discovery ?? input.discovery;
+        const turnDiscovery = turn.discovery ?? input.discovery;
+        const discovery = mergeDiscovery(fallbackDiscovery, turnDiscovery);
+        const readyForGate = Boolean(turn.readyForGate && fallback.readyForGate);
+        let proposal = turn.proposal;
+        if (readyForGate && !proposal && discovery.pains.length) {
+          proposal = proposalFallback(discovery);
+        }
+
+        return {
+          ...turn,
+          discovery,
+          proposal,
+          readyForGate,
+          teaserLine:
+            readyForGate && (turn.teaserLine ?? null)
+              ? turn.teaserLine
+              : !readyForGate
+                ? null
+                : proposal
+                  ? `${proposal.employeeName} · ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week`
+                  : null,
+        };
+      }
     }
   } catch (e) {
     console.error("hire OpenAI parse failed", e);
   }
 
   // Offline / quota / parse failure
-  const fallback = runSalesTurn(input.discovery, input.messages);
   return {
     ...fallback,
     choices: null,

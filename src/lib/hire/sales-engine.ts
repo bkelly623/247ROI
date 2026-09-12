@@ -74,6 +74,27 @@ function isVagueIndustry(text: string): boolean {
   );
 }
 
+function splitIndustryAndPain(text: string): {
+  industryText: string;
+  painText: string | null;
+} {
+  const trimmed = text.trim();
+  const firstSentence = trimmed.split(/[.!?]\s+/)[0]?.trim() ?? trimmed;
+  const industryMatch = firstSentence.match(
+    /^(?:i|we)\s+(?:run|own|have|operate)\s+(?:a|an|the|small|local|\s)*(.+?)(?:\s+(?:company|business|shop|firm|practice))?$/i
+  );
+  const industryText = industryMatch?.[1]?.trim() || firstSentence;
+  const painText =
+    trimmed.length > firstSentence.length
+      ? trimmed.slice(firstSentence.length).replace(/^[.!?\s]+/, "").trim()
+      : null;
+
+  return {
+    industryText,
+    painText: painText && painText.length > 8 ? painText : null,
+  };
+}
+
 function extractHours(text: string): number | null {
   const lower = text.toLowerCase();
   const day = lower.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?)?\s*(a|per|\/)?\s*day/);
@@ -147,9 +168,30 @@ export function runSalesTurn(
     if (/what do you mean|why|huh|wdym/i.test(lower)) {
       return base(pickLine(hireLines.clarifyIndustry, seed), d);
     }
-    const industry = normalizeIndustryLabel(last);
+    const intro = splitIndustryAndPain(last);
+    const industry = normalizeIndustryLabel(intro.industryText);
     if (!industry) {
       return base(pickLine(hireLines.clarifyIndustry, seed + "x"), d);
+    }
+    if (intro.painText) {
+      const title = titleFromText(intro.painText);
+      const pain = emptyPain(title, intro.painText, "pain1");
+      pain.confidence = 0.72;
+      d = note(
+        {
+          ...d,
+          businessType: industry,
+          pains: [pain],
+          activePainId: "pain1",
+          salesStage: "detail",
+        },
+        "task_captured"
+      );
+      return base(
+        `${industry} — useful. ${title.toLowerCase()} sounds like the first bottleneck to inspect.\nWalk me through it from the moment it starts to the moment it is either handled or forgotten.`,
+        d,
+        { phase: "process" }
+      );
     }
     d = { ...d, businessType: industry, salesStage: "task" };
     return base(askWhatEatsTime(industry), d, { phase: "pain1" });

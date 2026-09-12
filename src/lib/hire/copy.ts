@@ -1,5 +1,5 @@
 export const HIRE_OPENING =
-  "Welcome to the 247ROI AI Opportunity Audit.\n\nThis is a guided business systems audit for owners and operators who want to find the bottlenecks worth fixing first before spending money on the wrong software.\n\nThe goal is simple: find the first workflow where a better system could save time, improve visibility, reduce repeated computer work, or create measurable ROI. That system might be a custom automation, a dashboard, an internal app, an AI agent, a software integration, or a clearer human approval process.\n\nWe will look for where time, money, data, admin, visibility, or handoffs are leaking. Then we will separate what software can prepare or handle from what should stay under human control.\n\nStart with the basics: what kind of business are you in, and what work keeps getting delayed, repeated, missed, or stuck on your plate?";
+  "Welcome to the 247ROI AI Opportunity Audit.\n\nWe are going to find the first workflow worth fixing before anyone spends money on the wrong software.\n\nTell me two things: what kind of business are you in, and what work keeps getting delayed, repeated, missed, or stuck on your plate?";
 
 /**
  * Alternative opener — the “tech arc” story. Kept for A/B testing once
@@ -30,7 +30,7 @@ export const HIRE_PAGE = {
   triageNote:
     "This gives the audit useful context immediately. You can still describe the messy version in your own words after it opens the right path.",
   routingEyebrow: "Already know you need help?",
-  routingTitle: "Talk to 247ROI directly or use the audit to sharpen the first project.",
+  routingTitle: "Use the audit to sharpen the first project, or talk to 247ROI directly.",
   routingBody:
     "The useful call is not a generic AI demo. Bring one messy workflow and we will decide what should be automated, what needs a dashboard or internal app, and what should stay human.",
   routingProof: [

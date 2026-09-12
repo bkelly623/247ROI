@@ -229,7 +229,7 @@ export function HireAuditFlow() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="relative flex flex-1 flex-col pt-24 sm:pt-28">
+      <main className="relative flex flex-1 flex-col pt-20 sm:pt-24">
         <div
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
@@ -238,43 +238,88 @@ export function HireAuditFlow() {
           }}
         />
 
-        <section id="audit" className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-5 sm:px-6">
-          <header className="space-y-3 pb-5 pt-4 text-center sm:pt-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
-              {HIRE_PAGE.eyebrow}
-            </p>
-            <h1 className="mx-auto max-w-2xl font-display text-3xl font-bold leading-[1.08] tracking-tight text-zinc-50 sm:text-5xl">
-              {HIRE_PAGE.headline}
-            </h1>
-            <p className="mx-auto max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
-              {HIRE_PAGE.subhead}
-            </p>
-            <ul className="mx-auto grid max-w-xl grid-cols-1 gap-2 pt-2 text-left sm:grid-cols-2">
+        <section id="audit" className="mx-auto grid w-full max-w-7xl flex-1 gap-5 px-4 pb-6 pt-4 sm:px-6 lg:grid-cols-[0.78fr_1.22fr] lg:items-start lg:gap-6 lg:pt-6">
+          <aside className="space-y-4 lg:sticky lg:top-24">
+            <header className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+                {HIRE_PAGE.eyebrow}
+              </p>
+              <h1 className="max-w-2xl font-display text-3xl font-bold leading-[1.06] tracking-tight text-zinc-50 sm:text-5xl lg:text-6xl">
+                {HIRE_PAGE.headline}
+              </h1>
+              <p className="max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+                {HIRE_PAGE.subhead}
+              </p>
+            </header>
+
+            <div className="grid gap-2 text-sm text-zinc-400 sm:grid-cols-3 lg:grid-cols-1">
+              {["No obligation", "Useful even if we do not build", "Human judgment stays in control"].map((item) => (
+                <div key={item} className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2">
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            <ul className="grid gap-2 text-left sm:grid-cols-2 lg:grid-cols-1">
               {HIRE_PAGE.proofPoints.map((point) => (
                 <li
                   key={point}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-zinc-300"
+                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-zinc-300"
                 >
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-orange-400" />
                   <span>{point}</span>
                 </li>
               ))}
             </ul>
-            <p className="mx-auto max-w-lg text-sm leading-relaxed text-zinc-500">
+
+            <p className="max-w-lg text-sm leading-relaxed text-zinc-500">
               {HIRE_PAGE.microcopy}
             </p>
-          </header>
 
-          <div className="mb-4 grid gap-2 text-sm text-zinc-400 sm:grid-cols-3">
-            {["No obligation", "Useful even if we do not build", "Human judgment stays in control"].map((item) => (
-              <div key={item} className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-center">
-                {item}
+            {messages.length <= 1 && !showGate && (
+              <div className="rounded-2xl border border-white/10 bg-zinc-950/70 p-4 sm:rounded-3xl sm:p-5">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+                    {HIRE_PAGE.triageEyebrow}
+                  </p>
+                  <h2 className="mt-2 font-display text-xl font-bold leading-tight text-zinc-50 sm:text-2xl">
+                    {HIRE_PAGE.triageTitle}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-zinc-500">
+                    {HIRE_PAGE.triageNote}
+                  </p>
+                </div>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                  {HIRE_PAGE.triageChoices.map((choice) => {
+                    const Icon = triageIcons[choice.id] ?? HelpCircle;
+
+                    return (
+                      <button
+                        key={choice.id}
+                        type="button"
+                        disabled={!sessionId || busy}
+                        onClick={() => void send(undefined, choice.message)}
+                        className="group flex min-h-24 items-start gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-orange-400 transition group-hover:bg-orange-500 group-hover:text-white">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold text-zinc-100">
+                            {choice.title}
+                          </span>
+                          <span className="mt-1 block text-sm leading-5 text-zinc-500">
+                            {choice.body}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            ))}
-          </div>
+            )}
 
-          <div className="mb-4 rounded-2xl border border-orange-500/20 bg-orange-500/[0.06] p-4 sm:rounded-3xl sm:p-5">
-            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="rounded-2xl border border-orange-500/20 bg-orange-500/[0.06] p-4 sm:rounded-3xl sm:p-5">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">
                   {HIRE_PAGE.routingEyebrow}
@@ -286,7 +331,7 @@ export function HireAuditFlow() {
                   {HIRE_PAGE.routingBody}
                 </p>
               </div>
-              <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row lg:flex-col">
                 <a
                   href={PRIMARY_PHONE_HREF}
                   onClick={() =>
@@ -319,7 +364,7 @@ export function HireAuditFlow() {
                 </a>
               </div>
             </div>
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            <div className="mt-4 grid gap-2">
               {HIRE_PAGE.routingProof.map((item) => (
                 <div key={item} className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-zinc-300">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-orange-300" />
@@ -342,54 +387,17 @@ export function HireAuditFlow() {
               See service paths
               <ArrowUpRight className="h-4 w-4" />
             </Link>
-          </div>
+          </aside>
 
-          {messages.length <= 1 && !showGate && (
-            <div className="mb-4 rounded-2xl border border-white/10 bg-zinc-950/70 p-4 sm:rounded-3xl sm:p-5">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
-                    {HIRE_PAGE.triageEyebrow}
-                  </p>
-                  <h2 className="mt-2 font-display text-xl font-bold leading-tight text-zinc-50 sm:text-2xl">
-                    {HIRE_PAGE.triageTitle}
-                  </h2>
-                </div>
-                <p className="max-w-md text-sm leading-6 text-zinc-500">
-                  {HIRE_PAGE.triageNote}
-                </p>
-              </div>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {HIRE_PAGE.triageChoices.map((choice) => {
-                  const Icon = triageIcons[choice.id] ?? HelpCircle;
-
-                  return (
-                    <button
-                      key={choice.id}
-                      type="button"
-                      disabled={!sessionId || busy}
-                      onClick={() => void send(undefined, choice.message)}
-                      className="group flex min-h-28 items-start gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-orange-400 transition group-hover:bg-orange-500 group-hover:text-white">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-zinc-100">
-                          {choice.title}
-                        </span>
-                        <span className="mt-1 block text-sm leading-5 text-zinc-500">
-                          {choice.body}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+          <div className="flex min-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)] sm:rounded-3xl lg:min-h-[calc(100vh-7.5rem)]">
+            <div className="border-b border-white/10 px-4 py-3 sm:px-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+                Live discovery audit
+              </p>
+              <p className="mt-1 text-sm text-zinc-500">
+                Describe the messy workflow. The audit will map the bottleneck, fit, and next system.
+              </p>
             </div>
-          )}
-
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)] sm:rounded-3xl">
             <ProgressBar discovery={discovery} />
 
             <div className="flex-1 space-y-4 overflow-y-auto px-4 py-5 sm:px-6 sm:py-7">
