@@ -175,7 +175,7 @@ export function pageSpeedDeficits(ps: PageSpeedResult): AuditDeficit[] {
     deficits.push({
       severity: "warning",
       finding: `Lighthouse flagged: ${audit}`,
-      fix: "Resolve in Smart Site Foundation migration.",
+      fix: "Review this Lighthouse finding and make a targeted code or asset fix; a migration is not established as necessary.",
       category: "seo",
     });
   }

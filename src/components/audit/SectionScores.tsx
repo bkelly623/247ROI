@@ -16,7 +16,7 @@ export function SectionScores({
         const score = section.score;
         const display = score !== null ? String(score) : "—";
         const label =
-          score !== null ? scoreLabel(score) : section.measured ? "N/A" : "Not measured";
+          score !== null ? scoreLabel(score) : section.measured ? "Evidence collected" : "Not measured";
 
         return (
           <Card key={section.key} className="border-zinc-800/80">

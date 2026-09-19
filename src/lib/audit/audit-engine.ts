@@ -11,8 +11,6 @@ import { GROWTH_TIERS } from "./industry-stats";
 import { inferServiceFromName } from "./infer-service";
 import {
   detectSocialLinks,
-  socialScoreFromSignals,
-  socialSummary,
 } from "./social-detect";
 import { probePageSpeed, pageSpeedDeficits } from "./probes/pagespeed";
 import {
@@ -71,15 +69,14 @@ function buildSections(input: {
 }): AuditSection[] {
   const { site, google } = input;
   const social = detectSocialLinks(site.html);
-  const socialScore = socialScoreFromSignals(social);
-  const socialCopy = socialSummary(social);
+  const linkedPlatforms = Object.entries(social).filter(([key, value]) => key.startsWith("has") && value === true).length;
 
   // Retired: schema, word count and Lighthouse cannot establish AI visibility
   // or a Google discoverability percentage. Preserve raw observations separately.
   const aiScore: number | null = null;
   const aiMeasured = false;
   const seoScore: number | null = null;
-  const seoMeasured = false;
+  const seoMeasured = google.blocks.some(b => b.results.length > 0);
 
   // Reputation — real GBP data only
   let repScore: number | null = null;
@@ -112,7 +109,7 @@ function buildSections(input: {
       score: seoScore,
       measured: seoMeasured,
       dataSource: "Google PageSpeed Insights + SerpAPI local/organic",
-      summary: "No composite Google visibility score. Review dated search observations and authorized first-party GSC separately.",
+      summary: google.summary,
       topFix: "Prioritize evidenced search and conversion issues; no compulsory rebuild.",
     },
     {
@@ -123,19 +120,19 @@ function buildSections(input: {
       measured: repMeasured,
       dataSource: "Google Business Profile via SerpAPI",
       summary: !repMeasured
-        ? "Not measured — add SERPAPI_KEY for GBP review data."
+        ? "No verified review count or rating was returned. This does not mean you have no reviews."
         : `Google listing: ${google.businessListing.rating ?? "?"}★ · ${google.businessListing.reviewCount ?? 0} reviews.`,
-      topFix: "Automated review generation after every completed job.",
+      topFix: "Confirm the relevant business listing and review data before choosing a review-request workflow.",
     },
     {
       key: "social",
       label: "Social Presence",
       plainQuestion: "Are profiles linked on your site?",
-      score: socialScore,
+      score: null,
       measured: site.fetched,
       dataSource: "Homepage HTML link detection",
-      summary: socialCopy.summary,
-      topFix: socialCopy.topFix,
+      summary: site.fetched ? `Homepage links detected to ${linkedPlatforms} tracked social platforms. This does not measure profile activity or reputation.` : "Homepage could not be assessed.",
+      topFix: "Link official active profiles where useful; do not infer a need for a posting service from missing links alone.",
     },
   ];
 }
