@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- external Playwright test harness */
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { runAuditPipeline } from "../src/lib/audit/audit-engine";
 const require = createRequire(import.meta.url);
@@ -10,11 +11,12 @@ async function main() {
   for (const key of ['GOOGLE_PAGESPEED_API_KEY','PAGESPEED_API_KEY','PAGE_SPEED_API_KEY','GOOGLE_PSI_API_KEY','PSI_API_KEY','PAGESPEED_INSIGHTS_API_KEY','SERPAPI_KEY','SERP_API_KEY','SERPAPI_API_KEY','GOOGLE_PLACES_API_KEY','GOOGLE_PLACES_KEY','PLACES_API_KEY']) delete process.env[key];
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (url) => new Response(String(url).endsWith('robots.txt') ? 'User-agent: *\nAllow: /\nSitemap: https://example.com/sitemap.xml' : '<html><title>Independent consulting fixture</title><meta name="description" content="Business automation consulting"><h1>Business automation consulting</h1><p>Useful business consulting.</p></html>', { status: 200 });
-  const report = await runAuditPipeline({ businessName: '247ROI', websiteUrl: 'https://example.com', zipCode: '27401' });
+  const report = process.env.AUDIT_QA_REPORT ? JSON.parse(readFileSync(process.env.AUDIT_QA_REPORT, 'utf8')).result.report : await runAuditPipeline({ businessName: '247ROI', websiteUrl: 'https://example.com', zipCode: '27401' });
   globalThis.fetch = originalFetch;
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   try {
     for (const width of [390,1280]) {
+    for (const view of ["present", "report"]) {
       const page = await browser.newPage({ viewport: { width, height: 900 }, acceptDownloads: true });
       const id = '11111111-1111-4111-8111-111111111111';
       let runs = 0;
@@ -26,7 +28,7 @@ async function main() {
         if (url.pathname === `/api/sessions/${id}`) return route.fulfill({ json: { session: { id, business_name: '247ROI', website_url: 'https://example.com', zip_code: '27401', status: 'complete', mode: 'organic', report } } });
         return route.fulfill({ json: { ok: true } });
       });
-      await page.goto(`${base}/present/${id}`);
+      await page.goto(`${base}/${view}/${id}`);
       await page.getByText('247ROI', { exact: true }).first().waitFor();
       await page.waitForTimeout(800);
       assert.equal(runs, 0, 'saved report open must not start a new scan');
@@ -38,9 +40,11 @@ async function main() {
       assert(opportunityLinks > 0, 'qualification CTA is a native navigable link');
       await page.reload(); await page.getByText('247ROI', { exact: true }).first().waitFor();
       assert.equal(runs, 0, 'refresh must reopen saved evidence without collection');
-      await page.screenshot({ path: `/tmp/247roi-visibility-${width}.png`, fullPage: true });
+      await page.screenshot({ path: `/tmp/247roi-visibility-${view}-${width}.png`, fullPage: true });
+      if (width === 1280 && view === "report") await page.pdf({ path: "/tmp/247roi-visibility-qa.pdf", format: "A4", printBackground: true });
       await page.close();
       console.log(`PASS offline browser ${width}: saved report/reopen, no scan rerun, qualification links, no horizontal overflow`);
+    }
     }
   } finally { await browser.close(); }
 }

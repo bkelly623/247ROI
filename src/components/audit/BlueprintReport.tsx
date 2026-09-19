@@ -151,7 +151,7 @@ function GoogleRankings({ googleLocal, businessName }: {
   };
 
   return (
-    <Card className="border-zinc-800 glass-panel h-full">
+    <Card className="min-w-0 border-zinc-800 glass-panel h-full">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <MapPin className="h-5 w-5 text-primary" />
@@ -305,7 +305,7 @@ export function BlueprintReport({
       <ReportEmail sessionId={sessionId} />
       <SectionScores sections={report.sections} compact={isPresent} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
         <PageSpeedVitals report={report} />
         <GoogleRankings
           googleLocal={report.googleLocal}
@@ -440,7 +440,7 @@ export function BlueprintReportHeader({
   refreshing?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between border-b border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur sm:px-8">
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur sm:px-8">
       <div>
         <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
           247ROI · {variant === "present" ? "Meet Close Tool" : "Infrastructure Blueprint"}
