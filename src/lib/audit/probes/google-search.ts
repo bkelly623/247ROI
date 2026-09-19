@@ -1,16 +1,20 @@
 import { businessNameMentioned } from "../infer-service";
-import type { AuditDeficit, GoogleLocalResult } from "../types";
+import type { AuditDeficit, GoogleAIOverviewEvidence, GoogleLocalResult } from "../types";
 import { getPlacesKey, getSerpApiKey } from "../env";
 
 export interface GoogleSearchBlock {
   query: string;
   type: "local" | "organic";
+  source?: "serpapi" | "places";
+  observedAt?: string;
+  location?: string;
   results: GoogleLocalResult[];
   clientFound: boolean;
   clientPosition: number | null;
 }
 
 export interface GoogleSearchAudit {
+  aiOverviews?: GoogleAIOverviewEvidence[];
   configured: boolean;
   blocks: GoogleSearchBlock[];
   businessListing: {
@@ -49,10 +53,13 @@ function parseOrganic(
   return organic.slice(0, 10).map((item, i) => {
     const title = String(item.title ?? "Unknown");
     const link = String(item.link ?? "");
-    const isClient = Boolean(
-      businessNameMentioned(title, businessName) ||
-        (websiteHost && link.includes(websiteHost))
-    );
+    // Brand mentions and lookalike URLs are not rankings for the audited site.
+    let isClient = false;
+    try {
+      const resultHost = new URL(link).hostname.toLowerCase().replace(/^www\./, "");
+      const targetHost = websiteHost.replace(/^www\./, "");
+      isClient = Boolean(targetHost && (resultHost === targetHost || resultHost.endsWith(`.${targetHost}`)));
+    } catch { /* Invalid URLs do not establish a match. */ }
     return {
       position: (item.position as number) ?? i + 1,
       name: title,
@@ -77,12 +84,15 @@ async function serpSearch(
   const location = zipCode ? `${zipCode}, United States` : "United States";
   url.searchParams.set("location", location);
 
-  const res = await fetch(url.toString(), { next: { revalidate: 0 } });
+  try {
+  const res = await fetch(url.toString(), { next: { revalidate: 0 }, signal: AbortSignal.timeout(25000) });
   if (!res.ok) {
-    const text = await res.text();
-    return { error: `SerpAPI ${res.status}: ${text.slice(0, 180)}` };
+    return { error: `Search provider HTTP ${res.status}` };
   }
-  return { data: await res.json() };
+  const data = await res.json();
+  if (data.error) return { error: "Search provider did not return a usable sample" };
+  return { data };
+  } catch { return { error: "Search collection failed or timed out" }; }
 }
 
 async function placesSearch(
@@ -94,6 +104,7 @@ async function placesSearch(
 
   const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
     method: "POST",
+    signal: AbortSignal.timeout(25000),
     headers: {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": key,
@@ -119,6 +130,29 @@ async function placesSearch(
       isClient: businessNameMentioned(name, businessName),
     };
   });
+}
+
+// Only parse answer text already present in the organic response. Never follow
+// an async token or issue another paid request to populate a missing answer.
+export function parseAIOverview(data: Record<string, unknown>, query: string, location: string): GoogleAIOverviewEvidence {
+  const overview = data.ai_overview as Record<string, unknown> | undefined;
+  const texts: string[] = [];
+  function walk(value: unknown): void {
+    if (!value || typeof value !== "object") return;
+    const node = value as Record<string, unknown>;
+    if (typeof node.snippet === "string") texts.push(node.snippet);
+    for (const key of ["text_blocks", "list"]) if (Array.isArray(node[key])) (node[key] as unknown[]).forEach(walk);
+  }
+  walk(overview);
+  const answer = texts.join("\n").trim();
+  const references = Array.isArray(overview?.references) ? overview.references as Record<string, unknown>[] : [];
+  const citations = references.flatMap(ref => {
+    if (typeof ref.link !== "string") return [];
+    try { const url = new URL(ref.link); if (!['https:', 'http:'].includes(url.protocol)) return []; }
+    catch { return []; }
+    return [{ title: String(ref.title ?? ref.link), url: ref.link }];
+  });
+  return { query, location, observedAt: new Date().toISOString(), source: "serpapi", state: answer ? "observed" : overview ? "unavailable" : "not_returned", ...(answer ? { answer } : {}), citations };
 }
 
 export async function probeGoogleSearch(input: {
@@ -147,15 +181,25 @@ export async function probeGoogleSearch(input: {
       configured: false,
       blocks: [],
       businessListing: { found: false },
-      summary: "Google rankings not measured — add SERPAPI_KEY to Vercel.",
+      summary: "Google rankings were not measured in this scan.",
       rawError: "No Google search API configured",
     };
   }
 
   const blocks: GoogleSearchBlock[] = [];
+  const aiOverviews: GoogleAIOverviewEvidence[] = [];
+
+  // Same three existing captures, in parallel so a slow provider cannot consume
+  // three consecutive timeouts. No extra requests are introduced.
+  const [localRes, organicRes, brandRes] = hasSerp
+    ? await Promise.all([
+        serpSearch("google_local", queries.local, input.zipCode),
+        serpSearch("google", queries.organic, input.zipCode),
+        serpSearch("google", queries.branded, input.zipCode),
+      ])
+    : [{}, {}, {}];
 
   if (hasSerp) {
-    const localRes = await serpSearch("google_local", queries.local, input.zipCode);
     if (localRes.error) errors.push(localRes.error);
     if (localRes.data) {
       const results = parseLocal(localRes.data, input.businessName);
@@ -163,20 +207,22 @@ export async function probeGoogleSearch(input: {
       blocks.push({
         query: queries.local,
         type: "local",
+        source: "serpapi",
         results,
         clientFound: Boolean(hit),
         clientPosition: hit?.position ?? null,
       });
     }
 
-    const organicRes = await serpSearch("google", queries.organic, input.zipCode);
     if (organicRes.error) errors.push(organicRes.error);
     if (organicRes.data) {
+      aiOverviews.push(parseAIOverview(organicRes.data, queries.organic, `${input.zipCode}, United States`));
       const results = parseOrganic(organicRes.data, input.businessName, host);
       const hit = results.find((r) => r.isClient);
       blocks.push({
         query: queries.organic,
         type: "organic",
+        source: "serpapi",
         results,
         clientFound: Boolean(hit),
         clientPosition: hit?.position ?? null,
@@ -190,6 +236,7 @@ export async function probeGoogleSearch(input: {
     blocks.push({
       query: queries.local,
       type: "local",
+      source: "places",
       results,
       clientFound: Boolean(hit),
       clientPosition: hit?.position ?? null,
@@ -199,12 +246,17 @@ export async function probeGoogleSearch(input: {
   let businessListing: GoogleSearchAudit["businessListing"] = { found: false };
 
   if (hasSerp) {
-    const brandRes = await serpSearch("google", queries.branded, input.zipCode);
     const brandData = brandRes.data;
+    if (brandRes.error) errors.push(brandRes.error);
+    if (brandData) {
+      const results = parseOrganic(brandData, input.businessName, host);
+      const hit = results.find(r => r.isClient);
+      blocks.push({ query: queries.branded, type: "organic", source: "serpapi", results, clientFound: Boolean(hit), clientPosition: hit?.position ?? null });
+    }
     const kg = brandData?.knowledge_graph as Record<string, unknown> | undefined;
     const local = brandData?.local_results as Record<string, unknown>[] | undefined;
 
-    if (kg) {
+    if (kg && businessNameMentioned(String(kg.title ?? ""), input.businessName)) {
       businessListing = {
         found: true,
         name: String(kg.title ?? input.businessName),
@@ -231,7 +283,7 @@ export async function probeGoogleSearch(input: {
   }
 
   const localBlock = blocks.find((b) => b.type === "local");
-  const organicBlock = blocks.find((b) => b.type === "organic");
+  const organicBlock = blocks.find((b) => b.type === "organic" && b.clientFound) ?? blocks.find((b) => b.type === "organic");
 
   let summary = "";
   if (!localBlock?.clientFound && !organicBlock?.clientFound) {
@@ -239,10 +291,10 @@ export async function probeGoogleSearch(input: {
   } else {
     const parts: string[] = [];
     if (localBlock?.clientFound) {
-      parts.push(`local pack #${localBlock.clientPosition}`);
+      parts.push(localBlock.source === "places" ? "Places discovery match (not a ranking)" : `local search sample #${localBlock.clientPosition}`);
     }
     if (organicBlock?.clientFound) {
-      parts.push(`organic #${organicBlock.clientPosition}`);
+      parts.push(`organic #${organicBlock.clientPosition} for “${organicBlock.query}”`);
     }
     summary = `Found on Google: ${parts.join(", ")}.`;
   }
@@ -252,16 +304,22 @@ export async function probeGoogleSearch(input: {
   }
 
   const measured = blocks.some((b) => b.results.length > 0);
+  for (const block of blocks) {
+    block.observedAt = new Date().toISOString();
+    block.location = `${input.zipCode}, United States`;
+  }
+
 
   return {
     configured: hasSerp || hasPlaces,
     blocks,
+    aiOverviews,
     businessListing,
     summary: measured
       ? summary
       : errors[0]
         ? `Google measurement failed: ${errors[0]}`
-        : "No Google results returned for this market.",
+        : "No usable search results returned; visibility remains unmeasured.",
     rawError: errors[0],
   };
 }
@@ -272,7 +330,7 @@ export function googleDeficits(google: GoogleSearchAudit): AuditDeficit[] {
     deficits.push({
       severity: "warning",
       finding: google.summary,
-      fix: "Add SERPAPI_KEY to Vercel as SERPAPI_KEY (exact name), redeploy, re-run audit.",
+      fix: "Obtain a verified search sample before drawing ranking conclusions. This is a measurement gap, not a website defect.",
       category: "seo",
     });
     return deficits;
@@ -289,19 +347,19 @@ export function googleDeficits(google: GoogleSearchAudit): AuditDeficit[] {
   }
 
   const local = google.blocks.find((b) => b.type === "local");
-  if (local && !local.clientFound) {
+  if (local && local.results.length > 0 && !local.clientFound) {
     deficits.push({
-      severity: "critical",
-      finding: `Not in Google local results for "${local.query}".`,
-      fix: "Optimize GBP, local pages, and citations (Growth / AI Visibility program).",
+      severity: "info",
+      finding: `Not matched in the returned ${local.source === "places" ? "Places discovery" : "local search"} sample for "${local.query}".`,
+      fix: "Confirm this service and geography matter first. If relevant, 247ROI can review the listing and matching service page; this is not overall ranking evidence.",
       category: "seo",
     });
   }
 
   if (google.businessListing.found) {
-    const reviews = google.businessListing.reviewCount ?? 0;
+    const reviews = google.businessListing.reviewCount;
     const rating = google.businessListing.rating ?? 0;
-    if (reviews < 20) {
+    if (reviews !== undefined && reviews < 20) {
       deficits.push({
         severity: "warning",
         finding: `Google Business Profile has only ${reviews} reviews.`,
@@ -312,16 +370,16 @@ export function googleDeficits(google: GoogleSearchAudit): AuditDeficit[] {
     if (rating > 0 && rating < 4.3) {
       deficits.push({
         severity: "warning",
-        finding: `Google rating is ${rating}★ — below trust threshold for premium jobs.`,
+        finding: `Observed Google listing rating: ${rating}★.`,
         fix: "Review response system + service quality follow-up.",
         category: "reputation",
       });
     }
   } else {
     deficits.push({
-      severity: "critical",
-      finding: "Google Business Profile not matched in search data.",
-      fix: "Claim and optimize GBP; ensure NAP matches website.",
+      severity: "info",
+      finding: "Google Business Profile not matched in the returned search data; existence is unverified.",
+      fix: "Confirm listing ownership and local-business eligibility before recommending GBP work.",
       category: "reputation",
     });
   }

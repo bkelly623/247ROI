@@ -81,22 +81,22 @@ function parseJsonLd(html: string): SchemaBlock[] {
   return blocks;
 }
 
-async function fetchText(url: string, timeoutMs = 8000): Promise<{ text: string; status: number } | null> {
+async function fetchSiteText(url: string, timeoutMs = 8000): Promise<{ text: string; status: number } | null> {
   try {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), timeoutMs);
     const res = await fetch(url, {
-      signal: controller.signal,
+      signal: AbortSignal.timeout(timeoutMs),
       headers: { "User-Agent": "247ROI-AuditBot/2.0" },
     });
-    clearTimeout(t);
     return { text: await res.text(), status: res.status };
   } catch {
     return null;
   }
 }
 
-export async function probeSiteCrawl(rawUrl: string): Promise<SiteCrawlResult> {
+export async function probeSiteCrawl(
+  rawUrl: string,
+  fetchText: (url: string) => Promise<{ text: string; status: number } | null> = fetchSiteText,
+): Promise<SiteCrawlResult> {
   const url = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
   const origin = new URL(url).origin;
 
@@ -122,8 +122,8 @@ export async function probeSiteCrawl(rawUrl: string): Promise<SiteCrawlResult> {
   };
 
   const page = await fetchText(url);
-  if (!page) {
-    return { ...empty, fetchError: "Could not reach website" };
+  if (!page || page.status < 200 || page.status >= 300) {
+    return { ...empty, httpStatus: page?.status, fetchError: page ? `Website returned HTTP ${page.status}; page not assessed.` : "Could not reach website within the scan time limit." };
   }
 
   const html = page.text;
@@ -152,20 +152,20 @@ export async function probeSiteCrawl(rawUrl: string): Promise<SiteCrawlResult> {
   const robots = await fetchText(`${origin}/robots.txt`);
   let hasRobots = false;
   let allowsCrawl = true;
-  if (robots) {
+  if (robots && robots.status === 200 && !/<html/i.test(robots.text)) {
     hasRobots = true;
     if (/Disallow:\s*\/\s*$/im.test(robots.text)) allowsCrawl = false;
   }
 
   let hasSitemap = false;
   let sitemapUrl: string | undefined;
-  const sitemapLoc = robots?.text.match(/Sitemap:\s*(.+)/i)?.[1]?.trim();
+  const sitemapLoc = hasRobots ? robots?.text.match(/Sitemap:\s*(.+)/i)?.[1]?.trim() : undefined;
   if (sitemapLoc) {
     hasSitemap = true;
     sitemapUrl = sitemapLoc;
   } else {
     const sm = await fetchText(`${origin}/sitemap.xml`);
-    if (sm && sm.text.includes("<urlset")) {
+    if (sm && sm.status === 200 && /<(urlset|sitemapindex)\b/.test(sm.text)) {
       hasSitemap = true;
       sitemapUrl = `${origin}/sitemap.xml`;
     }
@@ -228,9 +228,9 @@ export function siteCrawlDeficits(site: SiteCrawlResult): AuditDeficit[] {
 
   if (!site.hasLocalBusinessSchema) {
     deficits.push({
-      severity: "critical",
-      finding: "No valid LocalBusiness JSON-LD schema detected.",
-      fix: "Inject structured business data (Smart Site Foundation).",
+      severity: "info",
+      finding: "LocalBusiness JSON-LD not detected; applicability depends on the business model.",
+      fix: "Check whether Organization or LocalBusiness fits the business. Schema alone does not establish AI recommendations.",
       category: "ai",
     });
   } else {

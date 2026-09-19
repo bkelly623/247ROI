@@ -1,4 +1,5 @@
 const TRADE_PATTERNS: { pattern: RegExp; label: string; service: string }[] = [
+  { pattern: /\b247\s*roi\b|\bdiscovizlabs\b/i, label: "AI & Business Automation", service: "AI business automation consultant" },
   { pattern: /roof/i, label: "Roofing", service: "roofer" },
   { pattern: /plumb/i, label: "Plumbing", service: "plumber" },
   { pattern: /hvac|heating|cooling|air condition/i, label: "HVAC", service: "HVAC contractor" },
@@ -20,7 +21,8 @@ export function inferServiceFromName(businessName: string): {
       return { tradeLabel: label, servicePhrase: service };
     }
   }
-  return { tradeLabel: "Home Services", servicePhrase: "home services contractor" };
+  // An unknown name is not evidence of a home-service business.
+  return { tradeLabel: "Business Services (unconfirmed)", servicePhrase: businessName.trim() || "business services" };
 }
 
 export function businessNameMentioned(

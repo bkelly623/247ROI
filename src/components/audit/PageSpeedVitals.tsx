@@ -77,8 +77,7 @@ export function PageSpeedVitals({ report }: { report: AuditReport }) {
       <CardContent>
         {keyMissing ? (
           <div className="rounded-xl border border-dashed border-zinc-700 p-6 text-center text-sm text-zinc-500">
-            Add <code className="text-primary">GOOGLE_PAGESPEED_API_KEY</code> in
-            Vercel, then re-run audit.
+            Mobile performance was not measured in this scan. This is a measurement gap, not evidence that your website is slow.
           </div>
         ) : error ? (
           <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-400">

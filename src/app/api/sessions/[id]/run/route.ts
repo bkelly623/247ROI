@@ -36,16 +36,18 @@ export async function POST(
       callbackUrl,
     });
 
-    await updateSession(id, {
+    const saved = await updateSession(id, {
       status: "complete",
       report,
       progress_events: report.progressEvents,
       warm_tier: "warm_a",
     });
+    if (!saved?.report) throw new Error("Report storage did not confirm the save");
 
-    return NextResponse.json({ sessionId: id, report });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Audit failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ sessionId: id, report: saved.report });
+  } catch {
+    // Do not expose provider/account errors or leave failed scans marked running.
+    await updateSession(id, { status: "failed" }).catch(() => null);
+    return NextResponse.json({ error: "The audit could not complete or save its report. Please retry; unavailable checks are not negative findings." }, { status: 503 });
   }
 }

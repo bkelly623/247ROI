@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ReportEmail } from "@/components/audit/ReportEmail";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -12,12 +13,10 @@ import {
   XCircle,
 } from "lucide-react";
 import type { AuditReport, GoogleLocalProbe, ScanSession } from "@/lib/audit/types";
-import { IndustryPulse } from "@/components/audit/IndustryPulse";
 import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
-import { GrowthSimulator } from "@/components/audit/GrowthSimulator";
 import { SectionScores } from "@/components/audit/SectionScores";
 import { PageSpeedVitals } from "@/components/audit/PageSpeedVitals";
-import { ScoreRing } from "@/components/audit/ScoreRing";
+import { inferServiceFromName } from "@/lib/audit/infer-service";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +29,7 @@ function DataSourceStrip({ report }: { report: AuditReport }) {
   const items = [
     { ok: meta.dataSources.siteCrawl, label: "Site Crawl" },
     { ok: meta.dataSources.pageSpeed, label: "Lighthouse" },
-    { ok: meta.dataSources.googleSearch, label: "Google Rankings" },
+    { ok: meta.dataSources.googleSearch, label: "Google Search Samples" },
   ];
 
   return (
@@ -54,7 +53,7 @@ function DataSourceStrip({ report }: { report: AuditReport }) {
       ))}
       {meta.dataSources.missing.length > 0 && (
         <span className="text-xs text-amber-400">
-          Missing: {meta.dataSources.missing.join(", ")}
+          Some checks were unavailable; see measurement limits below.
         </span>
       )}
     </div>
@@ -68,13 +67,13 @@ function GoogleRankings({ googleLocal, businessName }: {
   if (!googleLocal) return null;
 
   const localBlock =
-    googleLocal.blocks.find((b) => b.query.includes("near")) ??
-    googleLocal.blocks[0];
-  const organicBlock = googleLocal.blocks.find((b) => b.query.includes("best"));
+    googleLocal.blocks.find((b) => b.type === "local" || (!b.type && b.query.includes("near"))) ??
+    googleLocal.blocks.find((b) => !b.type);
+  const organicBlock = googleLocal.blocks.find((b) => b.type === "organic" || (!b.type && b.query.includes("best")));
 
   const showBlock = (
     title: string,
-    block: { query: string; results: GoogleLocalProbe["primaryResults"] } | undefined
+    block: GoogleLocalProbe["blocks"][number] | undefined
   ) => {
     if (!block) return null;
     const clientIn = block.results.some((r) => r.isClient);
@@ -85,16 +84,23 @@ function GoogleRankings({ googleLocal, businessName }: {
           <p className="text-sm font-medium text-zinc-300">{title}</p>
           {clientIn ? (
             <Badge className="border-emerald-500/40 bg-emerald-500/10 text-emerald-400">
-              You appear
+              Matched in sample
             </Badge>
           ) : (
             <Badge className="border-red-500/40 bg-red-500/10 text-red-400">
-              Not visible
+              {block.results.length ? "Not found in sample" : "Unmeasured"}
             </Badge>
           )}
         </div>
+        <p className="break-words text-sm text-zinc-300">Query: “{block.query}”</p>
+        <p className="text-xs text-zinc-500">
+          {block.source === "places" ? "Places discovery order — not a Google ranking" : block.source === "serpapi" ? "SerpAPI search snapshot" : "Legacy sample — source not retained"}
+          {block.location ? ` · ${block.location}` : " · location not retained"}
+          {block.observedAt ? ` · ${block.observedAt}` : " · capture time not retained"}
+          {` · ${block.results.length} returned results`}
+        </p>
         {block.results.length === 0 ? (
-          <p className="text-sm text-zinc-500">No results for this search.</p>
+          <p className="text-sm text-zinc-500">No usable results returned; this does not establish absence.</p>
         ) : (
           <div className="space-y-1.5">
             {block.results.slice(0, 6).map((r) => (
@@ -154,24 +160,34 @@ function GoogleRankings({ googleLocal, businessName }: {
         <p className="text-sm text-zinc-500">{googleLocal.summary}</p>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3 text-sm text-zinc-400">
+          <p className="font-medium text-zinc-200">Keywords & improvement opportunities</p>
+          <p className="mt-2">These are audit-generated test queries, not a verified list of keywords your website targets. Confirm the service and geography before using them as SEO targets.</p>
+          <p className="mt-2">{organicBlock?.source === "serpapi" && organicBlock.results.some((r) => r.isClient)
+            ? `Your site appears at organic position ${organicBlock.results.find((r) => r.isClient)?.position} in the returned sample. Review the matched page against this exact query before changing its title, service detail or internal links.`
+            : "No unbranded organic ranking is established by this sample. Confirm relevant target queries and collect dated organic samples before prioritizing new content."}</p>
+          <p className="mt-2 text-xs">Search volume, clicks, impressions, average position and traffic upside are not available in this report. Authorized Google Search Console query/page data is needed to identify high-impression, low-CTR or near-page-one opportunities; access to 247ROI does not authorize access to another business.</p>
+          {/\b247\s*roi\b/i.test(businessName) && googleLocal.searchQueries.some((q) => /home services/i.test(q)) && (
+            <p className="mt-2 text-amber-400">This saved report used an incorrect home-services query for 247ROI. Do not treat that sample as a relevant opportunity. A new audit must use AI business automation services; old observations have not been relabeled.</p>
+          )}
+        </div>
         {!googleLocal.configured ? (
           <div className="rounded-xl border border-dashed border-zinc-700 p-6 text-center text-sm text-zinc-500">
-            Add <code className="text-primary">SERPAPI_KEY</code> in Vercel, redeploy,
-            then re-run audit.
+            Search collection is unavailable for this report. Rankings and keyword performance remain unmeasured.
           </div>
-        ) : googleLocal.rawError ? (
+        ) : googleLocal.rawError && !googleLocal.blocks.length ? (
           <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-400">
             {googleLocal.rawError}
           </div>
         ) : (
           <>
-            {showBlock("Local map pack search", localBlock)}
-            {organicBlock && showBlock("Organic search", organicBlock)}
+            {googleLocal.rawError && <p className="text-sm text-amber-400">Collection was partial. Only the returned samples below are available.</p>}
+            {showBlock(localBlock?.source === "places" ? "Places discovery" : "Local search sample", localBlock)}
+            {googleLocal.blocks.filter(b => b.type === "organic").map((block, i) => <div key={`organic-${i}`}>{showBlock(block.query === businessName ? "Branded organic search" : "Unbranded organic search", block)}</div>)}
             {!localBlock?.results.some((r) => r.isClient) &&
-              !(organicBlock?.results.some((r) => r.isClient)) && (
+              !googleLocal.blocks.some(b => b.results.some(r => r.isClient)) && (
                 <p className="rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-center text-sm text-red-400">
-                  {businessName} isn&apos;t showing where customers search — competitors
-                  are capturing those clicks.
+                  {businessName} was not matched in these returned samples. This does not establish overall rankings, lost clicks, or AI-answer visibility.
                 </p>
               )}
           </>
@@ -196,7 +212,7 @@ function PriorityFixes({ deficits }: { deficits: AuditReport["deficits"] }) {
           Priority Fixes
         </CardTitle>
         <p className="text-sm text-zinc-500">
-          Ranked by impact on leads and AI visibility
+          Observed issues to review — traffic and lead impact not measured
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -211,7 +227,8 @@ function PriorityFixes({ deficits }: { deficits: AuditReport["deficits"] }) {
               </span>
               <div>
                 <p className="text-sm font-medium text-zinc-100">{d.finding}</p>
-                <p className="mt-1.5 text-sm text-emerald-400/90">→ {d.fix}</p>
+                <p className="mt-1.5 text-sm text-emerald-400/90">Suggested: {d.fix}</p>
+                <p className="mt-2 text-xs text-zinc-500">247ROI service fit: {d.category === "reputation" ? "Review & reputation workflows" : d.category === "social" ? "Content & profile consistency" : d.category === "ai" ? "AI visibility evidence & content review" : "Technical SEO & website optimization"}. Confirm scope before implementation.</p>
               </div>
             </div>
           </div>
@@ -272,21 +289,20 @@ export function BlueprintReport({
             <DataSourceStrip report={report} />
           </div>
           <div className="shrink-0">
-            <ScoreRing
-              score={report.opportunityIndex}
-              label="Infrastructure Readiness"
-              sublabel={
-                report.opportunityIndex < 50
-                  ? "High upside if you act now"
-                  : "Room to dominate your market"
-              }
-            />
+            <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full border-8 border-zinc-800 text-center">
+              <span className="text-lg font-semibold text-zinc-100">Evidence first</span>
+              <span className="px-3 text-xs text-zinc-400">No composite visibility score</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {isPresent && <IndustryPulse compact />}
+      <div className="rounded-xl border border-zinc-800 p-4 text-sm text-zinc-400">
+        <p>Service context: {inferServiceFromName(session.business_name).tradeLabel} — inferred from the name, not confirmed. ZIP is a sampling context, not proof of your full service area.</p>
+        <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. ChatGPT and Google AI Mode are unmeasured here; technical structure alone does not establish AI recommendations.</p>
+      </div>
 
+      <ReportEmail sessionId={sessionId} />
       <SectionScores sections={report.sections} compact={isPresent} />
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -297,6 +313,18 @@ export function BlueprintReport({
         />
       </div>
 
+      <p className="text-xs text-zinc-500">Website preview annotations are illustrative placements. Proposed changes below have not been deployed or measured.</p>
+      {report.googleLocal?.aiOverviews?.map((sample, i) => (
+        <Card key={`ai-overview-${i}`} className="border-zinc-800">
+          <CardHeader><CardTitle>Google AI Overview — sampled evidence</CardTitle></CardHeader>
+          <CardContent className="space-y-3 text-sm text-zinc-400">
+            <p>Query: “{sample.query}” · {sample.location} · {sample.observedAt} · SerpAPI</p>
+            <p>{sample.state === "observed" ? "Answer observed in this organic search response. This is one sample, not an overall visibility score." : "No usable AI answer retained in this sample. This does not establish brand absence."}</p>
+            {sample.answer && <p className="whitespace-pre-wrap text-zinc-200">{sample.answer}</p>}
+            {sample.citations.map((citation, j) => <p key={j}><a href={/^https?:\/\//i.test(citation.url) ? citation.url : undefined} target="_blank" rel="noopener noreferrer" className="text-primary underline">{citation.title}</a></p>)}
+          </CardContent>
+        </Card>
+      ))}
       <SiteBlueprint
         businessName={session.business_name}
         websiteUrl={session.website_url}
@@ -307,7 +335,7 @@ export function BlueprintReport({
 
       <PriorityFixes deficits={report.deficits} />
 
-      <GrowthSimulator report={report} />
+
 
       {isPresent ? (
         <div className="rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/10 to-transparent p-8 text-center">
@@ -315,10 +343,10 @@ export function BlueprintReport({
             Recommended first step
           </p>
           <h2 className="mt-2 text-2xl font-bold text-zinc-50">
-            Smart Site Foundation
+            {report.packages.primary.headline}
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm text-zinc-400">
-            Fixes the infrastructure gaps measured above. Your recommended next step includes a free quote for the right scope.
+            {report.packages.primary.description}
           </p>
           <Button size="lg" className="mt-6 h-14 px-8 text-lg" asChild>
             <a href={BRAND.phoneHref}>
@@ -326,6 +354,7 @@ export function BlueprintReport({
               {BRAND.phoneDisplay}
             </a>
           </Button>
+          <div className="mt-4"><Link className="text-primary underline" href={`/ai-opportunity-audit?visibility=${encodeURIComponent(sessionId)}`}>Discuss your SEO and AI visibility priorities</Link></div>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -341,15 +370,17 @@ export function BlueprintReport({
             </CardHeader>
             <CardContent>
               <p className="mb-4 text-sm font-medium text-emerald-400">Free quote after audit</p>
-              <Button className="w-full" onClick={() => onCtaClick?.("primary")}>
-                {report.packages.primary.ctaLabel}
+              <Button className="w-full" asChild>
+                <a href={BRAND.phoneHref} onClick={() => onCtaClick?.("primary")}>
+                  {report.packages.primary.ctaLabel}
+                </a>
               </Button>
             </CardContent>
           </Card>
           <Card className="border-amber-500/30 bg-amber-500/5">
             <CardHeader>
               <Badge variant="outline" className="w-fit border-amber-500/30 bg-amber-500/10 text-amber-400">
-                Phase Two
+                Optional next step
               </Badge>
               <CardTitle>{report.packages.secondary.headline}</CardTitle>
               <p className="text-sm text-zinc-400">
@@ -359,9 +390,11 @@ export function BlueprintReport({
             <CardContent>
               <Button
                 className="w-full bg-amber-500 text-zinc-950 hover:bg-amber-400"
-                onClick={() => onCtaClick?.("secondary")}
+                asChild
               >
-                {report.packages.secondary.ctaLabel}
+                <a href={BRAND.schedulingUrl.startsWith("#") || BRAND.schedulingUrl === "/ai-opportunity-audit" ? `/ai-opportunity-audit?visibility=${encodeURIComponent(sessionId)}` : BRAND.schedulingUrl} onClick={() => onCtaClick?.("secondary")}>
+                  {report.packages.secondary.ctaLabel}
+                </a>
               </Button>
             </CardContent>
           </Card>
@@ -380,9 +413,11 @@ export function BlueprintReport({
                 Call for a free fix plan walkthrough — no pressure.
               </p>
             </div>
-            <Button size="lg" onClick={() => onCtaClick?.("call")}>
-              <Phone className="h-4 w-4" />
-              {BRAND.phoneDisplay}
+            <Button size="lg" asChild>
+              <a href={BRAND.phoneHref} onClick={() => onCtaClick?.("call")}>
+                <Phone className="h-4 w-4" />
+                {BRAND.phoneDisplay}
+              </a>
             </Button>
           </CardContent>
         </Card>

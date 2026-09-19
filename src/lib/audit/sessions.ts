@@ -12,6 +12,9 @@ export async function createSession(input: {
   repToken?: string;
 }): Promise<ScanSession> {
   const supabase = createServiceClient();
+  if (!supabase && process.env.NODE_ENV === "production") {
+    throw new Error("Report storage is unavailable. Please try again later.");
+  }
   const row = {
     business_name: input.businessName,
     website_url: input.websiteUrl,
@@ -49,6 +52,9 @@ export async function createSession(input: {
 
 export async function getSession(id: string): Promise<ScanSession | null> {
   const supabase = createServiceClient();
+  if (!supabase && process.env.NODE_ENV === "production") {
+    throw new Error("Report storage is unavailable. Please try again later.");
+  }
   if (supabase) {
     const { data } = await supabase
       .from("scan_sessions")
@@ -79,6 +85,9 @@ export async function updateSession(
   }>
 ): Promise<ScanSession | null> {
   const supabase = createServiceClient();
+  if (!supabase && process.env.NODE_ENV === "production") {
+    throw new Error("Report storage is unavailable. Please try again later.");
+  }
   if (supabase) {
     const { data, error } = await supabase
       .from("scan_sessions")
@@ -109,6 +118,9 @@ export async function updateSession(
 export async function checkRateLimit(phone: string): Promise<boolean> {
   const normalized = phone.replace(/\D/g, "");
   const supabase = createServiceClient();
+  if (!supabase && process.env.NODE_ENV === "production") {
+    throw new Error("Report storage is unavailable. Please try again later.");
+  }
   if (!supabase) return true;
 
   const { data } = await supabase
@@ -128,6 +140,9 @@ export async function checkRateLimit(phone: string): Promise<boolean> {
 export async function recordRateLimit(phone: string): Promise<void> {
   const normalized = phone.replace(/\D/g, "");
   const supabase = createServiceClient();
+  if (!supabase && process.env.NODE_ENV === "production") {
+    throw new Error("Report storage is unavailable. Please try again later.");
+  }
   if (!supabase) return;
 
   await supabase.from("audit_rate_limits").upsert({
@@ -157,6 +172,9 @@ function mapRow(row: Record<string, unknown>): ScanSession {
 
 export async function getRepSession(token: string) {
   const supabase = createServiceClient();
+  if (!supabase && process.env.NODE_ENV === "production") {
+    throw new Error("Report storage is unavailable. Please try again later.");
+  }
   if (!supabase) return null;
   const { data } = await supabase
     .from("rep_sessions")

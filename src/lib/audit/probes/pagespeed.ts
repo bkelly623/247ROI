@@ -55,7 +55,10 @@ export async function probePageSpeed(url: string): Promise<PageSpeedResult> {
     psiUrl.searchParams.append("category", "best-practices");
     psiUrl.searchParams.set("key", key);
 
-    const res = await fetch(psiUrl.toString(), { next: { revalidate: 0 } });
+    const res = await fetch(psiUrl.toString(), {
+      next: { revalidate: 0 },
+      signal: AbortSignal.timeout(35000),
+    });
     if (!res.ok) {
       const errJson = await res.json().catch(() => null);
       const msg =
@@ -103,7 +106,8 @@ export async function probePageSpeed(url: string): Promise<PageSpeedResult> {
         ? metric("largest-contentful-paint")! / 1000
         : null,
       cls: metric("cumulative-layout-shift"),
-      inpMs: metric("interaction-to-next-paint") ?? metric("total-blocking-time"),
+      // INP needs field or interaction data. Total Blocking Time is not INP.
+      inpMs: metric("interaction-to-next-paint"),
       fcpSeconds: metric("first-contentful-paint")
         ? metric("first-contentful-paint")! / 1000
         : null,
@@ -128,8 +132,8 @@ export function pageSpeedDeficits(ps: PageSpeedResult): AuditDeficit[] {
   if (!ps.configured) {
     deficits.push({
       severity: "warning",
-      finding: "Mobile performance not measured — PageSpeed API key required.",
-      fix: "Configure GOOGLE_PAGESPEED_API_KEY for Lighthouse scores.",
+      finding: "Mobile performance was not measured in this scan.",
+      fix: "Collect a mobile Lighthouse result before deciding whether speed improvements are needed.",
       category: "seo",
     });
     return deficits;

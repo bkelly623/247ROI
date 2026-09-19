@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AuditShell } from "@/components/audit/AuditShell";
 import { Button } from "@/components/ui/button";
 import type { AuditReport, ScanSession } from "@/lib/audit/types";
-import { BRAND } from "@/lib/audit/config";
+
 import { AuditLoadingScreen } from "@/components/audit/AuditLoadingScreen";
 import {
   BlueprintReport,
@@ -32,17 +32,14 @@ export function ReportView({ sessionId }: { sessionId: string }) {
       .finally(() => setLoading(false));
   }, [loadSession]);
 
-  const trackCta = async (action: string) => {
-    await fetch(`/api/sessions/${sessionId}/events`, {
+  const trackCta = (_action: string) => {
+    // Analytics must never gate navigation or lose the browser's user gesture.
+    void fetch(`/api/sessions/${sessionId}/events`, {
       method: "POST",
+      keepalive: true,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "cta_click" }),
-    });
-    if (action === "call" || action === "primary") {
-      window.location.href = BRAND.phoneHref;
-    } else if (BRAND.schedulingUrl !== "#schedule") {
-      window.open(BRAND.schedulingUrl, "_blank");
-    }
+    }).catch(() => { /* Navigation remains available when analytics fails. */ });
   };
 
   const handleRefresh = async () => {

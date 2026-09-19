@@ -72,9 +72,20 @@ export interface GoogleLocalResult {
   isClient: boolean;
 }
 
+export interface GoogleAIOverviewEvidence {
+  query: string;
+  observedAt: string;
+  location: string;
+  source: "serpapi";
+  state: "observed" | "not_returned" | "unavailable";
+  answer?: string;
+  citations: { title: string; url: string }[];
+}
+
 export interface GoogleLocalProbe {
+  aiOverviews?: GoogleAIOverviewEvidence[];
   searchQueries: string[];
-  blocks: { query: string; results: GoogleLocalResult[] }[];
+  blocks: { query: string; results: GoogleLocalResult[]; type?: "local" | "organic"; source?: "serpapi" | "places"; observedAt?: string; location?: string }[];
   primaryResults: GoogleLocalResult[];
   primaryQuery: string;
   clientPosition: number | null;

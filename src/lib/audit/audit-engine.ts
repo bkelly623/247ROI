@@ -2,14 +2,12 @@ import type {
   AuditDeficit,
   AuditReport,
   AuditSection,
-  AuditSectionKey,
   GoogleLocalProbe,
   PackageRecommendation,
   SiteAnnotation,
 } from "./types";
 import { BRAND } from "./config";
 import { GROWTH_TIERS } from "./industry-stats";
-import { SERVICE_CATALOG } from "./types";
 import { inferServiceFromName } from "./infer-service";
 import {
   detectSocialLinks,
@@ -34,61 +32,21 @@ export interface AuditDataSources {
   missing: string[];
 }
 
-function pickSecondaryPackage(
-  sections: AuditSection[]
-): PackageRecommendation {
-  const supporting = sections.filter((s) => s.key !== "ai" && s.measured);
-  const weakest = [...supporting].sort((a, b) => (a.score ?? 0) - (b.score ?? 0))[0];
-  const emphasisKey = weakest?.key ?? "seo";
-
-  const emphasisCopy: Record<Exclude<AuditSectionKey, "ai">, string> = {
-    seo: "technical SEO, local page structure, and Google indexation",
-    reputation: "automated reviews and trust signals AI models rely on",
-    social: "entity-linked profiles so AI connects your brand across the web",
-  };
-
-  const key = emphasisKey === "ai" ? "seo" : emphasisKey;
-  const emphasis =
-    emphasisCopy[key as Exclude<AuditSectionKey, "ai">] ?? emphasisCopy.seo;
-
-  return {
-    id: "ai_visibility",
-    headline: "AI Visibility Growth Program",
-    description: `Your phase-two growth engine. We build citation layers, structured data, and AI-readable entity signals — including ${emphasis}.`,
-    priceFrame: "custom",
-    ctaLabel: "See If You Qualify for AI Visibility",
-    ctaUrl: BRAND.schedulingUrl,
-  };
-}
-
-function weightedReadinessIndex(sections: AuditSection[]): number | null {
-  const measured = sections.filter((s) => s.measured && s.score !== null);
-  if (measured.length === 0) return null;
-
-  const weights: Record<AuditSectionKey, number> = {
-    ai: 0.35,
-    seo: 0.35,
-    reputation: 0.2,
-    social: 0.1,
-  };
-  const totalWeight = measured.reduce((s, sec) => s + (weights[sec.key] ?? 0.25), 0);
-  const total = measured.reduce(
-    (sum, s) => sum + (s.score ?? 0) * (weights[s.key] ?? 0.25),
-    0
-  );
-  return Math.round(total / totalWeight);
+function pickSecondaryPackage(): PackageRecommendation {
+  return { id: "ai_visibility", headline: "AI Visibility Review", description: "Establish dated AI-answer evidence for relevant buyer questions, then evaluate content and entity improvements. SEO and AI work can complement each other; neither guarantees recommendations.", priceFrame: "custom", ctaLabel: "Discuss AI Visibility", ctaUrl: BRAND.schedulingUrl };
 }
 
 function buildAnnotations(
   site: Awaited<ReturnType<typeof probeSiteCrawl>>,
   pageSpeed: Awaited<ReturnType<typeof probePageSpeed>>
 ): { before: SiteAnnotation[]; after: SiteAnnotation[] } {
+  if (!site.fetched) return { before: [], after: [] };
   const before: SiteAnnotation[] = [];
   const after: SiteAnnotation[] = [];
 
-  if (!site.hasLocalBusinessSchema) {
-    before.push({ id: "schema", label: "Missing AI Data", detail: "No LocalBusiness schema", x: 72, y: 28, status: "problem" });
-    after.push({ id: "schema", label: "AI Layer Active", detail: "Schema injected", x: 72, y: 28, status: "fixed" });
+  if (site.fetched && site.schemaBlocks.length === 0) {
+    before.push({ id: "schema", label: "Schema review", detail: "No structured data detected; choose a business-appropriate type", x: 72, y: 28, status: "problem" });
+    after.push({ id: "schema", label: "Suggested schema", detail: "Proposed only — not deployed", x: 72, y: 28, status: "fixed" });
   }
   if (!site.metaDescription || !site.title) {
     before.push({ id: "meta", label: "Weak Meta", detail: "Title/description gaps", x: 28, y: 18, status: "problem" });
@@ -111,81 +69,41 @@ function buildSections(input: {
   pageSpeed: Awaited<ReturnType<typeof probePageSpeed>>;
   google: Awaited<ReturnType<typeof probeGoogleSearch>>;
 }): AuditSection[] {
-  const { site, pageSpeed, google } = input;
+  const { site, google } = input;
   const social = detectSocialLinks(site.html);
   const socialScore = socialScoreFromSignals(social);
   const socialCopy = socialSummary(social);
 
-  // AI score — from measurable site + schema + PageSpeed SEO only
-  let aiScore: number | null = null;
-  let aiMeasured = false;
-  if (site.fetched) {
-    aiMeasured = true;
-    let pts = 0;
-    if (site.hasLocalBusinessSchema) pts += 35;
-    else pts += 5;
-    if (site.schemaBlocks.some((b) => b.valid)) pts += 15;
-    if (site.contentWordCount > 300) pts += 15;
-    else if (site.contentWordCount > 150) pts += 8;
-    if (site.title && site.metaDescription) pts += 10;
-    if (site.ogTitle && site.ogDescription) pts += 5;
-    if (pageSpeed.configured && pageSpeed.seoScore !== null) {
-      pts = Math.round(pts * 0.6 + pageSpeed.seoScore * 0.4);
-    }
-    aiScore = Math.min(100, Math.max(5, pts));
-  }
-
-  // SEO score — PageSpeed SEO + performance + Google visibility
-  let seoScore: number | null = null;
-  let seoMeasured = false;
-  if (pageSpeed.configured && pageSpeed.seoScore !== null) {
-    seoMeasured = true;
-    seoScore = pageSpeed.seoScore;
-    if (pageSpeed.performanceScore !== null) {
-      seoScore = Math.round(seoScore * 0.55 + pageSpeed.performanceScore * 0.25);
-    }
-    if (google.configured) {
-      const local = google.blocks.find((b) => b.type === "local");
-      if (local?.clientFound) seoScore = Math.min(100, seoScore + 15);
-      else if (local) seoScore = Math.max(5, seoScore - 10);
-      const organic = google.blocks.find((b) => b.type === "organic");
-      if (organic?.clientFound) seoScore = Math.min(100, seoScore + 10);
-    }
-    if (site.hasSitemap) seoScore = Math.min(100, seoScore + 5);
-    if (!site.hasH1) seoScore = Math.max(5, seoScore - 8);
-  }
+  // Retired: schema, word count and Lighthouse cannot establish AI visibility
+  // or a Google discoverability percentage. Preserve raw observations separately.
+  const aiScore: number | null = null;
+  const aiMeasured = false;
+  const seoScore: number | null = null;
+  const seoMeasured = false;
 
   // Reputation — real GBP data only
   let repScore: number | null = null;
   let repMeasured = false;
-  if (google.configured && google.businessListing.found) {
+  if (google.configured && google.businessListing.found && google.businessListing.rating !== undefined && google.businessListing.reviewCount !== undefined) {
     repMeasured = true;
-    const rating = google.businessListing.rating ?? 0;
-    const reviews = google.businessListing.reviewCount ?? 0;
+    const rating = google.businessListing.rating;
+    const reviews = google.businessListing.reviewCount;
     repScore = Math.min(
       100,
-      Math.round(rating * 15 + Math.min(reviews, 100) * 0.35)
+      Math.round((rating ?? 0) * 15 + Math.min(reviews ?? 0, 100) * 0.35)
     );
   }
 
   return [
     {
       key: "ai",
-      label: "AI Readiness",
+      label: "AI Visibility",
       plainQuestion: "Can AI systems read your business?",
       score: aiScore,
       measured: aiMeasured,
-      dataSource: "Site crawl + schema analysis + Lighthouse SEO",
-      summary: !aiMeasured
-        ? "Could not measure — site unreachable."
-        : !site.hasLocalBusinessSchema
-          ? "No LocalBusiness schema — AI cannot confidently recommend you."
-          : site.schemaBlocks.some((b) => !b.valid)
-            ? "Schema present but incomplete — AI entity matching is weak."
-            : "Baseline AI-readable structure detected — can be strengthened.",
-      topFix: site.hasLocalBusinessSchema
-        ? "Expand citation layers and service-area content for AI retrieval."
-        : "Deploy LocalBusiness JSON-LD schema on Smart Site Foundation.",
+      dataSource: "Consumer AI visibility not measured by this legacy collector",
+      summary: "AI recommendations are unmeasured. Website structure is not recommendation evidence.",
+      topFix: "Review directly observed AI answers before recommending visibility work.",
     },
     {
       key: "seo",
@@ -194,14 +112,8 @@ function buildSections(input: {
       score: seoScore,
       measured: seoMeasured,
       dataSource: "Google PageSpeed Insights + SerpAPI local/organic",
-      summary: !seoMeasured
-        ? "Not measured — add GOOGLE_PAGESPEED_API_KEY."
-        : pageSpeed.performanceScore !== null && pageSpeed.performanceScore < 50
-          ? `Lighthouse mobile performance ${pageSpeed.performanceScore}/100 hurts rankings.`
-          : google.blocks.find((b) => b.type === "local" && !b.clientFound)
-            ? "Not appearing in measured local pack results for your service area."
-            : "Measurable search signals collected — see detailed findings.",
-      topFix: "Smart Site Foundation + local SEO optimization.",
+      summary: "No composite Google visibility score. Review dated search observations and authorized first-party GSC separately.",
+      topFix: "Prioritize evidenced search and conversion issues; no compulsory rebuild.",
     },
     {
       key: "reputation",
@@ -233,12 +145,13 @@ function toGoogleLocalProbe(
 ): GoogleLocalProbe {
   const primary = google.blocks.find((b) => b.type === "local") ?? google.blocks[0];
   return {
+    aiOverviews: google.aiOverviews,
     searchQueries: google.blocks.map((b) => b.query),
-    blocks: google.blocks.map((b) => ({ query: b.query, results: b.results })),
+    blocks: google.blocks.map((b) => ({ query: b.query, results: b.results, type: b.type, source: b.source, observedAt: b.observedAt, location: b.location })),
     primaryResults: primary?.results ?? [],
     primaryQuery: primary?.query ?? "",
     clientPosition: primary?.clientPosition ?? null,
-    inMapPack: Boolean(primary?.clientFound && (primary.clientPosition ?? 99) <= 3),
+    inMapPack: Boolean(primary?.source === "serpapi" && primary.type === "local" && primary.clientFound && (primary.clientPosition ?? 99) <= 3),
     configured: google.configured,
     summary: google.summary,
     rawError: google.rawError,
@@ -267,15 +180,15 @@ export async function runAuditPipeline(input: {
   ]);
 
   const sections = buildSections({ site, pageSpeed, google });
-  const opportunityIndex = weightedReadinessIndex(sections) ?? 0;
+  const opportunityIndex = 0; // Compatibility field only; no composite visibility percentage is established.
 
   const deficits: AuditDeficit[] = [
-    ...siteCrawlDeficits(site),
+    ...siteCrawlDeficits(site).filter((d) => !d.finding.includes("LocalBusiness")).map((d) => d.finding.startsWith("Thin content") ? { ...d, severity: "info" as const, finding: `Homepage text sample: ${site.contentWordCount} words.`, fix: "Review whether the page clearly explains services and audience; word count alone is not a ranking or AI visibility finding." } : d),
     ...pageSpeedDeficits(pageSpeed),
     ...googleDeficits(google),
   ];
 
-  const uniqueDeficits = deficits.filter(
+  const uniqueDeficits = deficits.sort((a, b) => ({ critical: 0, warning: 1, info: 2 }[a.severity] - { critical: 0, warning: 1, info: 2 }[b.severity])).filter(
     (d, i, arr) => arr.findIndex((x) => x.finding === d.finding) === i
   );
 
@@ -323,28 +236,26 @@ export async function runAuditPipeline(input: {
 
   return {
     opportunityIndex,
-    opportunityHeadline: weakest
-      ? `${input.businessName} — weakest measured area: ${weakest.label} (${weakest.score ?? "N/A"}%). Window is open in ${input.zipCode}.`
-      : `Audit incomplete — configure API keys for full measurement.`,
+    opportunityHeadline: `${input.businessName} — website checks and sampled search observations. AI recommendations and traffic impact are not established by these checks.`,
     sections,
     deficits: uniqueDeficits.slice(0, 12),
     packages: {
       primary: {
         id: "foundation",
-        headline: "Smart Site Foundation",
-        description: SERVICE_CATALOG.foundation.description,
+        headline: uniqueDeficits.some(d => d.category === "seo" && d.severity !== "info") ? "Technical SEO & Website Fix Plan" : "Visibility & Measurement Review",
+        description: uniqueDeficits[0] ? `Start with the observed issue: ${uniqueDeficits[0].finding} 247ROI can scope the relevant website, SEO or workflow improvement; a rebuild is not required by this audit.` : "Confirm your services and buyer queries, then collect missing evidence before choosing website, SEO or AI visibility work.",
         priceFrame: "as_low_as_99",
-        ctaLabel: "Activate Smart Site Foundation",
+        ctaLabel: "Discuss Your Fix Plan",
         ctaUrl: BRAND.schedulingUrl,
       },
-      secondary: pickSecondaryPackage(sections),
+      secondary: pickSecondaryPackage(),
     },
     guideSteps: [
       `Live AI visibility test: run ChatGPT/Gemini on the call (not in this report).`,
       `Google local: ${google.summary}`,
       `Weakest measured pillar: ${weakest?.label ?? "N/A"} — ${weakest?.topFix ?? ""}`,
-      `Smart Site Foundation fixes infrastructure gaps found in this audit.`,
-      `Growth and AI Visibility build on the foundation. Quotes are free after the audit.`,
+      `Review the highest-priority observed issue and scope a targeted fix, not an automatic rebuild.`,
+      `Choose SEO, AI visibility, review workflows or custom automation only when the evidence supports that service. Quotes are free after the audit.`,
     ],
     sitePreview: {
       businessName: input.businessName,
