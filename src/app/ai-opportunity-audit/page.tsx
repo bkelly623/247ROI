@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HireAuditFlow } from "@/components/hire/HireAuditFlow";
+import { AuditEntryFlow } from "@/components/hire/AuditEntryFlow";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -150,7 +150,7 @@ export default function HirePage() {
       {jsonLd.map((item, index) => (
         <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }} />
       ))}
-      <HireAuditFlow />
+      <AuditEntryFlow />
 
       <section className="border-t border-zinc-800 bg-zinc-950 px-5 py-16 text-zinc-100 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-6xl">
