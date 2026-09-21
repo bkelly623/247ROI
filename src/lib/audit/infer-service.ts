@@ -1,4 +1,6 @@
 const TRADE_PATTERNS: { pattern: RegExp; label: string; service: string }[] = [
+  { pattern: /\b(?:dentist|dentistry|dental)\b/i, label: "Dentistry", service: "dentist" },
+  { pattern: /\bmold\b/i, label: "Mold Remediation", service: "mold remediation company" },
   { pattern: /\b247\s*roi\b|\bdiscovizlabs\b/i, label: "AI & Business Automation", service: "AI business automation consultant" },
   { pattern: /roof/i, label: "Roofing", service: "roofer" },
   { pattern: /plumb/i, label: "Plumbing", service: "plumber" },

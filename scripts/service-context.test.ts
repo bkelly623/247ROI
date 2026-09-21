@@ -6,6 +6,8 @@ const ai = inferServiceContext('Acme', { title:'Custom AI employees and workflow
 assert.equal(ai.servicePhrase, 'AI business automation consultant'); assert.equal(ai.source, 'website');
 assert.equal(inferServiceContext('Acme', {title:'Home - Acme'}).source, 'unconfirmed');
 assert.equal(inferServiceContext('Jones Plumbing', {}).source, 'business_name');
+assert.equal(inferServiceContext('Friendly Dentistry', {}).servicePhrase, 'dentist');
+assert.equal(inferServiceContext('Friendly Dentistry', {}).source, 'business_name');
 assert.equal(inferServiceContext('Acme', {title:'Mold removal and remediation'}).servicePhrase, 'mold remediation company');
 assert.equal(inferServiceContext('Acme', {title:'Acme Dental Care'}).servicePhrase, 'dentist');
 console.log('PASS: public-website service classification; unknown names remain unconfirmed, no private-data dependency.');

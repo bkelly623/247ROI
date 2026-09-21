@@ -207,15 +207,9 @@ export async function probeSiteCrawl(
 export function siteCrawlDeficits(site: SiteCrawlResult): AuditDeficit[] {
   const deficits: AuditDeficit[] = [];
 
-  if (!site.fetched) {
-    deficits.push({
-      severity: "critical",
-      finding: site.fetchError ?? "Website unreachable.",
-      fix: "Confirm the page in a browser and inspect the HTTP response before proposing changes. Bot blocking or a temporary fetch failure does not establish a need to rebuild.",
-      category: "seo",
-    });
-    return deficits;
-  }
+  // A failed/blocked crawler is a coverage gap, not an evidenced website
+  // defect. Preserve HTTP/error details in audit metadata, not a sales priority.
+  if (!site.fetched) return deficits;
 
   if (!site.hasSsl) {
     deficits.push({
