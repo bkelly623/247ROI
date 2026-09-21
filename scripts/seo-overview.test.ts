@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {seoOverview} from '../src/lib/audit/seo-overview';
+import type {AuditReport} from '../src/lib/audit/types';
+const report:AuditReport=JSON.parse(readFileSync(process.env.SEO_REPORT!,'utf8')).session.report;
+const original=JSON.stringify(report);const view=seoOverview(report);
+assert.equal(view.score,100);assert.equal(view.performance,91);assert.equal(view.pages.length,6);
+assert.deepEqual(view.checks.map(c=>c.passed),[6,6,6,5]);assert(view.fixes.length>0);
+assert.equal(JSON.stringify(report),original);
+const missing=structuredClone(report);missing.auditMeta!.dataSources.pageSpeed=false;
+assert.equal(seoOverview(missing).score,null);assert.equal(seoOverview(missing).pages.length,6);
+missing.auditMeta!.dataSources.pageSpeed=true;missing.auditMeta!.pageSpeed!.seoScore=0;
+assert.equal(seoOverview(missing).score,0);
+missing.auditMeta!.apiErrors={pageSpeed:'timeout'};assert.equal(seoOverview(missing).score,null);
+const noPages=structuredClone(report);delete noPages.siteReview;
+assert.equal(seoOverview(noPages).pages.length,0);assert.equal(seoOverview(noPages).score,100);
+console.log('PASS retained owner report: SEO100/performance91, six pages and real priorities; missing/error never zero; measured zero retained; no report/evidence mutation');

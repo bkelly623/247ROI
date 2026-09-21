@@ -14,7 +14,7 @@ export function SectionScores({
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {sections.map((section) => {
         const score = section.score;
-        const display = score !== null ? String(score) : "—";
+        const display = score !== null ? String(score) : section.measured ? "Results below" : "Not measured";
         const label =
           score !== null ? scoreLabel(score) : section.measured ? "Evidence collected" : "Not measured";
 
@@ -46,7 +46,7 @@ export function SectionScores({
             <CardContent>
               <div className="mb-3 flex items-end gap-2">
                 <span
-                  className="text-4xl font-bold"
+                  className={score !== null ? "text-4xl font-bold" : "text-lg font-semibold"}
                   style={{
                     color: score !== null ? scoreColor(score) : "#71717a",
                   }}

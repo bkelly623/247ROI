@@ -18,7 +18,8 @@ import {
 import type { AuditReport, GoogleLocalProbe, ScanSession } from "@/lib/audit/types";
 import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
 import { SectionScores } from "@/components/audit/SectionScores";
-import { PageSpeedVitals } from "@/components/audit/PageSpeedVitals";
+import { SEOOverview } from "@/components/audit/SEOOverview";
+import { seoOverview } from "@/lib/audit/seo-overview";
 import { inferServiceFromName } from "@/lib/audit/infer-service";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -262,6 +263,8 @@ export function BlueprintReport({
   onCtaClick?: (action: string) => void;
 }) {
   const isPresent = variant === "present";
+  const seo = seoOverview(report);
+  const sections = report.sections.map(section => section.key === "seo" ? { ...section, label: "Technical SEO", score: seo.score, measured: seo.score !== null, plainQuestion: "Does the tested page pass Lighthouse SEO checks?", dataSource: "Google Lighthouse mobile SEO", summary: seo.score !== null ? `Lighthouse SEO: ${seo.score}/100. Page checks, speed findings and SEO improvement priorities appear above. This is not a search-ranking score.` : "Lighthouse did not return a usable SEO score. See the available page and search evidence above." } : section);
 
   return (
     <div className="space-y-8">
@@ -296,32 +299,30 @@ export function BlueprintReport({
           </div>
           <div className="shrink-0">
             <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full border-8 border-zinc-800 text-center">
-              <span className="text-lg font-semibold text-zinc-100">Evidence first</span>
-              <span className="px-3 text-xs text-zinc-400">No composite visibility score</span>
+              <span className="text-xs font-semibold text-cyan-300">Website SEO score</span>
+              <span data-testid="headline-seo-score" className={seo.score !== null ? "text-5xl font-bold text-zinc-100" : "text-lg font-semibold text-zinc-100"}>{seo.score ?? "Not measured"}</span>
+              <span className="px-3 text-xs text-zinc-400">{seo.score !== null ? "/ 100 · Lighthouse mobile" : "No score returned"}</span>
             </div>
           </div>
         </div>
       </section>
+
+      <SEOOverview report={report} />
+      <GoogleRankings googleLocal={report.googleLocal} businessName={session.business_name} />
 
       <div className="rounded-xl border border-zinc-800 p-4 text-sm text-zinc-400">
         <p>Service context: {report.serviceContext?.tradeLabel ?? inferServiceFromName(session.business_name).tradeLabel} — {report.serviceContext?.source === "website" ? "inferred from the public website" : "inferred from the name, not confirmed"}. ZIP is a sampling context, not proof of your full service area.</p>
         <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. Consumer ChatGPT and Google AI results, when collected, appear with their answers below; website structure alone does not establish AI recommendations.</p>
       </div>
 
-      {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Partial audit — not all measurements completed.</strong><p className="mt-2">Missing or unavailable: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
+      {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Audit coverage and limitations</strong><p className="mt-2">Unavailable features or limited coverage: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
       <ReportEmail sessionId={sessionId} />
       <DomainResearchResults evidence={report.domainResearch} />
       <SiteReviewResults evidence={report.siteReview} />
       {report.aiSampling ? <AISamplingResults evidence={report.aiSampling} /> : <><GoogleAIModeResults evidence={report.googleAIMode} /><ChatGPTResults evidence={report.chatGPT} /></>}
-      <SectionScores sections={report.sections} compact={isPresent} />
+      <SectionScores sections={sections} compact={isPresent} />
 
-      <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
-        <PageSpeedVitals report={report} />
-        <GoogleRankings
-          googleLocal={report.googleLocal}
-          businessName={session.business_name}
-        />
-      </div>
+
 
       <p className="text-xs text-zinc-500">Website preview annotations are illustrative placements. Proposed changes below have not been deployed or measured.</p>
       {report.googleLocal?.aiOverviews?.map((sample, i) => (
