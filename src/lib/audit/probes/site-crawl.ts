@@ -211,7 +211,7 @@ export function siteCrawlDeficits(site: SiteCrawlResult): AuditDeficit[] {
     deficits.push({
       severity: "critical",
       finding: site.fetchError ?? "Website unreachable.",
-      fix: "Fix hosting/DNS or deploy Smart Site Foundation.",
+      fix: "Confirm the page in a browser and inspect the HTTP response before proposing changes. Bot blocking or a temporary fetch failure does not establish a need to rebuild.",
       category: "seo",
     });
     return deficits;
@@ -222,7 +222,7 @@ export function siteCrawlDeficits(site: SiteCrawlResult): AuditDeficit[] {
       severity: "critical",
       finding: "Site not served over HTTPS.",
       fix: "Enable SSL certificate immediately.",
-      category: "reputation",
+      category: "seo",
     });
   }
 
@@ -258,8 +258,8 @@ export function siteCrawlDeficits(site: SiteCrawlResult): AuditDeficit[] {
   if (!site.hasH1) {
     deficits.push({
       severity: "warning",
-      finding: "No H1 heading on homepage.",
-      fix: "Add clear H1 with primary service and location.",
+      finding: "No H1 heading detected in fetched homepage HTML.",
+      fix: "Check the rendered page; if it also lacks a heading, add a clear H1 for the primary service and relevant location.",
       category: "seo",
     });
   }

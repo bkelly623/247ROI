@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ChatGPTResults } from "@/components/audit/ChatGPTResults";
 import { GoogleAIModeResults } from "@/components/audit/GoogleAIModeResults";
 import { ReportEmail } from "@/components/audit/ReportEmail";
 import {
@@ -70,7 +71,7 @@ function GoogleRankings({ googleLocal, businessName }: {
   const localBlock =
     googleLocal.blocks.find((b) => b.type === "local" || (!b.type && b.query.includes("near"))) ??
     googleLocal.blocks.find((b) => !b.type);
-  const organicBlock = googleLocal.blocks.find((b) => b.type === "organic" || (!b.type && b.query.includes("best")));
+  const organicBlock = googleLocal.blocks.find((b) => b.type === "organic" && b.queryIntent === "unbranded");
 
   const showBlock = (
     title: string,
@@ -184,7 +185,7 @@ function GoogleRankings({ googleLocal, businessName }: {
           <>
             {googleLocal.rawError && <p className="text-sm text-amber-400">Collection was partial. Only the returned samples below are available.</p>}
             {showBlock(localBlock?.source === "places" ? "Places discovery" : "Local search sample", localBlock)}
-            {googleLocal.blocks.filter(b => b.type === "organic").map((block, i) => <div key={`organic-${i}`}>{showBlock(block.query === businessName ? "Branded organic search" : "Unbranded organic search", block)}</div>)}
+            {googleLocal.blocks.filter(b => b.type === "organic").map((block, i) => <div key={`organic-${i}`}>{showBlock(block.queryIntent === "unbranded" ? "Unbranded organic search" : block.queryIntent === "branded" || block.query === businessName ? "Branded organic search" : "Organic sample — intent unconfirmed", block)}</div>)}
             {!localBlock?.results.some((r) => r.isClient) &&
               !googleLocal.blocks.some(b => b.results.some(r => r.isClient)) && (
                 <p className="rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-center text-sm text-red-400">
@@ -299,13 +300,14 @@ export function BlueprintReport({
       </section>
 
       <div className="rounded-xl border border-zinc-800 p-4 text-sm text-zinc-400">
-        <p>Service context: {inferServiceFromName(session.business_name).tradeLabel} — inferred from the name, not confirmed. ZIP is a sampling context, not proof of your full service area.</p>
-        <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. ChatGPT remains unmeasured. Google AI results, when collected, appear with their answers below; website structure alone does not establish AI recommendations.</p>
+        <p>Service context: {report.serviceContext?.tradeLabel ?? inferServiceFromName(session.business_name).tradeLabel} — {report.serviceContext?.source === "website" ? "inferred from the public website" : "inferred from the name, not confirmed"}. ZIP is a sampling context, not proof of your full service area.</p>
+        <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. Consumer ChatGPT and Google AI results, when collected, appear with their answers below; website structure alone does not establish AI recommendations.</p>
       </div>
 
       {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Partial audit — not all measurements completed.</strong><p className="mt-2">Missing or unavailable: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
       <ReportEmail sessionId={sessionId} />
       <GoogleAIModeResults evidence={report.googleAIMode} />
+      <ChatGPTResults evidence={report.chatGPT} />
       <SectionScores sections={report.sections} compact={isPresent} />
 
       <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">

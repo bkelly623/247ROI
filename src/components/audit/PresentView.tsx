@@ -12,7 +12,7 @@ async function runAudit(sessionId: string, force = false) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ force }),
-    signal: AbortSignal.timeout(115000),
+    signal: AbortSignal.timeout(165000),
   });
   const data = await res.json().catch(() => null);
   if (!res.ok || !data?.report) {

@@ -4,6 +4,7 @@ import type { AuditDeficit, GoogleAIOverviewEvidence, GoogleLocalResult } from "
 import { getPlacesKey, getSerpApiKey } from "../env";
 
 export interface GoogleSearchBlock {
+  queryIntent?: "branded" | "unbranded" | "unknown";
   query: string;
   type: "local" | "organic";
   source?: "serpapi" | "places";
@@ -170,6 +171,7 @@ export async function probeGoogleSearch(input: {
     branded: input.businessName,
   };
 
+  const hasService = Boolean(input.servicePhrase.trim()) && input.servicePhrase.trim().toLowerCase() !== input.businessName.trim().toLowerCase();
   const hasSerp = Boolean(getSerpApiKey());
   const hasPlaces = Boolean(getPlacesKey());
   const errors: string[] = [];
@@ -200,8 +202,8 @@ export async function probeGoogleSearch(input: {
     ? await Promise.all([
         // Standard Google results include the local pack; avoid the repeatedly
         // timing-out standalone local-search engine. This remains one capture.
-        serpSearch("google", queries.local, location),
-        serpSearch("google", queries.organic, location),
+        hasService ? serpSearch("google", queries.local, location) : Promise.resolve({}),
+        hasService ? serpSearch("google", queries.organic, location) : Promise.resolve({}),
         serpSearch("google", queries.branded, location),
       ])
     : [{}, {}, {}];
@@ -293,6 +295,7 @@ export async function probeGoogleSearch(input: {
   }
 
   const localBlock = blocks.find((b) => b.type === "local");
+  for (const block of blocks) block.queryIntent = block.query === queries.branded ? "branded" : hasService ? "unbranded" : "unknown";
   const organicBlock = blocks.find((b) => b.type === "organic" && b.clientFound) ?? blocks.find((b) => b.type === "organic");
 
   let summary = "";
@@ -337,25 +340,9 @@ export async function probeGoogleSearch(input: {
 
 export function googleDeficits(google: GoogleSearchAudit): AuditDeficit[] {
   const deficits: AuditDeficit[] = [];
-  if (!google.configured) {
-    deficits.push({
-      severity: "warning",
-      finding: google.summary,
-      fix: "Obtain a verified search sample before drawing ranking conclusions. This is a measurement gap, not a website defect.",
-      category: "seo",
-    });
-    return deficits;
-  }
-
-  if (google.rawError && !google.blocks.some((b) => b.results.length > 0)) {
-    deficits.push({
-      severity: "warning",
-      finding: `Google measurement failed: ${google.rawError}`,
-      fix: "Verify SERPAPI_KEY in Vercel and check SerpAPI quota.",
-      category: "seo",
-    });
-    return deficits;
-  }
+  // Collector/account failures belong in coverage, never in a prospect's
+  // website fix list or as a justification to sell technical SEO.
+  if (!google.configured || (google.rawError && !google.blocks.some((b) => b.results.length > 0))) return deficits;
 
   const local = google.blocks.find((b) => b.type === "local");
   if (local && local.results.length > 0 && !local.clientFound) {

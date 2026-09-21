@@ -145,7 +145,7 @@ function toGoogleLocalProbe(
     aiOverviews: google.aiOverviews,
     captures: google.captures,
     searchQueries: google.blocks.map((b) => b.query),
-    blocks: google.blocks.map((b) => ({ query: b.query, results: b.results, type: b.type, source: b.source, observedAt: b.observedAt, location: b.location })),
+    blocks: google.blocks.map((b) => ({ query: b.query, queryIntent: b.queryIntent, results: b.results, type: b.type, source: b.source, observedAt: b.observedAt, location: b.location })),
     primaryResults: primary?.results ?? [],
     primaryQuery: primary?.query ?? "",
     clientPosition: primary?.clientPosition ?? null,
@@ -160,14 +160,16 @@ export async function runAuditPipeline(input: {
   businessName: string;
   websiteUrl: string;
   zipCode: string;
+  servicePhrase?: string;
+  site?: Awaited<ReturnType<typeof probeSiteCrawl>>;
 }): Promise<AuditReport> {
   const url = input.websiteUrl.startsWith("http")
     ? input.websiteUrl
     : `https://${input.websiteUrl}`;
-  const { servicePhrase } = inferServiceFromName(input.businessName);
+  const servicePhrase = input.servicePhrase ?? inferServiceFromName(input.businessName).servicePhrase;
 
   const [site, pageSpeed, google] = await Promise.all([
-    probeSiteCrawl(url),
+    input.site ? Promise.resolve(input.site) : probeSiteCrawl(url),
     probePageSpeed(url),
     probeGoogleSearch({
       businessName: input.businessName,
@@ -242,14 +244,14 @@ export async function runAuditPipeline(input: {
         id: "foundation",
         headline: uniqueDeficits.some(d => d.category === "seo" && d.severity !== "info") ? "Technical SEO & Website Fix Plan" : "Visibility & Measurement Review",
         description: uniqueDeficits[0] ? `Start with the observed issue: ${uniqueDeficits[0].finding} 247ROI can scope the relevant website, SEO or workflow improvement; a rebuild is not required by this audit.` : "Confirm your services and buyer queries, then collect missing evidence before choosing website, SEO or AI visibility work.",
-        priceFrame: "as_low_as_99",
+        priceFrame: "custom",
         ctaLabel: "Discuss Your Fix Plan",
         ctaUrl: BRAND.schedulingUrl,
       },
       secondary: pickSecondaryPackage(),
     },
     guideSteps: [
-      `Live AI visibility test: run ChatGPT/Gemini on the call (not in this report).`,
+      `Review the dated AI answer samples and their citations below; one sample is not a general visibility verdict.`,
       `Google local: ${google.summary}`,
       `Weakest measured pillar: ${weakest?.label ?? "N/A"} — ${weakest?.topFix ?? ""}`,
       `Review the highest-priority observed issue and scope a targeted fix, not an automatic rebuild.`,
@@ -297,7 +299,7 @@ export async function runAuditPipeline(input: {
         pageSpeed: pageSpeed.rawError,
         google: google.rawError,
       },
-      note: "Live AI tests (ChatGPT/Gemini) are done on your sales call — not in this automated audit.",
+      note: "Website findings and public search samples are separate from the retained consumer-AI answers. Missing measurements are not proof of brand absence.",
     },
   };
 }

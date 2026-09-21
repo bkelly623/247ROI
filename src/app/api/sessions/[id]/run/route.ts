@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, updateSession } from "@/lib/audit/sessions";
 import { executeFullAudit } from "@/lib/audit/run-audit";
 
-export const maxDuration = 120;
+export const maxDuration = 180;
 
 export async function POST(
   req: NextRequest,
@@ -34,6 +34,7 @@ export async function POST(
       zipCode: session.zip_code,
       mode: session.mode,
       callbackUrl,
+      previousReport: session.report,
     });
 
     const saved = await updateSession(id, {

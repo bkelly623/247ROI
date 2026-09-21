@@ -86,7 +86,7 @@ export interface GoogleLocalProbe {
   captures?: Omit<import("./probes/serpapi-transport").SerpCapture, "data">[];
   aiOverviews?: GoogleAIOverviewEvidence[];
   searchQueries: string[];
-  blocks: { query: string; results: GoogleLocalResult[]; type?: "local" | "organic"; source?: "serpapi" | "places"; observedAt?: string; location?: string }[];
+  blocks: { query: string; queryIntent?: "branded" | "unbranded" | "unknown"; results: GoogleLocalResult[]; type?: "local" | "organic"; source?: "serpapi" | "places"; observedAt?: string; location?: string }[];
   primaryResults: GoogleLocalResult[];
   primaryQuery: string;
   clientPosition: number | null;
@@ -115,6 +115,8 @@ export interface SiteAnnotation {
 }
 
 export interface AuditReport {
+  chatGPT?: import("./probes/chatgpt-search").ChatGPTEvidence;
+  serviceContext?: import("./service-context").ServiceContext;
   googleAIMode?: import("./probes/google-ai-mode").GoogleAIModeEvidence;
   coverage?: { status: "partial" | "complete"; missing: string[] };
   opportunityIndex: number;
