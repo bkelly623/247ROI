@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS VM test harness */
 // Offline component tests: no transport, provider, browser, or delivery claims.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

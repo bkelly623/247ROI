@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DomainResearchResults, SiteReviewResults, AISamplingResults } from "@/components/audit/ResearchResults";
 import { ChatGPTResults } from "@/components/audit/ChatGPTResults";
 import { GoogleAIModeResults } from "@/components/audit/GoogleAIModeResults";
 import { ReportEmail } from "@/components/audit/ReportEmail";
@@ -230,7 +231,9 @@ function PriorityFixes({ deficits }: { deficits: AuditReport["deficits"] }) {
               <div>
                 <p className="text-sm font-medium text-zinc-100">{d.finding}</p>
                 <p className="mt-1.5 text-sm text-emerald-400/90">Suggested: {d.fix}</p>
-                <p className="mt-2 text-xs text-zinc-500">247ROI service fit: {d.category === "reputation" ? "Review & reputation workflows" : d.category === "social" ? "Content & profile consistency" : d.category === "ai" ? "AI visibility evidence & content review" : "Technical SEO & website optimization"}. Confirm scope before implementation.</p>
+                {d.evidenceUrl && <p className="mt-2 text-xs"><a className="break-all text-cyan-300 underline" href={d.evidenceUrl} target="_blank" rel="noopener noreferrer">Affected page / evidence</a></p>}
+                {(d.confidence || d.effort) && <p className="mt-2 text-xs text-zinc-500">Evidence confidence: {d.confidence ?? "not rated"} · Estimated effort: {d.effort ?? "confirm scope"}</p>}
+                <p className="mt-2 text-xs text-zinc-500">247ROI service fit: {d.serviceFit ?? (d.category === "reputation" ? "Review & reputation workflows" : d.category === "social" ? "Content & profile consistency" : d.category === "ai" ? "AI visibility evidence & content review" : "Technical SEO & website optimization")}. Confirm scope before implementation.</p>
               </div>
             </div>
           </div>
@@ -306,8 +309,9 @@ export function BlueprintReport({
 
       {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Partial audit — not all measurements completed.</strong><p className="mt-2">Missing or unavailable: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
       <ReportEmail sessionId={sessionId} />
-      <GoogleAIModeResults evidence={report.googleAIMode} />
-      <ChatGPTResults evidence={report.chatGPT} />
+      <DomainResearchResults evidence={report.domainResearch} />
+      <SiteReviewResults evidence={report.siteReview} />
+      {report.aiSampling ? <AISamplingResults evidence={report.aiSampling} /> : <><GoogleAIModeResults evidence={report.googleAIMode} /><ChatGPTResults evidence={report.chatGPT} /></>}
       <SectionScores sections={report.sections} compact={isPresent} />
 
       <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">

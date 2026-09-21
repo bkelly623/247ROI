@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {parseProviderPricing} from '../src/lib/audit/probes/provider-pricing';
+const labs={live:{priority_normal:[{cost_type:'per_result',cost:0.00012},{cost_type:'per_request',cost:0.012}]}};
+const data={status_code:20000,cost:0,tasks:[{status_code:20000,result:[{login:'DO_NOT_EXPOSE',money:{balance:999},price:{ai_optimization:{llm_scraper:{live:{advanced:{priority_normal:[{cost_type:'per_request',cost:0.004}]}}}},dataforseo_labs:{ranked_keywords:labs,competitors_domain:labs}}}]}]};
+const parsed=parseProviderPricing(data,new Date().toISOString());
+assert.equal(parsed.chatGPT.upperCostMicros,4000);assert.equal(parsed.ranked_keywords.upperCostMicros,14400);assert.equal(parsed.competitors_domain.upperCostMicros,12360);
+assert.ok(!JSON.stringify(parsed).includes('DO_NOT_EXPOSE'));assert.ok(!JSON.stringify(parsed).includes('balance'));
+assert.throws(()=>parseProviderPricing({...data,cost:1},new Date().toISOString()));
+const raised=structuredClone(data);raised.tasks[0].result[0].price.ai_optimization.llm_scraper.live.advanced.priority_normal[0].cost=0.005;
+assert.throws(()=>parseProviderPricing(raised,new Date().toISOString()));
+console.log('PASS: supplier price verification, account-specific rates, bounded per-request quotes, no private account data in projection, fail closed on raised/unknown prices.');

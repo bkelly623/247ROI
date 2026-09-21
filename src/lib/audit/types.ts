@@ -24,6 +24,10 @@ export interface AuditSection {
 }
 
 export interface AuditDeficit {
+  evidenceUrl?: string;
+  serviceFit?: string;
+  confidence?: "high" | "medium" | "low";
+  effort?: "small" | "medium" | "larger";
   severity: "critical" | "warning" | "info";
   finding: string;
   fix: string;
@@ -115,6 +119,9 @@ export interface SiteAnnotation {
 }
 
 export interface AuditReport {
+  siteReview?: import("./probes/site-review").SiteReviewResult;
+  domainResearch?: import("./probes/domain-research").DomainResearchEvidence;
+  aiSampling?: import("./probes/ai-sampling").AISamplingReport;
   chatGPT?: import("./probes/chatgpt-search").ChatGPTEvidence;
   serviceContext?: import("./service-context").ServiceContext;
   googleAIMode?: import("./probes/google-ai-mode").GoogleAIModeEvidence;

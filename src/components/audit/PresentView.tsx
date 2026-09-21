@@ -15,6 +15,19 @@ async function runAudit(sessionId: string, force = false) {
     signal: AbortSignal.timeout(165000),
   });
   const data = await res.json().catch(() => null);
+  if (res.status === 202) {
+    // Work is claimed and runs after the response. Reloading polls the same saved
+    // job instead of dispatching duplicate provider requests.
+    const deadline = Date.now() + 320000;
+    while (Date.now() < deadline) {
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      const response = await fetch(`/api/sessions/${sessionId}`, {cache: "no-store", signal: AbortSignal.timeout(12000)});
+      const current = await response.json().catch(() => null);
+      if (current?.session?.status === "complete" && current.session.report) return current.session.report as AuditReport;
+      if (current?.session?.status === "failed") throw new Error("The audit stopped before completion. This link remains saved; retry checks the same audit and does not automatically repeat paid samples.");
+    }
+    throw new Error("The report is still processing or needs review. Keep this saved audit link and reopen it shortly.");
+  }
   if (!res.ok || !data?.report) {
     throw new Error(res.status === 504
       ? "The scan took too long. Your audit link is saved; retry to check for a completed report."

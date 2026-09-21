@@ -18,6 +18,7 @@ export interface GoogleAIModeInput {
   businessName: string;
   zipCode: string;
   servicePhrase: string;
+  query?: string;
   websiteUrl: string;
 }
 
@@ -63,7 +64,7 @@ export async function probeGoogleAIMode(input: GoogleAIModeInput): Promise<Googl
   const brand = brandPattern(input.businessName, "giu");
   const service = (brand ? input.servicePhrase.replace(brand, "") : input.servicePhrase).trim();
   const location = `${input.zipCode.trim()}, United States`;
-  const query = `I'm looking for ${service || "business services"} serving ZIP code ${input.zipCode.trim()}. Which providers should I consider, and why?`;
+  const query = input.query ?? `I'm looking for ${service || "business services"} serving ZIP code ${input.zipCode.trim()}. Which providers should I consider, and why?`;
   const base: GoogleAIModeEvidence = {
     state: "unavailable", query, location, observedAt: new Date().toISOString(),
     source: "serpapi", citations: [], mentioned: null, cited: null,

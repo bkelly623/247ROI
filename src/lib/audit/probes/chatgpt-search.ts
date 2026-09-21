@@ -7,6 +7,7 @@ export interface ChatGPTInput {
   businessName: string;
   websiteUrl: string;
   servicePhrase: string;
+  query?: string;
   zipCode: string;
   /** Product-catalog-verified location; US is the retained successful sample. */
   locationName?: string;
@@ -74,7 +75,7 @@ function makeBase(input: ChatGPTInput): { base: ChatGPTEvidence; service: string
   const domain = hostname(input.websiteUrl);
   if (domain) service = service.replace(new RegExp(`(?:https?:\\/\\/)?(?:www\\.)?${domain.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[^\\s]*`, "giu"), "").trim();
   return { service, base: {
-    state: "unavailable", query: `Which providers offer ${service || "business services"} serving ZIP code ${input.zipCode.trim()} in the United States, and why should I consider them?`,
+    state: "unavailable", query: input.query ?? `Which providers offer ${service || "business services"} serving ZIP code ${input.zipCode.trim()} in the United States, and why should I consider them?`,
     location: input.locationName?.trim() || "United States", observedAt: new Date().toISOString(),
     source: "dataforseo", product: "consumer_chatgpt_scraper", mode: "search", citations: [], mentioned: null, cited: null,
   } };
