@@ -14,6 +14,11 @@ export async function reservePublicCollection(input:CollectionReservation):Promi
     return !error && data === true;
   } catch { return false; }
 }
+export async function archivePublicResponse(sessionId:string,requestKey:string,raw:string):Promise<void> {
+  const db=createServiceClient();if(!db)throw new Error("response_archive_unavailable");
+  const {error}=await db.from("audit_public_provider_captures").insert({session_id:sessionId,request_key:requestKey,raw_sha256:createHash("sha256").update(raw).digest("hex"),raw_text:raw}).abortSignal(AbortSignal.timeout(8000));
+  if(error)throw new Error("response_archive_failed");
+}
 export async function recordPublicCollection(input:Pick<CollectionReservation,"sessionId"|"kind"|"query">,outcome:Record<string,unknown>):Promise<boolean> {
   try {
     const db=createServiceClient();if (!db) return false;

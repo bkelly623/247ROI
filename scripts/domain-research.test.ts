@@ -24,6 +24,9 @@ async function main() {
   assert.equal(parseDomainResearchResponse(input, "competitors_domain", fixture("competitors_domain")).competitors[0].intersectingKeywords, 8);
   assert.ok(!JSON.stringify(ranked).includes("not public"));
   const noData = fixture("ranked_keywords", r => { r.total_count = 0; r.items_count = 0; r.items = null; r.metrics = null; r.location_code = null; r.language_code = null; });
+  const nullable = parseDomainResearchResponse(input, "ranked_keywords", fixture("ranked_keywords", r=>{r.total_count=null;r.items_count=0;r.items=null;r.metrics=null;}));
+  assert.equal(nullable.state,"no_data"); assert.equal(nullable.totalDatabaseItems,null);
+  assert.equal(parseDomainResearchResponse(input,"ranked_keywords",fixture("ranked_keywords",r=>{r.total_count=null;})).state,"unavailable");
   const empty = parseDomainResearchResponse(input, "ranked_keywords", noData);
   assert.equal(empty.state, "no_data"); assert.equal(empty.estimatedMonthlyTraffic, null);
   assert.equal(parseDomainResearchResponse(input, "ranked_keywords", fixture("ranked_keywords", r => { r.location_code = 2826; })).error, "dimensions_mismatch");
@@ -65,7 +68,7 @@ async function main() {
   }
   let noDataSends = 0;
   const noCoverage = await probeDomainResearch(input, { ...failureOptions, fetcher: async () => { noDataSends++; return new Response(noData); } });
-  assert.equal(noCoverage.rankedKeywords.state, "no_data"); assert.equal(noDataSends, 1);
+  assert.equal(noCoverage.rankedKeywords.state, "no_data"); assert.equal(noDataSends, 2);
   let cancelled = false;
   const bodyStall = await probeDomainResearch(input, { ...failureOptions, timeoutMs: 20, fetcher: async () => new Response(new ReadableStream({ cancel() { cancelled = true; } })) });
   assert.equal(bodyStall.rankedKeywords.error, "deadline_reservation_retained"); assert.ok(cancelled);

@@ -18,9 +18,16 @@ def reserve(s,kind='chatgpt',query='offline',cost=None,limit=None):
  return sql(f"set role service_role; select audit_reserve_public_collection('{s}',{q(kind)},{q(key)},{q(query)},{q(json.dumps(body))},{cost if cost is not None else costs[kind]})")
 sql('create database '+DB,db='postgres')
 try:
- for prefix in ['001_','004_','005_','006_','008_','010_','012_','013_','014_']:
+ for prefix in ['001_','004_','005_','006_','008_','010_','012_','013_','014_','015_','016_']:
   files=list((ROOT/'supabase/migrations').glob(prefix+'*.sql'));assert len(files)==1;sql(files[0].read_text())
+ # Confirm the function honors a separately configured ceiling without resetting spend.
+ sql("update audit_collection_budgets_v2 set ceiling_micros=90000")
  s=session()
+ raw='{"offline":true}';digest=hashlib.sha256(raw.encode()).hexdigest()
+ sql(f"set role service_role; insert into audit_public_provider_captures(session_id,request_key,raw_sha256,raw_text) values('{s}','offline','{digest}',{q(raw)})")
+ sql("set role anon; select * from audit_public_provider_captures",fail=True)
+ sql("set role service_role; delete from audit_public_provider_captures",fail=True)
+ sql(f"set role service_role; insert into audit_public_provider_captures(session_id,request_key,raw_sha256,raw_text) values('{s}','bad','{'0'*64}',{q(raw)})",fail=True)
  with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
   claims=list(pool.map(lambda _:sql(f"set role service_role; select audit_claim_public_scan('{s}')"),range(6)))
  assert claims.count('t')==1,claims
@@ -36,6 +43,6 @@ try:
  sessions=[session() for _ in range(20)]
  with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:list(pool.map(lambda x:reserve(x,'ranked_keywords'),sessions))
  totals=json.loads(sql("select json_build_object('reserved',(select sum(upper_cost_micros) from audit_provider_reservations_v2),'authorized',(select authorized_micros from audit_collection_budgets_v2),'ceiling',(select ceiling_micros from audit_collection_budgets_v2),'running',(select count(*) from audit_jobs_v2 where status='running'))"))
- assert totals['reserved']==totals['authorized']<=totals['ceiling']==88000;assert totals['running']==0
+ assert totals['reserved']==totals['authorized']<=totals['ceiling']==90000;assert totals['running']==0
  print('PASS: atomic scan claim, anonymous denial, immutable per-sample sends, 3-prompt ceiling, single Labs captures, shared cumulative budget races.',totals)
 finally:sql('drop database '+DB,db='postgres')

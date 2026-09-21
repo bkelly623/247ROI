@@ -4,7 +4,7 @@ import type { AuditReport } from "./types";
 import { probeGoogleAIMode } from "./probes/google-ai-mode";
 import { probeChatGPT, type ChatGPTEvidence } from "./probes/chatgpt-search";
 import type { GoogleAIModeEvidence } from "./probes/google-ai-mode";
-import { reservePublicCollection, recordPublicCollection, type CollectionReservation } from "./probes/collection-budget";
+import { archivePublicResponse, reservePublicCollection, recordPublicCollection, type CollectionReservation } from "./probes/collection-budget";
 import { getProviderPricing } from "./probes/provider-pricing";
 import { probeDomainResearch } from "./probes/domain-research";
 import { probeSiteReview } from "./probes/site-review";
@@ -27,7 +27,7 @@ export async function executeFullAudit(input: {
   const labsReservations:CollectionReservation[]=[];
   const domainPromise=(async()=>{
     if(input.previousReport?.domainResearch) return input.previousReport.domainResearch;
-    const evidence=await probeDomainResearch({target},{quote:pricing??undefined,authorize:async r=>{
+    const evidence=await probeDomainResearch({target},{quote:pricing??undefined,captureResponse:(request,raw)=>archivePublicResponse(input.sessionId,request.requestKey,raw),authorize:async r=>{
       const reservation={sessionId:input.sessionId,kind:r.kind,query:target,requestBody:r.requestBody,upperCostMicros:r.upperCostMicros};
       const allowed=await reservePublicCollection(reservation);if(allowed)labsReservations.push(reservation);return allowed;
     }});

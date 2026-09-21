@@ -54,6 +54,8 @@ export interface DomainResearchOptions {
   fetcher?: typeof fetch;
   /** Tests can shorten, never extend the 40s overall authorization+body deadline. */
   timeoutMs?: number;
+  /** Persist exact provider bytes privately before parsing; never exposed in reports. */
+  captureResponse?: (request: Readonly<DomainResearchReservation>, raw: string) => Promise<void>;
 }
 export type ResearchState = "observed" | "no_data" | "unavailable" | "not_authorized" | "not_configured";
 export interface RankedKeyword {
@@ -126,6 +128,13 @@ export function parseDomainResearchResponse(input: DomainResearchInput, kind: Do
   if (e.status_code !== 20000 || e.tasks_error !== 0 || e.tasks_count !== 1 || tasks.length !== 1 || t.status_code !== 20000) return fail("provider_status");
   if (!Array.isArray(t.result) || t.result.length !== 1) return fail("invalid_result");
   const r = rec(t.result[0]); const total = integer(r.total_count);
+  // Observed live no-coverage envelope: total_count:null, items_count:0, items:null, metrics:null.
+  // Preserve the unknown database total; this is NOT zero traffic or zero rankings.
+  const noCoverage = r.total_count === null && r.items_count === 0 && r.items === null && r.metrics === null;
+  if (noCoverage) {
+    if (r.target !== input.target || r.se_type !== "google" || ![2840, null].includes(r.location_code as number | null) || !["en", null].includes(r.language_code as string | null)) return fail("dimensions_mismatch");
+    return { ...blank("no_data"), receipt, raw: { total_count: null, keywords: [], competitors: [] } };
+  }
   const items = Array.isArray(r.items) ? r.items : r.items === null && total === 0 ? [] : null;
   if (!items || total === null || total < items.length || integer(r.items_count) !== items.length || items.length > DOMAIN_RESEARCH_LIMITS[kind]) return fail("invalid_items");
   if (r.target !== input.target || r.se_type !== "google" || (r.location_code !== 2840 && !(total === 0 && r.location_code === null)) || (r.language_code !== "en" && !(total === 0 && r.language_code === null))) return fail("dimensions_mismatch");
@@ -205,6 +214,7 @@ export async function probeDomainResearch(input: DomainResearchInput, options: D
         }
       } finally { controller.signal.removeEventListener("abort", cancel); cancel(); }
       const raw = Buffer.concat(chunks).toString("utf8");
+      if (options.captureResponse) await options.captureResponse(request, raw);
       let lane = parseDomainResearchResponse(input, request.kind, raw);
       // Always retain a hash receipt even for invalid JSON/non-2xx bodies.
       lane.receipt ??= { ...request, fetchedAt: new Date().toISOString(), httpStatus: response.status, cost: null, taskCost: null, taskId: null, rawSha256: hash(raw), bytes, statusCode: null, taskStatusCode: null };
@@ -214,12 +224,13 @@ export async function probeDomainResearch(input: DomainResearchInput, options: D
       if (!response.ok) lane = { ...blank("unavailable", "http_error"), receipt };
       else if (receipt.cost === null || receipt.taskCost === null || Math.max(receipt.cost, receipt.taskCost) * 1e6 > request.maxCostMicros + 0.000001) lane = { ...blank("unavailable", "cost_reconciliation_required"), receipt };
       base[active] = sanitize(lane) as DomainResearchLane;
-      // Do not spend again following an uncertain first result or absent coverage.
-      if (lane.state !== "observed") break;
+      // Unknown/malformed/uncertain results halt; a validated empty database response
+      // does not prevent the independently authorized competitor lookup.
+      if (lane.state !== "observed" && lane.state !== "no_data") break;
     }
   };
   try { await Promise.race([run(), deadline]); }
-  catch (e) { base[active] = { ...blank("unavailable", controller.signal.aborted ? "deadline_reservation_retained" : e instanceof Error && ["body_limit", "body_missing"].includes(e.message) ? e.message : "transport_failure_reservation_retained"), receipt: base[active].receipt }; }
+  catch (e) { base[active] = { ...blank("unavailable", controller.signal.aborted ? "deadline_reservation_retained" : e instanceof Error && ["body_limit", "body_missing", "response_archive_failed", "response_archive_unavailable"].includes(e.message) ? e.message : "transport_failure_reservation_retained"), receipt: base[active].receipt }; }
   finally { if (timer) clearTimeout(timer); }
   // Clone prevents late authorization/fetch completion mutating returned evidence.
   return structuredClone(base);
