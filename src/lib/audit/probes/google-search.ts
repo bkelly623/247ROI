@@ -1,3 +1,4 @@
+import { requestSerp, resolveSerpLocation, redactSerp, type SerpCapture } from "./serpapi-transport";
 import { businessNameMentioned } from "../infer-service";
 import type { AuditDeficit, GoogleAIOverviewEvidence, GoogleLocalResult } from "../types";
 import { getPlacesKey, getSerpApiKey } from "../env";
@@ -15,6 +16,7 @@ export interface GoogleSearchBlock {
 
 export interface GoogleSearchAudit {
   aiOverviews?: GoogleAIOverviewEvidence[];
+  captures?: Omit<SerpCapture, "data">[];
   configured: boolean;
   blocks: GoogleSearchBlock[];
   businessListing: {
@@ -30,7 +32,7 @@ export interface GoogleSearchAudit {
 }
 
 function parseLocal(data: Record<string, unknown>, businessName: string): GoogleLocalResult[] {
-  const local = (data.local_results as Record<string, unknown>[]) ?? [];
+  const local = localRows(data);
   return local.slice(0, 10).map((item, i) => {
     const name = String(item.title ?? "Unknown");
     return {
@@ -69,30 +71,27 @@ function parseOrganic(
   });
 }
 
-async function serpSearch(
-  engine: "google_local" | "google",
-  query: string,
-  zipCode?: string
-): Promise<{ data?: Record<string, unknown>; error?: string }> {
-  const key = getSerpApiKey();
-  if (!key) return { error: "SERPAPI_KEY not configured" };
+export function localRows(data: Record<string, unknown>): Record<string, unknown>[] {
+  const local = data.local_results;
+  const rows = Array.isArray(local) ? local : local && typeof local === "object" ? (local as Record<string, unknown>).places : [];
+  return Array.isArray(rows) ? rows.filter(r => r && typeof r === "object") : [];
+}
 
-  const url = new URL("https://serpapi.com/search.json");
-  url.searchParams.set("engine", engine);
-  url.searchParams.set("q", query);
-  url.searchParams.set("api_key", key);
-  const location = zipCode ? `${zipCode}, United States` : "United States";
-  url.searchParams.set("location", location);
+async function serpSearch(engine: "google_local" | "google", query: string, location: string) {
+  return requestSerp({ engine, q: query, location, gl: "us", hl: "en" });
+}
 
-  try {
-  const res = await fetch(url.toString(), { next: { revalidate: 0 }, signal: AbortSignal.timeout(25000) });
-  if (!res.ok) {
-    return { error: `Search provider HTTP ${res.status}` };
-  }
-  const data = await res.json();
-  if (data.error) return { error: "Search provider did not return a usable sample" };
-  return { data };
-  } catch { return { error: "Search collection failed or timed out" }; }
+// At most one token follow-up per organic sample. Never retry uncertain sends.
+export async function loadAIOverview(data: Record<string, unknown>, query: string, location: string): Promise<{ evidence: GoogleAIOverviewEvidence; capture?: SerpCapture }> {
+  const initial = parseAIOverview(data, query, location);
+  const overview = data.ai_overview as Record<string, unknown> | undefined;
+  if (initial.state === "observed" || typeof overview?.page_token !== "string" || !overview.page_token) return { evidence: initial };
+  const capture = await requestSerp({ engine: "google_ai_overview", page_token: overview.page_token }, 20000);
+  capture.query = query;
+  capture.location = location;
+  const evidence = capture.data ? parseAIOverview(capture.data, query, location) : initial;
+  if (evidence.state !== "observed") evidence.state = "unavailable";
+  return { evidence, capture };
 }
 
 async function placesSearch(
@@ -132,8 +131,7 @@ async function placesSearch(
   });
 }
 
-// Only parse answer text already present in the organic response. Never follow
-// an async token or issue another paid request to populate a missing answer.
+// Parse captured Google answer text only; token loading is handled separately.
 export function parseAIOverview(data: Record<string, unknown>, query: string, location: string): GoogleAIOverviewEvidence {
   const overview = data.ai_overview as Record<string, unknown> | undefined;
   const texts: string[] = [];
@@ -188,16 +186,24 @@ export async function probeGoogleSearch(input: {
 
   const blocks: GoogleSearchBlock[] = [];
   const aiOverviews: GoogleAIOverviewEvidence[] = [];
+  const captures: Omit<SerpCapture, "data">[] = [];
+  const resolved = hasSerp ? await resolveSerpLocation(input.zipCode) : {};
+  const location = resolved.location;
+  if (resolved.error) errors.push(resolved.error);
+  const keepCapture = (capture: SerpCapture) => {
+    const { data: _data, ...record } = capture;
+    captures.push(redactSerp(record) as Omit<SerpCapture, "data">);
+  };
 
-  // Same three existing captures, in parallel so a slow provider cannot consume
-  // three consecutive timeouts. No extra requests are introduced.
-  const [localRes, organicRes, brandRes] = hasSerp
+  // Independent captures run in parallel; one bounded Overview follow-up may follow.
+  const [localRes, organicRes, brandRes]: Partial<SerpCapture>[] = hasSerp && location
     ? await Promise.all([
-        serpSearch("google_local", queries.local, input.zipCode),
-        serpSearch("google", queries.organic, input.zipCode),
-        serpSearch("google", queries.branded, input.zipCode),
+        serpSearch("google_local", queries.local, location),
+        serpSearch("google", queries.organic, location),
+        serpSearch("google", queries.branded, location),
       ])
     : [{}, {}, {}];
+  for (const capture of [localRes, organicRes, brandRes]) if (capture.engine) keepCapture(capture as SerpCapture);
 
   if (hasSerp) {
     if (localRes.error) errors.push(localRes.error);
@@ -216,7 +222,9 @@ export async function probeGoogleSearch(input: {
 
     if (organicRes.error) errors.push(organicRes.error);
     if (organicRes.data) {
-      aiOverviews.push(parseAIOverview(organicRes.data, queries.organic, `${input.zipCode}, United States`));
+      const loaded = await loadAIOverview(organicRes.data, queries.organic, location!);
+      aiOverviews.push(loaded.evidence);
+      if (loaded.capture) { keepCapture(loaded.capture); if (loaded.capture.error) errors.push(loaded.capture.error); }
       const results = parseOrganic(organicRes.data, input.businessName, host);
       const hit = results.find((r) => r.isClient);
       blocks.push({
@@ -254,7 +262,7 @@ export async function probeGoogleSearch(input: {
       blocks.push({ query: queries.branded, type: "organic", source: "serpapi", results, clientFound: Boolean(hit), clientPosition: hit?.position ?? null });
     }
     const kg = brandData?.knowledge_graph as Record<string, unknown> | undefined;
-    const local = brandData?.local_results as Record<string, unknown>[] | undefined;
+    const local = brandData ? localRows(brandData) : [];
 
     if (kg && businessNameMentioned(String(kg.title ?? ""), input.businessName)) {
       businessListing = {
@@ -287,7 +295,7 @@ export async function probeGoogleSearch(input: {
 
   let summary = "";
   if (!localBlock?.clientFound && !organicBlock?.clientFound) {
-    summary = `${input.businessName} not found in measured Google local or organic results.`;
+    summary = `${input.businessName} not matched in the returned samples. Missing or failed lanes remain unmeasured.`;
   } else {
     const parts: string[] = [];
     if (localBlock?.clientFound) {
@@ -306,7 +314,7 @@ export async function probeGoogleSearch(input: {
   const measured = blocks.some((b) => b.results.length > 0);
   for (const block of blocks) {
     block.observedAt = new Date().toISOString();
-    block.location = `${input.zipCode}, United States`;
+    block.location = block.source === "serpapi" ? location : `Query geography: ${input.zipCode} (Places text search)`;
   }
 
 
@@ -314,13 +322,14 @@ export async function probeGoogleSearch(input: {
     configured: hasSerp || hasPlaces,
     blocks,
     aiOverviews,
+    captures,
     businessListing,
     summary: measured
       ? summary
       : errors[0]
         ? `Google measurement failed: ${errors[0]}`
         : "No usable search results returned; visibility remains unmeasured.",
-    rawError: errors[0],
+    rawError: errors.length ? errors.join("; ") : undefined,
   };
 }
 

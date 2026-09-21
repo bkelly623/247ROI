@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { GoogleAIModeResults } from "@/components/audit/GoogleAIModeResults";
+import { SearchPerformance } from "@/components/audit/SearchPerformance";
 import { ReportEmail } from "@/components/audit/ReportEmail";
 import {
   AlertTriangle,
@@ -166,7 +168,7 @@ function GoogleRankings({ googleLocal, businessName }: {
           <p className="mt-2">{organicBlock?.source === "serpapi" && organicBlock.results.some((r) => r.isClient)
             ? `Your site appears at organic position ${organicBlock.results.find((r) => r.isClient)?.position} in the returned sample. Review the matched page against this exact query before changing its title, service detail or internal links.`
             : "No unbranded organic ranking is established by this sample. Confirm relevant target queries and collect dated organic samples before prioritizing new content."}</p>
-          <p className="mt-2 text-xs">Search volume, clicks, impressions, average position and traffic upside are not available in this report. Authorized Google Search Console query/page data is needed to identify high-impression, low-CTR or near-page-one opportunities; access to 247ROI does not authorize access to another business.</p>
+          <p className="mt-2 text-xs">Search samples alone do not establish traffic, total keyword coverage or search volume. When authorized Search Console data is available, the separate Existing keywords section shows measured queries and improvement opportunities. Access to 247ROI does not authorize access to another business.</p>
           {/\b247\s*roi\b/i.test(businessName) && googleLocal.searchQueries.some((q) => /home services/i.test(q)) && (
             <p className="mt-2 text-amber-400">This saved report used an incorrect home-services query for 247ROI. Do not treat that sample as a relevant opportunity. A new audit must use AI business automation services; old observations have not been relabeled.</p>
           )}
@@ -299,10 +301,13 @@ export function BlueprintReport({
 
       <div className="rounded-xl border border-zinc-800 p-4 text-sm text-zinc-400">
         <p>Service context: {inferServiceFromName(session.business_name).tradeLabel} — inferred from the name, not confirmed. ZIP is a sampling context, not proof of your full service area.</p>
-        <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. ChatGPT and Google AI Mode are unmeasured here; technical structure alone does not establish AI recommendations.</p>
+        <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. ChatGPT remains unmeasured. Google AI results, when collected, appear with their answers below; website structure alone does not establish AI recommendations.</p>
       </div>
 
+      {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Partial audit — not all measurements completed.</strong><p className="mt-2">Missing or unavailable: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
       <ReportEmail sessionId={sessionId} />
+      <SearchPerformance evidence={report.searchConsole} />
+      <GoogleAIModeResults evidence={report.googleAIMode} />
       <SectionScores sections={report.sections} compact={isPresent} />
 
       <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">

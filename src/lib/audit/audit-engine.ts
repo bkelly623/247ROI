@@ -143,6 +143,7 @@ function toGoogleLocalProbe(
   const primary = google.blocks.find((b) => b.type === "local") ?? google.blocks[0];
   return {
     aiOverviews: google.aiOverviews,
+    captures: google.captures,
     searchQueries: google.blocks.map((b) => b.query),
     blocks: google.blocks.map((b) => ({ query: b.query, results: b.results, type: b.type, source: b.source, observedAt: b.observedAt, location: b.location })),
     primaryResults: primary?.results ?? [],
@@ -257,7 +258,7 @@ export async function runAuditPipeline(input: {
     sitePreview: {
       businessName: input.businessName,
       websiteUrl: url,
-      screenshotUrl: `https://image.thum.io/get/width/900/noanimate/${encodeURIComponent(url)}`,
+      screenshotUrl: `https://image.thum.io/get/width/900/noanimate/${url}`,
       beforeAnnotations: before,
       afterAnnotations: after,
     },

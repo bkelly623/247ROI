@@ -36,8 +36,9 @@ async function main() {
   const originalKey = process.env.SERPAPI_KEY;
   process.env.SERPAPI_KEY = 'offline-test-key';
   let requests = 0;
-  globalThis.fetch = async () => {
+  globalThis.fetch = async (url) => {
     requests++;
+    if (String(url).includes("locations.json")) return Response.json([{ country_code: "US", name: "10001", canonical_name: "10001,New York,United States" }]);
     return new Response(JSON.stringify({local_results: [], organic_results: [
       {position: 1, title: '247ROI mention', link: 'https://competitor.example/get247roi.com'},
       {position: 2, title: '247ROI spoof', link: 'https://get247roi.com.evil.example'},
@@ -50,9 +51,9 @@ async function main() {
     assert.deepEqual(organic.results.map(r => r.isClient), [false, false, true]);
     assert.equal(organic.clientPosition, 3);
     assert.equal(organic.source, 'serpapi');
-    assert.equal(organic.location, '10001, United States');
+    assert.equal(organic.location, '10001,New York,United States');
     assert.ok(organic.observedAt && !Number.isNaN(Date.parse(organic.observedAt)));
-    assert.equal(requests, 3);
+    assert.equal(requests, 4, "Three captures plus one free location lookup");
   } finally {
     globalThis.fetch = originalFetch;
     if (originalKey === undefined) delete process.env.SERPAPI_KEY;

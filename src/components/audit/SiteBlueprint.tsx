@@ -25,7 +25,10 @@ export function SiteBlueprint({
   const [imgError, setImgError] = useState(false);
   const annotations = showAfter ? after : before;
   const cleanUrl = websiteUrl.replace(/^https?:\/\//, "");
-  const hasScreenshot = Boolean(screenshotUrl && !imgError);
+  // Thum.io expects the target URL in its path, not a fully escaped URL.
+  const previewUrl = screenshotUrl?.startsWith("https://image.thum.io/get/width/900/noanimate/")
+    ? `https://image.thum.io/get/width/900/noanimate/${websiteUrl}` : screenshotUrl;
+  const hasScreenshot = Boolean(previewUrl && !imgError);
 
   return (
     <Card className="overflow-hidden border-border">
@@ -37,8 +40,8 @@ export function SiteBlueprint({
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             {showAfter
-              ? "Same site — upgraded with schema, speed, AI layer, and lead capture (annotated fixes)."
-              : "Your live site — red markers show gaps AI and Google hit today."}
+              ? "Illustration of proposed changes. These changes have not been implemented or measured."
+              : "Website preview with illustrative markers for findings from the scan."}
           </p>
         </div>
         <div className="flex gap-2">
@@ -54,7 +57,7 @@ export function SiteBlueprint({
             variant={showAfter ? "default" : "secondary"}
             onClick={() => setShowAfter(true)}
           >
-            Smart Site Fixes
+            Proposed Changes
           </Button>
         </div>
       </CardHeader>
@@ -77,7 +80,7 @@ export function SiteBlueprint({
                   : "border-amber-500/30 bg-amber-500/10 text-amber-400"
               }
             >
-              {showAfter ? "With Foundation" : "As-Is"}
+              {showAfter ? "Proposed" : "As-Is"}
             </Badge>
           </div>
 
@@ -86,7 +89,7 @@ export function SiteBlueprint({
               <div className="relative mx-auto max-h-[480px] overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={screenshotUrl}
+                  src={previewUrl}
                   alt={`Screenshot of ${cleanUrl}`}
                   className={`w-full object-cover object-top transition ${
                     showAfter ? "brightness-105 saturate-110" : "opacity-95"

@@ -83,6 +83,7 @@ export interface GoogleAIOverviewEvidence {
 }
 
 export interface GoogleLocalProbe {
+  captures?: Omit<import("./probes/serpapi-transport").SerpCapture, "data">[];
   aiOverviews?: GoogleAIOverviewEvidence[];
   searchQueries: string[];
   blocks: { query: string; results: GoogleLocalResult[]; type?: "local" | "organic"; source?: "serpapi" | "places"; observedAt?: string; location?: string }[];
@@ -114,6 +115,9 @@ export interface SiteAnnotation {
 }
 
 export interface AuditReport {
+  googleAIMode?: import("./probes/google-ai-mode").GoogleAIModeEvidence;
+  searchConsole?: import("./probes/search-console").SearchConsoleEvidence;
+  coverage?: { status: "partial" | "complete"; missing: string[] };
   opportunityIndex: number;
   opportunityHeadline: string;
   sections: AuditSection[];
