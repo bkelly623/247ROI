@@ -129,24 +129,8 @@ export async function probePageSpeed(url: string): Promise<PageSpeedResult> {
 
 export function pageSpeedDeficits(ps: PageSpeedResult): AuditDeficit[] {
   const deficits: AuditDeficit[] = [];
-  if (!ps.configured) {
-    deficits.push({
-      severity: "warning",
-      finding: "Mobile performance was not measured in this scan.",
-      fix: "Collect a mobile Lighthouse result before deciding whether speed improvements are needed.",
-      category: "seo",
-    });
-    return deficits;
-  }
-  if (ps.rawError) {
-    deficits.push({
-      severity: "warning",
-      finding: `PageSpeed measurement failed: ${ps.rawError}`,
-      fix: "Verify URL is reachable and API quota is available.",
-      category: "seo",
-    });
-    return deficits;
-  }
+  // Collection failures are coverage gaps, never prospect defects.
+  if (!ps.configured || ps.rawError) return deficits;
   if (ps.performanceScore !== null && ps.performanceScore < 50) {
     deficits.push({
       severity: "critical",

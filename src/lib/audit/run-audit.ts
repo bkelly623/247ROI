@@ -12,6 +12,7 @@ import { collectAISamples } from "./probes/ai-sampling";
 import { inferServiceContext } from "./service-context";
 import { probeSiteCrawl } from "./probes/site-crawl";
 import { researchDeficits } from "./research-deficits";
+import { measurementCoverage, primaryRecommendation } from "./measurement-coverage";
 
 export async function executeFullAudit(input: {
   sessionId:string;businessName:string;websiteUrl:string;zipCode:string;mode:"organic"|"rep";
@@ -56,8 +57,7 @@ export async function executeFullAudit(input: {
   if(domainResearch.rankedKeywords.state!=="observed")missing.push(domainResearch.rankedKeywords.state==="no_data"?"Keyword database coverage unavailable":"Existing keyword research");
   if(domainResearch.relatedCompetitors.state!=="observed")missing.push("Search-competitor database coverage");
   if(!aiSampling||aiSampling.summary.available<aiSampling.summary.total)missing.push("Some AI answer samples");
-  if(!siteReview.coverage.inspected)missing.push("Multi-page website inspection");
-  else if(siteReview.status==="partial")missing.push("Some sampled website pages");
+  missing.push(...measurementCoverage(baseReport, siteReview));
   if(baseReport.googleLocal?.rawError)missing.push("Some live Google search captures");
   const overviews=baseReport.googleLocal?.aiOverviews??[];
   if(!overviews.length||overviews.some(s=>s.state==="unavailable"))missing.push("Google AI Overview collection");
@@ -69,7 +69,7 @@ export async function executeFullAudit(input: {
     opportunityHeadline:`${input.businessName}: ${domainResearch.rankedKeywords.keywords.length} keyword records, ${siteReview.coverage.inspected} inspected pages and ${aiSampling?.summary.available??0} captured AI answers. Scope and unavailable checks are shown below.`,
     coverage:{status:missing.length?"partial":"complete",missing},
     sections:baseReport.sections.map(s=>s.key==="ai"?{...s,measured:Boolean(aiSampling?.summary.available),plainQuestion:"Did AI answers mention or cite your business?",summary,dataSource:"Consumer ChatGPT via DataForSEO; Google AI Mode via SerpAPI; three shared buyer questions",topFix:"Compare retained answers and cited sources, improve demonstrated content/entity gaps, then repeat comparable measurements."}:s),
-    packages:{...baseReport.packages,primary:{...baseReport.packages.primary,priceFrame:"custom",description:deficits[0]?`Start with: ${deficits[0].finding} ${deficits[0].fix} 247ROI can scope the specific work; this audit does not require a rebuild.`: "Review your ranking pages, sampled AI sources and collection coverage before selecting an improvement project."}},
+    packages:{...baseReport.packages,primary:{...baseReport.packages.primary,priceFrame:"custom",...primaryRecommendation(deficits)}},
     progressEvents:[...baseReport.progressEvents,`Public domain research: ${domainResearch.rankedKeywords.state}; competitors: ${domainResearch.relatedCompetitors.state}.`,`Multi-page review: ${siteReview.coverage.inspected} inspected pages.`,`AI sampling: ${aiSampling?.summary.available??0} usable answers. Report saved with explicit coverage.`],
   }});
 }
