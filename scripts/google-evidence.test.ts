@@ -32,11 +32,11 @@ async function main() {
       const url = new URL(String(input));
       if (url.pathname === "/locations.json") return Response.json([{ name: "19008", canonical_name: "19008,Pennsylvania,United States", country_code: "US" }]);
       assert.equal(url.searchParams.get("location"), "19008,Pennsylvania,United States");
-      if (url.searchParams.get("engine") === "google_local") return Response.json({ error: "local upstream failed" }, { status: 503 });
+      if (url.searchParams.get("q")?.includes(" near ")) return Response.json({ error: "local upstream failed" }, { status: 503 });
       return Response.json({ search_metadata: { status: "Success" }, organic_results: [{ title: "247ROI", link: "https://get247roi.com", position: 1 }] });
     }) as typeof fetch;
     const result = await probeGoogleSearch({ businessName: "247ROI", zipCode: "19008", websiteUrl: "https://get247roi.com", servicePhrase: "automation" });
-    assert.equal(result.blocks.length, 2); assert.equal(result.captures?.length, 3); assert.match(result.rawError ?? "", /google_local: HTTP 503/); assert.equal(result.aiOverviews?.[0].state, "not_returned");
+    assert.equal(result.blocks.length, 2); assert.equal(result.captures?.length, 3); assert.match(result.rawError ?? "", /google: HTTP 503/); assert.equal(result.aiOverviews?.[0].state, "not_returned");
     console.log("PASS: local array/nested schema, token load+citation, no duplicate load, quota error/raw, empty token unavailable, body deadline, byte cap, redaction, partial-lane survival/canonical location (10 cases)");
   } finally { global.fetch = original; }
 }

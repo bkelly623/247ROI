@@ -198,7 +198,9 @@ export async function probeGoogleSearch(input: {
   // Independent captures run in parallel; one bounded Overview follow-up may follow.
   const [localRes, organicRes, brandRes]: Partial<SerpCapture>[] = hasSerp && location
     ? await Promise.all([
-        serpSearch("google_local", queries.local, location),
+        // Standard Google results include the local pack; avoid the repeatedly
+        // timing-out standalone local-search engine. This remains one capture.
+        serpSearch("google", queries.local, location),
         serpSearch("google", queries.organic, location),
         serpSearch("google", queries.branded, location),
       ])
