@@ -145,7 +145,7 @@ function toGoogleLocalProbe(
     aiOverviews: google.aiOverviews,
     captures: google.captures,
     searchQueries: google.blocks.map((b) => b.query),
-    blocks: google.blocks.map((b) => ({ query: b.query, queryIntent: b.queryIntent, results: b.results, type: b.type, source: b.source, observedAt: b.observedAt, location: b.location })),
+    blocks: google.blocks.map((b) => ({ query: b.query, queryIntent: b.queryIntent, queryCorrection: b.queryCorrection, results: b.results, type: b.type, source: b.source, observedAt: b.observedAt, location: b.location })),
     primaryResults: primary?.results ?? [],
     primaryQuery: primary?.query ?? "",
     clientPosition: primary?.clientPosition ?? null,

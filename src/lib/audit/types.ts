@@ -90,7 +90,7 @@ export interface GoogleLocalProbe {
   captures?: Omit<import("./probes/serpapi-transport").SerpCapture, "data">[];
   aiOverviews?: GoogleAIOverviewEvidence[];
   searchQueries: string[];
-  blocks: { query: string; queryIntent?: "branded" | "unbranded" | "unknown"; results: GoogleLocalResult[]; type?: "local" | "organic"; source?: "serpapi" | "places"; observedAt?: string; location?: string }[];
+  blocks: { queryCorrection?: string; query: string; queryIntent?: "branded" | "unbranded" | "unknown"; results: GoogleLocalResult[]; type?: "local" | "organic"; source?: "serpapi" | "places"; observedAt?: string; location?: string }[];
   primaryResults: GoogleLocalResult[];
   primaryQuery: string;
   clientPosition: number | null;

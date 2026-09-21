@@ -181,7 +181,7 @@ export async function probeSiteReview(
     coverage: { inspected: 0, attempted: 0, limit: LIMIT, discovered: 0 }, errors: [],
     samplingLimits: ["At most 8 same-origin pages, prioritized by service/product/solution/about/contact links; maximum 3 concurrent requests and 30 seconds overall.",
       "Public GET-only HTML sample, not a rendered browser, exhaustive crawl, indexation, ranking or AI-citation measurement.",
-      "512 KiB per response; up to 3 redirects per resource, same-origin only; no retries of denied URLs. Discovery capped at 500 URLs and 200 links per page.",
+      "512 KiB per response; up to 3 redirects per resource, same-origin or exact apex/www canonical pair only; no retries of denied URLs. Discovery capped at 500 URLs and 200 links per page.",
       "Missing elements refer only to fetched HTML. Intentional noindex or shared metadata may be appropriate; verify page purpose before changes."],
   };
   if (homepage?.httpStatus && [401, 403, 429].includes(homepage.httpStatus)) {
@@ -196,18 +196,29 @@ export async function probeSiteReview(
   const error = (url: string, reason: string) => { if (result.errors.length < 24) result.errors.push({ url, reason }); };
   const resolve = deps.resolve ?? (host => lookup(host, { all: true, verbatim: true }));
   const request = deps.request ?? nativeRequest;
-  let robots = "";
+  const policies = new Map<string, string>();
   const visited = new Set<string>();
   try {
     const start = safeUrl(/^https?:\/\//i.test(websiteUrl) ? websiteUrl : `https://${websiteUrl}`);
+    const inScope = (u: URL) => u.origin === start.origin || (u.protocol === start.protocol && u.port === start.port && !isIP(u.hostname) && u.hostname.replace(/^www\./, "") === start.hostname.replace(/^www\./, ""));
     const fetchSafe = async (target: URL, isRobots = false): Promise<ResponseData & { url: string }> => {
       let u = target;
       for (let hop = 0; hop <= 3; hop++) {
         safeUrl(u.href);
         const addresses = await bounded(resolve(u.hostname.replace(/^\[|\]$/g, "")), signal);
         if (!addresses.length || addresses.some(a => !isPublicSiteAddress(a.address))) throw new Error("unsafe_dns");
-        if (u.origin !== start.origin) throw new Error("cross_origin_redirect_not_followed");
-        if (!isRobots && !siteReviewRobotsAllows(robots, u)) throw new Error("robots_excluded");
+        if (!inScope(u)) throw new Error("cross_origin_redirect_not_followed");
+        if (!isRobots) {
+          if (!policies.has(u.origin)) {
+            const policy = await fetchSafe(new URL("/robots.txt", u), true);
+            let robots = "";
+            if (policy.status === 404 || policy.status === 410) robots = "";
+            else if (policy.status >= 200 && policy.status < 300 && !/<(?:html|script)\b/i.test(policy.text)) robots = policy.text;
+            else throw new Error("robots_unavailable_or_denied");
+            policies.set(u.origin, robots);
+          }
+          if (!siteReviewRobotsAllows(policies.get(u.origin)!, u)) throw new Error("robots_excluded");
+        }
         if (!isRobots && visited.has(u.href)) throw new Error("already_attempted");
         if (!isRobots) visited.add(u.href);
         const r = await bounded(request(u, addresses[0], signal), signal);
@@ -220,11 +231,7 @@ export async function probeSiteReview(
       }
       throw new Error("redirect_limit");
     };
-    const robotUrl = new URL("/robots.txt", start);
-    const policy = await fetchSafe(robotUrl, true);
-    if (policy.status === 404 || policy.status === 410) robots = "";
-    else if (policy.status >= 200 && policy.status < 300 && !/<(?:html|script)\b/i.test(policy.text)) robots = policy.text;
-    else throw new Error("robots_unavailable_or_denied");
+    // Each content origin gets its own robots check, including canonical redirects.
     const discovered = new Map<string, { url: string; sourceUrl: string; text: string }>();
     const attempted = new Set<string>();
     const inspect = async (url: string): Promise<SiteReviewPage> => {
@@ -260,7 +267,7 @@ export async function probeSiteReview(
           const a = attrs(m[1]); if (!a.href || a.href.startsWith("#")) continue;
           try {
             const link = safeUrl(a.href, base);
-            if (link.origin !== start.origin) continue;
+            if (!inScope(link)) continue;
             if (!page.internalLinks.includes(link.href)) page.internalLinks.push(link.href);
             if (!discovered.has(link.href) && discovered.size < 500) discovered.set(link.href, { url: link.href, sourceUrl: url, text: text(m[2]) });
           } catch { /* unsafe/non-web links are never fetched */ }

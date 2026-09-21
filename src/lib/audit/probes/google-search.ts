@@ -3,7 +3,10 @@ import { businessNameMentioned } from "../infer-service";
 import type { AuditDeficit, GoogleAIOverviewEvidence, GoogleLocalResult } from "../types";
 import { getPlacesKey, getSerpApiKey } from "../env";
 
+import { queryCorrection } from "../query-correction";
+
 export interface GoogleSearchBlock {
+  queryCorrection?: string;
   queryIntent?: "branded" | "unbranded" | "unknown";
   query: string;
   type: "local" | "organic";
@@ -263,7 +266,7 @@ export async function probeGoogleSearch(input: {
     if (brandData) {
       const results = parseOrganic(brandData, input.businessName, host);
       const hit = results.find(r => r.isClient);
-      blocks.push({ query: queries.branded, type: "organic", source: "serpapi", results, clientFound: Boolean(hit), clientPosition: hit?.position ?? null });
+      blocks.push({ query: queries.branded, queryCorrection: queryCorrection(brandData), type: "organic", source: "serpapi", results, clientFound: Boolean(hit), clientPosition: hit?.position ?? null });
     }
     const kg = brandData?.knowledge_graph as Record<string, unknown> | undefined;
     const local = brandData ? localRows(brandData) : [];

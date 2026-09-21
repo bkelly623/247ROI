@@ -58,7 +58,7 @@ export async function executeFullAudit(input: {
   if(domainResearch.relatedCompetitors.state!=="observed")missing.push("Search-competitor database coverage");
   if(!aiSampling||aiSampling.summary.available<aiSampling.summary.total)missing.push("Some AI answer samples");
   missing.push(...measurementCoverage(baseReport, siteReview));
-  if(baseReport.googleLocal?.rawError)missing.push("Some live Google search captures");
+  if(baseReport.googleLocal?.rawError && !baseReport.googleLocal.rawError.split("; ").every(e=>e.startsWith("google_ai_overview:")))missing.push("Some live Google search captures");
   const overviews=baseReport.googleLocal?.aiOverviews??[];
   if(!overviews.length||overviews.some(s=>s.state==="unavailable"))missing.push("Google AI Overview collection");
   if(serviceContext.source==="unconfirmed")missing.push("Confirmed service context");

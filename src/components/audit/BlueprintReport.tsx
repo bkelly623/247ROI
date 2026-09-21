@@ -91,11 +91,12 @@ function GoogleRankings({ googleLocal, businessName }: {
             </Badge>
           ) : (
             <Badge className="border-red-500/40 bg-red-500/10 text-red-400">
-              {block.results.length ? "Not found in sample" : "Unmeasured"}
+              {block.queryCorrection ? "Query changed — unmeasured" : block.results.length ? "Not found in sample" : "Unmeasured"}
             </Badge>
           )}
         </div>
         <p className="break-words text-sm text-zinc-300">Query: “{block.query}”</p>
+        {block.queryCorrection && <p className="text-sm text-amber-300">Google showed results for “{block.queryCorrection}”. These retained results do not establish absence for the requested brand query.</p>}
         <p className="text-xs text-zinc-500">
           {block.source === "places" ? "Places discovery order — not a Google ranking" : block.source === "serpapi" ? "SerpAPI search snapshot" : "Legacy sample — source not retained"}
           {block.location ? ` · ${block.location}` : " · location not retained"}
