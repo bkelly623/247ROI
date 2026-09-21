@@ -153,6 +153,11 @@ export async function recordRateLimit(phone: string): Promise<void> {
 }
 
 function mapRow(row: Record<string, unknown>): ScanSession {
+  // Public audit records must never expose owner-only Search Console data,
+  // including records written by earlier versions of the collector.
+  const storedReport = row.report as (AuditReport & { searchConsole?: unknown }) | null;
+  const publicReport = storedReport ? { ...storedReport } : storedReport;
+  if (publicReport) delete publicReport.searchConsole;
   return {
     id: row.id as string,
     created_at: row.created_at as string,
@@ -166,7 +171,7 @@ function mapRow(row: Record<string, unknown>): ScanSession {
     phone: row.phone as string | null | undefined,
     email: row.email as string | null | undefined,
     warm_tier: row.warm_tier as WarmTier,
-    report: row.report as AuditReport | null | undefined,
+    report: publicReport,
   };
 }
 

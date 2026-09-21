@@ -116,7 +116,6 @@ export interface SiteAnnotation {
 
 export interface AuditReport {
   googleAIMode?: import("./probes/google-ai-mode").GoogleAIModeEvidence;
-  searchConsole?: import("./probes/search-console").SearchConsoleEvidence;
   coverage?: { status: "partial" | "complete"; missing: string[] };
   opportunityIndex: number;
   opportunityHeadline: string;
