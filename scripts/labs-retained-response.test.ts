@@ -3,6 +3,15 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {parseDomainResearchResponse,probeDomainResearch} from '../src/lib/audit/probes/domain-research';
 async function main(){
+ if(process.env.LABS_ARCHIVES){
+  const captures=JSON.parse(readFileSync(process.env.LABS_ARCHIVES,'utf8')) as {request_key:string;raw_text:string;raw_sha256:string}[];
+  for(const c of captures){
+   assert.equal(createHash('sha256').update(c.raw_text).digest('hex'),c.raw_sha256);
+   const kind=c.request_key.includes(':competitors_domain:')?'competitors_domain':'ranked_keywords';
+   assert.equal(parseDomainResearchResponse({target:'get247roi.com'},kind,c.raw_text).state,'no_data');
+  }
+  console.log('PASS both real production archived response shapes and immutable hashes');
+ }
  const raw=readFileSync(process.env.LABS_CAPTURE!,'utf8');
  const parsed=parseDomainResearchResponse({target:'get247roi.com'},'ranked_keywords',raw);
  assert.equal(parsed.state,'no_data');assert.equal(parsed.totalDatabaseItems,null);

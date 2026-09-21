@@ -130,7 +130,7 @@ export function parseDomainResearchResponse(input: DomainResearchInput, kind: Do
   const r = rec(t.result[0]); const total = integer(r.total_count);
   // Observed live no-coverage envelope: total_count:null, items_count:0, items:null, metrics:null.
   // Preserve the unknown database total; this is NOT zero traffic or zero rankings.
-  const noCoverage = r.total_count === null && r.items_count === 0 && r.items === null && r.metrics === null;
+  const noCoverage = r.total_count === null && r.items_count === 0 && r.items === null && (kind === "competitors_domain" || r.metrics === null);
   if (noCoverage) {
     if (r.target !== input.target || r.se_type !== "google" || ![2840, null].includes(r.location_code as number | null) || !["en", null].includes(r.language_code as string | null)) return fail("dimensions_mismatch");
     return { ...blank("no_data"), receipt, raw: { total_count: null, keywords: [], competitors: [] } };

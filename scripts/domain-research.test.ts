@@ -25,6 +25,7 @@ async function main() {
   assert.ok(!JSON.stringify(ranked).includes("not public"));
   const noData = fixture("ranked_keywords", r => { r.total_count = 0; r.items_count = 0; r.items = null; r.metrics = null; r.location_code = null; r.language_code = null; });
   const nullable = parseDomainResearchResponse(input, "ranked_keywords", fixture("ranked_keywords", r=>{r.total_count=null;r.items_count=0;r.items=null;r.metrics=null;}));
+  assert.equal(parseDomainResearchResponse(input,"competitors_domain",fixture("competitors_domain",r=>{r.total_count=null;r.items_count=0;r.items=null;delete r.metrics;})).state,"no_data");
   assert.equal(nullable.state,"no_data"); assert.equal(nullable.totalDatabaseItems,null);
   assert.equal(parseDomainResearchResponse(input,"ranked_keywords",fixture("ranked_keywords",r=>{r.total_count=null;})).state,"unavailable");
   const empty = parseDomainResearchResponse(input, "ranked_keywords", noData);
