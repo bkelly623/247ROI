@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { TrafficMixChart } from "./TrafficMixChart";
+import { trafficMix } from "@/lib/audit/traffic-mix";
 import type { AuditReport, ScanSession } from "@/lib/audit/types";
 import {
   buildReportPresentation,
@@ -68,6 +70,8 @@ export function ReportSummary({
   const presentation =
     provided ?? buildReportPresentation(session, report, sessionId);
 
+  const cards=[{card:presentation.seoCard,tone:"seo" as const,testId:"report-seo-card"},{card:presentation.aiCard,tone:"ai" as const,testId:"report-ai-card"}];
+  const orderedCards=trafficMix().leadingProng==="ai" ? [...cards].reverse() : cards;
   return (
     <section
       data-testid="report-summary"
@@ -91,9 +95,9 @@ export function ReportSummary({
         </p>
       </div>
 
+      <TrafficMixChart />
       <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-        <MetricCard card={presentation.seoCard} tone="seo" testId="report-seo-card" />
-        <MetricCard card={presentation.aiCard} tone="ai" testId="report-ai-card" />
+        {orderedCards.map(card=><MetricCard key={card.testId} {...card} />)}
       </div>
 
       {presentation.findings.length > 0 && (
