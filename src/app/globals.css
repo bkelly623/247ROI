@@ -285,3 +285,63 @@ html {
   stroke-linecap: round;
   transition: stroke-dashoffset 1.2s ease-out;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-in,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-pulse-glow,
+  .animate-gradient,
+  .pulse-glow,
+  .missed-calc-result-pulse,
+  .chat-widget-aurora {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Report print / Save as PDF — evidence readable; chrome & CTAs hidden */
+@media print {
+  .print\:hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: #121919 !important;
+  }
+
+  body:has(.report-blueprint) * {
+    color: #161b20 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .report-blueprint, .report-evidence, .report-full-details { break-inside: auto; }
+  .report-blueprint h1, .report-blueprint h2, .report-blueprint h3 { break-after: avoid; }
+  .report-blueprint details::details-content { content-visibility: visible !important; display: block !important; }
+  .report-blueprint details > :not(summary) { display: block !important; }
+  body:has(.report-blueprint) header, body:has(.report-blueprint) nav { display: none !important; }
+
+  details.report-full-details {
+    border-color: #d7d6cd !important;
+  }
+
+  details.report-full-details[open] > summary,
+  details.report-full-details > summary {
+    color: #121919 !important;
+  }
+
+  /* Expand evidence for print even if the user left details closed */
+  details.report-full-details:not([open]) > .report-evidence {
+    display: block !important;
+  }
+
+  a[href]::after {
+    content: none !important;
+  }
+}

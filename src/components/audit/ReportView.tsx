@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AuditShell } from "@/components/audit/AuditShell";
 import { Button } from "@/components/ui/button";
-import type { AuditReport, ScanSession } from "@/lib/audit/types";
+import type { ScanSession } from "@/lib/audit/types";
 
 import { AuditLoadingScreen } from "@/components/audit/AuditLoadingScreen";
 import {
@@ -15,7 +15,6 @@ import {
 export function ReportView({ sessionId }: { sessionId: string }) {
   const [session, setSession] = useState<ScanSession | null>(null);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadSession = useCallback(async () => {
@@ -40,27 +39,6 @@ export function ReportView({ sessionId }: { sessionId: string }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "cta_click" }),
     }).catch(() => { /* Navigation remains available when analytics fails. */ });
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/sessions/${sessionId}/run`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ force: true }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Re-run failed");
-      setSession((s) =>
-        s ? { ...s, report: data.report as AuditReport } : s
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Re-run failed");
-    } finally {
-      setRefreshing(false);
-    }
   };
 
   if (loading) {
@@ -95,8 +73,6 @@ export function ReportView({ sessionId }: { sessionId: string }) {
         session={session}
         sessionId={sessionId}
         variant="report"
-        onRefresh={handleRefresh}
-        refreshing={refreshing}
       />
       <main className="mx-auto max-w-5xl space-y-8 px-4 py-8 sm:px-6">
         {error && (

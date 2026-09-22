@@ -4,14 +4,13 @@ import Link from "next/link";
 import { DomainResearchResults, SiteReviewResults, AISamplingResults } from "@/components/audit/ResearchResults";
 import { ChatGPTResults } from "@/components/audit/ChatGPTResults";
 import { GoogleAIModeResults } from "@/components/audit/GoogleAIModeResults";
-import { ReportEmail } from "@/components/audit/ReportEmail";
+import { ReportDeliveryActions } from "@/components/audit/ReportDeliveryActions";
+import { ReportSummary } from "@/components/audit/ReportSummary";
 import {
   AlertTriangle,
   CheckCircle2,
   ExternalLink,
   MapPin,
-  Phone,
-  RefreshCw,
   Star,
   XCircle,
 } from "lucide-react";
@@ -25,7 +24,6 @@ import { inferServiceFromName } from "@/lib/audit/infer-service";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BRAND } from "@/lib/audit/config";
 
 function DataSourceStrip({ report }: { report: AuditReport }) {
   const meta = report.auditMeta;
@@ -251,14 +249,13 @@ export function BlueprintReport({
   report,
   variant = "present",
   sessionId,
-  onRefresh,
-  refreshing,
   onCtaClick,
 }: {
   session: ScanSession;
   report: AuditReport;
   variant?: "present" | "report";
   sessionId: string;
+  /** @deprecated Unused on saved reports — kept for call-site compatibility. */
   onRefresh?: () => void;
   refreshing?: boolean;
   onCtaClick?: (action: string) => void;
@@ -268,173 +265,101 @@ export function BlueprintReport({
   const sections = report.sections.map(section => section.key === "seo" ? { ...section, label: "Technical SEO (subordinate)", score: seo.score, measured: seo.score !== null, plainQuestion: "Does the tested page pass Lighthouse SEO checks?", dataSource: "Google Lighthouse mobile SEO", summary: seo.score !== null ? `Lighthouse SEO: ${seo.score}/100. Page checks, speed findings and SEO improvement priorities appear above. This is a technical score only — not overall acquisition visibility.` : "Lighthouse did not return a usable SEO score. See the available page and search evidence above." } : section);
 
   return (
-    <div className="space-y-8">
-      {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
-        <div className="absolute inset-0 bg-gradient-hero opacity-60" />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-500">
-              Infrastructure Blueprint
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-50 sm:text-4xl">
-              {session.business_name}
-            </h1>
-            <p className="max-w-2xl text-lg text-zinc-400">
-              {report.executiveSummary ?? report.opportunityHeadline}
-            </p>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
-              <a
-                href={session.website_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 hover:text-primary"
-              >
-                {session.website_url.replace(/^https?:\/\//, "")}
-                <ExternalLink className="h-3 w-3" />
-              </a>
-              <span>·</span>
-              <span>ZIP {session.zip_code}</span>
+    <div className="report-blueprint space-y-8">
+      <ReportSummary session={session} report={report} sessionId={sessionId} onCtaClick={onCtaClick} />
+      <ReportDeliveryActions sessionId={sessionId} />
+
+      <details
+        data-testid="report-full-details"
+        className="report-full-details group rounded-2xl border border-zinc-800 bg-zinc-950/40 open:bg-zinc-950/80"
+      >
+        <summary className="cursor-pointer list-none px-4 py-4 text-sm font-semibold text-zinc-100 marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 sm:px-6 [&::-webkit-details-marker]:hidden">
+          <span className="inline-flex items-center gap-2">
+            <span className="text-primary transition group-open:rotate-90" aria-hidden>
+              ▸
+            </span>
+            Open full evidence · queries, rankings, page checks &amp; fixes
+          </span>
+        </summary>
+
+        <div className="report-evidence space-y-8 border-t border-zinc-800 px-4 py-6 sm:px-6">
+          <section className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
+            <div className="absolute inset-0 bg-gradient-hero opacity-60" />
+            <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="space-y-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-500">
+                  Infrastructure Blueprint
+                </p>
+                <h2 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+                  {session.business_name}
+                </h2>
+                <p className="max-w-2xl text-base text-zinc-400">
+                  {report.executiveSummary ?? report.opportunityHeadline}
+                </p>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-500">
+                  <a
+                    href={session.website_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 hover:text-primary"
+                  >
+                    {session.website_url.replace(/^https?:\/\//, "")}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  <span>·</span>
+                  <span>ZIP {session.zip_code}</span>
+                </div>
+                <DataSourceStrip report={report} />
+              </div>
+              <div className="shrink-0">
+                <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full border-8 border-zinc-800 text-center">
+                  <span className="text-xs font-semibold text-cyan-300">Technical SEO (Lighthouse)</span>
+                  <span data-testid="headline-seo-score" className={seo.score !== null ? "text-5xl font-bold text-zinc-100" : "text-lg font-semibold text-zinc-100"}>{seo.score ?? "Not measured"}</span>
+                  <span className="px-3 text-xs text-zinc-400">{seo.score !== null ? "/ 100 · subordinate to overall assessment" : "No score returned"}</span>
+                </div>
+              </div>
             </div>
-            <DataSourceStrip report={report} />
+          </section>
+
+          <AssessmentSummary report={report} />
+          <SEOOverview report={report} />
+          <GoogleRankings googleLocal={report.googleLocal} businessName={session.business_name} />
+
+          <div className="rounded-xl border border-zinc-800 p-4 text-sm text-zinc-400">
+            <p>Service context: {report.serviceContext?.tradeLabel ?? inferServiceFromName(session.business_name).tradeLabel} — {report.serviceContext?.source === "website" ? "inferred from the public website" : "inferred from the name, not confirmed"}. ZIP is a sampling context, not proof of your full service area.</p>
+            <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. Consumer ChatGPT and Google AI results, when collected, appear with their answers below; website structure alone does not establish AI recommendations.</p>
           </div>
-          <div className="shrink-0">
-            <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full border-8 border-zinc-800 text-center">
-              <span className="text-xs font-semibold text-cyan-300">Technical SEO (Lighthouse)</span>
-              <span data-testid="headline-seo-score" className={seo.score !== null ? "text-5xl font-bold text-zinc-100" : "text-lg font-semibold text-zinc-100"}>{seo.score ?? "Not measured"}</span>
-              <span className="px-3 text-xs text-zinc-400">{seo.score !== null ? "/ 100 · subordinate to overall assessment" : "No score returned"}</span>
-            </div>
-          </div>
+
+          {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Audit coverage and limitations</strong><p className="mt-2">Unavailable features or limited coverage: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
+          <DomainResearchResults evidence={report.domainResearch} />
+          <SiteReviewResults evidence={report.siteReview} />
+          {report.aiSampling ? <AISamplingResults evidence={report.aiSampling} /> : <><GoogleAIModeResults evidence={report.googleAIMode} /><ChatGPTResults evidence={report.chatGPT} /></>}
+          <SectionScores sections={sections} compact={isPresent} />
+
+          <p className="text-xs text-zinc-500">Website preview annotations are illustrative placements. Proposed changes below have not been deployed or measured.</p>
+          {report.googleLocal?.aiOverviews?.map((sample, i) => (
+            <Card key={`ai-overview-${i}`} className="border-zinc-800">
+              <CardHeader><CardTitle>Google AI Overview — sampled evidence</CardTitle></CardHeader>
+              <CardContent className="space-y-3 text-sm text-zinc-400">
+                <p>Query: “{sample.query}” · {sample.location} · {sample.observedAt} · SerpAPI</p>
+                <p>{sample.state === "observed" ? "Answer observed in this organic search response. This is one sample, not an overall visibility score." : "No usable AI answer retained in this sample. This does not establish brand absence."}</p>
+                {sample.answer && <p className="whitespace-pre-wrap text-zinc-200">{sample.answer}</p>}
+                {sample.citations.map((citation, j) => <p key={j}><a href={/^https?:\/\//i.test(citation.url) ? citation.url : undefined} target="_blank" rel="noopener noreferrer" className="text-primary underline">{citation.title}</a></p>)}
+              </CardContent>
+            </Card>
+          ))}
+          <SiteBlueprint
+            businessName={session.business_name}
+            websiteUrl={session.website_url}
+            screenshotUrl={report.sitePreview.screenshotUrl}
+            before={report.sitePreview.beforeAnnotations}
+            after={report.sitePreview.afterAnnotations}
+          />
+
+          <PriorityFixes deficits={report.deficits} />
         </div>
-      </section>
+      </details>
 
-      <AssessmentSummary report={report} />
-      <SEOOverview report={report} />
-      <GoogleRankings googleLocal={report.googleLocal} businessName={session.business_name} />
-
-      <div className="rounded-xl border border-zinc-800 p-4 text-sm text-zinc-400">
-        <p>Service context: {report.serviceContext?.tradeLabel ?? inferServiceFromName(session.business_name).tradeLabel} — {report.serviceContext?.source === "website" ? "inferred from the public website" : "inferred from the name, not confirmed"}. ZIP is a sampling context, not proof of your full service area.</p>
-        <p className="mt-2">Measured: available website checks and returned search samples. Suggested: fixes and service options. Consumer ChatGPT and Google AI results, when collected, appear with their answers below; website structure alone does not establish AI recommendations.</p>
-      </div>
-
-      {report.coverage?.status === "partial" && <div role="status" className="rounded-xl border border-amber-500/40 p-4 text-sm text-amber-200"><strong>Audit coverage and limitations</strong><p className="mt-2">Unavailable features or limited coverage: {report.coverage.missing.join("; ")}. Returned findings below remain available.</p></div>}
-      <ReportEmail sessionId={sessionId} />
-      <DomainResearchResults evidence={report.domainResearch} />
-      <SiteReviewResults evidence={report.siteReview} />
-      {report.aiSampling ? <AISamplingResults evidence={report.aiSampling} /> : <><GoogleAIModeResults evidence={report.googleAIMode} /><ChatGPTResults evidence={report.chatGPT} /></>}
-      <SectionScores sections={sections} compact={isPresent} />
-
-
-
-      <p className="text-xs text-zinc-500">Website preview annotations are illustrative placements. Proposed changes below have not been deployed or measured.</p>
-      {report.googleLocal?.aiOverviews?.map((sample, i) => (
-        <Card key={`ai-overview-${i}`} className="border-zinc-800">
-          <CardHeader><CardTitle>Google AI Overview — sampled evidence</CardTitle></CardHeader>
-          <CardContent className="space-y-3 text-sm text-zinc-400">
-            <p>Query: “{sample.query}” · {sample.location} · {sample.observedAt} · SerpAPI</p>
-            <p>{sample.state === "observed" ? "Answer observed in this organic search response. This is one sample, not an overall visibility score." : "No usable AI answer retained in this sample. This does not establish brand absence."}</p>
-            {sample.answer && <p className="whitespace-pre-wrap text-zinc-200">{sample.answer}</p>}
-            {sample.citations.map((citation, j) => <p key={j}><a href={/^https?:\/\//i.test(citation.url) ? citation.url : undefined} target="_blank" rel="noopener noreferrer" className="text-primary underline">{citation.title}</a></p>)}
-          </CardContent>
-        </Card>
-      ))}
-      <SiteBlueprint
-        businessName={session.business_name}
-        websiteUrl={session.website_url}
-        screenshotUrl={report.sitePreview.screenshotUrl}
-        before={report.sitePreview.beforeAnnotations}
-        after={report.sitePreview.afterAnnotations}
-      />
-
-      <PriorityFixes deficits={report.deficits} />
-
-
-
-      {isPresent ? (
-        <div className="rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/10 to-transparent p-8 text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-            Recommended first step
-          </p>
-          <h2 className="mt-2 text-2xl font-bold text-zinc-50">
-            {report.packages.primary.headline}
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-zinc-400">
-            {report.packages.primary.description}
-          </p>
-          <Button size="lg" className="mt-6 h-14 px-8 text-lg" asChild>
-            <a href={BRAND.phoneHref}>
-              <Phone className="h-5 w-5" />
-              {BRAND.phoneDisplay}
-            </a>
-          </Button>
-          <div className="mt-4"><Link className="text-primary underline" href={`/ai-opportunity-audit?visibility=${encodeURIComponent(sessionId)}`}>Discuss your SEO and AI visibility priorities</Link></div>
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="border-emerald-500/30 bg-emerald-500/5">
-            <CardHeader>
-              <Badge variant="outline" className="w-fit border-primary/30 bg-primary/10 text-primary">
-                Start Here
-              </Badge>
-              <CardTitle>{report.packages.primary.headline}</CardTitle>
-              <p className="text-sm text-zinc-400">
-                {report.packages.primary.description}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-sm font-medium text-emerald-400">Free quote after audit</p>
-              <Button className="w-full" asChild>
-                <a href={BRAND.phoneHref} onClick={() => onCtaClick?.("primary")}>
-                  {report.packages.primary.ctaLabel}
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-          <Card className="border-amber-500/30 bg-amber-500/5">
-            <CardHeader>
-              <Badge variant="outline" className="w-fit border-amber-500/30 bg-amber-500/10 text-amber-400">
-                Optional next step
-              </Badge>
-              <CardTitle>{report.packages.secondary.headline}</CardTitle>
-              <p className="text-sm text-zinc-400">
-                {report.packages.secondary.description}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Button
-                className="w-full bg-amber-500 text-zinc-950 hover:bg-amber-400"
-                asChild
-              >
-                <a href={BRAND.schedulingUrl.startsWith("#") || BRAND.schedulingUrl === "/ai-opportunity-audit" ? `/ai-opportunity-audit?visibility=${encodeURIComponent(sessionId)}` : BRAND.schedulingUrl} onClick={() => onCtaClick?.("secondary")}>
-                  {report.packages.secondary.ctaLabel}
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {!isPresent && (
-        <Card className="border-zinc-800">
-          <CardContent className="flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:text-left">
-            <CheckCircle2 className="h-10 w-10 shrink-0 text-emerald-400" />
-            <div className="flex-1">
-              <p className="font-semibold text-zinc-100">
-                Ready to capture the opportunity?
-              </p>
-              <p className="text-sm text-zinc-400">
-                Call for a free fix plan walkthrough — no pressure.
-              </p>
-            </div>
-            <Button size="lg" asChild>
-              <a href={BRAND.phoneHref} onClick={() => onCtaClick?.("call")}>
-                <Phone className="h-4 w-4" />
-                {BRAND.phoneDisplay}
-              </a>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
@@ -443,35 +368,23 @@ export function BlueprintReportHeader({
   session,
   sessionId,
   variant,
-  onRefresh,
-  refreshing,
 }: {
   session: ScanSession;
   sessionId: string;
   variant: "present" | "report";
+  /** @deprecated Saved reports no longer expose force re-run. */
   onRefresh?: () => void;
   refreshing?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur sm:px-8">
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur print:hidden sm:px-8">
       <div>
         <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
-          247ROI · {variant === "present" ? "Meet Close Tool" : "Infrastructure Blueprint"}
+          247ROI · {variant === "present" ? "Opportunity brief" : "Saved audit report"}
         </p>
         <p className="text-lg font-semibold text-zinc-50">{session.business_name}</p>
       </div>
       <div className="flex items-center gap-2">
-        {onRefresh && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            Re-run audit
-          </Button>
-        )}
         {variant === "present" ? (
           <Button size="sm" variant="outline" asChild>
             <Link href={`/report/${sessionId}`}>Full report</Link>

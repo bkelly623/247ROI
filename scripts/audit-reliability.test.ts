@@ -33,8 +33,8 @@ async function main() {
   const runSource = readFileSync("src/lib/audit/run-audit.ts", "utf8");
   assert(!runSource.includes("dispatchToAthena"), "no duplicate remote execution");
   const viewSource = readFileSync("src/components/audit/PresentView.tsx", "utf8");
-  assert(viewSource.includes("sessionData.session.report && !force"), "saved report reopened without collection");
-  assert(viewSource.includes("void load(false)"));
+  assert(viewSource.includes("if (sessionData.session.report) return;"), "saved report reopened without collection");
+  assert(viewSource.includes("void load()"));
   assert(!viewSource.includes("updated API keys"), "no developer troubleshooting in prospect UX");
   console.log("PASS: offline reliability checks — 404/robots/sitemap/schema, bounded PageSpeed, INP honesty, no duplicate dispatch, saved report reuse.");
 }

@@ -110,7 +110,7 @@ export function HireAuditFlow() {
         const res = await fetch("/api/hire/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ source: "ai_opportunity_audit_page" }),
+          body: JSON.stringify({ source: "ai_opportunity_audit_page", visibilitySessionId: new URLSearchParams(window.location.search).get("visibility") ?? undefined }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not start");

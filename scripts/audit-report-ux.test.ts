@@ -12,8 +12,9 @@ async function main() {
   assert.equal(inferServiceFromName('Acme Roofing').servicePhrase, 'roofer');
   const report = readFileSync('src/components/audit/BlueprintReport.tsx', 'utf8');
   const view = readFileSync('src/components/audit/ReportView.tsx', 'utf8');
-  assert.match(report, /<a href=\{BRAND.schedulingUrl/);
-  assert.match(report, /encodeURIComponent\(sessionId\)/);
+  assert.match(readFileSync("src/components/audit/ReportSummary.tsx","utf8"), /href=\{presentation.consultationHref\}/);
+  assert.match(readFileSync("src/lib/audit/report-presentation.ts","utf8"), /consultationHref\(sessionId\)/);
+  assert.match(readFileSync('src/lib/audit/report-presentation.ts', 'utf8'), /encodeURIComponent\(sessionId\)/);
   assert.doesNotMatch(view, /window.open|await fetch\(`\/api\/sessions\/\$\{sessionId\}\/events/);
   assert.match(view, /keepalive: true/);
   assert.match(report, /not a verified list of keywords/);

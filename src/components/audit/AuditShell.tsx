@@ -12,7 +12,7 @@ export function AuditShell({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      {!compact && <Navbar />}
       {!compact && (
         <div className="border-b border-border/60 bg-card/30 px-4 py-3 sm:px-6">
           <div className="mx-auto flex max-w-6xl items-center justify-between">
@@ -32,7 +32,7 @@ export function AuditShell({
         </div>
       )}
       {children}
-      <Footer />
+      {!compact ? <Footer /> : <footer className="px-4 py-6 text-center text-xs text-zinc-500 print:hidden">247ROI · Saved audit evidence · <Link href="/privacy-policy" className="underline">Privacy</Link></footer>}
     </div>
   );
 }
