@@ -20,6 +20,9 @@ export interface GoogleAIModeInput {
   servicePhrase: string;
   query?: string;
   websiteUrl: string;
+  /** Stage-3 provider location; national uses United States without ZIP. */
+  providerLocation?: string;
+  geographyMode?: "local" | "regional" | "national" | "mixed";
 }
 
 const DEADLINE_MS = 50_000;
@@ -63,15 +66,19 @@ function answerText(data: Record<string, unknown>): string {
 export async function probeGoogleAIMode(input: GoogleAIModeInput): Promise<GoogleAIModeEvidence> {
   const brand = brandPattern(input.businessName, "giu");
   const service = (brand ? input.servicePhrase.replace(brand, "") : input.servicePhrase).trim();
-  const location = `${input.zipCode.trim()}, United States`;
-  const query = input.query ?? `I'm looking for ${service || "business services"} serving ZIP code ${input.zipCode.trim()}. Which providers should I consider, and why?`;
+  const national = input.geographyMode === "national";
+  const location = input.providerLocation?.trim() || (national ? "United States" : `${input.zipCode.trim()}, United States`);
+  const query = input.query ?? (national
+    ? `I'm looking for ${service || "business services"} in the United States. Which providers should I consider, and why?`
+    : `I'm looking for ${service || "business services"} serving ZIP code ${input.zipCode.trim()}. Which providers should I consider, and why?`);
   const base: GoogleAIModeEvidence = {
     state: "unavailable", query, location, observedAt: new Date().toISOString(),
     source: "serpapi", citations: [], mentioned: null, cited: null,
   };
   const key = getSerpApiKey();
   if (!key) return { ...base, state: "not_configured", error: "Google AI Mode collection is not configured" };
-  if (!service || !/^\d{5}(?:-\d{4})?$/.test(input.zipCode.trim())) {
+  const zipOk = national || /^\d{5}(?:-\d{4})?$/.test(input.zipCode.trim());
+  if (!service || !zipOk) {
     return { ...base, error: "An unbranded service phrase and valid US ZIP are required" };
   }
   const url = new URL("https://serpapi.com/search.json");

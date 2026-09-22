@@ -1,4 +1,6 @@
 import { createHash } from "node:crypto";
+import type { AuditContext } from "../audit-context";
+import { resolveGeography } from "../geography";
 import type { ChatGPTInput, ChatGPTOptions, ChatGPTEvidence } from "./chatgpt-search";
 import type { GoogleAIModeInput, GoogleAIModeEvidence } from "./google-ai-mode";
 
@@ -7,6 +9,8 @@ export type AIIntent = "provider_shortlist" | "specific_service" | "comparison_s
 export interface AISamplingInput extends ChatGPTInput {
   /** Optional narrower service/problem, never a brand or a made-up inferred need. */
   specificServicePhrase?: string;
+  /** Validated Stage-3 context; absent = legacy local ZIP questions. */
+  auditContext?: AuditContext | null;
 }
 export interface AIQuestion { intent: AIIntent; query: string }
 export type AIEvidence = ChatGPTEvidence | GoogleAIModeEvidence;
@@ -72,26 +76,39 @@ function unbranded(value: string, input: AISamplingInput): string {
   return result;
 }
 
+function geographyForInput(input: AISamplingInput) {
+  const resolved = resolveGeography({ context: input.auditContext, zipCode: input.zipCode });
+  if (!resolved.ok) throw new Error(resolved.error);
+  return resolved;
+}
+
 /** Exactly three comparable, unbranded buyer intents, shared across both engines. */
 export function planAIQuestions(input: AISamplingInput): AIQuestion[] {
-  if (!/^\d{5}(?:-\d{4})?$/.test(input.zipCode.trim())) throw new Error("A valid US ZIP is required");
+  const geo = geographyForInput(input);
   const service = unbranded(input.servicePhrase, input);
   const specific = input.specificServicePhrase ? unbranded(input.specificServicePhrase, input) : service;
-  const area = `serving ZIP code ${input.zipCode.trim()} in the United States`;
+  const area = geo.queryAreaPhrase;
   const questions: AIQuestion[] = [
     { intent: "provider_shortlist", query: `Which providers offer ${service} ${area}? Give a shortlist with sources.` },
     { intent: "specific_service", query: `I need help with ${specific}. Which providers ${area} handle this service, and what should I ask before hiring one?` },
     { intent: "comparison_selection", query: `Compare providers of ${service} ${area}. What differences in capabilities, suitability, and published evidence should guide my choice?` },
   ];
   if (input.businessName.trim() && questions.some(q => namePattern(input.businessName).test(q.query))) throw new Error("Buyer questions must not contain the audited brand");
+  // National must never force ZIP wording into buyer questions.
+  if (geo.geography === "national" && questions.some(q => /\bZIP\b/i.test(q.query) || /\b\d{5}(?:-\d{4})?\b/.test(q.query))) {
+    throw new Error("National buyer questions must not force ZIP wording");
+  }
   return questions;
 }
 
 /** Exact question plus audited entity and collection dimensions, never fuzzy reuse. */
 export function aiSampleKey(input: AISamplingInput, engine: AIEngine, query: string): string {
+  const geo = geographyForInput(input);
   return createHash("sha256").update(JSON.stringify([
     "ai-sampling-v1", engine, query, input.businessName, input.websiteUrl,
-    input.zipCode.trim(), engine === "chatgpt" ? input.locationName?.trim() || "United States" : `${input.zipCode.trim()}, United States`,
+    geo.cacheDims.geography, geo.cacheDims.providerLocation, geo.cacheDims.zipForLocal, geo.cacheDims.serviceArea,
+    geo.queryAreaPhrase,
+    engine === "chatgpt" ? (input.locationName?.trim() || geo.providerLocation) : geo.providerLocation,
   ])).digest("hex");
 }
 
@@ -106,15 +123,31 @@ export function summarizeAISamples(samples: readonly AISample[]): AISampleSummar
 }
 
 function failure(input: AISamplingInput, engine: AIEngine, query: string, error: string, denied = false): AIEvidence {
+  const geo = geographyForInput(input);
   const common = { query, observedAt: new Date().toISOString(), citations: [], mentioned: null, cited: null, error };
   return engine === "chatgpt"
-    ? { ...common, state: denied ? "not_authorized" : "unavailable", source: "dataforseo", product: "consumer_chatgpt_scraper", mode: "search", location: input.locationName?.trim() || "United States" }
-    : { ...common, state: "unavailable", source: "serpapi", location: `${input.zipCode.trim()}, United States` };
+    ? { ...common, state: denied ? "not_authorized" : "unavailable", source: "dataforseo", product: "consumer_chatgpt_scraper", mode: "search", location: input.locationName?.trim() || geo.providerLocation }
+    : { ...common, state: "unavailable", source: "serpapi", location: geo.providerLocation };
 }
 function timeout(value: number | undefined, fallback: number, cap: number): number {
   if (value === undefined) return fallback;
   if (!Number.isFinite(value) || value < 1) throw new Error("Invalid AI sampling deadline");
   return Math.min(value, cap);
+}
+
+/** Provider-facing sample input with geography-aligned location fields. */
+export function sampleProviderInput(input: AISamplingInput, query: string): ChatGPTInput & GoogleAIModeInput & { query: string } {
+  const geo = geographyForInput(input);
+  return {
+    businessName: input.businessName,
+    websiteUrl: input.websiteUrl,
+    servicePhrase: input.servicePhrase,
+    zipCode: geo.zipCode ?? input.zipCode,
+    locationName: input.locationName?.trim() || geo.providerLocation,
+    providerLocation: geo.providerLocation,
+    geographyMode: geo.geography === "legacy_local" ? "local" : geo.geography,
+    query,
+  };
 }
 
 /** Six maximum product captures, two concurrent per engine, zero retries.
@@ -147,11 +180,12 @@ export async function collectAISamples(input: AISamplingInput, options: AISampli
     if (duration <= 0) evidence = failure(input, job.engine, job.query, "AI sampling deadline reached; request not started");
     else {
       const collect = async (): Promise<AIEvidence> => {
-        if (job.engine === "google_ai_mode") return options.collectors.googleAIMode({ ...input, query: job.query });
+        const providerInput = sampleProviderInput(input, job.query);
+        if (job.engine === "google_ai_mode") return options.collectors.googleAIMode(providerInput);
         const budget = await options.budgetChatGPTQuote(Object.freeze({ key: job.key, query: job.query, intent: job.intent }));
         if (expired || Date.now() >= deadline) return failure(input, job.engine, job.query, "AI sampling deadline reached; request not started");
         if (!budget?.quote || !budget.authorize) return failure(input, job.engine, job.query, "ChatGPT sample budget not authorized", true);
-        return options.collectors.chatgpt({ ...input, query: job.query }, {
+        return options.collectors.chatgpt(providerInput, {
           ...budget, timeoutMs: Math.max(1, Math.min(duration, deadline - Date.now())),
           // A slow durable authorization must not authorize a new send after this
           // sampling window. Its reservation is retained, not refunded here.
@@ -186,8 +220,9 @@ export async function collectAISamples(input: AISamplingInput, options: AISampli
     await Promise.all([0, 1].map(async () => { for (let job = queue.shift(); job; job = queue.shift()) await run(job); }));
   }));
   samples.sort((a, b) => jobs.findIndex(j => j.key === a.key) - jobs.findIndex(j => j.key === b.key));
+  const geo = geographyForInput(input);
   return { version: 1, questions, samples, summary: summarizeAISamples(samples), byEngine: {
     chatgpt: summarizeAISamples(samples.filter(s => s.engine === "chatgpt")),
     google_ai_mode: summarizeAISamples(samples.filter(s => s.engine === "google_ai_mode")),
-  }, methodology: "Three unbranded buyer questions sampled identically across consumer ChatGPT search and Google AI Mode. Counts describe only these samples, not market share or guaranteed recommendations. Mention/citation denominators exclude failures and unknown values. ZIP text describes requested service coverage; it does not prove the search originated at that ZIP. Provider location, timestamps, raw answer and references remain in each evidence record. No causal explanation for inclusion or absence is inferred." };
+  }, methodology: `Three unbranded buyer questions sampled identically across consumer ChatGPT search and Google AI Mode (${geo.geography === "national" ? "national/US geography; no forced ZIP in query text" : "local/regional geography with declared area"}). Counts describe only these samples, not market share or guaranteed recommendations. Mention/citation denominators exclude failures and unknown values. ZIP text describes requested service coverage when used; it does not prove the search originated at that ZIP. Provider location, timestamps, raw answer and references remain in each evidence record. No causal explanation for inclusion or absence is inferred.` };
 }

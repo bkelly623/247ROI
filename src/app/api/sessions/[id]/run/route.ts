@@ -21,7 +21,8 @@ export async function POST(req: NextRequest, {params}: {params: Promise<{id:stri
     after(async()=>{
       try {
         const report=await executeFullAudit({sessionId:id,businessName:session.business_name,
-          websiteUrl:session.website_url,zipCode:session.zip_code,mode:session.mode,callbackUrl,previousReport:session.report});
+          websiteUrl:session.website_url,zipCode:session.zip_code,mode:session.mode,callbackUrl,previousReport:session.report,
+          auditContext:session.audit_context ?? null});
         const saved=await updateSession(id,{status:"complete",report,progress_events:report.progressEvents,warm_tier:"warm_a"});
         if (!saved?.report) throw new Error("Report storage did not confirm the save");
       } catch {

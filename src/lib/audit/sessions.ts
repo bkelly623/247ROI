@@ -1,8 +1,14 @@
 import { createServiceClient, explainSupabaseKeyError } from "./supabase/server";
+import type { AuditContext } from "./audit-context";
 import type { AuditReport, ScanSession, SessionStatus, WarmTier } from "./types";
 import { randomUUID } from "crypto";
 
 const memorySessions = new Map<string, ScanSession>();
+
+/** Test-only: clear in-memory sessions between offline roundtrips. */
+export function __resetMemorySessionsForTests(): void {
+  memorySessions.clear();
+}
 
 export async function createSession(input: {
   businessName: string;
@@ -10,6 +16,7 @@ export async function createSession(input: {
   zipCode: string;
   mode: "organic" | "rep";
   repToken?: string;
+  auditContext?: AuditContext | null;
 }): Promise<ScanSession> {
   const supabase = createServiceClient();
   if (!supabase && process.env.NODE_ENV === "production") {
@@ -23,6 +30,7 @@ export async function createSession(input: {
     status: "started" as SessionStatus,
     rep_token: input.repToken ?? null,
     warm_tier: "cold" as WarmTier,
+    audit_context: input.auditContext ?? null,
   };
 
   if (supabase) {
@@ -45,6 +53,7 @@ export async function createSession(input: {
     status: "started",
     warm_tier: "cold",
     report: null,
+    audit_context: input.auditContext ?? null,
   };
   memorySessions.set(session.id, session);
   return session;
@@ -82,6 +91,7 @@ export async function updateSession(
     report_viewed_at: string;
     cta_clicked_at: string;
     athena_job_id: string;
+    audit_context: AuditContext | null;
   }>
 ): Promise<ScanSession | null> {
   const supabase = createServiceClient();
@@ -110,6 +120,7 @@ export async function updateSession(
     ...(patch.status ? { status: patch.status } : {}),
     ...(patch.report ? { report: patch.report } : {}),
     ...(patch.warm_tier ? { warm_tier: patch.warm_tier } : {}),
+    ...("audit_context" in patch ? { audit_context: patch.audit_context ?? null } : {}),
   };
   memorySessions.set(id, updated);
   return updated;
@@ -172,6 +183,7 @@ function mapRow(row: Record<string, unknown>): ScanSession {
     email: row.email as string | null | undefined,
     warm_tier: row.warm_tier as WarmTier,
     report: publicReport,
+    audit_context: (row.audit_context as ScanSession["audit_context"]) ?? null,
   };
 }
 

@@ -11,6 +11,10 @@ export interface ChatGPTInput {
   zipCode: string;
   /** Product-catalog-verified location; US is the retained successful sample. */
   locationName?: string;
+  /** Stage-3 provider location (propagated with query/cache). Defaults from locationName. */
+  providerLocation?: string;
+  /** When national, ZIP is not required for query/location validation. */
+  geographyMode?: "local" | "regional" | "national" | "mixed";
 }
 export interface ChatGPTPriceQuote {
   upperCostMicros: number;
@@ -74,9 +78,14 @@ function makeBase(input: ChatGPTInput): { base: ChatGPTEvidence; service: string
   // Do not insert the audited website into the buyer query either.
   const domain = hostname(input.websiteUrl);
   if (domain) service = service.replace(new RegExp(`(?:https?:\\/\\/)?(?:www\\.)?${domain.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[^\\s]*`, "giu"), "").trim();
+  const national = input.geographyMode === "national";
+  const location = (input.providerLocation ?? input.locationName)?.trim() || (national ? "United States" : "United States");
+  const defaultQuery = national
+    ? `Which providers offer ${service || "business services"} in the United States, and why should I consider them?`
+    : `Which providers offer ${service || "business services"} serving ZIP code ${input.zipCode.trim()} in the United States, and why should I consider them?`;
   return { service, base: {
-    state: "unavailable", query: input.query ?? `Which providers offer ${service || "business services"} serving ZIP code ${input.zipCode.trim()} in the United States, and why should I consider them?`,
-    location: input.locationName?.trim() || "United States", observedAt: new Date().toISOString(),
+    state: "unavailable", query: input.query ?? defaultQuery,
+    location, observedAt: new Date().toISOString(),
     source: "dataforseo", product: "consumer_chatgpt_scraper", mode: "search", citations: [], mentioned: null, cited: null,
   } };
 }
@@ -124,7 +133,12 @@ export async function probeChatGPT(input: ChatGPTInput, options: ChatGPTOptions 
   const decoded = Buffer.from(auth, "base64").toString("utf8");
   const colon = decoded.indexOf(":");
   if (colon <= 0 || colon === decoded.length - 1) return { ...base, state: "not_configured", error: "ChatGPT consumer credentials are invalid" };
-  if (!service || service.length > 200 || !/^\d{5}(?:-\d{4})?$/.test(input.zipCode.trim()) || base.location.length > 200) return { ...base, error: "An unbranded service phrase and valid US ZIP/location are required" };
+  const national = input.geographyMode === "national";
+  const zipOk = national || /^\d{5}(?:-\d{4})?$/.test(input.zipCode.trim());
+  if (!service || service.length > 200 || !zipOk || base.location.length > 200) return { ...base, error: "An unbranded service phrase and valid US ZIP/location are required" };
+  if (national && (/\bZIP\b/i.test(base.query) || (base.location !== "United States" && /^\d{5}/.test(base.location)))) {
+    return { ...base, error: "National ChatGPT samples must use United States location without forced ZIP query text" };
+  }
   const quote = options.quote ? Object.freeze({ ...options.quote }) : undefined;
   const age = quote ? Date.now() - Date.parse(quote.verifiedAt) : NaN;
   if (!quote || !Number.isSafeInteger(quote.upperCostMicros) || quote.upperCostMicros <= 0 || quote.pricingUrl !== CHATGPT_PRICING_URL || !Number.isFinite(age) || age < 0 || age > 86400000) return { ...base, state: "not_authorized", error: "A fresh verified ChatGPT price quote is required" };

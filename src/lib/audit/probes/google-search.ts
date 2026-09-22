@@ -3,6 +3,8 @@ import { businessNameMentioned } from "../infer-service";
 import type { AuditDeficit, GoogleAIOverviewEvidence, GoogleLocalResult } from "../types";
 import { getPlacesKey, getSerpApiKey } from "../env";
 
+import { resolveGeography, zipForSerpResolver } from "../geography";
+import type { AuditContext } from "../audit-context";
 import { queryCorrection } from "../query-correction";
 
 export interface GoogleSearchBlock {
@@ -158,6 +160,7 @@ export function parseAIOverview(data: Record<string, unknown>, query: string, lo
 }
 
 export async function probeGoogleSearch(input: {
+  auditContext?: AuditContext | null;
   businessName: string;
   zipCode: string;
   servicePhrase: string;
@@ -168,15 +171,18 @@ export async function probeGoogleSearch(input: {
     .replace(/\/.*$/, "")
     .toLowerCase();
 
+  const geo = resolveGeography({context:input.auditContext,zipCode:input.zipCode});
+  const localScope = geo.ok && geo.requiresZipResolver;
+  const area = geo.ok && geo.geography !== "national" ? (localScope ? input.zipCode : input.auditContext?.serviceArea ?? "") : "";
   const queries = {
-    local: `${input.servicePhrase} near ${input.zipCode}`,
-    organic: `best ${input.servicePhrase} ${input.zipCode}`,
+    local: area ? `${input.servicePhrase} near ${area}` : input.servicePhrase,
+    organic: `best ${input.servicePhrase}${area ? ` ${area}` : ""}`,
     branded: input.businessName,
   };
 
   const hasService = Boolean(input.servicePhrase.trim()) && input.servicePhrase.trim().toLowerCase() !== input.businessName.trim().toLowerCase();
   const hasSerp = Boolean(getSerpApiKey());
-  const hasPlaces = Boolean(getPlacesKey());
+  const hasPlaces = Boolean(getPlacesKey()) && localScope;
   const errors: string[] = [];
 
   if (!hasSerp && !hasPlaces) {
@@ -192,7 +198,7 @@ export async function probeGoogleSearch(input: {
   const blocks: GoogleSearchBlock[] = [];
   const aiOverviews: GoogleAIOverviewEvidence[] = [];
   const captures: Omit<SerpCapture, "data">[] = [];
-  const resolved = hasSerp ? await resolveSerpLocation(input.zipCode) : {};
+  const resolved: {location?:string;error?:string} = !geo.ok ? {error:geo.error} : !hasSerp ? {} : geo.requiresZipResolver ? await resolveSerpLocation(zipForSerpResolver(geo) ?? "") : {location:geo.providerLocation};
   const location = resolved.location;
   if (resolved.error) errors.push(resolved.error);
   const keepCapture = (capture: SerpCapture) => {
@@ -215,11 +221,11 @@ export async function probeGoogleSearch(input: {
   if (hasSerp) {
     if (localRes.error) errors.push(localRes.error);
     if (localRes.data) {
-      const results = parseLocal(localRes.data, input.businessName);
+      const results = localScope ? parseLocal(localRes.data, input.businessName) : parseOrganic(localRes.data, input.businessName, host);
       const hit = results.find((r) => r.isClient);
       blocks.push({
         query: queries.local,
-        type: "local",
+        type: localScope ? "local" : "organic",
         source: "serpapi",
         results,
         clientFound: Boolean(hit),

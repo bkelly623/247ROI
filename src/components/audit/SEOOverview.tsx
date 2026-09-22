@@ -5,8 +5,8 @@ import { PageSpeedVitals } from './PageSpeedVitals';
 export function SEOOverview({report}:{report:AuditReport}) {
   const seo=seoOverview(report);
   return <section id="website-seo" data-testid="seo-overview" className="min-w-0 space-y-5 rounded-2xl border border-cyan-500/30 bg-zinc-950 p-5 sm:p-6">
-    <div><h2 className="text-2xl font-bold text-zinc-100">Website SEO results</h2>
-      <p className="mt-2 text-sm text-zinc-400">Your website checks and SEO fixes are shown here, separately from keyword-database coverage and AI visibility.</p></div>
+    <div><h2 className="text-2xl font-bold text-zinc-100">Website technical SEO results</h2>
+      <p className="mt-2 text-sm text-zinc-400">Technical page checks and Lighthouse scores only — subordinate to the overall acquisition assessment above. Separate from keyword-database coverage and AI visibility.</p></div>
     <div className="grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-2">
       <PageSpeedVitals report={report}/>
       <div className="min-w-0 rounded-xl border border-zinc-800 p-4">

@@ -125,6 +125,12 @@ export interface AuditReport {
   chatGPT?: import("./probes/chatgpt-search").ChatGPTEvidence;
   serviceContext?: import("./service-context").ServiceContext;
   googleAIMode?: import("./probes/google-ai-mode").GoogleAIModeEvidence;
+  /** Stage-3 confirmed context snapshot used for this report (may be null for legacy). */
+  auditContext?: import("./audit-context").AuditContext | null;
+  /** Bounded direct organic rank checks (operator-authorized only in public by default). */
+  directRank?: import("./probes/direct-rank").DirectRankReport;
+  /** Versioned SEO/AI assessment and opportunity cards. */
+  assessment?: import("./assessment").AuditAssessment;
   coverage?: { status: "partial" | "complete"; missing: string[] };
   opportunityIndex: number;
   opportunityHeadline: string;
@@ -179,6 +185,7 @@ export interface AuditReport {
       contentWordCount: number;
       hasLocalBusinessSchema: boolean;
       schemaBlocks: number;
+      schemaBasicValid?: boolean;
       hasSitemap: boolean;
       hasRobotsTxt: boolean;
       lcpSeconds: number | null;
@@ -214,6 +221,8 @@ export interface ScanSession {
   report?: AuditReport | null;
   warm_tier: WarmTier;
   created_at: string;
+  /** Validated Stage-3 context; null/absent = legacy local behavior. */
+  audit_context?: import("./audit-context").AuditContext | null;
 }
 
 export interface GatePayload {
@@ -229,6 +238,9 @@ export interface StartScanPayload {
   zipCode: string;
   mode?: SessionMode;
   repToken?: string;
+  /** Optional public geography confirmation (local | national). */
+  geography?: "local" | "national";
+  auditContext?: import("./audit-context").AuditContext;
 }
 
 export const SECTION_META: Record<

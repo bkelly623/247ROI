@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 import { emptyDiscovery } from '../src/lib/hire/types';
 const require = createRequire(import.meta.url);
 const { chromium } = require('/home/precision_focused_solutions/.hermes/hermes-agent/node_modules/playwright');
-const base = 'http://127.0.0.1:3189';
+const base = process.env.AUDIT_BASE ?? 'http://127.0.0.1:3189';
 async function main() {
  const browser = await chromium.launch({headless:true,args:['--no-sandbox']});
  try {
@@ -17,7 +17,7 @@ async function main() {
     if(url.pathname.startsWith('/present/')) return route.fulfill({contentType:'text/html',body:'<h1>Visibility handoff</h1>'});
     if(!url.pathname.startsWith('/api/')) return route.continue();
     if(url.pathname==='/api/hire/session') { chatStarts++;return route.fulfill({json:{sessionId:'qa-opportunity',opening:'Describe the workflow.',discovery:emptyDiscovery()}}); }
-    if(url.pathname==='/api/sessions') { scans++;assert.deepEqual(req.postDataJSON(),{businessName:'QA Consultancy',websiteUrl:'https://example.com',zipCode:'27401'});return route.fulfill({json:{session:{id:'qa-visibility'}}}); }
+    if(url.pathname==='/api/sessions') { scans++;assert.deepEqual(req.postDataJSON(),{businessName:'QA Consultancy',websiteUrl:'https://example.com',zipCode:'27401',geography:'national'});return route.fulfill({json:{session:{id:'qa-visibility'}}}); }
     return route.fulfill({json:{ok:true}});
    });
    await page.goto(base+'/ai-opportunity-audit');
@@ -37,6 +37,7 @@ async function main() {
    await page.getByLabel('Website',{exact:true}).fill('example.com');
    await page.getByLabel('Business name',{exact:true}).fill('QA Consultancy');
    await page.getByLabel('ZIP code',{exact:true}).fill('27401');
+   await page.getByLabel('Where do you serve customers?').selectOption('national');
    await page.getByRole('button',{name:'Check website visibility',exact:true}).click();
    await page.waitForURL('**/present/qa-visibility');
    assert.equal(scans,1);

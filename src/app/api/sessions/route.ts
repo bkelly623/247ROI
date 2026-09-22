@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  AuditContextSchema,
+  contextFromPublicChoice,
+  parseAuditContext,
+  PublicGeographyChoiceSchema,
+} from "@/lib/audit/audit-context";
 import { createSession, getRepSession } from "@/lib/audit/sessions";
 import { normalizeUrl } from "@/lib/audit/utils";
 
@@ -8,6 +14,10 @@ const schema = z.object({
   websiteUrl: z.string().min(3),
   zipCode: z.string().min(5).max(10),
   repToken: z.string().optional(),
+  /** Public intake: local vs national/remote confirmation. */
+  geography: PublicGeographyChoiceSchema.optional(),
+  /** Full validated context when supplied by a trusted caller; never accepts budget/authorization. */
+  auditContext: AuditContextSchema.optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -28,12 +38,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    let auditContext = body.auditContext ?? contextFromPublicChoice(body.geography) ?? null;
+    if (body.auditContext) {
+      const checked = parseAuditContext(body.auditContext);
+      if (!checked.ok) return NextResponse.json({ error: checked.error }, { status: 400 });
+      auditContext = checked.context;
+    }
+
     const session = await createSession({
       businessName,
       websiteUrl,
       zipCode,
       mode,
       repToken: body.repToken,
+      auditContext,
     });
 
     return NextResponse.json({ session });

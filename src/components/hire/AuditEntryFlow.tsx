@@ -14,6 +14,7 @@ export function AuditEntryFlow() {
   const [business, setBusiness] = useState("");
   const [website, setWebsite] = useState("");
   const [zip, setZip] = useState("");
+  const [geography, setGeography] = useState<"local" | "national">("local");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,7 +40,7 @@ export function AuditEntryFlow() {
       const response = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessName: business.trim(), websiteUrl: normalizeUrl(website.trim()), zipCode: zip.trim() }),
+        body: JSON.stringify({ businessName: business.trim(), websiteUrl: normalizeUrl(website.trim()), zipCode: zip.trim(), geography }),
         signal: AbortSignal.timeout(20000),
       });
       const data = await response.json().catch(() => null);
@@ -65,6 +66,7 @@ export function AuditEntryFlow() {
           <form onSubmit={scan} className="space-y-4 rounded-xl border border-white/10 p-5">
             <label className="block">Website<input className={field} required value={website} onChange={e => setWebsite(e.target.value)} placeholder="yourbusiness.com" autoComplete="url" /></label>
             <label className="block">Business name<input className={field} required minLength={2} value={business} onChange={e => setBusiness(e.target.value)} autoComplete="organization" /></label>
+            <label className="block">Where do you serve customers?<select className={field} value={geography} onChange={e => setGeography(e.target.value as "local" | "national")}><option value="local">Locally / nearby</option><option value="national">US-wide / remotely</option></select></label>
             <label className="block">ZIP code<input className={field} required minLength={5} maxLength={10} value={zip} onChange={e => setZip(e.target.value)} autoComplete="postal-code" /></label>
             <button type="submit" className={`${button} w-full bg-orange-500 text-black`} disabled={busy}>{busy ? "Starting visibility audit…" : "Check website visibility"}</button>
             <p className="text-sm text-zinc-400">Website scans need business name and ZIP above. You can continue to the Opportunity conversation after viewing the findings.</p>

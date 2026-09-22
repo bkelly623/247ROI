@@ -29,7 +29,8 @@ async function main() {
   assert.doesNotMatch(engine, /weightedReadinessIndex|AI cannot confidently|phase-two growth engine/);
   assert.doesNotMatch(llm, /ALWAYS package|Most businesses in your area|covert sales/);
   assert.doesNotMatch(report, /<GrowthSimulator|<IndustryPulse|<ScoreRing/);
-  assert.match(report, /No composite visibility score/);
+  assert.match(report, /<AssessmentSummary/);
+  assert.match(readFileSync("src/components/audit/AssessmentSummary.tsx", "utf8"), /Overall assessment incomplete/);
   const emptyFindings = googleDeficits({ configured: true, blocks: [{ query: "test", type: "local", source: "places", results: [], clientFound: false, clientPosition: null }], businessListing: { found: true }, summary: "empty" });
   assert.equal(emptyFindings.length, 0, 'No fake absent ranking or zero review findings');
   const originalFetch = globalThis.fetch;

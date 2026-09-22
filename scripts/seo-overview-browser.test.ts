@@ -3,7 +3,7 @@ import {createRequire} from 'node:module';
 import {readFileSync,writeFileSync} from 'node:fs';
 const require=createRequire(import.meta.url);
 const {chromium}=require('/home/precision_focused_solutions/.hermes/hermes-agent/node_modules/playwright');
-const base='http://127.0.0.1:3203';
+const base=process.env.AUDIT_BASE ?? 'http://127.0.0.1:3203';
 async function main(){
  const saved=JSON.parse(readFileSync(process.env.SEO_REPORT!,'utf8'));
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});const results=[];

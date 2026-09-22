@@ -56,6 +56,7 @@ export async function POST(
       zipCode: session.zip_code,
       mode: session.mode,
       callbackUrl,
+      auditContext: session.audit_context ?? null,
       lead: {
         firstName: body.firstName,
         lastName: body.lastName,

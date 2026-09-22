@@ -19,6 +19,7 @@ import type { AuditReport, GoogleLocalProbe, ScanSession } from "@/lib/audit/typ
 import { SiteBlueprint } from "@/components/audit/SiteBlueprint";
 import { SectionScores } from "@/components/audit/SectionScores";
 import { SEOOverview } from "@/components/audit/SEOOverview";
+import { AssessmentSummary } from "@/components/audit/AssessmentSummary";
 import { seoOverview } from "@/lib/audit/seo-overview";
 import { inferServiceFromName } from "@/lib/audit/infer-service";
 import { Button } from "@/components/ui/button";
@@ -264,7 +265,7 @@ export function BlueprintReport({
 }) {
   const isPresent = variant === "present";
   const seo = seoOverview(report);
-  const sections = report.sections.map(section => section.key === "seo" ? { ...section, label: "Technical SEO", score: seo.score, measured: seo.score !== null, plainQuestion: "Does the tested page pass Lighthouse SEO checks?", dataSource: "Google Lighthouse mobile SEO", summary: seo.score !== null ? `Lighthouse SEO: ${seo.score}/100. Page checks, speed findings and SEO improvement priorities appear above. This is not a search-ranking score.` : "Lighthouse did not return a usable SEO score. See the available page and search evidence above." } : section);
+  const sections = report.sections.map(section => section.key === "seo" ? { ...section, label: "Technical SEO (subordinate)", score: seo.score, measured: seo.score !== null, plainQuestion: "Does the tested page pass Lighthouse SEO checks?", dataSource: "Google Lighthouse mobile SEO", summary: seo.score !== null ? `Lighthouse SEO: ${seo.score}/100. Page checks, speed findings and SEO improvement priorities appear above. This is a technical score only — not overall acquisition visibility.` : "Lighthouse did not return a usable SEO score. See the available page and search evidence above." } : section);
 
   return (
     <div className="space-y-8">
@@ -299,14 +300,15 @@ export function BlueprintReport({
           </div>
           <div className="shrink-0">
             <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full border-8 border-zinc-800 text-center">
-              <span className="text-xs font-semibold text-cyan-300">Website SEO score</span>
+              <span className="text-xs font-semibold text-cyan-300">Technical SEO (Lighthouse)</span>
               <span data-testid="headline-seo-score" className={seo.score !== null ? "text-5xl font-bold text-zinc-100" : "text-lg font-semibold text-zinc-100"}>{seo.score ?? "Not measured"}</span>
-              <span className="px-3 text-xs text-zinc-400">{seo.score !== null ? "/ 100 · Lighthouse mobile" : "No score returned"}</span>
+              <span className="px-3 text-xs text-zinc-400">{seo.score !== null ? "/ 100 · subordinate to overall assessment" : "No score returned"}</span>
             </div>
           </div>
         </div>
       </section>
 
+      <AssessmentSummary report={report} />
       <SEOOverview report={report} />
       <GoogleRankings googleLocal={report.googleLocal} businessName={session.business_name} />
 

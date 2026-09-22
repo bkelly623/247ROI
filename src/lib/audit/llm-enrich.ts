@@ -117,7 +117,18 @@ function mergeEnrichment(
   const advisorSteps = Array.isArray(parsed.advisorSteps)
     ? parsed.advisorSteps.filter((step): step is string => typeof step === "string").slice(0, 8)
     : buildDefaultAdvisorSteps(base);
-  return { ...base, advisorSteps, progressEvents: [...base.progressEvents, "Optional advisor suggestions generated; not additional measurement."] };
+  // Never let LLM output mutate evidence, scores, assessment, or direct-rank fields.
+  return {
+    ...base,
+    advisorSteps,
+    progressEvents: [...base.progressEvents, "Optional advisor suggestions generated; not additional measurement."],
+    assessment: base.assessment,
+    directRank: base.directRank,
+    auditContext: base.auditContext,
+    aiSampling: base.aiSampling,
+    domainResearch: base.domainResearch,
+    siteReview: base.siteReview,
+  };
 }
 
 export function buildDefaultAdvisorSteps(report: AuditReport): string[] {

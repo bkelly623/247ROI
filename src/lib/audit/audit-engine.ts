@@ -157,6 +157,7 @@ function toGoogleLocalProbe(
 }
 
 export async function runAuditPipeline(input: {
+  auditContext?: import("./audit-context").AuditContext | null;
   businessName: string;
   websiteUrl: string;
   zipCode: string;
@@ -175,6 +176,7 @@ export async function runAuditPipeline(input: {
       businessName: input.businessName,
       zipCode: input.zipCode,
       servicePhrase,
+      auditContext: input.auditContext,
       websiteUrl: url,
     }),
   ]);
@@ -288,6 +290,7 @@ export async function runAuditPipeline(input: {
             contentWordCount: site.contentWordCount,
             hasLocalBusinessSchema: site.hasLocalBusinessSchema,
             schemaBlocks: site.schemaBlocks.length,
+            schemaBasicValid: site.schemaBlocks.every(block => block.valid),
             hasSitemap: site.hasSitemap,
             hasRobotsTxt: site.hasRobotsTxt,
             lcpSeconds: pageSpeed.lcpSeconds,

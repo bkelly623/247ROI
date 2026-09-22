@@ -25,6 +25,7 @@ export function AuditFlow() {
   const [businessName, setBusinessName] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [zipCode, setZipCode] = useState("");
+  const [geography, setGeography] = useState<"local" | "national">("local");
 
   const startAudit = useCallback(async () => {
     setError(null);
@@ -42,6 +43,7 @@ export function AuditFlow() {
           businessName: businessName.trim(),
           websiteUrl: normalizeUrl(websiteUrl),
           zipCode: zipCode.trim(),
+          geography,
           repToken: "demo-rep-247roi",
         }),
       });
@@ -53,7 +55,7 @@ export function AuditFlow() {
       setError(e instanceof Error ? e.message : "Failed to start");
       setLoading(false);
     }
-  }, [businessName, websiteUrl, zipCode, router]);
+  }, [businessName, websiteUrl, zipCode, geography, router]);
 
   return (
     <AuditShell>
@@ -105,8 +107,34 @@ export function AuditFlow() {
                   onChange={(e) => setWebsiteUrl(e.target.value)}
                 />
               </div>
+              <fieldset className="space-y-2">
+                <legend className="text-sm font-medium text-zinc-200">Service geography</legend>
+                <p className="text-xs text-zinc-500">
+                  Confirm local vs US-wide/remote. National buyer questions will not force ZIP wording.
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-zinc-300">
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="geography"
+                      checked={geography === "local"}
+                      onChange={() => setGeography("local")}
+                    />
+                    Local (ZIP-based sampling)
+                  </label>
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="geography"
+                      checked={geography === "national"}
+                      onChange={() => setGeography("national")}
+                    />
+                    National / remote (US-wide)
+                  </label>
+                </div>
+              </fieldset>
               <div className="space-y-2">
-                <Label htmlFor="zip">Zip Code</Label>
+                <Label htmlFor="zip">{geography === "local" ? "Zip Code" : "Zip Code (session reference)"}</Label>
                 <Input
                   id="zip"
                   placeholder="19103"
