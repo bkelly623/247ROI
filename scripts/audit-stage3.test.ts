@@ -724,7 +724,8 @@ async function main() {
     businessHost: "get247roi.com",
   });
   assert.equal(retainedAssessment.seo.overall, null, "retained local evidence lacks full Stage-3 dimensions");
-  assert.ok(retainedAssessment.opportunities.some(o => o.kind === "thin_reputation" || o.kind === "measurement_gap"));
+  assert.ok(retainedAssessment.opportunities.some(o => o.kind === "thin_reputation"));
+  assert.ok(!retainedAssessment.opportunities.some(o => o.kind === "measurement_gap"));
   // Preserve mention counts from retained sampling when present
   if (fixture.report.aiSampling) {
     const retainedAi = scoreAiAssessment({ aiSampling: fixture.report.aiSampling });

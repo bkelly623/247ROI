@@ -8,11 +8,18 @@ export function AssessmentSummary({ report }: { report: AuditReport }) {
 
   const seo = assessment?.seo;
   const ai = assessment?.ai;
-  const ranked = direct?.checks.filter(c => c.outcome === "ranked") ?? [];
+  const checks = direct?.checks ?? [];
   const candidates = (direct?.plan.selected ?? assessment?.keywordCandidates ?? []).slice(0, 8);
-  const opportunities = assessment?.opportunities ?? [];
+  const opportunities = (assessment?.opportunities ?? []).filter(o => o.kind !== "measurement_gap");
   const competitors = assessment?.competitors.filter(c => c.status === "verified").slice(0, 3) ?? [];
   const observedCompetitors = assessment?.competitors.filter(c => c.status === "observed").slice(0, 3) ?? [];
+  const scopeWarnings = [
+    ...new Set([
+      ...(ai?.scopeWarnings ?? []),
+      ...(report.aiSampling?.scopeWarnings ?? []),
+      ...(report.aiSampling?.samples ?? []).map(s => s.scopeWarning).filter((w): w is string => Boolean(w)),
+    ]),
+  ];
 
   return (
     <section
@@ -76,23 +83,40 @@ export function AssessmentSummary({ report }: { report: AuditReport }) {
             </p>
           )}
           {ai?.incompleteReason && <p className="mt-1 text-xs text-zinc-500">{ai.incompleteReason}</p>}
+          {scopeWarnings.length > 0 && (
+            <ul data-testid="assessment-scope-warnings" className="mt-2 space-y-1 text-xs text-amber-200">
+              {scopeWarnings.map(w => (
+                <li key={w}>Scope warning: {w}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
-      {(ranked.length > 0 || candidates.length > 0) && (
+      {(checks.length > 0 || candidates.length > 0) && (
         <div>
-          <h3 className="font-semibold text-zinc-100">Buyer searches and observed positions</h3>
-          {ranked.length > 0 ? (
-            <ul className="mt-3 space-y-2 text-sm">
-              {ranked.slice(0, 8).map(c => (
-                <li key={c.key} className="rounded-lg border border-zinc-800 p-3 text-zinc-300">
-                  <span className="font-medium text-zinc-100">{c.query}</span>
-                  <span className="ml-2 text-cyan-300">position {c.position}</span>
-                  <span className="ml-2 text-xs text-zinc-500">
-                    {c.providerLocation} · {c.device} · depth {c.checkedDepth}
-                  </span>
-                </li>
-              ))}
+          <h3 className="font-semibold text-zinc-100">Buyer searches checked</h3>
+          {checks.length > 0 ? (
+            <ul data-testid="assessment-direct-rank-checks" className="mt-3 space-y-2 text-sm">
+              {checks.map(c => {
+                const isCandidate = candidates.some(cand => ("query" in cand ? cand.query : "") === c.query);
+                return (
+                  <li key={c.key} className="rounded-lg border border-zinc-800 p-3 text-zinc-300">
+                    <span className="font-medium text-zinc-100">{c.query}</span>
+                    <span className="ml-2 text-xs uppercase text-zinc-500">
+                      {c.outcome.replace(/_/g, " ")}
+                      {c.position != null ? ` · position ${c.position}` : ""}
+                    </span>
+                    <span className="ml-2 text-xs text-zinc-500">
+                      {c.providerLocation} · {c.device} · depth {c.checkedDepth}
+                      {c.completeTop20Window ? "" : " · incomplete top20"} · {c.observedAt}
+                    </span>
+                    <span className="ml-2 text-xs text-zinc-500">
+                      {isCandidate ? "candidate+observed" : "observed"}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="mt-2 text-sm text-zinc-400">
@@ -119,7 +143,7 @@ export function AssessmentSummary({ report }: { report: AuditReport }) {
         <div>
           <h3 className="font-semibold text-zinc-100">Competitor candidates</h3>
           <ul className="mt-3 space-y-2 text-sm text-zinc-300">
-            {[...competitors, ...observedCompetitors].slice(0, 3).map(c => (
+            {[...competitors, ...observedCompetitors].slice(0, 5).map(c => (
               <li key={c.domain} className="rounded-lg border border-zinc-800 p-3">
                 <span className="font-medium text-zinc-100">{c.domain}</span>
                 <span className="ml-2 text-xs uppercase text-zinc-500">{c.status}</span>
@@ -152,6 +176,7 @@ export function AssessmentSummary({ report }: { report: AuditReport }) {
       <p className="text-xs text-zinc-500">
         Rubric {seo?.rubricVersion ?? "n/a"} / {ai?.rubricVersion ?? "n/a"}. Geography:{" "}
         {report.auditContext?.geography ?? "legacy local"}. No phantom demand volumes or forecasted revenue are shown.
+        Incomplete measurement is not pitched as a paid service opportunity.
       </p>
     </section>
   );

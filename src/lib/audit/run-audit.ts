@@ -15,7 +15,15 @@ import { inferServiceContext } from "./service-context";
 import { probeSiteCrawl } from "./probes/site-crawl";
 import { researchDeficits } from "./research-deficits";
 import { measurementCoverage, primaryRecommendation } from "./measurement-coverage";
-import { buildAuditAssessment, type AiJudgment, type ReviewedAuthorityEvidence, type ReviewedContentEvidence } from "./assessment";
+import { buildAuditAssessment, type AiJudgment, type ReviewedAuthorityEvidence, type ReviewedCompetitorEvidence, type ReviewedContentEvidence } from "./assessment";
+import type { AISamplingReport } from "./probes/ai-sampling";
+
+export interface RetainedEvidenceBundle {
+  /** Pre-parsed, hash-verified DirectRankReport from retained paid captures. */
+  directRank?: DirectRankReport;
+  /** Pre-parsed AISamplingReport from retained paid captures. */
+  aiSampling?: AISamplingReport;
+}
 
 export interface ExecuteFullAuditInput {
   sessionId: string;
@@ -36,7 +44,13 @@ export interface ExecuteFullAuditInput {
   /** Optional human-reviewed evidence admissions (never arbitrary frontend scores). */
   reviewedContent?: ReviewedContentEvidence[];
   reviewedAuthority?: ReviewedAuthorityEvidence[];
+  reviewedCompetitors?: ReviewedCompetitorEvidence[];
   aiJudgments?: AiJudgment[];
+  /**
+   * Operator-only retained evidence (hash-verified offline). When present for a lane,
+   * that paid collector is not invoked. Public JSON routes must never accept this unchecked.
+   */
+  retainedEvidence?: RetainedEvidenceBundle;
   /**
    * Offline test / operator seam: inject probe adapters. Production public routes omit this.
    * When provided, network probes are skipped in favor of these adapters.
@@ -91,50 +105,57 @@ export async function executeFullAudit(input: ExecuteFullAuditInput): Promise<Au
     }
     return evidence;
   })();
-  const aiPromise = serviceContext.source === "unconfirmed" ? Promise.resolve(undefined) : aiFn(sampleInput, {
-    existingReport: input.previousReport?.aiSampling,
-    perSampleTimeoutMs: 95000,
-    totalTimeoutMs: 150000,
-    collectors: {
-      googleAIMode: probeGoogleAIMode,
-      chatgpt: async (sample, options) => {
-        let reservation: CollectionReservation | undefined;
-        const evidence = await probeChatGPT(sample, {
-          ...options,
-          authorize: async r => {
-            const allowed = await options.authorize?.(r);
-            if (allowed) reservation = { ...r, sessionId: input.sessionId, kind: "chatgpt" };
-            return allowed === true;
-          },
-        });
-        if (reservation) await recordPublicCollection(reservation, { status: evidence.state === "observed" ? "observed" : "error", ...evidence });
-        return evidence;
-      },
-    },
-    budgetChatGPTQuote: async () =>
-      pricing
-        ? { quote: pricing.chatGPT, authorize: r => reservePublicCollection({ ...r, sessionId: input.sessionId, kind: "chatgpt" }) }
-        : null,
-  });
+  const aiPromise =
+    input.retainedEvidence?.aiSampling
+      ? Promise.resolve(input.retainedEvidence.aiSampling)
+      : serviceContext.source === "unconfirmed"
+        ? Promise.resolve(undefined)
+        : aiFn(sampleInput, {
+            existingReport: input.previousReport?.aiSampling,
+            perSampleTimeoutMs: 95000,
+            totalTimeoutMs: 150000,
+            collectors: {
+              googleAIMode: probeGoogleAIMode,
+              chatgpt: async (sample, options) => {
+                let reservation: CollectionReservation | undefined;
+                const evidence = await probeChatGPT(sample, {
+                  ...options,
+                  authorize: async r => {
+                    const allowed = await options.authorize?.(r);
+                    if (allowed) reservation = { ...r, sessionId: input.sessionId, kind: "chatgpt" };
+                    return allowed === true;
+                  },
+                });
+                if (reservation) await recordPublicCollection(reservation, { status: evidence.state === "observed" ? "observed" : "error", ...evidence });
+                return evidence;
+              },
+            },
+            budgetChatGPTQuote: async () =>
+              pricing
+                ? { quote: pricing.chatGPT, authorize: r => reservePublicCollection({ ...r, sessionId: input.sessionId, kind: "chatgpt" }) }
+                : null,
+          });
 
-  // Direct-rank: public default is plan-only / unmeasured unless operator options enable collection.
-  const directRankPromise: Promise<DirectRankReport> = collectDirectRanks(
-    {
-      businessName: input.businessName,
-      websiteUrl: url,
-      zipCode: input.zipCode,
-      servicePhrase: serviceContext.servicePhrase,
-      auditContext,
-    },
-    input.directRankOptions ?? {
-      enableCollection: false,
-      transport: async () => {
-        throw new Error("Public direct-rank transport must not be invoked");
-      },
-      authorize: async () => false,
-      existingReport: input.previousReport?.directRank,
-    }
-  );
+  // Direct-rank: retained evidence skips collectors; public default is plan-only / unmeasured.
+  const directRankPromise: Promise<DirectRankReport> = input.retainedEvidence?.directRank
+    ? Promise.resolve(input.retainedEvidence.directRank)
+    : collectDirectRanks(
+        {
+          businessName: input.businessName,
+          websiteUrl: url,
+          zipCode: input.zipCode,
+          servicePhrase: serviceContext.servicePhrase,
+          auditContext,
+        },
+        input.directRankOptions ?? {
+          enableCollection: false,
+          transport: async () => {
+            throw new Error("Public direct-rank transport must not be invoked");
+          },
+          authorize: async () => false,
+          existingReport: input.previousReport?.directRank,
+        }
+      );
 
   const [baseReport, domainResearch, siteReview, aiSampling, directRank] = await Promise.all([
     pipelineFn({
@@ -162,7 +183,10 @@ export async function executeFullAudit(input: ExecuteFullAuditInput): Promise<Au
   const overviews = baseReport.googleLocal?.aiOverviews ?? [];
   if (!overviews.length || overviews.some(s => s.state === "unavailable")) missing.push("Google AI Overview collection");
   if (serviceContext.source === "unconfirmed") missing.push("Confirmed service context");
-  if (directRank.publicPaidCollection === "disabled" || directRank.checks.some(c => c.outcome === "not_authorized")) {
+  if (
+    !input.retainedEvidence?.directRank &&
+    (directRank.publicPaidCollection === "disabled" || directRank.checks.some(c => c.outcome === "not_authorized"))
+  ) {
     missing.push("Authorized direct buyer-search rank collection (not enabled for public scans)");
   }
 
@@ -213,6 +237,7 @@ export async function executeFullAudit(input: ExecuteFullAuditInput): Promise<Au
     directRank,
     reviewedContent: input.reviewedContent,
     reviewedAuthority: input.reviewedAuthority,
+    reviewedCompetitors: input.reviewedCompetitors,
     aiJudgments: input.aiJudgments,
     businessHost: target,
   });

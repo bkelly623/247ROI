@@ -25,6 +25,8 @@ export interface AISample {
   evidence: AIEvidence;
   reused: boolean;
   competitorNames: string[];
+  /** Geographic mismatch warning (e.g. LA cluster on a US-wide request). */
+  scopeWarning?: string | null;
 }
 export interface AISampleSummary {
   total: number;
@@ -40,6 +42,8 @@ export interface AISamplingReport {
   summary: AISampleSummary;
   byEngine: Record<AIEngine, AISampleSummary>;
   methodology: string;
+  /** Distinct geographic/scope warnings that suppress misleading national AI scores. */
+  scopeWarnings?: string[];
 }
 export interface AISamplingOptions {
   /** Adapters MUST pass query through to the actual existing product probes.

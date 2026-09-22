@@ -5,13 +5,17 @@ export interface GoogleAIModeEvidence {
   query: string;
   observedAt: string;
   location: string;
-  source: "serpapi";
+  /** Live SerpAPI collection or retained DataForSEO AI Mode replay. */
+  source: "serpapi" | "dataforseo";
   answer?: string;
   citations: { title: string; url: string }[];
   mentioned: boolean | null;
   cited: boolean | null;
   error?: string;
   providerSearchId?: string;
+  /** Present on retained DataForSEO captures; null model stays unknown. */
+  modelObserved?: string | null;
+  receipt?: { cost: number | null; taskCost: number | null; taskId: string | null; rawSha256: string };
 }
 
 export interface GoogleAIModeInput {

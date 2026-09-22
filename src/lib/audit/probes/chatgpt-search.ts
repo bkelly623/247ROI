@@ -37,7 +37,7 @@ export interface ChatGPTOptions {
 export interface ChatGPTEvidence {
   state: "observed" | "unavailable" | "not_configured" | "not_authorized";
   query: string; location: string; observedAt: string;
-  source: "dataforseo"; product: "consumer_chatgpt_scraper"; mode: "search";
+  source: "dataforseo"; product: "consumer_chatgpt_scraper"; mode: "search" | "default";
   providerObservedAt?: string; locationObserved?: string; modelObserved?: string | null;
   answer?: string;
   citations: { title: string; url: string; hostname: string; relation: "cited_or_relied_on" }[];

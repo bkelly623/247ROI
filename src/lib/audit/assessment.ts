@@ -58,6 +58,8 @@ export interface AiAssessment {
   mentions: { count: number; denominator: number };
   citations: { count: number; denominator: number };
   judgmentsUsed: boolean;
+  /** Geographic scope warnings that suppressed a national AI score. */
+  scopeWarnings?: string[];
 }
 
 export interface CompetitorCandidate {
@@ -103,8 +105,9 @@ export const ReviewedContentEvidenceSchema = z.object({
     "nav_titles",
   ]),
   score: z.union([z.literal(0), z.literal(0.5), z.literal(1)]),
-  excerpt: z.string().max(1000),
-  reviewer: z.literal("human_review"),
+  excerpt: z.string().min(1).max(1000),
+  provenance: z.string().min(1).max(500),
+  reviewer: z.enum(["human_review", "analyst_review"]),
 });
 
 export const ReviewedAuthorityEvidenceSchema = z.object({
@@ -112,8 +115,10 @@ export const ReviewedAuthorityEvidenceSchema = z.object({
   score: z.union([z.literal(0), z.literal(0.5), z.literal(1)]),
   basis: z.enum(["observed", "owner_confirmed"]),
   sourceUrl: z.string().url().max(2048).optional(),
+  excerpt: z.string().min(1).max(1000).optional(),
+  provenance: z.string().min(1).max(500),
   note: z.string().max(500),
-  reviewer: z.literal("human_review"),
+  reviewer: z.enum(["human_review", "analyst_review"]),
 });
 
 export const VerifiedSocialEvidenceSchema = z.object({
@@ -122,7 +127,24 @@ export const VerifiedSocialEvidenceSchema = z.object({
   verifiedActive: z.boolean(),
   /** Never infer followers from homepage links alone. */
   followerCount: z.null(),
-  reviewer: z.literal("human_review"),
+  provenance: z.string().min(1).max(500),
+  reviewer: z.enum(["human_review", "analyst_review"]),
+});
+
+export const ReviewedCompetitorEvidenceSchema = z.object({
+  domain: z.string().min(1).max(253),
+  /** verified = inspected service + geography overlap; candidate = service only / geo unverified. */
+  status: z.enum(["verified", "candidate"]),
+  pageUrl: z.string().url().max(2048),
+  excerpt: z.string().min(1).max(1000),
+  provenance: z.string().min(1).max(500),
+  serviceOverlap: z.literal(true),
+  geographyOverlap: z.enum(["verified", "unverified"]),
+  /** Directories/platforms must not be admitted as competitors. */
+  kind: z.literal("business_competitor"),
+  /** Never claim independent client outcomes were verified. */
+  independentOutcomesVerified: z.literal(false),
+  reviewer: z.enum(["human_review", "analyst_review"]),
 });
 
 export const AiJudgmentSchema = z.object({
@@ -135,6 +157,51 @@ export const AiJudgmentSchema = z.object({
 export type ReviewedContentEvidence = z.infer<typeof ReviewedContentEvidenceSchema>;
 export type ReviewedAuthorityEvidence = z.infer<typeof ReviewedAuthorityEvidenceSchema>;
 export type VerifiedSocialEvidence = z.infer<typeof VerifiedSocialEvidenceSchema>;
+export type ReviewedCompetitorEvidence = z.infer<typeof ReviewedCompetitorEvidenceSchema>;
+
+/** Runtime-admit operator evidence; rejects malformed / incomplete admissions. */
+export function admitReviewedContent(raw: unknown[]): ReviewedContentEvidence[] {
+  return raw.flatMap(item => {
+    const parsed = ReviewedContentEvidenceSchema.safeParse(item);
+    return parsed.success ? [parsed.data] : [];
+  });
+}
+
+export function admitReviewedAuthority(raw: unknown[]): ReviewedAuthorityEvidence[] {
+  return raw.flatMap(item => {
+    const parsed = ReviewedAuthorityEvidenceSchema.safeParse(item);
+    return parsed.success ? [parsed.data] : [];
+  });
+}
+
+export function admitReviewedCompetitors(raw: unknown[]): ReviewedCompetitorEvidence[] {
+  return raw.flatMap(item => {
+    const parsed = ReviewedCompetitorEvidenceSchema.safeParse(item);
+    if (!parsed.success) return [];
+    // Verified requires geography overlap; otherwise demote is handled by status field.
+    if (parsed.data.status === "verified" && parsed.data.geographyOverlap !== "verified") return [];
+    return [parsed.data];
+  });
+}
+
+export function admitAiJudgments(raw: unknown[]): AiJudgment[] {
+  return raw.flatMap(item => {
+    const parsed = AiJudgmentSchema.safeParse(item);
+    return parsed.success ? [parsed.data] : [];
+  });
+}
+
+export const REMOTE_AUTHORITY_WEIGHTS: Record<string, number> = {
+  review_evidence: 0.4,
+  case_proof: 0.3,
+  independent_mentions: 0.3,
+};
+
+export const LOCAL_AUTHORITY_WEIGHTS: Record<string, number> = {
+  listing_presence: 0.25,
+  review_evidence: 0.45,
+  case_proof: 0.3,
+};
 
 export function visibilityPointsForRank(position: number | null, outcome: DirectRankCheck["outcome"]): number | null {
   if (outcome === "not_found_top20") return 0;
@@ -155,6 +222,35 @@ function meanKnown(checks: DimensionCheck[]): number | null {
   const known = checks.filter(c => c.score !== null);
   if (!known.length || known.length < checks.length) return null;
   return (known.reduce((s, c) => s + (c.score as number), 0) / known.length) * 100;
+}
+
+/** Weighted mean over required check ids; any missing/unknown required id suppresses the dimension. */
+export function weightedKnown(checks: DimensionCheck[], weights: Record<string, number>): number | null {
+  let sumW = 0;
+  let sum = 0;
+  for (const [id, weight] of Object.entries(weights)) {
+    const check = checks.find(c => c.id === id);
+    if (!check || check.score === null) return null;
+    sumW += weight;
+    sum += weight * (check.score as number);
+  }
+  if (sumW <= 0) return null;
+  return (sum / sumW) * 100;
+}
+
+function normalizePageUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    u.hash = "";
+    const path = u.pathname.replace(/\/+$/, "") || "/";
+    return `${u.protocol}//${u.hostname.toLowerCase().replace(/^www\./, "")}${path}${u.search}`.toLowerCase();
+  } catch {
+    return url.trim().toLowerCase();
+  }
+}
+
+function pageUrlsMatch(inspected: string, reviewed: string): boolean {
+  return normalizePageUrl(inspected) === normalizePageUrl(reviewed);
 }
 
 function gbpIneligible(context: AuditContext | null | undefined): boolean {
@@ -220,8 +316,9 @@ export function scoreSeoAssessment(input: {
     incompleteReason: visibilityScore === null ? "Required buyer-search visibility not fully measured" : undefined,
   };
 
-  // Content — only from reviewed evidence against actual siteReview pages
+  // Content — only from validated reviewed evidence against actual siteReview pages
   const pages = input.report.siteReview?.pages.filter(p => p.status === "observed") ?? [];
+  const admittedContent = admitReviewedContent(input.reviewedContent ?? []);
   const contentIds = [
     "dedicated_landing",
     "service_customer_geo_fit",
@@ -230,7 +327,7 @@ export function scoreSeoAssessment(input: {
     "nav_titles",
   ] as const;
   const contentChecks: DimensionCheck[] = contentIds.map(id => {
-    const review = (input.reviewedContent ?? []).find(r => r.checkId === id);
+    const review = admittedContent.find(r => r.checkId === id);
     if (!review) {
       return {
         id,
@@ -243,7 +340,7 @@ export function scoreSeoAssessment(input: {
           : "No inspected pages for content quality",
       };
     }
-    const pageOk = pages.some(p => (p.finalUrl ?? p.url) === review.pageUrl);
+    const pageOk = pages.some(p => pageUrlsMatch(p.finalUrl ?? p.url, review.pageUrl));
     if (!pageOk) {
       return {
         id,
@@ -259,7 +356,7 @@ export function scoreSeoAssessment(input: {
       label: id,
       score: review.score,
       basis: "observed",
-      evidenceRefs: [review.pageUrl],
+      evidenceRefs: [review.pageUrl, review.provenance],
       note: review.excerpt.slice(0, 200),
     };
   });
@@ -342,10 +439,13 @@ export function scoreSeoAssessment(input: {
     incompleteReason: technicalScore === null ? "Technical checks incomplete" : undefined,
   };
 
-  // Authority
+  // Authority — frozen within-profile weights (not equal mean)
   const ownerReviews = context?.ownerAssertions?.reviews;
   const ownerGbp = context?.ownerAssertions?.gbp;
   const gbpFound = input.report.auditMeta?.gbp?.found === true;
+  const admittedAuthority = admitReviewedAuthority(input.reviewedAuthority ?? []);
+  const authorityAdmission = (itemId: ReviewedAuthorityEvidence["itemId"]) =>
+    admittedAuthority.find(a => a.itemId === itemId);
   const authorityItems: DimensionCheck[] = remote
     ? [
         {
@@ -355,25 +455,54 @@ export function scoreSeoAssessment(input: {
             ownerReviews?.status === "none"
               ? 0
               : ownerReviews?.status === "has_reviews"
-                ? 1
-                : null,
-          basis: ownerReviews ? "owner_confirmed" : "unknown",
-          evidenceRefs: ownerReviews ? ["owner_assertion:reviews"] : [],
+                ? 0.5 // existence confirmed; quality not benchmarked
+                : authorityAdmission("review_evidence")?.score ?? null,
+          basis: ownerReviews
+            ? "owner_confirmed"
+            : authorityAdmission("review_evidence")
+              ? authorityAdmission("review_evidence")!.basis
+              : "unknown",
+          evidenceRefs: ownerReviews
+            ? ["owner_assertion:reviews"]
+            : authorityAdmission("review_evidence")
+              ? [
+                  authorityAdmission("review_evidence")!.provenance,
+                  ...(authorityAdmission("review_evidence")!.sourceUrl
+                    ? [authorityAdmission("review_evidence")!.sourceUrl!]
+                    : []),
+                ]
+              : [],
           note: ownerReviews?.status === "none" ? "Owner-confirmed no reviews (this item only)" : undefined,
         },
         {
           id: "case_proof",
           label: "Substantive attributable case proof",
-          score: (input.reviewedAuthority ?? []).find(a => a.itemId === "case_proof")?.score ?? null,
-          basis: (input.reviewedAuthority ?? []).find(a => a.itemId === "case_proof") ? "observed" : "unknown",
-          evidenceRefs: [],
+          score: authorityAdmission("case_proof")?.score ?? null,
+          basis: authorityAdmission("case_proof") ? authorityAdmission("case_proof")!.basis : "unknown",
+          evidenceRefs: authorityAdmission("case_proof")
+            ? [
+                authorityAdmission("case_proof")!.provenance,
+                ...(authorityAdmission("case_proof")!.sourceUrl
+                  ? [authorityAdmission("case_proof")!.sourceUrl!]
+                  : []),
+              ]
+            : [],
         },
         {
           id: "independent_mentions",
           label: "Independent mentions/citations/credentials",
-          score: (input.reviewedAuthority ?? []).find(a => a.itemId === "independent_mentions")?.score ?? null,
-          basis: (input.reviewedAuthority ?? []).find(a => a.itemId === "independent_mentions") ? "observed" : "unknown",
-          evidenceRefs: [],
+          score: authorityAdmission("independent_mentions")?.score ?? null,
+          basis: authorityAdmission("independent_mentions")
+            ? authorityAdmission("independent_mentions")!.basis
+            : "unknown",
+          evidenceRefs: authorityAdmission("independent_mentions")
+            ? [
+                authorityAdmission("independent_mentions")!.provenance,
+                ...(authorityAdmission("independent_mentions")!.sourceUrl
+                  ? [authorityAdmission("independent_mentions")!.sourceUrl!]
+                  : []),
+              ]
+            : [],
         },
       ]
     : [
@@ -383,15 +512,19 @@ export function scoreSeoAssessment(input: {
           score:
             ownerGbp?.status === "none"
               ? 0
-              : ownerGbp?.status === "has_listing" || gbpFound
-                ? ownerGbp?.status === "has_listing" || input.report.auditMeta?.gbp?.found
+              : ownerGbp?.status === "has_listing"
+                ? 1
+                : gbpFound
                   ? 1
-                  : 0.5
-                : ownerGbp?.status === "ineligible"
-                  ? null
-                  : null,
-          basis: ownerGbp ? "owner_confirmed" : gbpFound ? "observed" : "unknown",
-          evidenceRefs: ownerGbp ? ["owner_assertion:gbp"] : [],
+                  : ownerGbp?.status === "ineligible"
+                    ? null
+                    : authorityAdmission("listing_presence")?.score ?? null,
+          basis: ownerGbp ? "owner_confirmed" : gbpFound ? "observed" : authorityAdmission("listing_presence") ? "observed" : "unknown",
+          evidenceRefs: ownerGbp
+            ? ["owner_assertion:gbp"]
+            : authorityAdmission("listing_presence")
+              ? [authorityAdmission("listing_presence")!.provenance]
+              : [],
           note: ownerGbp?.status === "ineligible" ? "GBP ineligible — not penalized" : undefined,
         },
         {
@@ -401,28 +534,43 @@ export function scoreSeoAssessment(input: {
             ownerReviews?.status === "none"
               ? 0
               : ownerReviews?.status === "has_reviews"
-                ? 1
+                ? 0.5
                 : typeof input.report.auditMeta?.gbp?.reviewCount === "number"
                   ? input.report.auditMeta.gbp.reviewCount > 0
-                    ? 1
+                    ? 0.5
                     : 0
-                  : null,
-          basis: ownerReviews ? "owner_confirmed" : typeof input.report.auditMeta?.gbp?.reviewCount === "number" ? "observed" : "unknown",
-          evidenceRefs: ownerReviews ? ["owner_assertion:reviews"] : [],
+                  : authorityAdmission("review_evidence")?.score ?? null,
+          basis: ownerReviews
+            ? "owner_confirmed"
+            : typeof input.report.auditMeta?.gbp?.reviewCount === "number"
+              ? "observed"
+              : authorityAdmission("review_evidence")
+                ? authorityAdmission("review_evidence")!.basis
+                : "unknown",
+          evidenceRefs: ownerReviews
+            ? ["owner_assertion:reviews"]
+            : authorityAdmission("review_evidence")
+              ? [authorityAdmission("review_evidence")!.provenance]
+              : [],
           note: ownerReviews?.status === "none" ? "Owner-confirmed no reviews informs this item only" : undefined,
         },
         {
           id: "case_proof",
           label: "Case proof and corroboration",
-          score: (input.reviewedAuthority ?? []).find(a => a.itemId === "case_proof")?.score ?? null,
-          basis: (input.reviewedAuthority ?? []).find(a => a.itemId === "case_proof") ? "observed" : "unknown",
-          evidenceRefs: [],
+          score: authorityAdmission("case_proof")?.score ?? null,
+          basis: authorityAdmission("case_proof") ? authorityAdmission("case_proof")!.basis : "unknown",
+          evidenceRefs: authorityAdmission("case_proof")
+            ? [authorityAdmission("case_proof")!.provenance]
+            : [],
         },
       ];
 
   // Filter ineligible listing from remote/ineligible profiles
-  const authorityChecks = authorityItems.filter(c => !(c.id === "listing_presence" && (remote || ownerGbp?.status === "ineligible")));
-  const authorityScore = meanKnown(authorityChecks);
+  const authorityChecks = authorityItems.filter(
+    c => !(c.id === "listing_presence" && (remote || ownerGbp?.status === "ineligible"))
+  );
+  const authorityWeights = remote ? REMOTE_AUTHORITY_WEIGHTS : LOCAL_AUTHORITY_WEIGHTS;
+  const authorityScore = weightedKnown(authorityChecks, authorityWeights);
   const authority: ScoreDimension = {
     key: "authority",
     weight: 0.2,
@@ -473,6 +621,7 @@ export function scoreSeoAssessment(input: {
 /**
  * AI score requires recommendation judgments, not incidental substring mentions.
  * Formula when fully known: 60 * recommendation fraction + 40 * own-domain citation fraction.
+ * Geographic scope warnings suppress the national AI score without erasing mention/citation counts.
  */
 export function scoreAiAssessment(input: {
   aiSampling?: AISamplingReport | null;
@@ -481,6 +630,12 @@ export function scoreAiAssessment(input: {
   const sampling = input.aiSampling;
   const planned = 6;
   const emptyEngine = { overall: null, recommendations: 0, citations: 0, usable: 0, planned: 3 };
+  const scopeWarnings = [
+    ...new Set([
+      ...(sampling?.scopeWarnings ?? []),
+      ...(sampling?.samples ?? []).map(s => s.scopeWarning).filter((w): w is string => Boolean(w)),
+    ]),
+  ];
   if (!sampling) {
     return {
       rubricVersion: AI_RUBRIC_VERSION,
@@ -492,28 +647,49 @@ export function scoreAiAssessment(input: {
       mentions: { count: 0, denominator: 0 },
       citations: { count: 0, denominator: 0 },
       judgmentsUsed: false,
+      scopeWarnings: [],
     };
   }
 
   const usable = sampling.samples.filter(
-    (s,i,all) => all.findIndex(other => other.key === s.key) === i && s.evidence.state === "observed" && !s.evidence.error && s.evidence.answer?.trim() && s.evidence.query === s.query
+    (s, i, all) =>
+      all.findIndex(other => other.key === s.key) === i &&
+      s.evidence.state === "observed" &&
+      !s.evidence.error &&
+      s.evidence.answer?.trim() &&
+      s.evidence.query === s.query
   );
-  const mentions = {count:usable.filter(s => s.evidence.mentioned === true).length,denominator:usable.length};
-  const citations = {count:usable.filter(s => s.evidence.cited === true).length,denominator:usable.length};
-  const balancedCoverage = usable.filter(s => s.engine === "chatgpt").length === 3 && usable.filter(s => s.engine === "google_ai_mode").length === 3;
-  const judgmentMap = new Map((input.judgments ?? []).map(j => [j.sampleKey, j]));
+  const mentions = {
+    count: usable.filter(s => s.evidence.mentioned === true).length,
+    denominator: usable.length,
+  };
+  const citations = {
+    count: usable.filter(s => s.evidence.cited === true).length,
+    denominator: usable.length,
+  };
+  const balancedCoverage =
+    usable.filter(s => s.engine === "chatgpt").length === 3 &&
+    usable.filter(s => s.engine === "google_ai_mode").length === 3;
+  const judgmentMap = new Map(admitAiJudgments(input.judgments ?? []).map(j => [j.sampleKey, j]));
   const hasJudgments = usable.length > 0 && usable.every(s => judgmentMap.has(s.key));
 
   function engineScore(engine: "chatgpt" | "google_ai_mode") {
     const samples = usable.filter(s => s.engine === engine);
     const plannedEngine = 3;
     if (samples.length !== plannedEngine) {
-      return { overall: null as number | null, recommendations: 0, citations: samples.filter(s => s.evidence.cited === true).length, usable: samples.length, planned: plannedEngine };
+      return {
+        overall: null as number | null,
+        recommendations: 0,
+        citations: samples.filter(s => s.evidence.cited === true).length,
+        usable: samples.length,
+        planned: plannedEngine,
+      };
     }
     if (!samples.every(s => judgmentMap.has(s.key))) {
-      // Legacy: allow 0 only when every sample is valid non-mention AND cited is boolean false/true known
-      const allNonMention = samples.every(s => s.evidence.mentioned === false && typeof s.evidence.cited === "boolean");
-      if (allNonMention && !hasJudgments) {
+      const allNonMention = samples.every(
+        s => s.evidence.mentioned === false && typeof s.evidence.cited === "boolean"
+      );
+      if (allNonMention && !hasJudgments && scopeWarnings.length === 0) {
         const citeFrac = samples.filter(s => s.evidence.cited === true).length / samples.length;
         return {
           overall: roundHalfUp(60 * 0 + 40 * citeFrac),
@@ -523,7 +699,13 @@ export function scoreAiAssessment(input: {
           planned: plannedEngine,
         };
       }
-      return { overall: null, recommendations: 0, citations: samples.filter(s => s.evidence.cited === true).length, usable: samples.length, planned: plannedEngine };
+      return {
+        overall: null,
+        recommendations: 0,
+        citations: samples.filter(s => s.evidence.cited === true).length,
+        usable: samples.length,
+        planned: plannedEngine,
+      };
     }
     const recs = samples.filter(s => judgmentMap.get(s.key)!.recommended).length;
     const cites = samples.filter(s => s.evidence.cited === true).length;
@@ -543,7 +725,12 @@ export function scoreAiAssessment(input: {
   let incompleteReason: string | undefined = "Pending recommendation judgments or incomplete sample coverage";
   let judgmentsUsed = false;
 
-  if (balancedCoverage && usable.length === planned && hasJudgments) {
+  if (scopeWarnings.length > 0) {
+    overall = null;
+    incomplete = true;
+    incompleteReason =
+      "Geographic scope warning on one or more AI samples suppresses the national AI score; mention/citation observations are retained";
+  } else if (balancedCoverage && usable.length === planned && hasJudgments) {
     const recs = usable.filter(s => judgmentMap.get(s.key)!.recommended).length;
     const cites = usable.filter(s => s.evidence.cited === true).length;
     overall = roundHalfUp(60 * (recs / usable.length) + 40 * (cites / usable.length));
@@ -551,11 +738,11 @@ export function scoreAiAssessment(input: {
     incompleteReason = undefined;
     judgmentsUsed = true;
   } else if (
-    balancedCoverage && usable.length === planned &&
+    balancedCoverage &&
+    usable.length === planned &&
     usable.every(s => s.evidence.mentioned === false && typeof s.evidence.cited === "boolean") &&
     (input.judgments ?? []).length === 0
   ) {
-    // Legacy zero when exact valid nonmention evidence justifies — never manufacture recommendation flags
     const citeFrac = usable.filter(s => s.evidence.cited === true).length / usable.length;
     overall = roundHalfUp(40 * citeFrac);
     incomplete = false;
@@ -573,6 +760,7 @@ export function scoreAiAssessment(input: {
     mentions: { count: mentions.count, denominator: mentions.denominator },
     citations: { count: citations.count, denominator: citations.denominator },
     judgmentsUsed,
+    scopeWarnings,
   };
 }
 
@@ -580,7 +768,9 @@ export function deriveCompetitorCandidates(input: {
   aiSampling?: AISamplingReport | null;
   directRank?: DirectRankReport | null;
   businessHost: string;
+  reviewedCompetitors?: ReviewedCompetitorEvidence[];
 }): CompetitorCandidate[] {
+  const admitted = admitReviewedCompetitors(input.reviewedCompetitors ?? []);
   const counts = new Map<string, { urls: Set<string>; appearances: number }>();
   for (const sample of input.aiSampling?.samples ?? []) {
     if (sample.evidence.state !== "observed" || sample.evidence.error) continue;
@@ -594,11 +784,13 @@ export function deriveCompetitorCandidates(input: {
         seenInSample.add(host);
         row.urls.add(c.url);
         counts.set(host, row);
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
   }
   for (const check of input.directRank?.checks ?? []) {
-    if (!["ranked", "not_found_top20"].includes(check.outcome)) continue;
+    if (!["ranked", "not_found_top20", "unknown_incomplete"].includes(check.outcome)) continue;
     const seenInCheck = new Set<string>();
     for (const hit of check.hits) {
       if (hit.isTarget || !hit.hostname) continue;
@@ -609,7 +801,25 @@ export function deriveCompetitorCandidates(input: {
       counts.set(hit.hostname, row);
     }
   }
-  return [...counts.entries()]
+
+  const promoted = new Map<string, CompetitorCandidate>();
+  for (const adm of admitted) {
+    const domain = adm.domain.toLowerCase().replace(/^www\./, "");
+    const observed = counts.get(domain);
+    promoted.set(domain, {
+      domain,
+      status: adm.status === "verified" ? "verified" : "observed",
+      appearances: observed?.appearances ?? 0,
+      sourceUrls: [...new Set([adm.pageUrl, ...[...(observed?.urls ?? [])].slice(0, 4)])],
+      note:
+        adm.status === "verified"
+          ? `${adm.reviewer === "human_review" ? "Human" : "Analyst"}-reviewed published service and geography overlap. ${adm.excerpt.slice(0, 180)} Independent client outcomes were not verified.`
+          : `Candidate only: service overlap with geography unverified. ${adm.excerpt.slice(0, 160)} Independent client outcomes were not verified.`,
+    });
+  }
+
+  const observedOnly = [...counts.entries()]
+    .filter(([domain]) => !promoted.has(domain))
     .sort((a, b) => b[1].appearances - a[1].appearances)
     .slice(0, 5)
     .map(([domain, data]) => ({
@@ -619,6 +829,8 @@ export function deriveCompetitorCandidates(input: {
       sourceUrls: [...data.urls].slice(0, 5),
       note: "Observed in retained search/AI source URLs; not verified as a same-scope business competitor",
     }));
+
+  return [...promoted.values(), ...observedOnly].slice(0, 8);
 }
 
 export function deriveOpportunities(input: {
@@ -631,20 +843,8 @@ export function deriveOpportunities(input: {
   const cards: OpportunityCard[] = [];
   const ctx = input.auditContext;
 
-  if (input.seo.incomplete && input.seo.dimensions.find(d => d.key === "visibility")?.score === null) {
-    cards.push({
-      id: "measurement-visibility",
-      problem: "Relevant organic buyer-search positions are not fully measured",
-      evidence: ["seo.visibility incomplete"],
-      kind: "measurement_gap",
-      recommendedService: "Targeted SEO research and measured improvement plan",
-      deliverables: ["Authorized direct-rank collection for confirmed buyer queries", "Same-scope competitor verification", "Repeat measurement"],
-      confidence: "high",
-      effort: "medium",
-      demandVolume: null,
-      offerFit: "247ROI can scope measurement and content/SEO work for the confirmed services — not an automatic website rebuild",
-    });
-  }
+  // Do NOT sell operator measurement gaps as a top service opportunity.
+  // Incomplete visibility remains an honest incomplete assessment, not a pitch.
 
   const techCritical = input.seo.dimensions
     .find(d => d.key === "technical")
@@ -664,33 +864,74 @@ export function deriveOpportunities(input: {
     });
   }
 
+  const contentDim = input.seo.dimensions.find(d => d.key === "content");
+  const evidencedContentGap =
+    contentDim?.checks.some(c => c.score === 0 && c.basis === "observed") === true;
+  const evidencedProofGap =
+    ctx?.ownerAssertions?.reviews?.status === "none" ||
+    input.seo.dimensions
+      .find(d => d.key === "authority")
+      ?.checks.some(c => c.id === "case_proof" && c.score === 0 && c.basis !== "unknown") === true;
+
   if (ctx?.ownerAssertions?.reviews?.status === "none") {
     cards.push({
       id: "thin-reputation",
       problem: "Owner-confirmed absence of public reviews (thin proof, not bad reputation)",
       evidence: ["owner_assertion:reviews=none"],
       kind: "thin_reputation",
-      recommendedService: "Review-request and case-study workflow",
-      deliverables: ["Review request automation respecting platform rules", "Attributable case-study workflow"],
+      recommendedService: "Demo and case-development workflow",
+      deliverables: [
+        "Publish attributable demos or anonymized case narratives when delivery evidence exists",
+        "Only request reviews once genuine customer relationships are confirmed — customer status is currently unknown",
+      ],
       confidence: "high",
       effort: "medium",
       demandVolume: null,
-      offerFit: "Proof-building for the confirmed review gap only — does not imply all authority dimensions are absent",
+      offerFit:
+        "Conditional proof-building for the confirmed review gap only — does not assume existing customers or imply all authority dimensions are absent",
     });
   }
 
-  if (input.ai.overall === 0 || (input.ai.mentions.denominator >= 6 && input.ai.mentions.count === 0 && !input.ai.incomplete)) {
+  const aiAbsenceSignal =
+    input.ai.overall === 0 ||
+    (input.ai.mentions.denominator >= 6 && input.ai.mentions.count === 0 && !input.ai.incomplete) ||
+    (input.ai.mentions.denominator >= 6 &&
+      input.ai.mentions.count === 0 &&
+      (input.ai.scopeWarnings?.length ?? 0) > 0);
+  // AI-only absence is insufficient without an evidenced content or proof gap.
+  if (aiAbsenceSignal && (evidencedContentGap || evidencedProofGap)) {
     cards.push({
       id: "ai-absence",
-      problem: "No qualifying AI recommendation appearances in this small-sample snapshot",
-      evidence: [`ai.mentions ${input.ai.mentions.count}/${input.ai.mentions.denominator}`],
+      problem: input.ai.mentions.count === 0 ? "No brand mentions in this small AI-answer sample, alongside an evidenced content or proof gap" : "No qualifying recommendations in reviewed AI answers, alongside an evidenced content or proof gap",
+      evidence: [
+        `ai.mentions ${input.ai.mentions.count}/${input.ai.mentions.denominator}`,
+        ...(input.ai.scopeWarnings ?? []),
+        evidencedContentGap ? "content.gap observed" : "proof.gap owner/case",
+      ],
       kind: "ai_absence",
       recommendedService: "AI visibility + search/content/authority engagement with repeat measurement",
-      deliverables: ["Improve demonstrated content/entity gaps", "Repeat comparable buyer questions", "Never guarantee citations"],
+      deliverables: [
+        "Improve demonstrated content/entity gaps",
+        "Repeat comparable buyer questions",
+        "Never guarantee citations",
+      ],
       confidence: "medium",
       effort: "larger",
       demandVolume: null,
       offerFit: "247ROI AI visibility work fits when content/identity gaps are also evidenced",
+    });
+  } else if (evidencedContentGap) {
+    cards.push({
+      id: "search-content-gap",
+      problem: "Reviewed content evidence shows a service-page usefulness gap",
+      evidence: ["seo.content observed gap"],
+      kind: "search_content_gap",
+      recommendedService: "Service-page content improvement",
+      deliverables: ["Strengthen buyer-selection answers and proof on inspected pages", "Re-measure comparable queries"],
+      confidence: "medium",
+      effort: "medium",
+      demandVolume: null,
+      offerFit: "Content work tied to inspected page evidence — not a measurement-gap pitch",
     });
   }
 
@@ -722,6 +963,7 @@ export function buildAuditAssessment(input: {
   directRank?: DirectRankReport | null;
   reviewedContent?: ReviewedContentEvidence[];
   reviewedAuthority?: ReviewedAuthorityEvidence[];
+  reviewedCompetitors?: ReviewedCompetitorEvidence[];
   aiJudgments?: AiJudgment[];
   businessHost: string;
 }): AuditAssessment {
@@ -740,6 +982,7 @@ export function buildAuditAssessment(input: {
     aiSampling: input.report.aiSampling,
     directRank: input.directRank,
     businessHost: input.businessHost,
+    reviewedCompetitors: input.reviewedCompetitors,
   });
   const opportunities = deriveOpportunities({
     seo,
