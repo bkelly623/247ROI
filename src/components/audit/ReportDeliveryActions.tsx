@@ -11,26 +11,27 @@ import {
  * Direct online delivery: copy link + print/PDF.
  * Email is deferred — no form, gate, unlock, or marketing opt-in.
  */
-export function ReportDeliveryActions({ sessionId }: { sessionId: string }) {
+export function ReportDeliveryActions({ sessionId, mode = "short" }: { sessionId: string; mode?: "short" | "full" }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
   const fallbackId = useId();
-  const reportPath = canonicalReportPath(sessionId);
+  const suffix = mode === "full" ? "?view=full" : "";
+  const reportPath = canonicalReportPath(sessionId) + suffix;
   useEffect(() => {
     let closed: HTMLDetailsElement[]=[];
-    const before=()=>{if(closed.length)return;closed=Array.from(document.querySelectorAll<HTMLDetailsElement>('.report-blueprint details:not([open])'));closed.forEach(d=>{d.open=true;});};
+    const before=()=>{if(mode !== 'full' || closed.length)return;closed=Array.from(document.querySelectorAll<HTMLDetailsElement>('.report-blueprint details:not([open])'));closed.forEach(d=>{d.open=true;});};
     const after=()=>{closed.forEach(d=>{d.open=false;});closed=[];};
     window.addEventListener('beforeprint',before);
     window.addEventListener('afterprint',after);
     return ()=>{window.removeEventListener('beforeprint',before);window.removeEventListener('afterprint',after);after();};
-  }, []);
+  }, [mode]);
 
   const copyLink = async () => {
     setBusy(true);
     setMessage("");
     setFallbackUrl(null);
-    const url = canonicalReportUrl(window.location.origin, sessionId);
+    const url = canonicalReportUrl(window.location.origin, sessionId) + suffix;
     try {
       await navigator.clipboard.writeText(url);
       setMessage(
@@ -71,9 +72,9 @@ export function ReportDeliveryActions({ sessionId }: { sessionId: string }) {
       data-testid="report-delivery-actions"
       className="my-6 rounded-2xl border border-zinc-700 bg-zinc-900/60 p-5 text-zinc-100 print:hidden"
     >
-      <h2 className="text-lg font-semibold">Keep a copy of your report</h2>
+      <h2 className="text-lg font-semibold">Keep your {mode} report</h2>
       <p className="mt-2 text-sm text-zinc-300">
-        Copy a saved report link or use Print / Save as PDF. Email delivery is not available in this release.
+        Copy this saved view or print it as a PDF. Switch views above to save the other version. Email delivery is not available.
       </p>
       <p className="mt-2 text-xs text-amber-200/90">
         Permission notice: anyone with the link can view this saved report. Do not post it publicly.

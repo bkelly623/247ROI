@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { DomainResearchResults, SiteReviewResults, AISamplingResults } from "@/components/audit/ResearchResults";
 import { ChatGPTResults } from "@/components/audit/ChatGPTResults";
 import { GoogleAIModeResults } from "@/components/audit/GoogleAIModeResults";
@@ -261,28 +262,24 @@ export function BlueprintReport({
   onCtaClick?: (action: string) => void;
 }) {
   const isPresent = variant === "present";
+  const full = useSearchParams().get("view") === "full";
+  const savedPath = `/${variant}/${encodeURIComponent(sessionId)}`;
   const seo = seoOverview(report);
   const sections = report.sections.map(section => section.key === "seo" ? { ...section, label: "Technical SEO (subordinate)", score: seo.score, measured: seo.score !== null, plainQuestion: "Does the tested page pass Lighthouse SEO checks?", dataSource: "Google Lighthouse mobile SEO", summary: seo.score !== null ? `Lighthouse SEO: ${seo.score}/100. Page checks, speed findings and SEO improvement priorities appear above. This is a technical score only — not overall acquisition visibility.` : "Lighthouse did not return a usable SEO score. See the available page and search evidence above." } : section);
 
   return (
     <div className="report-blueprint space-y-8">
-      <ReportSummary session={session} report={report} sessionId={sessionId} onCtaClick={onCtaClick} />
-      <ReportDeliveryActions sessionId={sessionId} />
-
-      <details
-        data-testid="report-full-details"
-        className="report-full-details group rounded-2xl border border-zinc-800 bg-zinc-950/40 open:bg-zinc-950/80"
-      >
-        <summary className="cursor-pointer list-none px-4 py-4 text-sm font-semibold text-zinc-100 marker:content-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 sm:px-6 [&::-webkit-details-marker]:hidden">
-          <span className="inline-flex items-center gap-2">
-            <span className="text-primary transition group-open:rotate-90" aria-hidden>
-              ▸
-            </span>
-            Open full evidence · queries, rankings, page checks &amp; fixes
-          </span>
-        </summary>
-
-        <div className="report-evidence space-y-8 border-t border-zinc-800 px-4 py-6 sm:px-6">
+      <nav aria-label="Report view" className="brief-view-nav print:hidden">
+        <Link href={savedPath} aria-current={!full ? "page" : undefined} data-testid="short-report-link">← Short report</Link>
+        <Link href={`${savedPath}?view=full`} aria-current={full ? "page" : undefined} data-testid="full-report-link">Full report & evidence →</Link>
+        <span>Same saved snapshot · no new scan</span>
+      </nav>
+      {!full && <ReportSummary session={session} report={report} sessionId={sessionId} onCtaClick={onCtaClick} />}
+      <ReportDeliveryActions sessionId={sessionId} mode={full ? "full" : "short"} />
+      {full && <section data-testid="report-full-details" className="report-full-details">
+        <h1 className="text-3xl font-bold mb-2">Full report & evidence</h1>
+        <p className="text-zinc-400 mb-6">The saved measurements behind your brief. Search samples, page checks, AI answers and technical details — not a new audit.</p>
+        <div className="report-evidence space-y-8 border-t border-zinc-800 py-6">
           <section className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900 p-6 sm:p-8">
             <div className="absolute inset-0 bg-gradient-hero opacity-60" />
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -358,7 +355,7 @@ export function BlueprintReport({
 
           <PriorityFixes deficits={report.deficits} />
         </div>
-      </details>
+      </section>}
 
     </div>
   );

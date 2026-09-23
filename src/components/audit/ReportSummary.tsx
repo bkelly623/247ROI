@@ -1,177 +1,69 @@
 "use client";
-
 import Link from "next/link";
 import { TrafficMixChart } from "./TrafficMixChart";
-import { trafficMix } from "@/lib/audit/traffic-mix";
 import type { AuditReport, ScanSession } from "@/lib/audit/types";
-import {
-  buildReportPresentation,
-  type PresentationCard,
-  type ReportPresentation,
-} from "@/lib/audit/report-presentation";
+import { buildReportPresentation, type ReportPresentation } from "@/lib/audit/report-presentation";
+import { buildVisualBrief, rankLabel, safePagePath } from "@/lib/audit/visual-brief";
 
-function MetricCard({
-  card,
-  tone,
-  testId,
-}: {
-  card: PresentationCard;
-  tone: "seo" | "ai";
-  testId: string;
-}) {
-  const border =
-    tone === "seo"
-      ? "border-cyan-500/35 bg-cyan-500/5"
-      : "border-violet-500/35 bg-violet-500/5";
-  const labelColor = tone === "seo" ? "text-cyan-300" : "text-violet-300";
-
-  return (
-    <article
-      data-testid={testId}
-      className={`min-w-0 rounded-xl border p-4 sm:p-5 ${border}`}
-    >
-      <p className={`text-xs font-semibold uppercase tracking-wide ${labelColor}`}>
-        {card.label}
-      </p>
-      <p
-        data-testid={`${testId}-value`}
-        className="mt-2 break-words text-3xl font-bold tracking-tight text-zinc-50 sm:text-4xl"
-      >
-        {card.value}
-      </p>
-      <span className="mt-2 inline-block rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-400">
-        {card.tag}
-      </span>
-      <p className="mt-3 text-sm leading-relaxed text-zinc-400">{card.detail}</p>
-      {card.supporting.length > 0 && (
-        <ul className="mt-3 space-y-1 text-xs text-zinc-500">
-          {card.supporting.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ul>
-      )}
-    </article>
-  );
+function Step({ now, goal }: { now: string; goal: string }) {
+  return <div className="brief-step"><div><span>NOW</span><p>{now}</p></div><b aria-hidden>→</b><div><span>GOAL · NOT A FORECAST</span><p>{goal}</p></div></div>;
 }
-
-export function ReportSummary({
-  session,
-  report,
-  sessionId,
-  presentation: provided,
-  onCtaClick,
-}: {
-  session: ScanSession;
-  report: AuditReport;
-  sessionId: string;
-  presentation?: ReportPresentation;
-  onCtaClick?: (action: string) => void;
+export function ReportSummary({ session, report, sessionId, presentation: provided, onCtaClick }: {
+  session: ScanSession; report: AuditReport; sessionId: string; presentation?: ReportPresentation; onCtaClick?: (action: string) => void;
 }) {
-  const presentation =
-    provided ?? buildReportPresentation(session, report, sessionId);
-
-  const cards=[{card:presentation.seoCard,tone:"seo" as const,testId:"report-seo-card"},{card:presentation.aiCard,tone:"ai" as const,testId:"report-ai-card"}];
-  const orderedCards=trafficMix().leadingProng==="ai" ? [...cards].reverse() : cards;
-  return (
-    <section
-      data-testid="report-summary"
-      aria-labelledby="report-summary-headline"
-      className="min-w-0 space-y-6 motion-safe:animate-fade-in"
-    >
-      <div className="space-y-3">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-primary">
-          247ROI · Your opportunity brief
-        </p>
-        <h1
-          id="report-summary-headline"
-          className="max-w-3xl text-balance text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl lg:text-4xl"
-        >
-          {presentation.headline}
-        </h1>
-        <p className="max-w-2xl text-sm text-zinc-400 sm:text-base">{presentation.intro}</p>
-        <p className="text-xs text-zinc-500">
-          {presentation.businessName}
-          {presentation.isLegacy ? " · Legacy report format" : ""} · {presentation.geographyNote}
-        </p>
+  const presentation = provided ?? buildReportPresentation(session, report, sessionId);
+  const b = buildVisualBrief(report);
+  const selected = new Set(b.opportunities.map(o => o.query));
+  const ranks = [...b.checks.filter(c => selected.has(c.query)), ...b.checks.filter(c => !selected.has(c.query))];
+  const rankRows = (rows: typeof ranks) => rows.map(c => <div className="brief-rank" key={c.key}>
+    <div className="flex flex-wrap items-baseline justify-between gap-2"><p className="font-medium">{c.query}</p><strong className="text-cyan-200">{rankLabel(c)}</strong></div>
+    <div className="rank-track" aria-label={`Inspected organic positions for ${c.query}`}>
+      {Array.from({length: Math.max(20, ...c.hits.map(h=>h.position))},(_,i)=>i+1).map(n=><span key={n} title={`Position ${n}: ${c.hits.some(h=>h.position===n) ? c.hits.find(h=>h.position===n)?.isTarget ? "your site" : "another result" : "not inspected"}`} className={c.hits.some(h=>h.position===n && h.isTarget) ? "rank-you" : c.hits.some(h=>h.position===n) ? "rank-observed" : "rank-unknown"}>{n===1 || n===10 || n===20 ? n : ""}</span>)}
+    </div>
+    <details className="brief-more"><summary>Search scope & date</summary><p className="brief-note">{c.checkedDepth ? `Contiguous positions 1–${c.checkedDepth}` : "No complete contiguous window"} · {c.completeTop20Window ? "complete top-20 window" : "top-20 absence not established"} · {c.providerLocation} · {c.device} · {c.observedAt?.slice(0,10) ?? "date unknown"}</p></details>
+  </div>);
+  return <section className="visual-brief" data-testid="report-summary" aria-labelledby="report-summary-headline">
+    <div className="brief-cover">
+      <p className="brief-eyebrow">247ROI / THE ONE-MINUTE BRIEF</p>
+      <h1 id="report-summary-headline">{presentation.headline}</h1>
+      <p className="mt-3 text-zinc-300">{session.business_name} <span className="text-zinc-500">· {presentation.geographyNote}</span></p>
+      <div className="brief-standings">
+        <article data-testid="report-seo-card"><span className="brief-eyebrow">GOOGLE SEARCH / SEO</span><strong data-testid="report-seo-card-value">{b.seoStanding}</strong><p>{b.seoDetail}</p></article>
+        <article data-testid="report-ai-card"><span className="brief-eyebrow">AI ANSWERS</span><strong data-testid="report-ai-card-value">{b.aiStanding}</strong><p>{b.aiUsable.length ? `Mentioned your business. ${b.citations.filter(s=>s.evidence.cited).length}/${b.citations.length} measured answers linked to your site.` : presentation.aiCard.detail}</p></article>
       </div>
-
-      <TrafficMixChart />
-      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-        {orderedCards.map(card=><MetricCard key={card.testId} {...card} />)}
+      <p className="brief-note mt-3">Saved search & AI samples. {report.aiSampling?.scopeWarnings?.length ? "Some US-wide AI answers included local results; not a national standing." : "Search positions and AI answers can change."}</p>
+    </div>
+    <TrafficMixChart />
+    <section className="brief-panel" aria-labelledby="brief-google">
+      <div className="brief-section-heading"><span>01 / GET FOUND</span><h2 id="brief-google">Turn the right search into a conversation.</h2></div>
+      <div className="brief-page-targets" data-testid="current-page-targets"><h3>Your pages already talk about</h3>
+        {b.opportunities.length ? <div className="flex flex-wrap gap-2 mt-2">{b.opportunities.map(o=><a key={o.query} href={o.support!.url} target="_blank" rel="noopener noreferrer" className="brief-chip">{o.support!.title?.split("|")[0].trim() || safePagePath(o.support!.url)} ↗</a>)}</div> : <p>{b.pages.length ? b.pages.slice(0,3).map(page=>page.title || page.url).join(" · ") : "Page topics were not retained in this saved report."}</p>}
+        <p className="brief-note mt-2">Current page topics, separate from the rankings below.</p>
       </div>
-
-      {presentation.findings.length > 0 && (
-        <div data-testid="report-findings" className="space-y-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">
-            Key findings
-          </h2>
-          <ul className="space-y-2 text-sm text-zinc-300">
-            {presentation.findings.map((f) => (
-              <li
-                key={f}
-                className="rounded-lg border-l-2 border-primary/60 bg-zinc-900/50 py-2 pl-3 pr-2"
-              >
-                {f}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {presentation.opportunities.length > 0 && (
-        <div data-testid="report-opportunities" className="space-y-3">
-          <h2 className="text-lg font-semibold text-zinc-100">Focused next moves</h2>
-          <ol className="space-y-3">
-            {presentation.opportunities.map((o, i) => (
-              <li
-                key={o.id}
-                className="grid grid-cols-[2rem_1fr] gap-3 rounded-xl border border-zinc-800 bg-zinc-950/60 p-4"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-zinc-950">
-                  {i + 1}
-                </span>
-                <div className="min-w-0">
-                  <p className="font-medium text-zinc-100">{o.title}</p>
-                  <p className="mt-1 text-sm text-zinc-400">{o.summary}</p>
-                  {o.evidence && (
-                    <p className="mt-2 text-xs text-zinc-500">{o.evidence}</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
-
-      <div
-        data-testid="report-consultation-cta"
-        className="rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/15 to-transparent p-5 sm:p-6 print:hidden"
-      >
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-          Recommended next step
-        </p>
-        <h2 className="mt-2 text-xl font-bold text-zinc-50 sm:text-2xl">
-          Let’s choose the right next step
-        </h2>
-        <p className="mt-2 max-w-xl text-sm text-zinc-400">
-          Review priorities with 247ROI. This opens the opportunity conversation — nothing is booked until you continue.
-        </p>
-        <Link
-          href={presentation.consultationHref}
-          onClick={()=>onCtaClick?.("discuss_priorities")}
-          data-testid="consultation-link"
-          className="mt-4 inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          {presentation.consultationLabel}
-        </Link>
+      <div data-testid="measured-rankings" className="mt-5"><h3>Where you actually showed up</h3><p className="brief-note">Each block is an organic position: teal = your site, gray = another result, outline = not inspected.</p>
+        {ranks.length ? rankRows(ranks.slice(0,3)) : <p className="py-4 text-zinc-400">Rankings not measured. Available older search samples remain in the full report.</p>}
+        {ranks.length>3 && <details className="brief-more"><summary>See all {ranks.length} checked searches</summary>{rankRows(ranks.slice(3))}</details>}
+        {ranks.length>0 && <p className="brief-note">Saved third-party search captures; later results may drift off topic. Inspected depth is not search demand. Provider, URLs and raw evidence references are in the full report.</p>}
       </div>
-
-      {presentation.provenanceNotes.length > 0 && (
-        <details className="text-xs text-zinc-400" data-testid="report-provenance">
-          <summary className="cursor-pointer py-2">Scope and sources</summary>
-          <p className="mt-2">{presentation.provenanceNotes.join(" ")}</p>
-        </details>
-      )}
     </section>
-  );
+    <section className="brief-panel" data-testid="keyword-opportunities"><div className="brief-section-heading"><span>02 / PICK YOUR NEXT WINS</span><h2>Start with pages you already have.</h2></div>
+      <p className="brief-note mb-4">Build on an existing service page first. The goal is first-page visibility; the work starts with useful content and real proof.</p><details className="brief-more"><summary>How these suggestions were chosen</summary><p>Service fit, buyer intent, existing page support and returned competition. Demand, difficulty and likely returns are unmeasured. Goals are not forecasts or guarantees.</p></details>
+      <div className="brief-opportunities">{b.opportunities.map((o,i)=><article key={o.query} className="brief-opportunity">
+        <span className="brief-eyebrow">{String(i+1).padStart(2,"0")} / {i===0 ? "START HERE" : "BUILD ON AN EXISTING PAGE"}</span><h3>{o.query}</h3>
+        <Step now={o.check ? rankLabel(o.check) : "Not measured"} goal="First page for this buyer search"/>
+        <p>{i===0 ? "Add one real work example, who it helps, scope and a clear next step." : i===1 ? "Show the before-and-after workflow, delivery steps and what the buyer needs to provide." : "Build a detailed buyer guide and attributable case proof; link it to this service page."}</p>
+        <details className="brief-more"><summary>Why this keyword?</summary><p>Service-provider intent in the saved query plan; wording overlaps an <a href={o.support!.url} target="_blank" rel="noopener noreferrer">observed page ↗</a>. This supports content fit, not easy rankings.</p><p className="mt-2">Returned search competition: {o.rivals.slice(0,2).map((r,j)=><span key={r.url}>{j>0 ? "; " : ""}<a href={r.url} target="_blank" rel="noopener noreferrer">#{r.position} {r.hostname}</a></span>)}. These are search results, not verified peer businesses. Confirm demand and service capacity before expanding.</p></details>
+      </article>)}</div>
+      {b.broader && <article className="brief-page-targets mt-4" data-testid="broader-target"><span className="brief-eyebrow">PROPOSED EXPANSION · VALIDATE FIRST</span><h3>{b.broader.query}</h3><p>A separate target from your saved service plan. Confirm buyer demand and delivery fit, then decide whether to expand an existing page or create a dedicated page with real work examples.</p><details className="brief-more"><summary>Proposal basis</summary><p>From the saved service-provider query plan. Not a measured demand estimate or a ranking forecast; an uninspected page may already cover this topic.</p></details></article>}
+      {!b.opportunities.length && <div className="brief-page-targets"><h3>A shortlist needs more evidence.</h3><p>No saved buyer queries could be matched to inspected service pages. Confirm your main service, match a real landing page, then check buyer searches. We have not invented three targets.</p></div>}
+    </section>
+    <section className="brief-panel brief-ai" data-testid="ai-buyer-questions"><div className="brief-section-heading"><span>03 / BECOME AN ANSWER</span><h2>Give AI a reason to name you.</h2></div>
+      <div className="space-y-3">{b.questions.slice(0,3).map(q=><article key={q.query} className="brief-question"><h3>“{q.query}”</h3><div className="flex flex-wrap gap-2 mt-2">{q.samples.map(s=><span className="brief-chip" key={s.key}>{s.engine === "chatgpt" ? "ChatGPT" : "Google AI Mode"} · {s.evidence.state!=="observed" || s.evidence.error ? "Unknown" : `${s.evidence.mentioned === true ? "Mentioned" : s.evidence.mentioned === false ? "No mention" : "Mention unknown"} / ${s.evidence.cited === true ? "Linked" : s.evidence.cited === false ? "No link" : "Link unknown"}`}</span>)}</div></article>)}</div>
+      {!b.questions.length && <p className="text-zinc-400">No buyer-question set retained. Any available older AI answers remain in the full report; missing evidence is not absence.</p>}
+      <Step now={b.aiStanding === "Not measured" ? "Presence unknown" : `${b.aiStanding} mention you`} goal="Named and linked for relevant buyer questions"/>
+      <div className="brief-proof"><p><strong>Make the service specific.</strong> Answer who you help, where you work, how delivery works and what makes a good fit.</p><p><strong>Make the proof checkable.</strong> Publish real examples with permission. Ask for honest reviews only from genuine customers.</p><p><strong>Check the same questions again.</strong> Compare mentions and links after improvements; neither is guaranteed or a visit.</p></div>
+      <details className="brief-more"><summary>AI sources & competitive context</summary><p>Saved consumer-product captures, not generated audit answers. {b.aiUsable.map(s=>`${s.engine}: ${s.evidence.observedAt?.slice(0,10) ?? "date unknown"}, ${s.evidence.location}`).filter((s,i,a)=>a.indexOf(s)===i).join(" · ")}</p><p className="mt-2">{report.assessment?.competitors.filter(c=>c.status==="verified").map(c=><span key={c.domain}><a href={c.sourceUrls[0]} target="_blank" rel="noopener noreferrer">{c.domain}</a>: published service/market overlap verified; not delivery quality. </span>)}Broad answers can name software platforms rather than service businesses. Full report retains answers and provider-listed sources.</p></details>
+    </section>
+    <section className="brief-close" data-testid="report-consultation-cta"><div><p className="brief-eyebrow">ONE PRACTICAL NEXT STEP</p><h2>{b.opportunities.length ? "Improve one page. Add real proof. Then compare." : "Confirm the service. Fill the evidence gaps first."}</h2><p>Useful for Google. Useful for buyers. Easier for AI to understand. Each result still needs its own measurement.</p></div><Link className="brief-button print:hidden" data-testid="consultation-link" href={presentation.consultationHref} onClick={()=>onCtaClick?.("discuss_priorities")}>Discuss my priorities ↗</Link></section>
+  </section>;
 }
