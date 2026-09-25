@@ -22,19 +22,22 @@ export default function TermsOfServicePage() {
               <div>
                 <p className="font-medium text-gray-900">1. Program Description:</p>
                 <p className="mt-2">
-                  This messaging program sends audit follow-up, service update, and support messages to
-                  customers or prospects who have contacted Brendan Kelly, doing business as
-                  247ROI through our website at{" "}
+                  This messaging program sends automated text replies and follow-up messages to
+                  individuals who call our registered business phone number and whose call we are
+                  unable to answer. By calling that number, the caller consents to receive a
+                  one-time automated text reply confirming we received their call and offering to
+                  help. Prospects and customers who separately contact Brendan Kelly, doing
+                  business as 247ROI, through our website at{" "}
                   <a
                     href="https://www.get247roi.com"
                     className="underline underline-offset-2 hover:text-gray-900"
                   >
                     https://www.get247roi.com
                   </a>
-                  , or via our contact forms, and have explicitly opted in to receive SMS
-                  notifications. Opt-in is collected via web forms with a dedicated checkbox for SMS
-                  consent. Messages may include audit follow-up, service updates, reminders,
-                  and customer support communications.
+                  {" "}or via our contact forms may also opt in to receive SMS notifications
+                  through a dedicated checkbox for SMS consent on those forms. Messages may include
+                  missed-call replies, audit follow-up, service updates, reminders, and customer
+                  support communications.
                 </p>
               </div>
 
