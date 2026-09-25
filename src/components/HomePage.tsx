@@ -184,6 +184,13 @@ export default function HomePage() {
                     </a>
                   </Button>
                 </div>
+                <p className="mt-3 max-w-xl text-xs leading-relaxed text-zinc-500">
+                  Can&apos;t get through? We&apos;ll text you back. Msg &amp; data rates may apply. See{" "}
+                  <Link href="/terms-of-service" className="underline underline-offset-2 hover:text-zinc-300">
+                    SMS Terms
+                  </Link>
+                  .
+                </p>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-400">
                   Start with the AI Opportunity Audit. No generic pitch, no tool-first diagnosis, and no black-box AI
                   promise.
