@@ -15,6 +15,8 @@ export function AuditEntryFlow() {
   const [website, setWebsite] = useState("");
   const [zip, setZip] = useState("");
   const [geography, setGeography] = useState<"local" | "national">("local");
+  const [phone, setPhone] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,7 +42,7 @@ export function AuditEntryFlow() {
       const response = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ businessName: business.trim(), websiteUrl: normalizeUrl(website.trim()), zipCode: zip.trim(), geography }),
+        body: JSON.stringify({ businessName: business.trim(), websiteUrl: normalizeUrl(website.trim()), zipCode: zip.trim(), geography, phone: phone.trim(), smsConsent }),
         signal: AbortSignal.timeout(20000),
       });
       const data = await response.json().catch(() => null);
@@ -68,6 +70,24 @@ export function AuditEntryFlow() {
             <label className="block">Business name<input className={field} required minLength={2} value={business} onChange={e => setBusiness(e.target.value)} autoComplete="organization" /></label>
             <label className="block">Where do you serve customers?<select className={field} value={geography} onChange={e => setGeography(e.target.value as "local" | "national")}><option value="local">Locally / nearby</option><option value="national">US-wide / remotely</option></select></label>
             <label className="block">ZIP code<input className={field} required minLength={5} maxLength={10} value={zip} onChange={e => setZip(e.target.value)} autoComplete="postal-code" /></label>
+            <label className="block">Mobile phone number<input type="tel" className={field} required minLength={7} value={phone} onChange={e => setPhone(e.target.value)} autoComplete="tel" placeholder="(610) 555-0123" /></label>
+            <label className="flex items-start gap-2 text-xs leading-relaxed text-zinc-400">
+              <input
+                type="checkbox"
+                required
+                checked={smsConsent}
+                onChange={e => setSmsConsent(e.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-zinc-600 bg-zinc-900"
+              />
+              <span>
+                I agree to receive SMS messages from 247ROI, including my audit results and follow-up
+                (approx. 2-4 msgs). Msg &amp; data rates may apply. Msg frequency varies. Reply STOP to
+                cancel, HELP for help. See our{" "}
+                <a href="/terms-of-service" target="_blank" rel="noreferrer" className="underline hover:text-zinc-200">Terms of Service</a>{" "}
+                and{" "}
+                <a href="/privacy-policy" target="_blank" rel="noreferrer" className="underline hover:text-zinc-200">Privacy Policy</a>.
+              </span>
+            </label>
             <button type="submit" className={`${button} w-full bg-orange-500 text-black`} disabled={busy}>{busy ? "Starting visibility audit…" : "Check website visibility"}</button>
             <p className="text-sm text-zinc-400">Website scans need business name and ZIP above. You can continue to the Opportunity conversation after viewing the findings.</p>
           </form>
