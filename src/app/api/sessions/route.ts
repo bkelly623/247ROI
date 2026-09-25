@@ -18,11 +18,32 @@ const schema = z.object({
   geography: PublicGeographyChoiceSchema.optional(),
   /** Full validated context when supplied by a trusted caller; never accepts budget/authorization. */
   auditContext: AuditContextSchema.optional(),
+  /** SMS opt-in: phone number and explicit consent captured on the public intake form. */
+  phone: z.string().min(7).optional(),
+  smsConsent: z.boolean().optional(),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = schema.parse(await req.json());
+
+    // SMS opt-in enforcement: if a phone number is supplied, explicit consent must accompany it.
+    // TODO(247ROI): persist body.phone / body.smsConsent to scan_sessions once that column exists
+    // in Supabase; logged here in the interim so consent capture is not silently dropped.
+    if (body.phone) {
+      if (!body.smsConsent) {
+        return NextResponse.json(
+          { error: "SMS consent checkbox must be checked to submit a phone number." },
+          { status: 400 }
+        );
+      }
+      console.log("[sms-consent]", {
+        phone: body.phone,
+        smsConsent: body.smsConsent,
+        businessName: body.businessName,
+        at: new Date().toISOString(),
+      });
+    }
     let mode: "organic" | "rep" = "organic";
     let businessName = body.businessName;
     let websiteUrl = normalizeUrl(body.websiteUrl);
