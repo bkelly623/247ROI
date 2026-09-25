@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { ContactForm } from "@/components/contact/ContactForm";
 
 export const metadata: Metadata = {
   title: "Start Your AI Opportunity Audit | 247ROI",
@@ -73,21 +74,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7">
-                <p className="text-sm font-semibold uppercase tracking-wider text-primary">Audit output</p>
-                <h2 className="mt-3 font-display text-2xl font-bold">What gets decided before anything is built</h2>
-                <div className="mt-6 space-y-3">
-                  {auditOutputs.map((item) => (
-                    <div key={item} className="flex gap-3 rounded-2xl border border-white/10 bg-background/40 p-4">
-                      <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
-                      <p className="text-sm font-medium text-foreground/90">{item}</p>
-                    </div>
-                  ))}
-                </div>
-                <Link href="/ai-opportunity-audit" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
-                  Start the audit
-                </Link>
-              </div>
+              <ContactForm />
             </div>
           </div>
         </section>
