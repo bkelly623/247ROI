@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     return new NextResponse(twiml, { headers: { "Content-Type": "text/xml" } });
   }
 
-  const twiml = `<?xml version="1.0" encoding="UTF-8"?><Response><Dial timeout="20" action="/api/voice/status" method="POST"><Number>${forwardTo}</Number></Dial></Response>`;
+  const twiml = `<?xml version="1.0" encoding="UTF-8"?><Response><Dial timeout="20" action="https://www.get247roi.com/api/voice/status" method="POST"><Number>${forwardTo}</Number></Dial></Response>`;
 
   return new NextResponse(twiml, { headers: { "Content-Type": "text/xml" } });
 }
