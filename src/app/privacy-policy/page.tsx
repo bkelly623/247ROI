@@ -85,7 +85,7 @@ export default function PrivacyPolicyPage() {
                 <p className="font-medium text-gray-900">Opt-In &amp; Consent:</p>
                 <ul className="mt-2 space-y-1 list-disc pl-6">
                   <li>Messages are only sent after explicit opt-in</li>
-                  <li>Consent is collected via website/contact forms or verbally by phone when a caller&apos;s call goes unanswered</li>
+                  <li>Consent is collected via website/contact forms</li>
                   <li>Records of consent are maintained</li>
                 </ul>
               </div>
