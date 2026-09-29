@@ -24,10 +24,6 @@ export function ContactForm() {
       setError("Please fill in your name, phone number, and a short message.");
       return;
     }
-    if (!smsConsent) {
-      setError("Please check the box to consent to SMS messages so we can text you back.");
-      return;
-    }
 
     setBusy(true);
     try {
@@ -138,10 +134,9 @@ export function ContactForm() {
           className="mt-1 h-4 w-4 shrink-0 rounded border-white/30 bg-background/60"
           checked={smsConsent}
           onChange={(e) => setSmsConsent(e.target.checked)}
-          required
         />
         <span>
-          I agree to receive SMS messages from 247ROI about my inquiry and follow-up (approx. 2-4 msgs). Msg &amp;
+          (Optional) I agree to receive SMS messages from 247ROI about my inquiry and follow-up (approx. 2-4 msgs). Msg &amp;
           data rates may apply. Msg frequency varies. Reply STOP to cancel, HELP for help. See our{" "}
           <Link href="/terms-of-service" className="underline underline-offset-2 hover:text-foreground">
             Terms of Service

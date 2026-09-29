@@ -23,14 +23,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = schema.parse(await req.json());
 
-    // SMS opt-in enforcement: a phone number may only be submitted alongside explicit consent.
-    if (!body.smsConsent) {
-      return NextResponse.json(
-        { error: "SMS consent checkbox must be checked to submit this form." },
-        { status: 400 }
-      );
-    }
-
     // TODO(247ROI): persist this submission (name/phone/email/message/smsConsent) to Supabase
     // once a contact_submissions table exists; logged here in the interim so consent capture
     // is not silently dropped.
@@ -42,14 +34,19 @@ export async function POST(req: NextRequest) {
       receivedAt: new Date().toISOString(),
     });
 
-    const sendResult = await sendSms(body.phone, CONTACT_REPLY_TEXT);
-    if (!sendResult.ok) {
-      // The submission itself is still valid and logged; surface the send failure
-      // so it's visible, but don't block the user's confirmation on a carrier/API hiccup.
-      console.error("[contact-sms-send-failed]", { phone: body.phone, error: sendResult.error });
+    // Only send the SMS reply if the user opted in; the form itself is not gated on consent.
+    let smsSent = false;
+    if (body.smsConsent) {
+      const sendResult = await sendSms(body.phone, CONTACT_REPLY_TEXT);
+      smsSent = sendResult.ok;
+      if (!sendResult.ok) {
+        // The submission itself is still valid and logged; surface the send failure
+        // so it's visible, but don't block the user's confirmation on a carrier/API hiccup.
+        console.error("[contact-sms-send-failed]", { phone: body.phone, error: sendResult.error });
+      }
     }
 
-    return NextResponse.json({ ok: true, smsSent: sendResult.ok });
+    return NextResponse.json({ ok: true, smsSent });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: "Invalid submission.", details: err.flatten() }, { status: 400 });
