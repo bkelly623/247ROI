@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendSms } from "@/lib/twilio";
 
 /**
- * This exact string is registered as "Sample message #2" in the Twilio A2P
- * 10DLC campaign registration. Do not edit this text without also updating
- * that registration — the two must stay identical.
+ * NOTE: this text is not currently declared as a use case in the Twilio A2P
+ * 10DLC campaign registration (the campaign only covers the website contact
+ * form). This flow runs in production but its own message content/use case
+ * has not been separately submitted for review — flagged as a follow-up.
  */
 const MISSED_CALL_TEXT =
-  "Hi, sorry we missed your call! This is 247ROI — reply here and we'll get back to you, or call us back at (610) 300-3001. Msg & data rates may apply. Reply STOP to opt out, HELP for help.";
+  "Hi, sorry we missed your call! This is 247ROI's assistant — tell me what's going on and I'll get you the right help, or call again at (610) 300-3001. Msg & data rates may apply. Reply STOP to opt out, HELP for help.";
 
 const UNANSWERED_STATUSES = new Set(["no-answer", "busy", "failed", "canceled"]);
 
