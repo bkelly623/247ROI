@@ -1,119 +1,20 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { HireGate } from "@/components/hire/HireGate";
-import { HireReport } from "@/components/hire/HireReport";
-import type { HireProposal, HireSession } from "@/lib/hire/types";
-
-export default function HireReportPage() {
-  const params = useParams<{ id: string }>();
-  const id = params.id;
-  const [session, setSession] = useState<HireSession | null>(null);
-  const [unlocked, setUnlocked] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [needGate, setNeedGate] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`/api/hire/${id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Not found");
-        if (cancelled) return;
-
-        if (data.unlocked && data.session?.proposal) {
-          setSession(data.session as HireSession);
-          setUnlocked(true);
-        } else if (data.session?.proposal || data.session?.status === "gate_ready") {
-          setNeedGate(true);
-          setSession(data.session as HireSession);
-        } else {
-          setError("This audit is not ready yet. Finish the chat first.");
-        }
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
-
-  async function reloadUnlocked() {
-    const res = await fetch(`/api/hire/${id}`);
-    const data = await res.json();
-    if (res.ok && data.unlocked) {
-      setSession(data.session);
-      setUnlocked(true);
-      setNeedGate(false);
-    }
-  }
-
-  return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
-      <main className="flex-1 pt-20">
-        {loading && (
-          <div className="flex min-h-[50vh] items-center justify-center gap-2 text-zinc-500">
-            <Loader2 className="h-5 w-5 animate-spin text-orange-400" />
-            Loading opportunity audit…
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-6 py-20 text-center">
-            <p className="text-red-400">{error}</p>
-            <Button asChild>
-              <Link href="/ai-opportunity-audit">Start the finder</Link>
-            </Button>
-          </div>
-        )}
-
-        {!loading && unlocked && session?.proposal && (
-          <HireReport session={session} proposal={session.proposal as HireProposal} />
-        )}
-
-        {!loading && needGate && !unlocked && (
-          <div className="mx-auto max-w-lg px-6 py-20 text-center">
-            <h1 className="font-display text-3xl font-bold text-zinc-50">
-              Your opportunity audit is sealed
-            </h1>
-            <p className="mt-3 text-zinc-400">
-              Unlock it with your details, then we can map the system against your actual workflow.
-            </p>
-          </div>
-        )}
-      </main>
-      <Footer />
-
-      {needGate && !unlocked && (
-        <HireGate
-          sessionId={id}
-          teaserLine={
-            session && "proposal" in session && session.proposal
-              ? `${(session.proposal as HireProposal).employeeName} · locked`
-              : null
-          }
-          employeeName={
-            session && "proposal" in session && session.proposal
-              ? (session.proposal as HireProposal).employeeName
-              : undefined
-          }
-          onUnlocked={() => {
-            void reloadUnlocked();
-          }}
-        />
-      )}
-    </div>
-  );
+import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import { HireReport } from '@/components/hire/HireReport';
+import type { HireSession } from '@/lib/hire/types';
+export default function HireReportPage(){
+  const {id}=useParams<{id:string}>();
+  const [session,setSession]=useState<HireSession|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
+  const load=useCallback(async()=>{
+    setLoading(true);setError('');
+    try{const res=await fetch(`/api/hire/${encodeURIComponent(id)}`,{cache:'no-store',signal:AbortSignal.timeout(15000)});const data=await res.json();if(!res.ok)throw new Error(data.error||'Unable to load your plan.');if(!data.unlocked||!data.session.proposal)throw new Error('Your conversation is saved, but the plan is not ready yet.');setSession(data.session);}
+    catch(e){setError(e instanceof Error?e.message:'Unable to load. Please retry.');}finally{setLoading(false);}
+  },[id]);
+  useEffect(()=>{void load();},[load]);
+  return <div className="min-h-screen bg-zinc-950"><Navbar/><main className="pt-20">
+    {loading?<p role="status" className="p-12 text-center text-zinc-300">Opening your saved plan…</p>:error?<div className="mx-auto max-w-lg space-y-4 px-5 py-12 text-zinc-200"><h1 className="text-2xl font-bold">Let’s get you back to your audit.</h1><p role="alert">{error}</p><button onClick={()=>void load()} className="min-h-11 rounded-lg border border-white/20 px-4">Retry loading</button><Link href={`/ai-opportunity-audit?step=opportunity&resume=${encodeURIComponent(id)}`} className="block py-3 text-orange-300 underline">Return to saved conversation</Link><Link href="/ai-opportunity-audit?step=opportunity&new=1" className="block py-3 underline">Start a new audit</Link></div>:session?.proposal?<HireReport session={session} proposal={session.proposal}/>:null}
+  </main></div>;
 }

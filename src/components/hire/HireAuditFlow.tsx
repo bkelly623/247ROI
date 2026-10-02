@@ -1,487 +1,134 @@
 "use client";
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ArrowUp, Check, Loader2, RotateCcw, ShieldCheck } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import { emptyDiscovery, type DiscoveryState, type HireMessage } from '@/lib/hire/types';
+import { OPENING } from '@/lib/hire/sales-engine';
+import { canProduceBrief, choicesFor, discoverySummary, nextDiscoveryStep, type HireChoice } from '@/lib/hire/discovery-policy';
+import { primaryPain } from '@/lib/hire/estimates';
+import { trackSiteEvent } from '@/lib/analytics/client';
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowUpRight,
-  BarChart3,
-  CheckCircle2,
-  FileText,
-  HelpCircle,
-  Inbox,
-  Loader2,
-  Mail,
-  PhoneCall,
-  Send,
-  ScrollText,
-} from "lucide-react";
-import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { HireGate } from "@/components/hire/HireGate";
-import type { DiscoveryState, HireProposal } from "@/lib/hire/types";
-import { emptyDiscovery } from "@/lib/hire/types";
-import { HIRE_OPENING, HIRE_PAGE } from "@/lib/hire/copy";
-import { getHireProgress } from "@/lib/hire/progress";
-import { trackSiteEvent } from "@/lib/analytics/client";
-import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-
-type ChatBubble = { id: string; role: "user" | "assistant"; content: string };
-
-const triageIcons: Record<string, typeof PhoneCall> = {
-  leads: PhoneCall,
-  admin: Inbox,
-  visibility: BarChart3,
-  bids: ScrollText,
-  docs: FileText,
-  unsure: HelpCircle,
-};
-
-function uid() {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const field='w-full min-h-11 rounded-xl border border-white/20 bg-zinc-900 px-3 py-2 text-base text-zinc-100 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30';
+const action='inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold disabled:opacity-50';
+type Pending={text:string;requestId:string};
+type Saved={id:string;draft:string;pending:Pending|null};
+function storageKey(){return `247roi:opportunity:v2:${new URLSearchParams(window.location.search).get('visibility')||'direct'}`;}
+function store(data:Saved){try{localStorage.setItem(storageKey(),JSON.stringify(data));}catch{/* Private browsing: server link still works. */}}
+async function request(url:string,body?:unknown){
+  const res=await fetch(url,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined,cache:'no-store',signal:AbortSignal.timeout(24000)});
+  const data=await res.json(); if(!res.ok) throw new Error(data.error||'Please retry.');return data;
 }
-
-function ProgressBar({ discovery }: { discovery: DiscoveryState }) {
-  const steps = getHireProgress(discovery);
-  return (
-    <div className="border-b border-white/10 px-3 py-3 sm:px-5">
-      <ol className="flex items-center justify-between gap-1">
-        {steps.map((s, i) => (
-          <li key={s.id} className="flex min-w-0 flex-1 items-center gap-1">
-            <div className="flex min-w-0 flex-col items-center gap-1">
-              <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
-                  s.done
-                    ? "bg-orange-500 text-white"
-                    : s.current
-                      ? "border border-orange-400/70 text-orange-300"
-                      : "border border-white/15 text-zinc-600"
-                }`}
-              >
-                {s.done ? "✓" : i + 1}
-              </span>
-              <span
-                className={`truncate text-[10px] sm:text-xs ${
-                  s.current
-                    ? "font-medium text-zinc-200"
-                    : s.done
-                      ? "text-zinc-400"
-                      : "text-zinc-600"
-                }`}
-              >
-                {s.label}
-              </span>
-            </div>
-            {i < steps.length - 1 && (
-              <div
-                className={`mb-4 h-px flex-1 ${
-                  s.done ? "bg-orange-500/50" : "bg-white/10"
-                }`}
-              />
-            )}
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
-
-export function HireAuditFlow() {
-  const router = useRouter();
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatBubble[]>([
-    { id: "opening", role: "assistant", content: HIRE_OPENING },
-  ]);
-  const [discovery, setDiscovery] = useState<DiscoveryState>(emptyDiscovery());
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [bootError, setBootError] = useState<string | null>(null);
-  const [showGate, setShowGate] = useState(false);
-  const [teaserLine, setTeaserLine] = useState<string | null>(null);
-  const [proposal, setProposal] = useState<HireProposal | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/hire/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ source: "ai_opportunity_audit_page", visibilitySessionId: new URLSearchParams(window.location.search).get("visibility") ?? undefined }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Could not start");
-        if (!cancelled) {
-          setSessionId(data.sessionId);
-          trackSiteEvent({
-            eventName: "hire_session_started",
-            source: "ai_opportunity_audit_page",
-            sessionId: data.sessionId,
-          });
-          if (data.opening) {
-            setMessages([
-              { id: "opening", role: "assistant", content: data.opening },
-            ]);
-          }
-          if (data.discovery) setDiscovery(data.discovery);
-        }
-      } catch (e) {
-        if (!cancelled) {
-          setBootError(
-            e instanceof Error ? e.message : "Couldn't start. Refresh."
-          );
-        }
+export function HireAuditFlow(){
+  const router=useRouter();
+  const [id,setId]=useState<string|null>(null),[revision,setRevision]=useState('');
+  const [messages,setMessages]=useState<HireMessage[]>([{role:'assistant',content:OPENING}]);
+  const [discovery,setDiscovery]=useState<DiscoveryState>(emptyDiscovery());
+  const [choices,setChoices]=useState<HireChoice[]>(choicesFor(emptyDiscovery()));
+  const [input,setInput]=useState(''),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState('');
+  const [review,setReview]=useState(false),[guided,setGuided]=useState(false),[resumed,setResumed]=useState(false),[slow,setSlow]=useState(false),[copyStatus,setCopyStatus]=useState('');
+  const reviewRef=useRef<HTMLElement>(null);
+  const pending=useRef<Pending|null>(null),lock=useRef(false),initialized=useRef(false),log=useRef<HTMLDivElement>(null),inputRef=useRef<HTMLTextAreaElement>(null);
+  const boot=useCallback(async(force=false)=>{
+    setLoading(true);setError('');
+    try{
+      let saved:Saved|null=null;try{saved=JSON.parse(localStorage.getItem(storageKey())||'null');}catch{}
+      const query=new URLSearchParams(window.location.search);
+      force=force||query.get('new')==='1';
+      const fromUrl=query.get('resume');
+      const resumeId=force?null:(fromUrl||saved?.id);
+      if(resumeId){
+        const data=await request(`/api/hire/${encodeURIComponent(resumeId)}?resume=1`);
+        if(data.session.status==='unlocked'){router.replace(`/ai-opportunity-audit/${resumeId}`);return;}
+        setId(resumeId);setRevision(data.session.updated_at);setMessages(data.session.messages.length?data.session.messages:[{role:'assistant',content:OPENING}]);setDiscovery(data.session.discovery);setChoices(choicesFor(data.session.discovery));setReview(data.session.status==='gate_ready');setResumed(true);
+        if(saved?.id===resumeId){setInput(saved.draft||'');pending.current=saved.pending||null;}
+      }else{
+        const visibility=new URLSearchParams(window.location.search).get('visibility');
+        const data=await request('/api/hire/session',{source:'ai_opportunity_audit_page',...(visibility?{visibilitySessionId:visibility}:{})});
+        setId(data.sessionId);setRevision(data.revision);setMessages([{role:'assistant',content:data.opening}]);setDiscovery(data.discovery);setChoices(data.choices||choicesFor(data.discovery));setInput('');setReview(false);setResumed(false);pending.current=null;
+        store({id:data.sessionId,draft:'',pending:null});
+        if(force){const url=new URL(window.location.href);url.searchParams.delete('resume');url.searchParams.delete('new');window.history.replaceState(null,'',url);}
+        trackSiteEvent({eventName:'hire_session_started',source:'ai_opportunity_audit_page',sessionId:data.sessionId});
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    const scroller = bottomRef.current?.parentElement;
-    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
-  }, [messages, busy, showGate]);
-
-  async function send(e?: FormEvent, overrideText?: string) {
-    e?.preventDefault();
-    const text = (overrideText ?? input).trim();
-    if (!text || busy || !sessionId || showGate) return;
-
-    setInput("");
-    setBusy(true);
-    setMessages((prev) => [...prev, { id: uid(), role: "user", content: text }]);
-    trackSiteEvent({
-      eventName: overrideText ? "hire_triage_selected" : "hire_chat_message_sent",
-      source: "ai_opportunity_audit_page",
-      sessionId,
-      metadata: {
-        messageCount: messages.length + 1,
-        triage: Boolean(overrideText),
-      },
-    });
-
-    try {
-      const res = await fetch("/api/hire/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          message: text,
-          messages: messages.map(({ role, content }) => ({ role, content })),
-          discovery,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Chat failed");
-
-      if (data.sessionId && data.sessionId !== sessionId) {
-        setSessionId(data.sessionId);
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        { id: uid(), role: "assistant", content: data.reply as string },
-      ]);
-
-      if (data.discovery) setDiscovery(data.discovery);
-      if (data.proposal) setProposal(data.proposal);
-
-      if (data.readyForGate) {
-        setProposal(data.proposal);
-        setTeaserLine(data.teaserLine);
-        setShowGate(true);
-        trackSiteEvent({
-          eventName: "hire_gate_shown",
-          source: "ai_opportunity_audit_page",
-          sessionId: data.sessionId ?? sessionId,
-          metadata: {
-            phase: data.phase,
-            hasProposal: Boolean(data.proposal),
-          },
-        });
-      }
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: uid(),
-          role: "assistant",
-          content: "Something glitched — try that again.",
-        },
-      ]);
-    } finally {
-      setBusy(false);
-      inputRef.current?.focus();
-    }
+    }catch(e){setError(e instanceof Error?e.message:'Unable to load. Please retry.');}
+    finally{setLoading(false);}
+  },[router]);
+  useEffect(()=>{if(!initialized.current){initialized.current=true;void boot();}},[boot]);
+  useEffect(()=>{if(id)store({id,draft:input,pending:pending.current});},[id,input]);
+  useEffect(()=>{log.current?.scrollTo({top:log.current.scrollHeight,behavior:'auto'});},[messages,busy]);
+  useEffect(()=>{if(review)reviewRef.current?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});},[review]);
+  useEffect(()=>{if(!busy){setSlow(false);return;}const t=setTimeout(()=>setSlow(true),5000);return()=>clearTimeout(t);},[busy]);
+  async function send(e?:FormEvent,textOverride?:string){
+    e?.preventDefault();const text=(textOverride??input).trim();if(!id||lock.current||!text||loading)return;
+    lock.current=true;setBusy(true);setError('');setReview(false);
+    const item=pending.current?.text===text?pending.current:{text,requestId:crypto.randomUUID()};pending.current=item;setInput(text);store({id,draft:text,pending:item});
+    try{
+      const data=await request('/api/hire/chat',{sessionId:id,message:text,requestId:item.requestId,revision});
+      // Read back on a replay so a dropped response never duplicates a bubble.
+      if(data.replayed){const saved=await request(`/api/hire/${id}?resume=1`);setMessages(saved.session.messages);}
+      else setMessages(prev=>[...prev,{role:'user',content:text},{role:'assistant',content:data.reply}]);
+      setRevision(data.revision);setDiscovery(data.discovery);setChoices(data.choices||choicesFor(data.discovery));setGuided(data.mode==='guided');setReview(Boolean(data.readyForGate));pending.current=null;setInput('');store({id,draft:'',pending:null});
+      trackSiteEvent({eventName:'hire_chat_message_sent',source:'ai_opportunity_audit_page',sessionId:id,metadata:{phase:data.phase}});
+    }catch(e){setError(e instanceof Error && e.name!=='TimeoutError'?e.message:'That took too long. Your answer is still here—retry safely.');}
+    finally{lock.current=false;setBusy(false);}
   }
-
-  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void send();
-    }
+  async function finish(e:FormEvent<HTMLFormElement>){
+    e.preventDefault();if(!id||lock.current)return;lock.current=true;setBusy(true);setError('');
+    const values=new FormData(e.currentTarget);const rawHours=String(values.get('hours')||'').trim();
+    try{
+      const data=await request(`/api/hire/${id}`,{confirmed:true,revision,correction:{businessType:values.get('businessType'),title:values.get('title'),process:values.get('process'),tools:values.get('tools'),hours:rawHours===''?null:Number(rawHours),automatable:values.get('automatable')==='unknown'?null:values.get('automatable')==='yes'}});
+      trackSiteEvent({eventName:'hire_report_created',source:'ai_opportunity_audit_page',sessionId:id});
+      router.push(`/ai-opportunity-audit/${data.sessionId}`);
+    }catch(e){setError(e instanceof Error?e.message:'Could not save. Please retry.');}
+    finally{lock.current=false;setBusy(false);}
   }
-
-  return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navbar />
-      <main className="relative flex flex-1 flex-col pt-24 sm:pt-28">
-        <div
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 45% at 50% -5%, rgba(255,106,0,0.14), transparent 55%)",
-          }}
-        />
-
-        <section id="audit" className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-5 sm:px-6">
-          <header className="space-y-3 pb-5 pt-4 text-center sm:pt-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
-              {HIRE_PAGE.eyebrow}
-            </p>
-            <h1 className="mx-auto max-w-2xl font-display text-3xl font-bold leading-[1.08] tracking-tight text-zinc-50 sm:text-5xl">
-              {HIRE_PAGE.headline}
-            </h1>
-            <p className="mx-auto max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg">
-              {HIRE_PAGE.subhead}
-            </p>
-            <ul className="mx-auto grid max-w-xl grid-cols-1 gap-2 pt-2 text-left sm:grid-cols-2">
-              {HIRE_PAGE.proofPoints.map((point) => (
-                <li
-                  key={point}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-zinc-300"
-                >
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-orange-400" />
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mx-auto max-w-lg text-sm leading-relaxed text-zinc-500">
-              {HIRE_PAGE.microcopy}
-            </p>
-          </header>
-
-          <div className="mb-4 grid gap-2 text-sm text-zinc-400 sm:grid-cols-3">
-            {["No obligation", "Useful even if we do not build", "Human judgment stays in control"].map((item) => (
-              <div key={item} className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-center">
-                {item}
-              </div>
-            ))}
-          </div>
-
-          <div className="mb-4 rounded-2xl border border-orange-500/20 bg-orange-500/[0.06] p-4 sm:rounded-3xl sm:p-5">
-            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">
-                  {HIRE_PAGE.routingEyebrow}
-                </p>
-                <h2 className="mt-2 font-display text-xl font-bold leading-tight text-zinc-50 sm:text-2xl">
-                  {HIRE_PAGE.routingTitle}
-                </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-                  {HIRE_PAGE.routingBody}
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
-                <a
-                  href={PRIMARY_PHONE_HREF}
-                  onClick={() =>
-                    sessionId &&
-                    trackSiteEvent({
-                      eventName: "hire_direct_call_clicked",
-                      source: "ai_opportunity_audit_page",
-                      sessionId,
-                    })
-                  }
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition hover:bg-orange-600"
-                >
-                  <PhoneCall className="h-4 w-4" />
-                  Call {PRIMARY_PHONE_DISPLAY}
-                </a>
-                <a
-                  href="mailto:contact@247roi.com?subject=AI%20Opportunity%20Audit"
-                  onClick={() =>
-                    sessionId &&
-                    trackSiteEvent({
-                      eventName: "hire_direct_email_clicked",
-                      source: "ai_opportunity_audit_page",
-                      sessionId,
-                    })
-                  }
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.03] px-4 text-sm font-semibold text-zinc-100 transition hover:border-orange-400/70 hover:text-orange-200"
-                >
-                  <Mail className="h-4 w-4" />
-                  Email
-                </a>
-              </div>
-            </div>
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
-              {HIRE_PAGE.routingProof.map((item) => (
-                <div key={item} className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-zinc-300">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-orange-300" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-            <Link
-              href="/services"
-              onClick={() =>
-                sessionId &&
-                trackSiteEvent({
-                  eventName: "hire_services_route_clicked",
-                  source: "ai_opportunity_audit_page",
-                  sessionId,
-                })
-              }
-              className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-orange-300 hover:text-orange-200"
-            >
-              See service paths
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          {messages.length <= 1 && !showGate && (
-            <div className="mb-4 rounded-2xl border border-white/10 bg-zinc-950/70 p-4 sm:rounded-3xl sm:p-5">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
-                    {HIRE_PAGE.triageEyebrow}
-                  </p>
-                  <h2 className="mt-2 font-display text-xl font-bold leading-tight text-zinc-50 sm:text-2xl">
-                    {HIRE_PAGE.triageTitle}
-                  </h2>
-                </div>
-                <p className="max-w-md text-sm leading-6 text-zinc-500">
-                  {HIRE_PAGE.triageNote}
-                </p>
-              </div>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                {HIRE_PAGE.triageChoices.map((choice) => {
-                  const Icon = triageIcons[choice.id] ?? HelpCircle;
-
-                  return (
-                    <button
-                      key={choice.id}
-                      type="button"
-                      disabled={!sessionId || busy}
-                      onClick={() => void send(undefined, choice.message)}
-                      className="group flex min-h-28 items-start gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 text-left transition hover:border-orange-500/60 hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-zinc-900 text-orange-400 transition group-hover:bg-orange-500 group-hover:text-white">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-sm font-semibold text-zinc-100">
-                          {choice.title}
-                        </span>
-                        <span className="mt-1 block text-sm leading-5 text-zinc-500">
-                          {choice.body}
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/85 shadow-[0_0_80px_rgba(0,0,0,0.35)] sm:rounded-3xl">
-            <ProgressBar discovery={discovery} />
-
-            <div className="flex-1 space-y-4 overflow-y-auto px-4 py-5 sm:px-6 sm:py-7">
-              <AnimatePresence initial={false}>
-                {messages.map((m) => (
-                  <motion.div
-                    key={m.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-[94%] whitespace-pre-wrap rounded-2xl px-4 py-3.5 text-base leading-relaxed sm:max-w-[88%] sm:rounded-3xl sm:px-5 sm:py-4 sm:text-lg ${
-                        m.role === "user"
-                          ? "bg-orange-500 font-medium text-white"
-                          : "border border-white/10 bg-white/[0.05] text-zinc-100"
-                      }`}
-                    >
-                      {m.content}
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              {busy && (
-                <div className="flex items-center gap-2 text-base text-zinc-500">
-                  <Loader2 className="h-4 w-4 animate-spin text-orange-400" />
-                  {HIRE_PAGE.busy}
-                </div>
-              )}
-              {bootError && <p className="text-base text-red-400">{bootError}</p>}
-              <div ref={bottomRef} />
-            </div>
-
-            <form
-              onSubmit={send}
-              className="border-t border-white/10 bg-black/40 p-3 sm:p-5"
-            >
-              <div className="flex items-end gap-3">
-                <textarea
-                  ref={inputRef}
-                  rows={2}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={onKeyDown}
-                  disabled={!sessionId || busy || showGate}
-                  placeholder={
-                    showGate
-                      ? HIRE_PAGE.placeholderLocked
-                      : HIRE_PAGE.placeholder
-                  }
-                  className="min-h-[52px] flex-1 resize-none rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-base text-zinc-100 placeholder:text-zinc-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/25 disabled:opacity-60 sm:min-h-[64px] sm:text-lg"
-                />
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={!sessionId || busy || !input.trim() || showGate}
-                  className="h-[52px] w-[52px] shrink-0 rounded-2xl sm:h-[64px] sm:w-[64px]"
-                  aria-label="Send"
-                >
-                  {busy ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Send className="h-5 w-5" />
-                  )}
-                </Button>
-              </div>
-              <p className="mt-2 text-center text-xs text-zinc-600 sm:text-sm">
-                {HIRE_PAGE.sendHint}
-              </p>
-            </form>
-          </div>
-        </section>
-      </main>
-
-      {showGate && sessionId && (
-        <HireGate
-          sessionId={sessionId}
-          teaserLine={teaserLine}
-          employeeName={proposal?.employeeName}
-          hoursLabel={
-            proposal
-              ? `${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week`
-              : undefined
-          }
-          proposal={proposal}
-          discovery={discovery}
-          messages={messages.map(({ role, content }) => ({ role, content }))}
-          onUnlocked={(id) => {
-            router.push(`/ai-opportunity-audit/${id}`);
-          }}
-        />
-      )}
+  const step=nextDiscoveryStep(discovery),p=primaryPain(discovery);
+  const stages=['Your work','The bottleneck','Your plan'];const current=!discovery.businessType?0:step==='review'?2:1;
+  return <div className="min-h-screen bg-zinc-950 text-zinc-100"><Navbar/><main id="audit" className="mx-auto max-w-5xl px-4 pb-12 pt-24 sm:px-6 sm:pt-28">
+    <header className="mb-5 max-w-2xl">
+      <p className="text-xs font-semibold uppercase tracking-[.18em] text-orange-400">AI Opportunity Audit</p>
+      <h1 className="mt-2 font-display text-3xl font-bold leading-tight sm:text-5xl">Get the busywork off your plate.</h1>
+      <p className="mt-3 text-base text-zinc-400">A few focused answers. One practical first move. Your plan is yours—no phone number required.</p>
+    </header>
+    <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <section aria-label="Audit conversation" className="min-w-0 overflow-hidden rounded-2xl border border-white/15 bg-zinc-900/40">
+        <ol aria-label="Audit progress" className="flex gap-2 border-b border-white/10 px-4 py-3">{stages.map((s,i)=><li key={s} aria-current={i===current?'step':undefined} className={`flex flex-1 items-center gap-2 text-xs ${i===current?'text-orange-300':'text-zinc-400'}`}><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-current">{i<current?<Check size={12}/>:i+1}</span>{s}</li>)}</ol>
+        {resumed&&<p className="px-4 pt-3 text-xs text-emerald-300">Your saved conversation is back. Pick up where you left off.</p>}
+        <div ref={log} role="log" aria-label="Conversation messages" aria-live="polite" aria-relevant="additions" className="max-h-[42svh] min-h-28 space-y-4 overflow-y-auto overscroll-contain p-4 sm:max-h-[440px] sm:p-5">
+          {messages.map((m,i)=><div key={i} className={`flex ${m.role==='user'?'justify-end':''}`}><div className={`max-w-[95%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-base leading-relaxed ${m.role==='user'?'bg-orange-500 text-black':'bg-white/[.06] text-zinc-100'}`}><span className="sr-only">{m.role==='user'?'You: ':'247ROI: '}</span>{m.content}</div></div>)}
+          {busy&&<p role="status" className="flex items-center gap-2 text-sm text-zinc-400"><Loader2 size={16} className="animate-spin"/>{slow?'Still working—your answer is retained.':'Working on your answer…'}</p>}
+        </div>
+        {!review&&<form onSubmit={send} className="border-t border-white/10 p-3 sm:p-4">
+          <label htmlFor="hire-answer" className="sr-only">Your answer</label>
+          <div className="flex items-end gap-2"><textarea id="hire-answer" ref={inputRef} rows={2} maxLength={2000} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.nativeEvent.isComposing){e.preventDefault();void send();}}} placeholder="Tell me in your own words…" disabled={busy||loading||!id} className={`${field} min-w-0 resize-y`}/><button type="submit" aria-label="Send answer" disabled={busy||loading||!id||!input.trim()} className={`${action} h-12 w-12 shrink-0 border-orange-500 bg-orange-500 text-black`}><ArrowUp size={20}/></button></div>
+          {choices.length>0&&<div aria-label="Suggested answers" className="mt-3 flex flex-wrap gap-2">{choices.map(c=><button key={c.id} type="button" disabled={busy||loading||!id} className={`${action} bg-white/[.03] text-zinc-300 hover:border-orange-400`} onClick={()=>void send(undefined,c.value)}>{c.label}</button>)}</div>}
+          <p className="mt-3 text-xs text-zinc-400">Use a suggestion or type. Don’t include customer records, passwords or private financial details.</p>
+        </form>}
+        {loading&&<p role="status" className="p-4 text-sm text-zinc-400">Opening your saved workspace…</p>}
+        {error&&<div role="alert" className="m-4 rounded-xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-200"><p>{error}</p><div className="mt-3 flex flex-wrap gap-2"><button className={action} disabled={busy||loading} onClick={()=>void (id&&input?send():boot())}>{id&&input?'Retry answer':'Retry loading'}</button>{id&&<button className={action} disabled={busy} onClick={()=>void boot()}>Reload saved conversation</button>}</div></div>}
+      </section>
+      <aside className="min-w-0 space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/[.025] p-4"><h2 className="font-semibold">What we’ve found</h2>{discovery.businessType||p?<dl className="mt-4 space-y-3">{discoverySummary(discovery).slice(0,4).map(s=><div key={s.label}><dt className="text-xs text-zinc-400">{s.label}</dt><dd className="mt-1 break-words text-sm">{s.value}</dd></div>)}</dl>:<p className="mt-3 text-sm leading-relaxed text-zinc-400">We’ll turn your answers into a clear priority, a possible time-saving range and a first step you can actually use.</p>}
+          {canProduceBrief(discovery)&&!review&&<button disabled={busy} className={`${action} mt-4 w-full border-orange-400/50 text-orange-300`} onClick={()=>setReview(true)}>Review my summary</button>}
+        </div>
+        <p className="flex gap-2 text-xs leading-relaxed text-zinc-400"><ShieldCheck size={18} className="shrink-0 text-orange-400"/>Human judgment stays in control. If a simpler fix makes more sense than AI, we’ll say so.</p>
+        {guided&&<p role="status" className="text-xs text-amber-200">Guided mode: AI is temporarily unavailable. You can still finish and edit your plan.</p>}
+      </aside>
     </div>
-  );
+    {review&&p&&<section ref={reviewRef} aria-label="Confirm your summary" className="scroll-mt-24 mt-5 rounded-2xl border border-orange-400/40 bg-orange-500/[.05] p-4 sm:p-6"><h2 className="font-display text-2xl font-bold">Did we get this right?</h2><p className="mt-2 text-sm text-zinc-400">Edit anything below. Unknown hours stay blank—we won’t make them up.</p><form onSubmit={finish} className="mt-4 grid gap-4 sm:grid-cols-2" key={`${revision}-review`}>
+      <label className="text-sm">Business type<input name="businessType" required maxLength={80} defaultValue={discovery.businessType||''} className={`${field} mt-1`}/></label>
+      <label className="text-sm">First priority<input name="title" required maxLength={100} defaultValue={p.title} className={`${field} mt-1`}/></label>
+      <label className="text-sm sm:col-span-2">How the work happens today<textarea name="process" required minLength={10} maxLength={1000} rows={3} defaultValue={p.processSteps.join('\n')} className={`${field} mt-1`}/></label>
+      <label className="text-sm">Tools you use (optional)<input name="tools" maxLength={200} defaultValue={p.tools.join(', ')} className={`${field} mt-1`}/></label>
+      <label className="text-sm">Hours/week on this task (optional)<input name="hours" type="number" min="0" max="168" step="0.1" placeholder="Not sure yet" defaultValue={p.time.statedHoursPerWeek??''} className={`${field} mt-1`}/></label>
+      <label className="text-sm sm:col-span-2">Is this mainly repeatable computer or paperwork activity?<select name="automatable" defaultValue={p.automatable==null?'unknown':p.automatable?'yes':'no'} className={`${field} mt-1`}><option value="yes">Yes — with human review where needed</option><option value="no">No — mainly hands-on work or professional judgment</option><option value="unknown">Not sure yet</option></select></label>
+      <div className="flex flex-wrap gap-3 sm:col-span-2"><button type="submit" disabled={busy} className={`${action} border-orange-500 bg-orange-500 text-black`}>{busy?'Saving your plan…':'That’s right — show my plan'}</button><button type="button" disabled={busy} onClick={()=>{setReview(false);inputRef.current?.focus();}} className={action}>Keep talking</button></div>
+    </form></section>}
+    <footer className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-zinc-400">
+      {id&&<button className="min-h-11 underline" onClick={async()=>{try{await navigator.clipboard.writeText(`${window.location.origin}/ai-opportunity-audit?step=opportunity&resume=${id}`);setCopyStatus('Resume link copied. Keep it private.');}catch{setCopyStatus('Use your browser’s address bar or Share menu to keep this page.');const u=new URL(window.location.href);u.searchParams.set('resume',id);window.history.replaceState(null,'',u);}}}>Copy resume link</button>}
+      <button disabled={busy||loading} className="flex min-h-11 items-center gap-1 underline" onClick={()=>{if(window.confirm('Start a new audit? Your previous audit still exists at its saved link.'))void boot(true);}}><RotateCcw size={12}/>Start a new audit</button>
+      <Link href="/privacy-policy" className="min-h-11 content-center underline">Privacy</Link><p role="status">{copyStatus}</p>
+    </footer>
+  </main></div>;
 }

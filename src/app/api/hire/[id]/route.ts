@@ -1,128 +1,44 @@
-import { NextRequest, NextResponse } from "next/server";
-import { hireGateSchema } from "@/lib/hire/gate";
-import { notifyHireUnlock } from "@/lib/hire/notify";
-import {
-  createHireSession,
-  getHireSession,
-  updateHireSession,
-} from "@/lib/hire/sessions";
-import type { DiscoveryState, HireMessage, HireProposal } from "@/lib/hire/types";
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { getHireSession, updateHireSession, publicHireView } from '@/lib/hire/sessions';
+import { canProduceBrief } from '@/lib/hire/discovery-policy';
+import { primaryPain } from '@/lib/hire/estimates';
+import { proposalFallback } from '@/lib/hire/prompt';
+import { readHireBody } from '@/lib/hire/http';
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  const session = await getHireSession(id);
-  if (!session) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
-  const unlocked = session.status === "unlocked";
-  if (unlocked) {
-    return NextResponse.json({ session, unlocked: true });
-  }
-
-  return NextResponse.json({
-    unlocked: false,
-    session: {
-      id: session.id,
-      status: session.status,
-      phase: session.phase,
-      proposal: session.proposal
-        ? {
-            employeeName: session.proposal.employeeName,
-            roleTitle: session.proposal.roleTitle,
-            tagline: session.proposal.tagline,
-            hoursSavedPerWeek: session.proposal.hoursSavedPerWeek,
-          }
-        : null,
-      discovery: {
-        businessName: session.discovery.businessName,
-        businessType: session.discovery.businessType,
-      },
-    },
-  });
-}
-
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+export async function GET(req: NextRequest,{params}:{params:Promise<{id:string}>}) {
+  const {id}=await params;
+  if (!z.string().uuid().safeParse(id).success) return NextResponse.json({error:'Not found'},{status:404});
   try {
-    const raw = await req.json();
-    const contact = hireGateSchema.parse({
-      firstName: raw.firstName,
-      lastName: raw.lastName ?? "",
-      phone: raw.phone,
-      email: raw.email ?? "",
-    });
-
-    let session = await getHireSession(id);
-
-    const proposal =
-      (raw.proposal as HireProposal | undefined) ?? session?.proposal;
-    const discovery =
-      (raw.discovery as DiscoveryState | undefined) ?? session?.discovery;
-    const messages =
-      (raw.messages as HireMessage[] | undefined) ?? session?.messages;
-
-    if (!proposal) {
-      return NextResponse.json(
-        { error: "Finish the audit conversation first." },
-        { status: 400 }
-      );
+    const session=await getHireSession(id);
+    if(!session) return NextResponse.json({error:'Saved audit not found.'},{status:404});
+    return NextResponse.json({session:publicHireView(session,req.nextUrl.searchParams.get('resume')==='1'),unlocked:session.status==='unlocked' || session.status==='gate_ready'}, {headers:{'Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow'}});
+  } catch { return NextResponse.json({error:'Your saved audit is temporarily unavailable. Please retry.'},{status:503}); }
+}
+const finishSchema=z.object({
+  confirmed:z.literal(true), revision:z.string().max(60),
+  correction:z.object({businessType:z.string().trim().min(2).max(80),title:z.string().trim().min(2).max(100),process:z.string().trim().min(10).max(1000),tools:z.string().max(200),hours:z.number().min(0).max(168).nullable(),automatable:z.boolean().nullable()}).optional(),
+});
+export async function POST(req: NextRequest,{params}:{params:Promise<{id:string}>}) {
+  try {
+    const {id}=await params;
+    if(!z.string().uuid().safeParse(id).success) return NextResponse.json({error:'Not found'},{status:404});
+    const parsed=finishSchema.safeParse(await readHireBody(req));
+    if(!parsed.success) return NextResponse.json({error:'Please confirm the summary. No contact details are required.'},{status:400});
+    const session=await getHireSession(id);
+    if(!session) return NextResponse.json({error:'Saved audit not found.'},{status:404});
+    if(session.status==='unlocked') return NextResponse.json({sessionId:id,unlocked:true});
+    if(session.updated_at!==parsed.data.revision) return NextResponse.json({error:'The conversation changed. Reload before confirming.'},{status:409});
+    const d=structuredClone(session.discovery), p=primaryPain(d), edit=parsed.data.correction;
+    if(edit && p) {
+      d.businessType=edit.businessType; p.title=edit.title; p.processSteps=edit.process.split(/\n|→/).map(s=>s.trim()).filter(Boolean).slice(0,5); p.rawDescription=edit.process; p.tools=edit.tools.split(',').map(s=>s.trim()).filter(Boolean).slice(0,8);
+      p.time={...p.time,statedHoursPerWeek:edit.hours,computedHoursPerWeek:edit.hours,minutesPerOccurrence:null,occurrencesPerWeek:null,hiddenMinutesPerOccurrence:null}; p.automatable=edit.automatable;
+      if(edit.hours==null) d.notes.push('hours_unknown');
     }
-
-    if (!session) {
-      session = await createHireSession({
-        source: raw.source ?? "gate_recover",
-      });
-    }
-
-    const targetId = session.id;
-    const nextDiscovery = discovery ?? session.discovery;
-    const updated = await updateHireSession(targetId, {
-      first_name: contact.firstName,
-      last_name: contact.lastName || "",
-      phone: contact.phone,
-      email: contact.email || "",
-      proposal,
-      discovery: nextDiscovery,
-      messages: messages ?? session.messages,
-      gate_submitted_at: new Date().toISOString(),
-      unlocked_at: new Date().toISOString(),
-      status: "unlocked",
-      phase: "unlocked",
-    });
-
-    void notifyHireUnlock({
-      sessionId: targetId,
-      firstName: contact.firstName,
-      lastName: contact.lastName,
-      phone: contact.phone,
-      email: contact.email,
-      discovery: nextDiscovery,
-      proposal,
-    });
-
-    if (targetId !== id && updated) {
-      return NextResponse.json({
-        sessionId: targetId,
-        unlocked: true,
-        session: updated,
-        redirected: true,
-      });
-    }
-
-    return NextResponse.json({
-      sessionId: targetId,
-      unlocked: true,
-      session: updated,
-    });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Gate failed";
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
+    if(!canProduceBrief(d)) return NextResponse.json({error:'Describe your business and one concrete example of the work first.'},{status:400});
+    d.salesStage='pitch';d.notes=[...new Set([...d.notes,'owner_confirmed'])];
+    const updated=await updateHireSession(id,{discovery:d,proposal:proposalFallback(d),status:'unlocked',phase:'unlocked',unlocked_at:new Date().toISOString()},session.updated_at);
+    if(!updated) return NextResponse.json({error:'Another update arrived. Reload and confirm again.'},{status:409});
+    return NextResponse.json({sessionId:id,unlocked:true,session:publicHireView(updated)},{headers:{'Cache-Control':'no-store'}});
+  } catch { return NextResponse.json({error:'Could not save your report. Please retry; the conversation is retained.'},{status:503}); }
 }

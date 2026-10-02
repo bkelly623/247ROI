@@ -1,232 +1,43 @@
 "use client";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ArrowRight, Check, Copy, Download, Mail, Phone, ShieldCheck } from 'lucide-react';
+import type { HireProposal, HireSession } from '@/lib/hire/types';
+import { buildHireEstimate, primaryPain } from '@/lib/hire/estimates';
+import { buildRecommendation } from '@/lib/hire/recommendation';
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from '@/app/components/cta';
+import { trackSiteEvent } from '@/lib/analytics/client';
+const button='inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold hover:border-orange-400';
 
-import Link from "next/link";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Clock3,
-  HeartHandshake,
-  MonitorSmartphone,
-  Phone,
-  Sparkles,
-  Workflow,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import type { HireProposal, HireSession } from "@/lib/hire/types";
-import { PRIMARY_PHONE_DISPLAY } from "@/app/components/cta";
-import { buildHireSmsHref, impactFromNotes } from "@/lib/hire/progress";
-
-export function HireReport({
-  session,
-  proposal,
-}: {
-  session: HireSession;
-  proposal: HireProposal;
-}) {
-  const primary =
-    session.discovery.pains.find((p) => p.id === "pain1") ??
-    session.discovery.pains[0];
-  const impact = impactFromNotes(session.discovery.notes);
-  const hours =
-    primary?.time.computedHoursPerWeek ??
-    primary?.time.statedHoursPerWeek ??
-    null;
-  const smsHref = buildHireSmsHref({
-    industry: session.discovery.businessType,
-    pain: primary?.title,
-    hours,
-    employeeName: proposal.employeeName,
-  });
-
-  return (
-    <div className="mx-auto max-w-3xl space-y-8 px-4 py-8 sm:px-6">
-      <header className="space-y-4 animate-fade-in">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-400">
-          Opportunity map unlocked
-        </p>
-        <h1 className="font-display text-4xl font-bold tracking-tight text-zinc-50 sm:text-5xl">
-          Your first system opportunity: {proposal.employeeName}
-        </h1>
-        <p className="max-w-2xl text-lg text-zinc-400">{proposal.tagline}</p>
-        {impact && (
-          <p className="max-w-2xl text-lg text-orange-200/90">
-            You said you’d use the time for: <span className="text-zinc-100">{impact}</span>
-          </p>
-        )}
-        <div className="flex flex-wrap gap-3">
-          <div className="rounded-xl border border-orange-500/30 bg-orange-500/10 px-4 py-3">
-            <p className="text-xs text-orange-300/80">Hours back / week</p>
-            <p className="font-display text-2xl font-bold text-orange-200">
-              {proposal.hoursSavedPerWeek.low}–{proposal.hoursSavedPerWeek.high}
-            </p>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-            <p className="text-xs text-zinc-500">Per month</p>
-            <p className="font-display text-2xl font-bold text-zinc-100">
-              {proposal.monthlyHoursSaved.low}–{proposal.monthlyHoursSaved.high} hrs
-            </p>
-          </div>
-          {session.discovery.businessType && (
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <p className="text-xs text-zinc-500">Industry</p>
-              <p className="font-display text-2xl font-bold text-zinc-100">
-                {session.discovery.businessType}
-              </p>
-            </div>
-          )}
-        </div>
-      </header>
-
-      <section className="rounded-2xl border border-orange-500/30 bg-gradient-to-br from-orange-500/15 to-zinc-950 p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
-          Next step
-        </p>
-        <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50 sm:text-2xl">
-          On the call we map {primary?.title?.toLowerCase() || "this workflow"}, show how{" "}
-          {proposal.employeeName} would work in your actual business, and decide if the first version is worth building.
-        </h2>
-        <p className="mt-2 text-sm text-zinc-400">
-          Bring nothing fancy — 15–20 minutes. You’ll know if it makes sense to move forward.
-        </p>
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" className="h-12 flex-1 font-semibold">
-            <a href={smsHref}>
-              <Phone className="h-4 w-4" />
-              Text / call {PRIMARY_PHONE_DISPLAY}
-            </a>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="h-12 flex-1 border-white/15"
-          >
-            <Link href="/calendar">{proposal.ctaLabel}</Link>
-          </Button>
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-900/80 to-zinc-950 p-6">
-        <div className="mb-3 flex items-center gap-2 text-orange-300">
-          <HeartHandshake className="h-5 w-5" />
-          <h2 className="font-display text-lg font-semibold">The relief</h2>
-        </div>
-        <p className="text-zinc-300">{proposal.emotionalPayoff}</p>
-      </section>
-
-      {primary && (
-        <section className="space-y-3">
-          <div className="flex items-center gap-2 text-zinc-300">
-            <Clock3 className="h-5 w-5 text-orange-400" />
-            <h2 className="font-display text-lg font-semibold">What we diagnosed</h2>
-          </div>
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm text-zinc-400">
-            <p className="font-medium text-zinc-200">{primary.title}</p>
-            <p className="mt-2">{primary.rawDescription}</p>
-            {hours != null && (
-              <p className="mt-3 text-orange-300/90">
-                Desk load ≈ {hours} hrs/week
-                {primary.time.underestimationNote
-                  ? ` — ${primary.time.underestimationNote}`
-                  : ""}
-              </p>
-            )}
-          </div>
-        </section>
-      )}
-
-      <section className="space-y-3">
-        <div className="flex items-center gap-2 text-zinc-300">
-          <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-          <h2 className="font-display text-lg font-semibold">Problems this kills</h2>
-        </div>
-        <ul className="space-y-2">
-          {proposal.problemsSolved.map((item) => (
-            <li
-              key={item}
-              className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-300"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="space-y-3">
-        <div className="flex items-center gap-2 text-zinc-300">
-          <Workflow className="h-5 w-5 text-sky-400" />
-          <h2 className="font-display text-lg font-semibold">System workflow A→Z</h2>
-        </div>
-        <ol className="space-y-2">
-          {proposal.jobFromAtoZ.map((step, i) => (
-            <li
-              key={`${i}-${step}`}
-              className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-300"
-            >
-              <span className="font-display text-orange-400">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span>{step}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="space-y-3">
-        <div className="flex items-center gap-2 text-zinc-300">
-          <MonitorSmartphone className="h-5 w-5 text-violet-300" />
-          <h2 className="font-display text-lg font-semibold">How you use it</h2>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            ["Interface", proposal.howTheyUseIt.interface],
-            ["Daily loop", proposal.howTheyUseIt.dailyLoop],
-            ["Your approvals", proposal.howTheyUseIt.approvals],
-            ["Handoffs", proposal.howTheyUseIt.humanHandoffs],
-          ].map(([label, body]) => (
-            <div
-              key={label}
-              className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
-            >
-              <p className="text-xs uppercase tracking-wide text-zinc-500">{label}</p>
-              <p className="mt-2 text-sm text-zinc-300">{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <div className="mb-2 flex items-center gap-2 text-orange-300">
-          <Sparkles className="h-5 w-5" />
-          <h2 className="font-display text-lg font-semibold">Why this system first</h2>
-        </div>
-        <p className="text-zinc-300">{proposal.whyThisFirst}</p>
-        <p className="mt-3 text-sm text-zinc-500">{proposal.implementationSketch}</p>
-        {proposal.secondaryOpportunity && (
-          <p className="mt-3 text-sm text-zinc-400">
-            Roadmap opportunity #2: {proposal.secondaryOpportunity}
-          </p>
-        )}
-      </section>
-
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-          Optional later
-        </p>
-        <h2 className="mt-2 font-display text-xl font-semibold text-zinc-50">
-          Revenue pass after the first system
-        </h2>
-        <p className="mt-2 text-sm text-zinc-400">
-          After this system, we can rank missed calls, website, AI visibility, and reviews by
-          fastest profit lift.
-        </p>
-        <Button asChild size="lg" variant="outline" className="mt-4 h-11 border-white/15">
-          <a href={smsHref}>
-            Ask about a revenue pass
-            <ArrowRight className="h-4 w-4" />
-          </a>
-        </Button>
-      </section>
-    </div>
-  );
+export function HireReport({session,proposal}:{session:HireSession;proposal:HireProposal}) {
+  const [full,setFull]=useState(false),[copied,setCopied]=useState(false),[manual,setManual]=useState(false),[url,setUrl]=useState('');
+  const p=primaryPain(session.discovery),e=buildHireEstimate(session.discovery);
+  const plan={...buildRecommendation(session.discovery),...proposal};
+  useEffect(()=>{setUrl(`${window.location.origin}/ai-opportunity-audit/${session.id}`);setFull(new URLSearchParams(window.location.search).get('view')==='full');},[session.id]);
+  const remaining=e.taskHours!=null&&e.weekly?{low:Math.round((e.taskHours-e.weekly.high)*10)/10,high:Math.round((e.taskHours-e.weekly.low)*10)/10}:null;
+  function toggle(){const next=!full;setFull(next);const u=new URL(window.location.href);if(next)u.searchParams.set('view','full');else u.searchParams.delete('view');window.history.replaceState(null,'',u);}
+  const email=`mailto:?subject=${encodeURIComponent('My 247ROI opportunity plan')}&body=${encodeURIComponent(`My first priority: ${p?.title||plan.roleTitle}\n\nSaved plan: ${url}\n\nThis link includes business details. Share only with people you trust.`)}`;
+  return <article className="hire-report mx-auto max-w-4xl space-y-5 px-4 py-8 text-zinc-100 sm:px-6">
+    <div className="print:hidden flex flex-wrap items-center justify-between gap-3"><p className="flex items-center gap-2 text-xs text-emerald-300"><Check size={14}/>Your plan is ready · No sign-up required</p><button onClick={toggle} className={button}>{full?'Show short plan':'Show full detail'}</button></div>
+    <header className="rounded-3xl border border-orange-400/30 bg-gradient-to-br from-orange-500/[.12] to-zinc-950 p-5 sm:p-8">
+      <p className="text-xs font-semibold uppercase tracking-[.18em] text-orange-300">Your first move · {session.discovery.businessType||'Business opportunity'}</p>
+      <h1 className="mt-3 max-w-2xl font-display text-3xl font-bold leading-tight sm:text-5xl">{plan.roleTitle}</h1>
+      <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-300">{plan.tagline}</p>
+      <div className="mt-6 grid gap-5 sm:grid-cols-[1fr_1.2fr]">
+        <div><p className="text-sm text-zinc-300">{e.weekly?'Potential time back each week':'Time saving'}</p><p className="mt-1 font-display text-4xl font-bold text-orange-300">{e.weekly?<>{e.weekly.low}–{e.weekly.high}<span className="ml-2 text-lg">hours</span></>:'Not estimated'}</p><p className="mt-2 text-sm text-zinc-300">{plan.emotionalPayoff}</p></div>
+        {e.weekly&&remaining?<figure aria-label={`Planning comparison: ${e.taskHours} hours today; ${remaining.low} to ${remaining.high} hours remaining if the benchmark holds.`} className="space-y-2"><div className="flex justify-between gap-2 text-xs text-zinc-300"><span>Today: task time you shared</span><strong>{e.taskHours} hrs</strong></div><div className="h-5 rounded bg-zinc-600"/><div className="flex justify-between gap-2 pt-2 text-xs text-zinc-300"><span>Possible time still needed</span><strong>{remaining.low}–{remaining.high} hrs</strong></div><div className="h-5 rounded bg-white/[.04]"><div className="flex h-full w-[30%] overflow-hidden rounded"><span className="w-1/3 bg-orange-400"/><span className="w-2/3 bg-orange-400/35"/></div></div><figcaption className="text-xs text-zinc-400">Illustration of the 70–90% planning range—not a measured result.</figcaption></figure>:<div className="rounded-2xl border border-white/10 p-4 text-sm leading-relaxed text-zinc-300">{plan.recommendationKind==='keep_human'?'The useful opportunity may be preparation and handoffs—not replacing the person doing the work.':'The workflow can still be worth improving. Time one normal week before assigning a savings number.'}</div>}
+      </div>
+      <p className="mt-5 border-t border-white/10 pt-4 text-xs leading-relaxed text-zinc-400">{e.note}</p>
+    </header>
+    <section className="grid gap-4 sm:grid-cols-2" aria-label="The change"><div className="rounded-2xl border border-white/10 p-5"><h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">What you told us</h2><p className="mt-3 text-sm leading-relaxed">{p?.rawDescription||plan.problemsSolved[0]}</p></div><div className="rounded-2xl border border-white/10 p-5"><h2 className="text-xs font-semibold uppercase tracking-widest text-orange-300">A better way</h2><ol className="mt-3 space-y-2">{plan.jobFromAtoZ.slice(0,4).map((s,i)=><li key={i} className="flex gap-2 text-sm leading-relaxed"><span className="font-semibold text-orange-400">{i+1}.</span><span>{s}</span></li>)}</ol></div></section>
+    <section className="rounded-2xl border border-white/15 bg-white/[.03] p-5"><h2 className="font-display text-xl font-bold">Start here—even without us.</h2><p className="mt-3 text-sm leading-relaxed text-zinc-200">{plan.firstMove}</p><div className="mt-4 grid gap-4 border-t border-white/10 pt-4 sm:grid-cols-2"><div><h3 className="flex items-center gap-2 text-sm font-semibold text-orange-300"><ShieldCheck size={16}/>What stays with you</h3><p className="mt-2 text-sm text-zinc-300">{plan.howTheyUseIt.approvals}</p></div><div><h3 className="text-sm font-semibold text-orange-300">How to know it’s working</h3><p className="mt-2 text-sm text-zinc-300">{plan.successMetric}</p></div></div></section>
+    {full&&<section aria-label="Full plan detail" className="space-y-4 rounded-2xl border border-white/10 p-5"><h2 className="font-display text-2xl font-bold">The practical details</h2>{[
+      ['Why this first',plan.whyThisFirst],['Use what you already own',plan.howTheyUseIt.interface],['Your daily routine',plan.howTheyUseIt.dailyLoop],['Exceptions and safeguards',plan.howTheyUseIt.humanHandoffs],['A small, reversible start',plan.implementationSketch],['What is still unverified','Tool access, integration feasibility, data quality, implementation cost and actual savings. This is a starting recommendation based on your answers—not a completed technical audit.'],
+    ].map(([label,body])=><div key={label} className="border-t border-white/10 pt-3"><h3 className="text-sm font-semibold text-orange-300">{label}</h3><p className="mt-1 text-sm leading-relaxed text-zinc-300">{body}</p></div>)}{plan.secondaryOpportunity&&<p className="text-sm text-zinc-400">Parked for later: {plan.secondaryOpportunity}. Validate the first improvement before adding another.</p>}<p className="text-xs text-zinc-400">Both views use the same saved answers. Opening full detail does not run another audit.</p></section>}
+    <section className="print:hidden rounded-2xl border border-orange-400/30 p-5"><h2 className="font-display text-xl font-bold">Want help making this work?</h2><p className="mt-2 text-sm leading-relaxed text-zinc-300">We’ll check the tools, approval rules and economics with you. If the simplest fix is already in your software, start there. Bring this plan so you don’t have to explain everything twice.</p><div className="mt-4 flex flex-wrap gap-3"><Link href={`/calendar?audit=${session.id}`} className={`${button} border-orange-500 bg-orange-500 text-black`} onClick={()=>trackSiteEvent({eventName:'hire_consultation_clicked',source:'hire_report',sessionId:session.id})}>Talk through this plan<ArrowRight size={16}/></Link><a href={PRIMARY_PHONE_HREF} className={button}><Phone size={16}/>Call {PRIMARY_PHONE_DISPLAY}</a></div></section>
+    <section aria-label="Keep your plan" className="print:hidden rounded-2xl border border-white/10 p-5"><h2 className="font-semibold">Keep your plan</h2><div className="mt-3 flex flex-wrap gap-2"><button className={button} onClick={async()=>{try{await navigator.clipboard.writeText(url);setCopied(true);}catch{setManual(true);}}}><Copy size={16}/>{copied?'Link copied':'Copy saved link'}</button><button className={button} onClick={()=>window.print()}><Download size={16}/>Print / Save PDF</button><a href={email} className={button}><Mail size={16}/>Email link</a></div><p role="status" className="mt-3 text-xs leading-relaxed text-zinc-400">Email link opens your email app; you choose the recipient and send. No email or marketing subscription is sent automatically. Anyone with the saved link can view these business details.</p>{manual&&<label className="mt-3 block text-sm">Copy this saved link<input readOnly value={url} onFocus={e=>e.target.select()} className="mt-1 w-full min-w-0 rounded border border-white/20 bg-zinc-900 p-2 text-sm"/></label>}</section>
+    <p className="break-all text-xs text-zinc-400">247ROI · Based on your answers · {url}</p>
+    <p className="print:hidden text-sm text-zinc-400"><Link href="/ai-opportunity-audit?step=opportunity&new=1" className="underline">Explore another workflow</Link></p>
+    <style jsx global>{`@media print { @page { margin: 12mm; } html:has(.hire-report), body:has(.hire-report) { min-height:0!important; height:auto!important; } body:has(.hire-report) nav, body:has(.hire-report) footer, body:has(.hire-report) [class~="print:hidden"] { display: none !important; } body:has(.hire-report) [class*="min-h-screen"] { min-height:0!important; } body:has(.hire-report) main { padding-top:0!important; } body:has(.hire-report) *, .hire-report * { color:#20252b!important; background:transparent!important; box-shadow:none!important; text-shadow:none!important; } .hire-report { padding:0!important; max-width:none!important; font-size:11px!important; } .hire-report h1 { font-size:28px!important; } .hire-report section,.hire-report header { break-inside:avoid; border-color:#c4c6c9!important; padding:12px!important; border-radius:8px!important; } .hire-report p,.hire-report li { font-size:11px!important; } .hire-report figure { display:none; } .hire-report h2 { break-after:avoid; } }`}</style>
+  </article>;
 }

@@ -45,6 +45,10 @@ export type DiscoveryState = {
 };
 
 export type HireProposal = {
+  estimate?: import('./estimates').HireEstimate;
+  firstMove?: string;
+  successMetric?: string;
+  recommendationKind?: 'pilot' | 'existing_tools' | 'keep_human';
   employeeName: string;
   roleTitle: string;
   tagline: string;

@@ -1,725 +1,87 @@
-import type { ChatTurn } from "./schema";
-import {
-  askWhatEatsTime,
-  industryExamples,
-  normalizeIndustryLabel,
-  proposalFallback,
-} from "./prompt";
-import { HIRE_OPENING } from "./copy";
-import { hireLines, pickLine } from "./lines";
-import type { DiscoveryState, HireMessage, PainPoint } from "./types";
+import type { ChatTurn } from './schema';
+import { askWhatEatsTime, normalizeIndustryLabel, proposalFallback } from './prompt';
+import { applyUserControls, choicesFor, nextDiscoveryStep } from './discovery-policy';
+import { primaryPain } from './estimates';
+import { emptyDiscovery, type DiscoveryState, type HireMessage, type PainPoint } from './types';
 
-function seedFrom(d: DiscoveryState, last: string): string {
-  return `${d.businessType || ""}|${d.salesStage || ""}|${d.notes.length}|${last.slice(0, 12)}`;
-}
+export const OPENING = "Let's find one thing worth taking off your plate. What kind of business do you run? You can also tell me what's eating your time.";
 
-function painHours(pain: PainPoint | undefined): number {
-  return (
-    pain?.time.computedHoursPerWeek ?? pain?.time.statedHoursPerWeek ?? 0
-  );
-}
-
-function emptyPain(title: string, raw: string, id = "pain1"): PainPoint {
-  return {
-    id,
-    title,
-    rawDescription: raw,
-    tools: [],
-    processSteps: [],
-    whoDoesIt: null,
-    whyItHurts: null,
-    time: {
-      label: title,
-      minutesPerOccurrence: null,
-      occurrencesPerWeek: null,
-      hiddenMinutesPerOccurrence: null,
-      computedHoursPerWeek: null,
-      statedHoursPerWeek: null,
-      underestimationNote: null,
-    },
-    automatable: true,
-    confidence: 0.45,
-  };
-}
-
-function note(d: DiscoveryState, flag: string): DiscoveryState {
-  if (d.notes.includes(flag)) return d;
-  return { ...d, notes: [...d.notes, flag] };
-}
-
-function uniqueNotes(d: DiscoveryState, flags: string[]): string[] {
-  return [...new Set([...d.notes, ...flags.filter(Boolean)])];
-}
-
-function titleFromText(last: string): string {
-  if (/\bbookkeep|ledger|quickbooks|xero|reconcile\b/i.test(last))
-    return "Bookkeeping";
-  if (/\binsurance|claim|billing\b/i.test(last)) return "Billing / insurance";
-  if (/\bno-?show\b/i.test(last)) return "No-show follow-ups";
-  if (/\breview\b/i.test(last)) return "Review requests";
-  if (/\bestimat|quote|proposal|bid\b/i.test(last)) return "Quotes / estimates";
-  if (/\bfollow|chas(e|ing)\b/i.test(last)) return "Follow-ups";
-  if (/\bmissed.?call|lead|phone|voicemail\b/i.test(last))
-    return "Missed calls / lead response";
-  if (/\binbox|email|message|dm\b/i.test(last)) return "Inbox / email";
-  if (/\bschedul|book|appoint|dispatch|resched\b/i.test(last))
-    return "Scheduling";
-  if (/\binvoice|collect\b/i.test(last)) return "Invoicing";
-  return last.slice(0, 48).replace(/[^\w\s/-]/g, "").trim() || "Ops work";
-}
-
-function isVagueIndustry(text: string): boolean {
-  return /^(business owner|owner|entrepreneur|small business|my (own )?business|self[- ]?employed)\.?$/i.test(
-    text.trim()
-  );
-}
-
-function extractHours(text: string): number | null {
-  const lower = text.toLowerCase();
-  const day = lower.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?)?\s*(a|per|\/)?\s*day/);
-  if (day) return Number(day[1]) * 5;
-  const week = lower.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?)/);
-  if (week) return Number(week[1]);
-  if (/^\s*\d+(?:\.\d+)?\s*$/.test(text)) {
-    const n = Number(text.trim());
-    if (n > 0 && n <= 80) return n;
+/** A weekly number needs a weekly unit. Never silently assume five working days. */
+export function extractWeeklyHours(text: string): number | null {
+  const week = text.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?)\s*(?:a|per|each|\/)\s*(?:week|wk)/i);
+  if (week) {
+    const n = Number(week[1]) / (/min/i.test(week[2]) ? 60 : 1);
+    return n >= 0 && n <= 168 ? n : null;
+  }
+  const day = text.match(/(\d+(?:\.\d+)?)\s*(hours?|hrs?|minutes?|mins?)\s*(?:a|per|each|\/)\s*day/i);
+  const days = text.match(/(\d+)\s*days?\s*(?:a|per|each|\/)\s*week/i);
+  if (day && days && +days[1] <= 7) {
+    const n = +day[1] * +days[1] / (/min/i.test(day[2]) ? 60 : 1);
+    return n <= 168 ? n : null;
   }
   return null;
 }
-
-function parseDualPains(text: string): string[] {
-  // Prefer explicit dual markers
-  if (/\balso\b/i.test(text) || /\band\b.+\b(i |we )?(do|handle|spend|manage)/i.test(text)) {
-    const parts = text
-      .split(/\balso\b/i)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 3);
-    if (parts.length >= 2) return parts.slice(0, 3);
-  }
-  const parts = text
-    .split(/\band\b|,|;/i)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 5);
-  if (parts.length >= 2) {
-    const titles = parts.map(titleFromText);
-    if (new Set(titles).size >= 2) return parts.slice(0, 3);
-  }
-  return [text];
+function titleFrom(text: string) {
+  if (/follow|chas.*quote|chas.*estimat/i.test(text)) return 'Quote follow-up';
+  if (/estimat|quote|takeoff|bid/i.test(text)) return 'Estimates and quotes';
+  if (/schedul|dispatch|appoint|booking/i.test(text)) return 'Scheduling';
+  if (/bookkeep|invoice|billing|payroll/i.test(text)) return 'Invoicing and bookkeeping';
+  if (/inbox|email|paperwork|document/i.test(text)) return 'Inbox and paperwork';
+  if (/lead|missed.call|voicemail/i.test(text)) return 'Lead response';
+  if (/report|spreadsheet|dashboard/i.test(text)) return 'Reporting';
+  return text.slice(0,70);
+}
+const unknown = (s: string) => /^(not sure|i don.?t know|idk|skip|unknown|no idea|prefer not)/i.test(s);
+function newPain(text: string): PainPoint {
+  return { id:'pain1', title:titleFrom(text), rawDescription:text.slice(0,300), tools:[], processSteps:[], whoDoesIt:null, whyItHurts:null,
+    time:{label:'This task',minutesPerOccurrence:null,occurrencesPerWeek:null,hiddenMinutesPerOccurrence:null,computedHoursPerWeek:null,statedHoursPerWeek:null,underestimationNote:null}, automatable:null, confidence:.5 };
 }
 
-/**
- * Offline fallback — Work Optional–style discovery OS.
- * Industry → problem → (detail) → hours → mirror → value → gate.
- */
-export function runSalesTurn(
-  discovery: DiscoveryState,
-  messages: HireMessage[]
-): ChatTurn {
-  const last =
-    messages.filter((m) => m.role === "user").at(-1)?.content?.trim() ?? "";
-  let d: DiscoveryState = { ...discovery };
-  const lower = last.toLowerCase();
-
-  const base = (
-    reply: string,
-    next: DiscoveryState,
-    extra: Partial<ChatTurn> = {}
-  ): ChatTurn => ({
-    reply,
-    phase: extra.phase ?? "warming",
-    discovery: next,
-    proposal: extra.proposal ?? null,
-    readyForGate: extra.readyForGate ?? false,
-    teaserLine: extra.teaserLine ?? null,
-    choices: null,
-    inputMode: "text",
-  });
-
-  // ——— 1) INDUSTRY ———
-  if (!d.businessType) {
-    const seed = seedFrom(d, last);
-    if (!last || /^(hi|hey|hello|howdy|sup|yo)\b/i.test(last)) {
-      return base(pickLine(hireLines.askIndustry, seed), d);
-    }
-    if (isVagueIndustry(last) || /\b(not sure|idk)\b/i.test(lower)) {
-      return base(pickLine(hireLines.vagueIndustry, seed), d);
-    }
-    if (/what do you mean|why|huh|wdym/i.test(lower)) {
-      return base(pickLine(hireLines.clarifyIndustry, seed), d);
-    }
-    const industry = normalizeIndustryLabel(last);
-    if (!industry) {
-      return base(pickLine(hireLines.clarifyIndustry, seed + "x"), d);
-    }
-    d = { ...d, businessType: industry, salesStage: "task" };
-    return base(askWhatEatsTime(industry), d, { phase: "pain1" });
-  }
-
-  const taskKnown =
-    d.notes.includes("task_captured") ||
-    Boolean(
-      d.pains.find(
-        (p) =>
-          p.id === "pain1" &&
-          p.title &&
-          !/^desk|computer time$/i.test(p.title) &&
-          p.confidence >= 0.55
-      )
-    );
-
-  // ——— 2) WHAT ———
-  if (!taskKnown) {
-    if (last.length < 3 || /\b(not sure|idk|don'?t know|nothing|no idea)\b/i.test(lower)) {
-      const examples = industryExamples(d.businessType).slice(0, 3).join("; ");
-      return base(
-        `What’s eating the hours then?\nCommon in ${d.businessType}: ${examples}.`,
-        d,
-        { phase: "pain1" }
-      );
-    }
-
-    // Answering the rank question
-    if (d.notes.includes("multi_pain") && d.salesStage === "rank") {
-      const parkedNote = d.notes.find((n) => n.startsWith("parked:"))?.slice(7) ?? "";
-      const parkedTitles = parkedNote.split("|").filter(Boolean);
-      // Also allow original dual titles from prior turn stored in pains? Reconstruct both options
-      const allCandidates = [
-        ...parkedTitles,
-        ...d.notes
-          .filter((n) => n.startsWith("options:"))
-          .flatMap((n) => n.slice(8).split("|")),
-      ].filter(Boolean);
-
-      let title = titleFromText(last);
-      const matched = allCandidates.find((c) => {
-        const cl = c.toLowerCase();
-        const ll = last.toLowerCase();
-        if (ll.includes(cl)) return true;
-        if (cl.includes("email") || cl.includes("inbox")) {
-          return /\b(email|emails|inbox|messages)\b/.test(ll);
-        }
-        if (cl.includes("bookkeep")) {
-          return /\b(bookkeep|books|accounting|quickbooks|ledger)\b/.test(ll);
-        }
-        const first = cl.split(/[\s/]+/)[0];
-        return first.length > 3 && ll.includes(first);
-      });
-      if (matched) title = matched;
-
-      const others = allCandidates.filter((c) => c !== title);
-      const pain = emptyPain(title, last, "pain1");
-      pain.confidence = 0.75;
-      const secondary = others[0]
-        ? emptyPain(others[0], others[0], "pain2")
-        : null;
-
-      d = note(
-        {
-          ...d,
-          pains: secondary ? [pain, secondary] : [pain],
-          activePainId: "pain1",
-          salesStage: title === "Inbox / email" ? "time" : "detail",
-          notes: [
-            ...d.notes.filter((n) => !n.startsWith("parked:") && !n.startsWith("options:")),
-            others.length ? `parked:${others.join("|")}` : "",
-          ].filter(Boolean),
-        },
-        "task_captured"
-      );
-
-      if (title === "Inbox / email") {
-        return base("Email. Hours a week?", d, { phase: "time_verify" });
-      }
-      return base(
-        pickLine(hireLines.askProcess, seedFrom(d, last))(title),
-        d,
-        { phase: "process" }
-      );
-    }
-
-    const chunks = parseDualPains(last);
-    if (chunks.length >= 2) {
-      const titles = [...new Set(chunks.map(titleFromText))];
-      if (titles.length >= 2) {
-        d = {
-          ...d,
-          salesStage: "rank",
-          notes: uniqueNotes(d, [
-            "multi_pain",
-            `options:${titles.join("|")}`,
-            `parked:${titles.slice(1).join("|")}`,
-          ]),
-        };
-        return base(
-          `${titles.join(" and ")}.\nWhich one burns more hours in a normal week?`,
-          d,
-          { phase: "pain1" }
-        );
-      }
-    }
-
-    const title = titleFromText(last);
-    const pain = emptyPain(title, last, "pain1");
-    pain.confidence = 0.7;
-    d = note(
-      {
-        ...d,
-        pains: [pain, ...d.pains.filter((p) => p.id !== "pain1")],
-        activePainId: "pain1",
-        salesStage: "detail",
-      },
-      "task_captured"
-    );
-
-    // Thin email-only answers → hours first, don't fake deep discovery
-    if (/^(i )?just (answer|respond|check) (to )?emails?\b/i.test(last) || title === "Inbox / email") {
-      return base(
-        "Email. Roughly how many hours a week?",
-        d,
-        { phase: "time_verify" }
-      );
-    }
-
-    return base(
-      pickLine(hireLines.askProcess, seedFrom(d, last))(title),
-      d,
-      { phase: "process" }
-    );
-  }
-
-  const pain =
-    d.pains.find((p) => p.id === "pain1") ??
-    d.pains.find((p) => p.id !== "desk") ??
-    d.pains[0];
-
-  // Soft reject / tiny problem → pivot to parked
-  if (
-    pain &&
-    (/not a big deal|doesn'?t (even )?take|no\.?$|nah|not really|manageable/i.test(
-      lower
-    ) ||
-      (extractHours(last) != null && (extractHours(last) as number) <= 3 && !d.notes.includes("desk_time_captured")))
-  ) {
-    const parked = d.notes.find((n) => n.startsWith("parked:"))?.slice(7);
-    const hours = extractHours(last);
-    if (hours != null && hours <= 3) {
-      const updated = {
-        ...pain,
-        time: {
-          ...pain.time,
-          statedHoursPerWeek: hours,
-          computedHoursPerWeek: hours,
-        },
-      };
-      d = {
-        ...d,
-        pains: [updated, ...d.pains.filter((p) => p.id !== updated.id)],
-      };
-      if (parked) {
-        const nextTitle = parked.split("|")[0];
-        const next = emptyPain(nextTitle, nextTitle, "pain1");
-        next.confidence = 0.7;
-        d = note(
-          {
-            ...d,
-            pains: [next, { ...updated, id: "pain2" }],
-            activePainId: "pain1",
-            salesStage: "detail",
-            notes: d.notes.filter((n) => !n.startsWith("parked:")),
-          },
-          "task_captured"
-        );
-        return base(
-          `${hours} hrs on ${updated.title.toLowerCase()} isn’t the hire.\n${nextTitle} — hours a week?`,
-          d,
-          { phase: "time_verify" }
-        );
-      }
-      return base(
-        `${hours} hrs isn’t worth automating.\nWhat else on a computer eats real time?`,
-        {
-          ...d,
-          salesStage: "task",
-          notes: d.notes.filter((n) => n !== "task_captured"),
-          pains: d.pains.filter((p) => p.id !== "pain1"),
-          activePainId: null,
-        },
-        { phase: "pain1" }
-      );
-    }
-    if (parked && /not a big deal|no\.?$|nah|not really|manageable/i.test(lower)) {
-      const nextTitle = parked.split("|")[0];
-      const next = emptyPain(nextTitle, nextTitle, "pain1");
-      next.confidence = 0.7;
-      d = {
-        ...d,
-        pains: [next, { ...pain, id: "pain2" }],
-        activePainId: "pain1",
-        salesStage: "detail",
-        notes: [
-          ...d.notes.filter((n) => !n.startsWith("parked:") && n !== "desk_time_captured"),
-          "task_captured",
-        ],
-      };
-        return base(
-          `Fine — park ${pain.title.toLowerCase()}.\n${nextTitle}. Hours a week?`,
-          d,
-          { phase: "time_verify" }
-        );
-    }
-  }
-
-  const timeKnown =
-    d.notes.includes("desk_time_captured") ||
-    Boolean(
-      pain &&
-        (pain.time.statedHoursPerWeek != null ||
-          pain.time.computedHoursPerWeek != null)
-    );
-
-  // ——— DETAIL before time if needed ———
-  const hasProcess = Boolean(
-    pain &&
-      (pain.processSteps.length >= 2 ||
-        (pain.processSteps.length === 1 && pain.processSteps[0].length > 40))
-  );
-
-  if (pain && !hasProcess && d.salesStage === "detail") {
-    const maybeHours = extractHours(last);
-    if (maybeHours != null && last.length < 20) {
-      // They jumped to hours — accept and continue
-      const updated = {
-        ...pain,
-        time: {
-          ...pain.time,
-          statedHoursPerWeek: maybeHours,
-          computedHoursPerWeek: maybeHours,
-        },
-      };
-      d = note(
-        {
-          ...d,
-          pains: [updated, ...d.pains.filter((p) => p.id !== updated.id)],
-          salesStage: "process",
-        },
-        "desk_time_captured"
-      );
-      return base(
-        `${maybeHours} hours on ${updated.title.toLowerCase()}.\nWalk me through it — what happens from start to finish?`,
-        d,
-        { phase: "process" }
-      );
-    }
-    if (last.length > 15 && !/^(yes|yep|yeah|no|nah)\b/i.test(last)) {
-      const steps = last
-        .split(/[\n.]| then | → |->|,\s+(?=[a-z])/i)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 3)
-        .slice(0, 8);
-      const updated = {
-        ...pain,
-        processSteps: steps.length >= 2 ? steps : [last.slice(0, 200)],
-        rawDescription: last,
-        confidence: 0.85,
-      };
-      d = {
-        ...d,
-        pains: [updated, ...d.pains.filter((p) => p.id !== updated.id)],
-        salesStage: "time",
-      };
-      return base(
-        pickLine(hireLines.askHours, seedFrom(d, last))(updated.title),
-        d,
-        { phase: "time_verify" }
-      );
-    }
-    return base("Step by step — how do you do it today?", d, {
-      phase: "process",
-    });
-  }
-
-  // ——— HOURS ———
-  if (pain && !timeKnown) {
-    if (/\b(a lot|too much|all day)\b/i.test(lower) && extractHours(last) == null) {
-      return base("Ballpark it — 5, 15, 30 hours a week?", d, {
-        phase: "time_verify",
-      });
-    }
-    const weekly = extractHours(last);
-    if (weekly == null) {
-      return base(
-        `Hours per week on ${pain.title.toLowerCase()}?`,
-        d,
-        { phase: "time_verify" }
-      );
-    }
-    if (weekly <= 3) {
-      const parked = d.notes.find((n) => n.startsWith("parked:"))?.slice(7);
-      const updated = {
-        ...pain,
-        time: {
-          ...pain.time,
-          statedHoursPerWeek: weekly,
-          computedHoursPerWeek: weekly,
-        },
-      };
-      if (parked) {
-        const nextTitle = parked.split("|")[0];
-        const next = emptyPain(nextTitle, nextTitle, "pain1");
-        next.confidence = 0.7;
-        d = {
-          ...d,
-          pains: [next, { ...updated, id: "pain2" }],
-          notes: [
-            ...d.notes.filter(
-              (n) =>
-                !n.startsWith("parked:") &&
-                n !== "desk_time_captured" &&
-                n !== "task_captured"
-            ),
-            "task_captured",
-          ],
-          salesStage: "time",
-        };
-        return base(
-          `${weekly} on ${updated.title.toLowerCase()} is light.\n${nextTitle} — hours per week?`,
-          d,
-          { phase: "time_verify" }
-        );
-      }
-    }
-
-    const updated = {
-      ...pain,
-      time: {
-        ...pain.time,
-        statedHoursPerWeek: weekly,
-        computedHoursPerWeek: weekly,
-      },
-      confidence: Math.max(pain.confidence, 0.85),
-    };
-    d = note(
-      {
-        ...d,
-        pains: [updated, ...d.pains.filter((p) => p.id !== updated.id)],
-        salesStage: hasProcess ? "mirror" : "process",
-      },
-      "desk_time_captured"
-    );
-
-    if (!hasProcess) {
-      return base(
-        `${weekly} hours. Walk me through it start to finish.`,
-        d,
-        { phase: "process" }
-      );
-    }
-
-    d = note(d, "mirrored");
-    const proposal = proposalFallback(d);
-    return base(
-      pickLine(hireLines.confirmMirror, seedFrom(d, last))(
-        updated.processSteps.join(" → "),
-        weekly
-      ),
-      { ...d, salesStage: "confirm" },
-      { phase: "process", proposal }
-    );
-  }
-
-  // ——— PROCESS after hours ———
-  if (pain && timeKnown && !hasProcess) {
-    if (last.length > 15 && !/^(yes|yep|yeah|no|nah)\b/i.test(last)) {
-      const steps = last
-        .split(/[\n.]| then | → |->|,\s+(?=[a-z])/i)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 3)
-        .slice(0, 8);
-      const updated = {
-        ...pain,
-        processSteps: steps.length >= 2 ? steps : [last.slice(0, 200)],
-        rawDescription: last,
-        confidence: 0.9,
-      };
-      d = note(
-        {
-          ...d,
-          pains: [updated, ...d.pains.filter((p) => p.id !== updated.id)],
-          salesStage: "confirm",
-        },
-        "mirrored"
-      );
-      const hrs =
-        updated.time.statedHoursPerWeek ?? updated.time.computedHoursPerWeek;
-      return base(
-        pickLine(hireLines.confirmMirror, seedFrom(d, last))(
-          updated.processSteps.join(" → "),
-          hrs ?? "?"
-        ),
-        d,
-        { phase: "process" }
-      );
-    }
-    return base("Start to finish — how does it work today?", d, {
-      phase: "process",
-    });
-  }
-
-  // ——— CONFIRM → short path (hours ≥ 8) skips second-order + micro-commit ———
-  if (
-    pain &&
-    hasProcess &&
-    timeKnown &&
-    /^(yes|yep|yeah|yup|right|correct|that'?s right|sounds right|exactly)\b/i.test(
-      lower
-    ) &&
-    !d.notes.includes("pitched_value")
-  ) {
-    const hrs = painHours(pain);
-    const seed = seedFrom(d, last);
-
-    // Meaningful hours → pitch immediately (shorter funnel)
-    if (hrs >= 8 || d.notes.includes("short_path")) {
-      const proposal = proposalFallback(note(d, "short_path"));
-      const steps = pain.processSteps.length
-        ? pain.processSteps
-            .map((s) => `the system ${s.toLowerCase()}`)
-            .join(", then ")
-        : "the system takes the repeat steps end to end";
-      const pitch = `Think of it like a hire with perfect memory: ${steps}. You keep the judgment calls.`;
-      d = note(
-        note({ ...d, salesStage: "value" }, "pitched_value"),
-        "short_path"
-      );
-      return base(pickLine(hireLines.valuable, seed)(pitch), d, {
-        phase: "ready",
-        proposal,
-      });
-    }
-
-    if (!d.notes.includes("second_order")) {
-      d = note({ ...d, salesStage: "second_order" }, "second_order");
-      return base(pickLine(hireLines.secondOrder, seed)(hrs || 10), d, {
-        phase: "pain2_probe",
-      });
-    }
-  }
-
-  if (
-    d.salesStage === "second_order" ||
-    (d.notes.includes("second_order") && !d.notes.includes("pitched_value"))
-  ) {
-    if (!d.notes.includes("want_solve") && d.salesStage === "second_order") {
-      d = note({ ...d, salesStage: "want_solve" }, "want_solve");
-      if (last.length > 2) {
-        d = note(d, `impact:${last.slice(0, 120)}`);
-      }
-      return base(pickLine(hireLines.wantSolve, seedFrom(d, last)), d, {
-        phase: "pain2_probe",
-      });
-    }
-  }
-
-  if (
-    d.notes.includes("want_solve") &&
-    !d.notes.includes("pitched_value") &&
-    /^(yes|yep|yeah|sure|i (do|want)|solve|fix)\b/i.test(lower)
-  ) {
-    const proposal = proposalFallback(d);
-    const steps = pain?.processSteps?.length
-      ? pain.processSteps.map((s) => `the system ${s.toLowerCase()}`).join(", then ")
-      : "the system takes the repeat steps end to end";
-    const pitch = `Think of it like a hire with perfect memory: ${steps}. You keep the judgment calls.`;
-    d = note({ ...d, salesStage: "value" }, "pitched_value");
-    return base(pickLine(hireLines.valuable, seedFrom(d, last))(pitch), d, {
-      phase: "ready",
-      proposal,
-    });
-  }
-
-  if (
-    d.notes.includes("want_solve") &&
-    /^(no|nah|accepted|fine|living with)\b/i.test(lower)
-  ) {
-    return base(
-      "Alright.\nAnything else on a computer burning 10+ hours a week — or are we done?",
-      { ...d, salesStage: "task", notes: d.notes.filter((n) => n !== "task_captured" && n !== "desk_time_captured" && n !== "mirrored") },
-      { phase: "pain1" }
-    );
-  }
-
-  if (
-    (d.notes.includes("pitched_value") || d.salesStage === "value") &&
-    /^(yes|yep|yeah|sure|absolutely|definitely|i think so)\b/i.test(lower)
-  ) {
-    const proposal = proposalFallback(d);
-    return base(
-      `Unlock ${proposal.employeeName} — job A→Z and hours back.`,
-      { ...d, salesStage: "pitch" },
-      {
-        phase: "ready",
-        proposal,
-        readyForGate: true,
-        teaserLine: `${proposal.employeeName} · ${proposal.hoursSavedPerWeek.low}–${proposal.hoursSavedPerWeek.high} hrs/week`,
-      }
-    );
-  }
-
-  if (
-    (d.notes.includes("pitched_value") || d.salesStage === "value") &&
-    /^(no|nah|not really)\b/i.test(lower)
-  ) {
-    return base(
-      "What’s off — cost, trust, timing, or wrong problem?",
-      { ...d, salesStage: "objection" },
-      { phase: "pain2_probe" }
-    );
-  }
-
-  if (pain && hasProcess && timeKnown && !d.notes.includes("mirrored")) {
-    d = note({ ...d, salesStage: "confirm" }, "mirrored");
-    const hrs =
-      pain.time.statedHoursPerWeek ?? pain.time.computedHoursPerWeek;
-    return base(
-      `So: ${pain.processSteps.join(" → ")}. ~${hrs} hrs/week.\nDo I have that right?`,
-      d,
-      { phase: "process" }
-    );
-  }
-
-  if (pain && hasProcess && timeKnown) {
-    const proposal = proposalFallback(d);
-    return base(
-      `If we made ${pain.title.toLowerCase()} mostly automatic, would that be valuable?`,
-      note({ ...d, salesStage: "value" }, "pitched_value"),
-      { phase: "ready", proposal }
-    );
-  }
-
-  return base(askWhatEatsTime(d.businessType || "your industry"), d, {
-    phase: "pain1",
-  });
+/** Same progression for model and guided fallback; confirmation happens in the UI. */
+export function guidedTurn(discovery: DiscoveryState): ChatTurn {
+  const d = structuredClone(discovery), p = primaryPain(d), step = nextDiscoveryStep(d);
+  d.salesStage = step;
+  let reply = OPENING;
+  let phase: ChatTurn['phase'] = 'warming';
+  if (step === 'task') { reply = askWhatEatsTime(d.businessType!); phase = 'pain1'; }
+  if (step === 'process') { reply = `Let's make ${p!.title.toLowerCase()} concrete. Walk me through one recent example—what happens, and which tools do you use?`; phase = 'process'; }
+  if (step === 'time') { reply = `Roughly how many hours a week go into ${p!.title.toLowerCase()}? An estimate is fine, or choose “Not sure yet.”`; phase = 'time_verify'; }
+  if (step === 'relief') { reply = p?.automatable === false ? 'The judgment or hands-on work stays with you. What would better preparation or fewer interruptions free you to focus on?' : 'The goal is less chasing, not another tool to babysit. What would getting this off your plate make room for?'; phase = 'pain2_probe'; }
+  if (step === 'review') { reply = 'Here’s what I’ve understood. Check the summary below, change anything I missed, then see your recommendation—no contact details required.'; phase = 'ready'; }
+  return { reply, phase, discovery:d, proposal: step === 'review' ? proposalFallback(d) : null, readyForGate:step === 'review', teaserLine:null, choices:choicesFor(d), inputMode:'both' };
 }
-
-export function openingTurn(): ChatTurn {
-  return {
-    reply: HIRE_OPENING,
-    phase: "warming",
-    discovery: {
-      businessName: null,
-      businessType: null,
-      role: null,
-      teamSize: null,
-      pains: [],
-      activePainId: null,
-      seekingSecondPain: false,
-      notes: [],
-      salesStage: "inspire",
-    },
-    proposal: null,
-    readyForGate: false,
-    teaserLine: null,
-    choices: null,
-    inputMode: "text",
-  };
+export function runSalesTurn(discovery: DiscoveryState, messages: HireMessage[]): ChatTurn {
+  const text = messages.filter(m=>m.role==='user').at(-1)?.content.trim() || '';
+  const d = structuredClone(discovery), step = nextDiscoveryStep(d);
+  if (!text) return guidedTurn(d);
+  if (!d.businessType && !unknown(text) && !/^(hi|hello|hey|business owner|owner)[.! ]*$/i.test(text)) {
+    const industry = text.match(/\b(roof(?:ing|er)?|plumb(?:ing|er)?|HVAC|electric(?:al|ian)?|landscap(?:ing|er)?|construction|home services|professional services|retail|ecommerce|agency|accounting|dental|clinic|chiropractic|restaurant|salon|consulting)\b/i);
+    // Ambiguous task-first answers must not become an industry.
+    if (industry) d.businessType=normalizeIndustryLabel(industry[1]);
+    else if (text.length < 65 && !/inbox|email|follow|schedul|paperwork|help|not sure|hours|quote/i.test(text)) d.businessType=normalizeIndustryLabel(text);
+  }
+  let p = primaryPain(d);
+  const taskWords = /follow|schedul|dispatch|inbox|email|paperwork|invoice|bookkeep|estimat|quote|lead|missed.call|report|payroll|diagnos|surgery|install|physical|repair/i.test(text);
+  if (!p && !unknown(text) && ((step==='task' && text.length>5) || taskWords)) { p=newPain(text); d.pains=[p,...d.pains]; d.activePainId=p.id; }
+  if (p) {
+    const weekly = extractWeeklyHours(text);
+    if (weekly != null) { p.time.statedHoursPerWeek=weekly; p.time.computedHoursPerWeek=weekly; d.notes=d.notes.filter(n=>n!=='hours_unknown'); }
+    if (step==='time' && unknown(text)) { p.time.statedHoursPerWeek=null; p.time.computedHoursPerWeek=null; d.notes.push('hours_unknown'); }
+    const concrete = /\b(then|copy|send|open|check|enter|search|call|log|review|read|compare|manually|first)\b/i.test(text) && text.length>35;
+    if ((step==='process' && !unknown(text) && text.length>20) || concrete) {
+      p.processSteps=text.split(/\bthen\b|→|;/i).map(s=>s.trim().slice(0,160)).filter(Boolean).slice(0,5);
+      p.rawDescription=text.slice(0,300);
+      const tools=text.match(/\b(Excel|Gmail|Outlook|QuickBooks|Jobber|ServiceTitan|Housecall Pro|CRM|spreadsheet|email|paper|calendar)\b/gi);
+      p.tools=[...new Set([...p.tools,...(tools||[])])];
+      if (/email|copy|spreadsheet|CRM|data entry|reminder|paperwork|inbox|follow.up|bookkeep|quote|estimat/i.test(text)) p.automatable=true;
+      if (/diagnos|surgery|physical|install|hands.on|final legal|medical decision/i.test(text)) p.automatable=false;
+    }
+  }
+  if (step==='relief') {
+    d.notes.push('relief_asked');
+    if (!unknown(text) && !/show my|recommendation|report|skip/i.test(text)) d.notes.push(`impact:${text.slice(0,180)}`);
+  }
+  d.notes=[...new Set(d.notes)].slice(-30);
+  return guidedTurn(applyUserControls(discovery,d,text));
 }
+export function openingTurn(): ChatTurn { return guidedTurn(emptyDiscovery()); }

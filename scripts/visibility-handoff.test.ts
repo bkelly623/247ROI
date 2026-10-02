@@ -5,6 +5,7 @@ import {createSession,updateSession} from '../src/lib/audit/sessions';
 import {getHireSession} from '../src/lib/hire/sessions';
 import {validVisibilityId} from '../src/lib/hire/visibility-handoff';
 async function main(){
+ process.env.HIRE_LOCAL_MEMORY='1';
  for(const k of ['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_ANON_KEY','SUPABASE_SERVICE_ROLE_KEY','SUPABASE_URL']) delete process.env[k];
  globalThis.fetch=async()=>{throw new Error('Network forbidden in local handoff test');};
  const fixture=JSON.parse(readFileSync('/home/precision_focused_solutions/.hermes/profiles/robotrevolution/workspace/website-ops/audit-sales-stage3/stage3-final-session.json','utf8')).session;

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import ChatWidget from "@/app/components/ChatWidget";
 
-const HIDE_CHAT_PREFIXES = ["/audit", "/report"];
+const HIDE_CHAT_PREFIXES = ["/audit", "/report", "/ai-opportunity-audit"];
 
 export default function ConditionalChatWidget() {
   const pathname = usePathname() ?? "";

@@ -17,7 +17,8 @@ async function main() {
     if(url.pathname.startsWith('/present/')) return route.fulfill({contentType:'text/html',body:'<h1>Visibility handoff</h1>'});
     if(!url.pathname.startsWith('/api/')) return route.continue();
     if(url.pathname==='/api/hire/session') { chatStarts++;return route.fulfill({json:{sessionId:'qa-opportunity',opening:'Describe the workflow.',discovery:emptyDiscovery()}}); }
-    if(url.pathname==='/api/sessions') { scans++;assert.deepEqual(req.postDataJSON(),{businessName:'QA Consultancy',websiteUrl:'https://example.com',zipCode:'27401',geography:'national'});return route.fulfill({json:{session:{id:'qa-visibility'}}}); }
+    if(url.pathname==='/api/hire/qa-opportunity') return route.fulfill({json:{session:{id:'qa-opportunity',updated_at:'qa',status:'chatting',discovery:emptyDiscovery(),messages:[{role:'assistant',content:'Describe the workflow.'}]}}});
+    if(url.pathname==='/api/sessions') { scans++;assert.deepEqual(req.postDataJSON(),{businessName:'QA Consultancy',websiteUrl:'https://example.com',zipCode:'27401',geography:'national',phone:'2025550100',smsConsent:true});return route.fulfill({json:{session:{id:'qa-visibility'}}}); }
     return route.fulfill({json:{ok:true}});
    });
    await page.goto(base+'/ai-opportunity-audit');
@@ -27,7 +28,7 @@ async function main() {
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),width);
    await page.getByRole('button',{name:'Skip website — explore operations',exact:true}).click();
    await page.locator('textarea').waitFor();
-   await page.getByText('Describe the workflow.',{exact:true}).waitFor();
+   await page.getByRole('log').getByText('Describe the workflow.',{exact:false}).waitFor();
    assert.equal(scans,0,'skip never starts website scan');
    await page.reload(); await page.locator('textarea').waitFor();
    await page.goto(base+'/ai-opportunity-audit?visibility=qa-visibility');
@@ -38,6 +39,8 @@ async function main() {
    await page.getByLabel('Business name',{exact:true}).fill('QA Consultancy');
    await page.getByLabel('ZIP code',{exact:true}).fill('27401');
    await page.getByLabel('Where do you serve customers?').selectOption('national');
+   await page.getByLabel('Mobile phone number').fill('2025550100');
+   await page.getByRole('checkbox').check();
    await page.getByRole('button',{name:'Check website visibility',exact:true}).click();
    await page.waitForURL('**/present/qa-visibility');
    assert.equal(scans,1);

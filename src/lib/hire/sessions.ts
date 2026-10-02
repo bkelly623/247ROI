@@ -14,7 +14,12 @@ import {
   type HireSessionStatus,
 } from "./types";
 
-const memory = new Map<string, HireSession>();
+const globalMemory = globalThis as typeof globalThis & { hireQaMemory?: Map<string, HireSession> };
+const memory = globalMemory.hireQaMemory ??= new Map<string, HireSession>();
+export const localMemoryAllowed = () => process.env.HIRE_LOCAL_MEMORY === '1' && !process.env.VERCEL;
+function requireMemoryMode() {
+  if (!localMemoryAllowed()) throw new Error('Saving is temporarily unavailable. Please retry; your draft is still on this device.');
+}
 
 function now() {
   return new Date().toISOString();
@@ -62,15 +67,18 @@ export async function createHireSession(input?: {
       .from("hire_sessions")
       .insert(row)
       .select("*")
+      .abortSignal(AbortSignal.timeout(5000))
       .single();
     if (error) {
-      // Table may not exist yet — fall back to memory so local/demo still works.
-      console.warn("hire_sessions insert failed, using memory:", error.message);
+      // Only explicit local QA can use volatile storage; production fails closed.
+      console.warn("hire_sessions insert failed:", error.code);
     } else if (data) {
       return mapRow(data);
     }
   }
 
+  requireMemoryMode();
+  if (memory.size >= 200) memory.delete(memory.keys().next().value!);
   const session: HireSession = {
     id: randomUUID(),
     created_at: now(),
@@ -101,10 +109,13 @@ export async function getHireSession(id: string): Promise<HireSession | null> {
       .from("hire_sessions")
       .select("*")
       .eq("id", id)
+      .abortSignal(AbortSignal.timeout(5000))
       .maybeSingle();
-    if (!error && data) return mapRow(data);
+    if (error) throw new Error("Saved audit unavailable. Please retry.");
+    if (data) return mapRow(data);
   }
-  return memory.get(id) ?? null;
+  if (!supabase) requireMemoryMode();
+  return localMemoryAllowed() ? memory.get(id) ?? null : null;
 }
 
 export async function updateHireSession(
@@ -122,67 +133,42 @@ export async function updateHireSession(
     gate_shown_at: string;
     gate_submitted_at: string;
     unlocked_at: string;
-  }>
+  }>,
+  expectedUpdatedAt?: string
 ): Promise<HireSession | null> {
   const supabase = createServiceClient();
   if (supabase) {
-    const { data, error } = await supabase
-      .from("hire_sessions")
-      .update({ ...patch, updated_at: now() })
-      .eq("id", id)
-      .select("*")
-      .maybeSingle();
+    let query = supabase.from("hire_sessions").update({ ...patch, updated_at: now() }).eq("id", id);
+    if (expectedUpdatedAt) query = query.eq('updated_at', expectedUpdatedAt);
+    const {data, error} = await query.select('*').abortSignal(AbortSignal.timeout(5000)).maybeSingle();
     if (!error && data) {
       const mapped = mapRow(data);
-      memory.set(id, mapped);
+      // Supabase is authoritative; do not shadow a failed durable write in memory.
       return mapped;
     }
     if (error) {
       console.warn("hire_sessions update failed:", explainSupabaseKeyError(error.message));
+      throw new Error("Could not save your answer. Please retry.");
     }
   }
 
+  if (supabase) return null;
+  requireMemoryMode();
   const existing = memory.get(id);
+  if (existing && expectedUpdatedAt && existing.updated_at !== expectedUpdatedAt) return null;
   if (!existing) return null;
   const next: HireSession = {
     ...existing,
     ...patch,
-    updated_at: now(),
+    updated_at: new Date(Math.max(Date.now(), Date.parse(existing.updated_at) + 1)).toISOString(),
   };
   memory.set(id, next);
   return next;
 }
 
-/** Public-safe session for unlocked reports; strips nothing critical but hides if locked. */
-export function publicHireView(session: HireSession, unlocked: boolean) {
-  if (unlocked || session.status === "unlocked") {
-    return session;
-  }
-
-  return {
-    id: session.id,
-    status: session.status,
-    phase: session.phase,
-    discovery: {
-      businessName: session.discovery.businessName,
-      businessType: session.discovery.businessType,
-      pains: session.discovery.pains.map((p) => ({
-        title: p.title,
-        time: {
-          computedHoursPerWeek: p.time.computedHoursPerWeek,
-          statedHoursPerWeek: p.time.statedHoursPerWeek,
-        },
-      })),
-    },
-    proposal: session.proposal
-      ? {
-          employeeName: session.proposal.employeeName,
-          roleTitle: session.proposal.roleTitle,
-          tagline: session.proposal.tagline,
-          hoursSavedPerWeek: session.proposal.hoursSavedPerWeek,
-          teaserOnly: true,
-        }
-      : null,
-    gated: true,
-  };
+/** Session IDs are unguessable bearer links. Never expose contact fields or rep tokens. */
+export function publicHireView(session: HireSession, includeMessages = false) {
+  const {id, status, phase, discovery, proposal, updated_at, created_at} = session;
+  return {id,status,phase,discovery:{...discovery,notes:discovery.notes.filter(n=>!n.startsWith('turn:'))},proposal,updated_at,created_at,
+    messages:includeMessages ? session.messages : []};
 }
