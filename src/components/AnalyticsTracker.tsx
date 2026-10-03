@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { trackSiteEvent } from "@/lib/analytics/client";
+import { getInquiryAttribution, trackSiteEvent } from "@/lib/analytics/client";
 
 function datasetMetadata(element: HTMLElement) {
   const metadata: Record<string, string> = {};
@@ -22,6 +22,7 @@ export function AnalyticsTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
+    getInquiryAttribution();
     const search = window.location.search.replace(/^\?/, "");
     trackSiteEvent({
       eventName: "page_view",

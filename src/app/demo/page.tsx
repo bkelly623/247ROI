@@ -3,11 +3,11 @@ import DemoPage from "@/components/DemoPage";
 
 export const metadata: Metadata = {
   title: "Business System Examples | 247ROI",
-  description: "See example custom dashboards, internal apps, workflow automations, AI agents, bid intake, estimating support, and approval-ready outputs.",
+  description: "Try an interactive sample dashboard and approval workflow. Explore missed-call text back and AI receptionist examples.",
   alternates: { canonical: "/demo" },
   openGraph: {
     title: "Business System Examples | 247ROI",
-    description: "See example custom dashboards, internal apps, workflow automations, AI agents, bid intake, estimating support, and approval-ready outputs.",
+    description: "Try an interactive sample dashboard and approval workflow. Explore missed-call text back and AI receptionist examples.",
     url: "/demo",
   },
 };

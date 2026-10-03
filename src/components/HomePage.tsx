@@ -8,7 +8,6 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   ClipboardList,
-  ExternalLink,
   FileText,
   Gauge,
   Mail,
@@ -20,8 +19,9 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ServicePaths from "@/components/ServicePaths";
 import { Button } from "@/components/ui/button";
-import { HERO_PRIMARY_CTA_LABEL, PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 const problems = [
   "The same computer work gets repeated every week.",
@@ -82,48 +82,6 @@ const trustItems = [
   "Deliver visible work product: dashboards, queues, reports, apps, drafts, summaries, and handoff notes.",
 ];
 
-const serviceRoutes = [
-  {
-    title: "What to automate first",
-    href: "/what-should-my-business-automate-first",
-    body: "Use a practical bottleneck filter before choosing AI, automation, dashboards, internal apps, or process cleanup.",
-  },
-  {
-    title: "AI automation consultant",
-    href: "/ai-automation-consultant-small-business",
-    body: "Find the computer work AI should handle first, then build a practical system around it.",
-  },
-  {
-    title: "Custom AI agents",
-    href: "/ai-agents-for-business",
-    body: "Build constrained agents for research, triage, drafting, reporting, CRM updates, and handoffs.",
-  },
-  {
-    title: "Custom dashboards",
-    href: "/custom-business-dashboard",
-    body: "Pull scattered operating data into one owner-ready view with alerts and weekly summaries.",
-  },
-  {
-    title: "Internal tools",
-    href: "/internal-tools-for-small-business",
-    body: "Replace fragile spreadsheet workflows with focused apps, queues, approvals, and records.",
-  },
-  {
-    title: "Workflow automation consultant",
-    href: "/workflow-automation-consultant",
-    body: "Turn repeated computer work, handoffs, approvals, and follow-up into a workflow people can actually trust.",
-  },
-  {
-    title: "Business process automation",
-    href: "/business-process-automation-consultant",
-    body: "Map repeated work, clean up handoffs, and automate the bottleneck with the clearest payoff.",
-  },
-  {
-    title: "AI visibility optimization",
-    href: "/ai-visibility-optimization",
-    body: "Make the business easier for Google, AI answer engines, and buyers to understand and cite.",
-  },
-];
 
 export default function HomePage() {
   return (
@@ -149,22 +107,22 @@ export default function HomePage() {
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300 sm:text-xl">
                   247ROI helps owners and operators turn messy computer-based work into practical systems: custom
-                  automations, dashboards, internal apps, AI agents, and approval workflows.
+                  automations, dashboards, internal apps, AI agents, and approval workflows. We also help you respond to leads with missed-call text back and AI receptionists.
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Button
                     asChild
                     size="lg"
-                    className="min-h-[3.5rem] rounded-full bg-orange-500 px-7 font-semibold text-white hover:bg-orange-600"
+                    className="min-h-[3.5rem] rounded-full bg-orange-700 px-7 font-semibold text-white hover:bg-orange-800"
                   >
                     <Link
-                      href="/ai-opportunity-audit"
+                      href="/contact"
                       data-track-event="cta_click"
-                      data-track-label={HERO_PRIMARY_CTA_LABEL}
-                      data-track-destination="/ai-opportunity-audit"
+                      data-track-label="Discuss your project"
+                      data-track-destination="/contact"
                       data-track-source="homepage_hero"
                     >
-                      {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                      Discuss your project <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
                   <Button
@@ -185,8 +143,7 @@ export default function HomePage() {
                   </Button>
                 </div>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-zinc-400">
-                  Start with the AI Opportunity Audit. No generic pitch, no tool-first diagnosis, and no black-box AI
-                  promise.
+                  Start with a conversation. Clear scope, human oversight, and no obligation to build.
                 </p>
               </motion.div>
 
@@ -199,7 +156,7 @@ export default function HomePage() {
                 <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-300">First step</p>
-                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Run the AI Opportunity Audit.</h2>
+                    <h2 className="mt-2 font-display text-2xl font-bold text-white">Find your practical starting point.</h2>
                   </div>
                   <BriefcaseBusiness className="h-8 w-8 text-orange-400" aria-hidden />
                 </div>
@@ -226,6 +183,8 @@ export default function HomePage() {
           </div>
         </section>
 
+        <ServicePaths />
+
         <section className="border-b border-zinc-200 bg-white py-14">
           <div className="container mx-auto px-5 sm:px-6">
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -248,15 +207,15 @@ export default function HomePage() {
           <div className="container mx-auto px-5 sm:px-6">
             <div className="grid gap-10 lg:grid-cols-[0.76fr_1.24fr] lg:items-start">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">
-                  AI Opportunity Audit
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-700">
+                  How we start
                 </p>
                 <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
                   The first step is not buying AI. It is finding the work AI should touch.
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-zinc-600">
-                  Most automation fails because the workflow is unclear, the owner is overloaded, or the handoffs are
-                  hidden inside inboxes and spreadsheets. The audit turns that mess into a concrete first move.
+                  Missed inquiries and repeated work can hide inside inboxes, spreadsheets and unclear handoffs.
+                  We review the problem with you and agree on a concrete first improvement.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
@@ -275,7 +234,7 @@ export default function HomePage() {
           <div className="container mx-auto px-5 sm:px-6">
             <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">What 247ROI builds</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-700">What 247ROI builds</p>
                 <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
                   We build business systems for the work that lives between people, software, and decisions.
                 </h2>
@@ -290,7 +249,7 @@ export default function HomePage() {
                   const Icon = item.icon;
                   return (
                     <div key={item.title} className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-                      <Icon className="h-6 w-6 text-orange-600" aria-hidden />
+                      <Icon className="h-6 w-6 text-orange-700" aria-hidden />
                       <h3 className="mt-5 font-display text-xl font-bold">{item.title}</h3>
                       <p className="mt-3 text-sm leading-relaxed text-zinc-600">{item.body}</p>
                     </div>
@@ -301,46 +260,15 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="border-b border-zinc-200 bg-white py-20">
-          <div className="container mx-auto px-5 sm:px-6">
-            <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">Service paths</p>
-                <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
-                  Start with the problem, then choose the system.
-                </h2>
-                <p className="mt-5 text-lg leading-relaxed text-zinc-600">
-                  247ROI can build with AI, automation, dashboards, internal apps, or visibility systems. The audit
-                  decides which path should come first.
-                </p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                {serviceRoutes.map((route) => (
-                  <Link
-                    key={route.href}
-                    href={route.href}
-                    className="group rounded-lg border border-zinc-200 bg-zinc-50 p-5 transition-colors hover:border-orange-300 hover:bg-orange-50"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <h3 className="font-display text-xl font-bold text-zinc-950">{route.title}</h3>
-                      <ExternalLink className="mt-1 h-4 w-4 shrink-0 text-orange-600 transition-transform group-hover:translate-x-0.5" aria-hidden />
-                    </div>
-                    <p className="mt-3 text-sm leading-relaxed text-zinc-600">{route.body}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="border-b border-zinc-800 bg-zinc-950 py-20 text-white">
           <div className="container mx-auto px-5 sm:px-6">
             <div className="mx-auto max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-300">Plain buyer language</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-300">See it in action</p>
               <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
-                If work keeps getting delayed, dropped, rewritten, or chased, there is probably a system problem.
+                See a workflow turn an inquiry into a clear next action.
               </h2>
             </div>
+            <div className="mt-7 text-center"><Link href="/demo" data-track-event="demo_open" data-track-source="homepage" className="inline-flex min-h-12 items-center rounded-full bg-orange-700 px-7 font-semibold text-white hover:bg-orange-800">Try the interactive example</Link><p className="mt-3 text-sm text-zinc-300">Clearly labeled sample data. No customer results implied.</p></div>
             <div className="mx-auto mt-12 grid max-w-5xl gap-4 md:grid-cols-2">
               {examples.map((example) => (
                 <div key={example} className="rounded-lg border border-white/10 bg-white/[0.04] p-6">
@@ -356,7 +284,7 @@ export default function HomePage() {
           <div className="container mx-auto px-5 sm:px-6">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">How we earn trust</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-700">How we earn trust</p>
                 <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
                   No magic pitch. No black box.
                 </h2>
@@ -368,7 +296,7 @@ export default function HomePage() {
               <div className="space-y-4">
                 {trustItems.map((item) => (
                   <div key={item} className="flex gap-4 rounded-lg border border-zinc-200 bg-zinc-50 p-5">
-                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-orange-600" aria-hidden />
+                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-orange-700" aria-hidden />
                     <p className="leading-relaxed text-zinc-700">{item}</p>
                   </div>
                 ))}
@@ -380,28 +308,28 @@ export default function HomePage() {
         <section id="contact" className="bg-zinc-50 py-20">
           <div className="container mx-auto px-5 sm:px-6">
             <div className="mx-auto max-w-4xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-600">Start here</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-orange-700">Start here</p>
               <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-5xl">
                 Bring one messy workflow. Leave with a clearer next step.
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">
-                The AI Opportunity Audit looks for the first process worth improving, what AI, automation, a dashboard, or
-                a custom app should handle, what should stay human, and what a practical first build would need.
+                Tell us where leads are slipping away or work keeps getting stuck. We’ll discuss a practical first step,
+                the tools involved, and what it would take to build. No audit required.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                 <Button
                   asChild
                   size="lg"
-                  className="min-h-[3.5rem] rounded-full bg-orange-500 px-8 font-semibold text-white hover:bg-orange-600"
+                  className="min-h-[3.5rem] rounded-full bg-orange-700 px-8 font-semibold text-white hover:bg-orange-800"
                 >
                   <Link
-                    href="/ai-opportunity-audit"
+                    href="/contact"
                     data-track-event="cta_click"
-                    data-track-label={HERO_PRIMARY_CTA_LABEL}
-                    data-track-destination="/ai-opportunity-audit"
+                    data-track-label="Discuss your project"
+                    data-track-destination="/contact"
                     data-track-source="homepage_bottom"
                   >
-                    {HERO_PRIMARY_CTA_LABEL}
+                    Discuss your project
                   </Link>
                 </Button>
                 <Button

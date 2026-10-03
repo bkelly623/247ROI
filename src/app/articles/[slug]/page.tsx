@@ -94,11 +94,11 @@ export default async function ArticlePage({ params }: PageProps) {
                 <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">{article.summary}</p>
                 <div className="mt-8 flex flex-wrap gap-3 text-sm text-muted-foreground">
                   <span>{article.readTime}</span>
-                  <span>Primary keyword: {article.primaryKeyword}</span>
+
                 </div>
-                <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/ai-opportunity-audit">
-                    Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                <Button asChild size="lg" className="mt-8 rounded-full bg-orange-700 px-8 font-semibold text-primary-foreground hover:bg-orange-800">
+                  <Link href="/contact">
+                    Discuss your project <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                   </Link>
                 </Button>
               </div>
@@ -171,8 +171,8 @@ export default async function ArticlePage({ params }: PageProps) {
                     <p className="text-sm leading-relaxed text-muted-foreground">
                       Want to see the version of this inside your business?
                     </p>
-                    <Button asChild className="mt-4 w-full rounded-full bg-primary font-semibold text-primary-foreground hover:bg-primary/90">
-                      <Link href="/ai-opportunity-audit">Find My First AI Employee</Link>
+                    <Button asChild className="mt-4 w-full rounded-full bg-orange-700 font-semibold text-primary-foreground hover:bg-orange-800">
+                      <Link href="/contact">Discuss your project</Link>
                     </Button>
                   </div>
                 </aside>

@@ -6,8 +6,9 @@ import { ArrowRight, CheckCircle2, ClipboardCheck, DatabaseZap, FileSearch, Pane
 import Navbar from "@/components/Navbar";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import ServicePaths from "@/components/ServicePaths";
 import { Button } from "@/components/ui/button";
-import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
+
 
 const lanes = [
   {
@@ -117,12 +118,12 @@ export default function ServicesPage() {
                 Business systems built with AI agents, automation, and custom software.
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-                247ROI builds custom automations, dashboards, internal apps, and AI agents around the work already
-                happening across your software, spreadsheets, inboxes, documents, and team memory.
+                Capture and respond to leads with missed-call text back and AI receptionists. Improve operations
+                with custom software, automated workflows, dashboards and AI built around the tools you already use.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                  <Link href="/ai-opportunity-audit">{HERO_PRIMARY_CTA_LABEL}</Link>
+                <Button asChild size="lg" className="rounded-full bg-orange-700 px-8 font-semibold text-primary-foreground hover:bg-orange-800">
+                  <Link href="/contact">Discuss your project</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                   <Link href="/demo">See Example Workflows</Link>
@@ -131,6 +132,8 @@ export default function ServicesPage() {
             </motion.div>
           </div>
         </section>
+
+        <ServicePaths />
 
         <section className="border-b border-border/40 py-20 md:py-24">
           <div className="container mx-auto px-6">
@@ -171,7 +174,7 @@ export default function ServicesPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {process.map(([title, body], index) => (
                   <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">{index + 1}</div>
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-700 text-sm font-bold text-primary-foreground">{index + 1}</div>
                     <h3 className="font-display text-lg font-bold">{title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
                   </div>

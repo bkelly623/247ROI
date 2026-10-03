@@ -1,57 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { sendSms } from "@/lib/twilio";
+import { inquirySchema, saveInquiry, notifyInquiry } from "@/lib/inquiries";
 
-const schema = z.object({
-  name: z.string().min(1),
-  /** SMS opt-in: phone number and explicit consent captured on the public contact form. */
-  phone: z.string().min(7),
-  email: z.string().email().optional(),
-  message: z.string().min(1),
-  smsConsent: z.boolean(),
-});
-
-/**
- * This exact string is what's registered as "Sample message #1" in the
- * Twilio A2P 10DLC campaign registration. Do not edit this text without
- * also updating that registration — the two must stay identical.
- */
-const CONTACT_REPLY_TEXT =
-  "Hi, thanks for reaching out to 247ROI! We got your message and will follow up shortly. Msg & data rates may apply. Reply STOP to opt out, HELP for help.";
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  const origin = req.headers.get("origin");
+  if (origin) {
+    try { if (new URL(origin).host !== req.headers.get("host")) return NextResponse.json({ error: "Please submit from this website." }, { status: 403 }); }
+    catch { return NextResponse.json({ error: "Invalid origin." }, { status: 403 }); }
+  }
+  if (!req.headers.get("content-type")?.includes("application/json")) return NextResponse.json({ error: "Invalid request." }, { status: 415 });
+  if (Number(req.headers.get("content-length") || 0) > 14000) return NextResponse.json({ error: "Message too long." }, { status: 413 });
+  let raw;
   try {
-    const body = schema.parse(await req.json());
-
-    // TODO(247ROI): persist this submission (name/phone/email/message/smsConsent) to Supabase
-    // once a contact_submissions table exists; logged here in the interim so consent capture
-    // is not silently dropped.
-    console.log("[contact-sms-consent]", {
-      name: body.name,
-      phone: body.phone,
-      email: body.email,
-      smsConsent: body.smsConsent,
-      receivedAt: new Date().toISOString(),
-    });
-
-    // Only send the SMS reply if the user opted in; the form itself is not gated on consent.
-    let smsSent = false;
-    if (body.smsConsent) {
-      const sendResult = await sendSms(body.phone, CONTACT_REPLY_TEXT);
-      smsSent = sendResult.ok;
-      if (!sendResult.ok) {
-        // The submission itself is still valid and logged; surface the send failure
-        // so it's visible, but don't block the user's confirmation on a carrier/API hiccup.
-        console.error("[contact-sms-send-failed]", { phone: body.phone, error: sendResult.error });
-      }
-    }
-
-    return NextResponse.json({ ok: true, smsSent });
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      return NextResponse.json({ error: "Invalid submission.", details: err.flatten() }, { status: 400 });
-    }
-    console.error("[contact-api] unexpected error", err);
-    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    const text = await req.text();
+    if (Buffer.byteLength(text) > 14000) return NextResponse.json({ error: "Message too long." }, { status: 413 });
+    raw = JSON.parse(text);
+  } catch { return NextResponse.json({ error: "Invalid submission." }, { status: 400 }); }
+  const parsed = inquirySchema.safeParse(raw);
+  if (!parsed.success || parsed.data.website) return NextResponse.json({ error: "Please check your name, phone number, email and message." }, { status: 400 });
+  try {
+    const saved = await saveInquiry(parsed.data, req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown");
+    // Notification failure must not erase a successfully saved inquiry or prompt duplicates.
+    const notified = await notifyInquiry(saved).catch(() => false);
+    return NextResponse.json({ ok: true, reference: saved.submissionId, saved: true, notification: notified ? "sent" : "queued" }, { headers: { "Cache-Control": "no-store" } });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "unknown";
+    console.error("[contact_save_failed]", code);
+    if (code === "rate_limited") return NextResponse.json({ error: "Too many messages. Please call (610) 300-3001 instead." }, { status: 429, headers: { "Retry-After": "3600" } });
+    if (code === "idempotency_conflict") return NextResponse.json({ error: "This message reference was already used. Reload to send a new message." }, { status: 409 });
+    return NextResponse.json({ error: "We could not confirm your message was saved. Your text is still here. Try again or call (610) 300-3001." }, { status: 503 });
   }
 }

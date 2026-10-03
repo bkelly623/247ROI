@@ -24,10 +24,10 @@ export const AI_EMPLOYEE_OFFERS: AiEmployeeOffer[] = [
     title: "AI Receptionist",
     shortTitle: "Receptionist",
     eyebrow: "Front desk AI employee",
-    headline: "Every call answered. Every lead captured.",
+    headline: "Answer more calls. Give callers a clear next step.",
     subheadline:
       "A 24/7 AI receptionist for trades and service businesses that answers overflow, captures job details, routes urgent calls, and pushes leads toward booked work.",
-    priceHint: "30-day trial for qualified businesses",
+    priceHint: "Setup and pricing confirmed before you commit",
     bestFor: "Call-heavy local service businesses losing jobs to voicemail, after-hours gaps, and slow response.",
     route: "/ai-employees/ai-receptionist",
     icon: "phone",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import AiEmployeeLandingPage from "@/components/AiEmployeeLandingPage";
+import LeadOfferPage from "@/components/LeadOfferPage";
 import { AI_EMPLOYEE_OFFERS, getAiEmployeeOffer } from "@/lib/aiEmployees";
 import { SITE_URL } from "@/lib/site";
 
@@ -68,7 +69,7 @@ export default async function AiEmployeeOfferRoutePage({ params }: PageProps) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      <AiEmployeeLandingPage offer={offer} />
+      {slug === "ai-receptionist" ? <LeadOfferPage offer="ai-receptionist" /> : <AiEmployeeLandingPage offer={offer} />}
     </>
   );
 }

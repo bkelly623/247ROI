@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
-import { HERO_PRIMARY_CTA_LABEL, PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export default function CTA() {
   return (
@@ -28,8 +28,8 @@ export default function CTA() {
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/ai-opportunity-audit">{HERO_PRIMARY_CTA_LABEL}</Link>
+              <Button asChild size="lg" className="min-h-[3.5rem] rounded-full bg-orange-700 px-8 font-semibold text-primary-foreground hover:bg-orange-800">
+                <Link href="/contact">Discuss your project</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="min-h-[3.5rem] rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
                 <a href={PRIMARY_PHONE_HREF}>

@@ -23,11 +23,13 @@ function randomId(prefix: string) {
 
 function storageId(key: string, prefix: string, storage: Storage | undefined) {
   if (!storage) return randomId(prefix);
-  const existing = storage.getItem(key);
-  if (existing) return existing;
-  const next = randomId(prefix);
-  storage.setItem(key, next);
-  return next;
+  try {
+    const existing = storage.getItem(key);
+    if (existing) return existing;
+    const next = randomId(prefix);
+    storage.setItem(key, next);
+    return next;
+  } catch { return randomId(prefix); }
 }
 
 export function getAnalyticsIdentity() {
@@ -35,10 +37,27 @@ export function getAnalyticsIdentity() {
     return { visitorId: undefined, sessionId: undefined };
   }
 
-  return {
+  try { return {
     visitorId: storageId(VISITOR_KEY, "visitor", window.localStorage),
     sessionId: storageId(SESSION_KEY, "session", window.sessionStorage),
-  };
+  }; } catch { return { visitorId: undefined, sessionId: undefined }; }
+}
+
+export function getInquiryAttribution() {
+  if (typeof window === "undefined") return { source: "", campaign: "" };
+  const key = "247roi_first_touch";
+  try {
+    const stored = window.sessionStorage.getItem(key);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (typeof parsed.source === "string" && typeof parsed.campaign === "string") return parsed as { source: string; campaign: string };
+    }
+    const query = new URLSearchParams(window.location.search);
+    const referrer = document.referrer ? new URL(document.referrer).origin : "direct";
+    const value = { source: `${referrer} → ${window.location.pathname}`.slice(0, 200), campaign: [query.get("utm_source"), query.get("utm_medium"), query.get("utm_campaign")].filter(Boolean).join(" / ").slice(0, 200) };
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+    return value;
+  } catch { return { source: "", campaign: "" }; }
 }
 
 export function trackSiteEvent(payload: SiteEventPayload) {
@@ -56,8 +75,7 @@ export function trackSiteEvent(payload: SiteEventPayload) {
 
   if (navigator.sendBeacon) {
     const blob = new Blob([body], { type: "application/json" });
-    navigator.sendBeacon("/api/events", blob);
-    return;
+    try { if (navigator.sendBeacon("/api/events", blob)) return; } catch { /* fall back to fetch */ }
   }
 
   void fetch("/api/events", {
@@ -65,5 +83,5 @@ export function trackSiteEvent(payload: SiteEventPayload) {
     headers: { "Content-Type": "application/json" },
     body,
     keepalive: true,
-  });
+  }).catch(() => undefined);
 }

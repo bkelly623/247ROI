@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validTwilioSignature } from "@/lib/twilio-signature";
 import { sendSms } from "@/lib/twilio";
 
 /**
@@ -13,7 +14,9 @@ const MISSED_CALL_TEXT =
 const UNANSWERED_STATUSES = new Set(["no-answer", "busy", "failed", "canceled"]);
 
 export async function POST(req: NextRequest) {
+  if (!req.headers.get("x-twilio-signature")) return new NextResponse("Forbidden", { status: 403 });
   const form = await req.formData();
+  if (!validTwilioSignature(req, form)) return new NextResponse("Forbidden", { status: 403 });
   const dialCallStatus = String(form.get("DialCallStatus") || "");
   const caller = String(form.get("From") || "");
 

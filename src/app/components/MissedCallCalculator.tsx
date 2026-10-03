@@ -286,7 +286,7 @@ export default function MissedCallCalculator({
       <div className="mx-auto flex w-full max-w-[420px] flex-col items-center px-1 py-2 sm:px-2">
         {showHeading ? (
           <h1 className="mb-6 text-center font-display text-lg font-semibold leading-snug tracking-tight text-foreground sm:text-xl">
-            How Much Revenue Are You Losing?
+            What Could Missed Calls Be Worth?
           </h1>
         ) : null}
 
@@ -376,28 +376,29 @@ export default function MissedCallCalculator({
 
           <section className="w-full pt-2 text-center">
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              You&apos;re Losing
+              Estimated revenue opportunity
             </p>
             <p className="missed-calc-result-pulse mt-1.5 text-[3rem] font-display font-extrabold leading-[1.02] tracking-[-0.02em] sm:text-[4.25rem] gradient-text drop-shadow-[0_0_28px_hsl(var(--primary)/0.32)]">
               {formatMoney(animatedTotal)}
             </p>
             <p className="mt-2 max-w-[28ch] text-[13px] font-semibold leading-snug text-foreground/90 mx-auto">
-              That&apos;s {xCount} customers you never even spoke to
+              About {xCount} potential jobs under these assumptions
             </p>
 
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Illustrative estimate, not measured lost revenue or a guarantee. Presets are examples, not industry benchmarks. Adjust the inputs to your business. Revenue is not profit; some callers may call back or already be customers.</p>
             <div className="mt-5 flex flex-col items-center gap-3">
               <Button
                 asChild
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 sm:px-10 min-h-[3.25rem] text-sm sm:text-base font-semibold shadow-[0_0_32px_hsl(var(--primary)/0.22)] touch-manipulation"
               >
-                <Link href="/ai-opportunity-audit">Find My First AI Employee</Link>
+                <Link href="/missed-call-text-back">Explore missed-call text back</Link>
               </Button>
               <Link
                 href="/services"
                 className={`${BOOK_SETUP_CALL_LINK_CLASSNAME} text-xs sm:text-sm text-center`}
               >
-                See AI employee services
+                Compare lead-capture options
               </Link>
             </div>
           </section>

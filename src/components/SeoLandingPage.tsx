@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { SEO_LANDING_PAGES, type SeoLandingPage as SeoLandingPageType } from "@/lib/seoLandingPages";
 import { AI_EMPLOYEE_OFFERS } from "@/lib/aiEmployees";
-import { HERO_PRIMARY_CTA_LABEL } from "@/app/components/cta";
+
 
 export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
   const relatedPages = SEO_LANDING_PAGES.filter((candidate) => page.relatedPageSlugs?.includes(candidate.slug));
@@ -29,9 +29,9 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{page.subheadline}</p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Button asChild size="lg" className="rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                    <Link href="/ai-opportunity-audit">
-                      {HERO_PRIMARY_CTA_LABEL} <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+                  <Button asChild size="lg" className="rounded-full bg-orange-700 px-8 font-semibold text-primary-foreground hover:bg-orange-800">
+                    <Link href="/contact">
+                      Discuss your project <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/[0.03] px-8 text-foreground hover:bg-white/[0.07]">
@@ -41,15 +41,13 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-7">
-                <p className="text-sm font-semibold uppercase tracking-wider text-primary">Search focus</p>
-                <h2 className="mt-3 font-display text-2xl font-bold">{page.primaryKeyword}</h2>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {page.relatedKeywords.map((keyword) => (
-                    <span key={keyword} className="rounded-full border border-white/10 bg-background/45 px-3 py-1 text-xs text-muted-foreground">
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
+                <p className="text-sm font-semibold uppercase tracking-wider text-primary">A practical starting point</p>
+                <h2 className="mt-3 font-display text-2xl font-bold">Fix one workflow. Know what changed.</h2>
+                <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
+                  <li>Review the problem and the tools you already use.</li>
+                  <li>Agree on scope, approvals, and a measurable result.</li>
+                  <li>Test the first build before expanding.</li>
+                </ul>
                 <div className="mt-6 rounded-2xl border border-primary/25 bg-primary/10 p-4">
                   <p className="text-sm leading-relaxed text-foreground/85">
                     247ROI builds custom automations, dashboards, internal apps, and AI agents for businesses that need
@@ -65,7 +63,7 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
           <div className="container mx-auto px-6">
             <div className="grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
               <div>
-                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Buyer problem</span>
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">Where work gets stuck</span>
                 <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">The value is in the workflow, not the novelty.</h2>
                 <p className="mt-4 text-muted-foreground">
                   AI earns its keep when it captures revenue, saves labor, speeds up response, prepares work product, or
@@ -187,8 +185,8 @@ export default function SeoLandingPage({ page }: { page: SeoLandingPageType }) {
                 Bring the computer work people are still doing by hand. 247ROI will identify what can be automated,
                 what should stay human, and what is worth building first.
               </p>
-              <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/ai-opportunity-audit">{HERO_PRIMARY_CTA_LABEL}</Link>
+              <Button asChild size="lg" className="mt-8 rounded-full bg-orange-700 px-8 font-semibold text-primary-foreground hover:bg-orange-800">
+                <Link href="/contact">Discuss your project</Link>
               </Button>
             </div>
           </div>

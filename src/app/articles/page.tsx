@@ -39,9 +39,9 @@ export default function ArticlesPage() {
                 These are not fake case studies or fixed packages. They are realistic workflow examples showing what AI
                 can handle, what humans still approve, and where custom software can save time.
               </p>
-              <Button asChild size="lg" className="mt-8 rounded-full bg-primary px-8 font-semibold text-primary-foreground hover:bg-primary/90">
-                <Link href="/ai-opportunity-audit">
-                  Find My First AI Employee <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
+              <Button asChild size="lg" className="mt-8 rounded-full bg-orange-700 px-8 font-semibold text-primary-foreground hover:bg-orange-800">
+                <Link href="/contact">
+                  Discuss your project <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
                 </Link>
               </Button>
             </div>
@@ -68,10 +68,7 @@ export default function ArticlesPage() {
                     {article.title}
                   </h2>
                   <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{article.description}</p>
-                  <div className="mt-6 rounded-xl border border-white/10 bg-background/35 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary">Target keyword</p>
-                    <p className="mt-2 text-sm font-medium text-foreground/90">{article.primaryKeyword}</p>
-                  </div>
+
                   <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
                     Read use case <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                   </span>

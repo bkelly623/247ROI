@@ -147,7 +147,7 @@ export default function PrivacyPolicyPage() {
             <p className="mb-4">We do not sell or rent personal data.</p>
             <p>We may share data with:</p>
             <ul className="mt-3 space-y-1 list-disc pl-6">
-              <li>Service providers (for operations)</li>
+              <li>Service providers (for operations). Website inquiries are saved in private storage and routed to the business owner through an internal messaging notification so we can respond and follow up.</li>
               <li>SMS providers (delivery only)</li>
               <li>Legal authorities if required</li>
             </ul>

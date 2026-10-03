@@ -18,7 +18,7 @@ export function GET() {
 
   const articleText = ARTICLES.map(
     (article) =>
-      `## ${article.title}\nURL: ${SITE_URL}/articles/${article.slug}\nPrimary keyword: ${article.primaryKeyword}\nDescription: ${article.description}\nSummary: ${article.summary}`
+      `## ${article.title}\nURL: ${SITE_URL}/articles/${article.slug}\nDescription: ${article.description}\nSummary: ${article.summary}`
   ).join("\n\n");
 
   const text = `# 247ROI LLM Context

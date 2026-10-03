@@ -23,6 +23,112 @@ export type Article = {
 };
 
 export const ARTICLES: Article[] = [
+{
+  "slug": "missed-call-text-back-vs-ai-receptionist",
+  "title": "Missed-Call Text Back vs. AI Receptionist: Which Does Your Business Need?",
+  "description": "Compare a text-back safety net with AI call answering: when each fits, who handles replies, phone compatibility, costs and practical limits.",
+  "eyebrow": "Lead-capture guide",
+  "primaryKeyword": "missed-call text back vs AI receptionist",
+  "secondaryKeywords": [
+    "missed call text back",
+    "AI receptionist for small business"
+  ],
+  "buyer": "Business owners choosing how to handle missed, overflow or after-hours calls.",
+  "readTime": "4 min read",
+  "publishedAt": "2026-10-03",
+  "updatedAt": "2026-10-03",
+  "summary": "Text back starts a conversation after an eligible missed call. An AI receptionist answers the call itself. The better starting point depends on what your callers need and who will handle the follow-up.",
+  "keyTakeaways": [
+    "Choose text back when missed calls are the gap and your team can handle replies.",
+    "Consider an AI receptionist when callers need help during the call, including after hours or overflow.",
+    "Neither tool replaces clear ownership, consent, escalation rules or a follow-up process."
+  ],
+  "sections": [
+    {
+      "heading": "Start with what happens when you cannot answer",
+      "body": [
+        "Look at a typical busy day. Do callers leave messages and wait? Do they need simple information immediately? Does someone follow up promptly, or do requests get scattered across phones? The first improvement should address that specific gap."
+      ]
+    },
+    {
+      "heading": "When missed-call text back fits",
+      "body": [
+        "For an eligible missed call, the system sends a short message that identifies your business and gives the caller a way to reply. It keeps the conversation open without making the caller leave a voicemail.",
+        "Your team still needs to read replies, answer questions and confirm any appointment. Qualification, CRM updates or additional automation can be added separately if useful."
+      ],
+      "bullets": [
+        "You miss some calls while on jobs or helping customers.",
+        "A staff member can manage replies and callbacks.",
+        "You want a focused starting point rather than a complete phone overhaul."
+      ]
+    },
+    {
+      "heading": "When an AI receptionist fits",
+      "body": [
+        "An AI receptionist handles the conversation on the phone. Depending on the agreed setup, it can answer common questions, capture contact details, request a booking or route the caller.",
+        "Define what it must not do. Sensitive decisions, pricing exceptions, emergencies and promises outside approved rules need a human or a clear fallback."
+      ],
+      "bullets": [
+        "Callers need a useful response while they are still on the line.",
+        "Overflow or after-hours calls are difficult for your team to cover.",
+        "You can provide accurate business information and escalation contacts."
+      ]
+    },
+    {
+      "heading": "What to check before committing",
+      "body": [
+        "Confirm whether your number and carrier support the proposed setup, whether forwarding or porting is necessary, and where replies or summaries will go. Keeping your existing number may be possible, but should be checked rather than promised.",
+        "Ask for the complete cost: setup, recurring service, included messages or minutes, overages, support and cancellation terms. Compare the time your team will spend following up, not just the monthly price.",
+        "Text delivery is not guaranteed. Landlines, blocked numbers, opt-outs and carrier filtering affect eligibility. Define consent and opt-out handling before launch; a call is not blanket permission for ongoing marketing texts."
+      ]
+    },
+    {
+      "heading": "Test the handoff, not just the greeting",
+      "body": [
+        "For text back, place an agreed test call from an eligible mobile, let it go unanswered, check delivery, reply and confirm someone receives the conversation. For an AI receptionist, test a normal request, an unusual question and a failed transfer.",
+        "A useful test ends with a clear owner and next step. If inquiries disappear into another inbox, the workflow is not finished."
+      ]
+    },
+    {
+      "heading": "Choose one gap to fix first",
+      "body": [
+        "You do not have to buy both. Start with the missed-call or answering problem you can clearly identify. Review real calls and follow-up outcomes before adding more automation."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Can I use both?",
+      "answer": "Yes. They can support different call flows, but define exactly when each runs to avoid duplicate or confusing responses."
+    },
+    {
+      "question": "Can I keep my number?",
+      "answer": "Possibly. Number ownership, carrier support, forwarding and messaging compatibility need to be checked before setup."
+    },
+    {
+      "question": "Will text back book jobs automatically?",
+      "answer": "Not by itself. Basic text back opens a conversation; a person or separately configured booking workflow handles the next step."
+    }
+  ],
+  "relatedLinks": [
+    {
+      "label": "Missed-call text back",
+      "href": "/missed-call-text-back"
+    },
+    {
+      "label": "AI receptionist",
+      "href": "/ai-employees/ai-receptionist"
+    },
+    {
+      "label": "Discuss your phone setup",
+      "href": "/contact?offer=lead-capture"
+    },
+    {
+      "label": "Custom follow-up workflows",
+      "href": "/workflow-automation-consultant"
+    }
+  ]
+},
   {
     slug: "what-should-my-business-automate-first",
     title: "What Should My Business Automate First? A Practical Bottleneck Checklist",
@@ -469,17 +575,17 @@ export const ARTICLES: Article[] = [
     summary:
       "The first useful AI build for many contractors is not fully automated estimating. It is bid intake automation: a custom AI workflow that turns messy bid invites into clean review packets before an estimator spends time on them.",
     keyTakeaways: [
-      "Bid intake is a better first SEO/use-case target than broad AI takeoff terms because the workflow is valuable and less locked up by established software players.",
+      "Organizing bid invites can save estimators preparation time without asking AI to make pricing or quantity decisions.",
       "The AI should prepare the bid, not decide the bid: deadlines, requirements, scope notes, missing documents, risks, and go/no-go context.",
-      "247ROI should position this as custom AI software built around the contractor's actual inboxes, portals, files, and approval rules.",
+      "A useful intake system fits your existing inboxes, portals, files, and approval rules rather than forcing your team into a new estimating process.",
     ],
     sections: [
       {
         heading: "Why bid intake is the right first workflow to target",
         body: [
           "Contractors do not only lose time inside the estimate. They lose time before the estimate starts: finding bid invites, opening portals, downloading files, checking deadlines, deciding if the job fits, and figuring out what the estimator needs to review.",
-          "That makes contractor bid intake automation a strong first keyword and content target. It is specific enough to rank for, valuable enough to attract serious buyers, and broad enough to support custom AI software instead of one fixed AI employee role.",
-          "This is also cleaner than chasing broad terms like AI takeoff software. Takeoff and estimating searches are crowded with established construction software brands. Bid intake is still operational, messy, and custom, which fits 247ROI better.",
+          "An intake workflow brings each opportunity into one review queue, with its deadline, documents, missing information, and responsible estimator. Your team can decide what to pursue without rebuilding the picture from scattered messages.",
+          "If your takeoff software already works, keep it. The first improvement may be the handoff into that software: complete files, clear scope, and enough time for an estimator to review them.",
         ],
       },
       {
@@ -537,10 +643,10 @@ export const ARTICLES: Article[] = [
         ],
       },
       {
-        heading: "Why this fits 247ROI",
+        heading: "Fit the workflow to your team",
         body: [
-          "This is not a stable, off-the-shelf role. Every contractor's bid process is different. Some live in email. Some live in BuildingConnected. Some use spreadsheets. Some have a shared drive. Some have one estimator; others route opportunities across a team.",
-          "That is the point. 247ROI builds custom AI software around the actual workflow. The article can use bid intake as the example while making the larger promise clear: if valuable computer work is repetitive, document-heavy, or scattered across tools, AI can probably take the first pass.",
+          "Every contractor's bid process is different. Some live in email. Some live in BuildingConnected. Some use spreadsheets. Some have a shared drive. Some have one estimator; others route opportunities across a team.",
+          "247ROI can connect the tools your team already uses and prepare a consistent review packet. We first check access, document quality, and approval requirements, then test a narrow workflow against representative bid invites.",
         ],
       },
       {
@@ -568,9 +674,9 @@ export const ARTICLES: Article[] = [
           "Usually, yes. The value of custom AI software is that it can be designed around the inboxes, portals, spreadsheets, CRMs, file storage, and approval habits already inside the business.",
       },
       {
-        question: "Why target bid intake before takeoff automation?",
+        question: "When should we improve bid intake before takeoff?",
         answer:
-          "Broad takeoff automation is crowded with established construction software. Bid intake is often more fragmented and custom, which makes it a better first 247ROI use case for contractors with messy pre-estimating workflows.",
+          "Start with intake when estimators spend significant time finding invites, checking deadlines, or chasing missing files. If those steps already work well, a different bottleneck may deserve attention first. Final quantities and pricing still need qualified review.",
       },
     ],
     relatedLinks: [

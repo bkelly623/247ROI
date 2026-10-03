@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validTwilioSignature } from "@/lib/twilio-signature";
 import { getConversationHistory, alreadyNotifiedAbout, sendSms } from "@/lib/twilio";
 import { runSmsTurn } from "@/lib/sms-lead/engine";
 
@@ -30,7 +31,9 @@ function twiml(message?: string) {
  * stateless serverless invocations with no extra infra.
  */
 export async function POST(req: NextRequest) {
+  if (!req.headers.get("x-twilio-signature")) return new NextResponse("Forbidden", { status: 403 });
   const form = await req.formData();
+  if (!validTwilioSignature(req, form)) return new NextResponse("Forbidden", { status: 403 });
   const from = String(form.get("From") || "");
   const to = String(form.get("To") || "");
   const bodyText = String(form.get("Body") || "").trim();

@@ -7,7 +7,7 @@ import { PhoneCall, Zap, CalendarCheck, MessageSquareText, BarChart3 } from "luc
 const items: { icon: LucideIcon; title: string; description: string }[] = [
   {
     icon: PhoneCall,
-    title: "Every call answered",
+    title: "Help for unanswered calls",
     description: "After-hours and overflow are handled so leads don’t disappear into voicemail.",
   },
   {
