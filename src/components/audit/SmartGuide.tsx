@@ -1,5 +1,6 @@
 "use client";
 
+import { PRIMARY_PHONE_DISPLAY } from "@/app/components/cta";
 import { useState } from "react";
 import { ChevronRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,7 @@ export function SmartGuide({ steps, businessName }: SmartGuideProps) {
         </div>
         {askOpen && (
           <p className="text-xs text-zinc-500">
-            Call us at (917) 572-7734 — we&apos;ll walk you through your blueprint live.
+            Call us at {PRIMARY_PHONE_DISPLAY} — we&apos;ll walk you through your blueprint live.
           </p>
         )}
       </CardContent>

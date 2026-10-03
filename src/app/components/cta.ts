@@ -6,8 +6,8 @@ export const HIRE_AUDIT_PATH = "/ai-opportunity-audit";
 export const BOOKING_ANCHOR = "#contact";
 
 /** Primary business line — navbar, footer, “contact the business”. */
-export const PRIMARY_PHONE_HREF = "tel:+19175727734";
-export const PRIMARY_PHONE_DISPLAY = "(917) 572-7734";
+export const PRIMARY_PHONE_HREF = "tel:+16103003001";
+export const PRIMARY_PHONE_DISPLAY = "(610) 300-3001";
 
 /** Legacy receptionist demo line. Keep only for old references, not as the main funnel. */
 export const AI_RECEPTIONIST_CTA_PHONE_HREF = "tel:+18663602529";

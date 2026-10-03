@@ -6,7 +6,7 @@
 **Production URL:** https://get247roi.com  
 **Repo:** github.com/bkelly623/247ROI  
 **Supabase:** https://ytdufsxqywkvtnpyetco.supabase.co  
-**Phone CTA:** (917) 572-7734
+**Phone CTA:** (610) 300-3001
 
 ---
 
@@ -171,7 +171,7 @@ Route: `/report/[id]`
 | Locked modules | `LockedGrowthModules` | Ghost UI + gold lock |
 | Revenue Pathway | `RevenuePathway` | Qualification questionnaire |
 | Terminal log | `FauxTerminal` | Scan replay |
-| Phone CTA | footer card | (917) 572-7734 |
+| Phone CTA | footer card | (610) 300-3001 |
 | **Report Advisor** | `ReportAdvisor` | Floating bubble — report page ONLY |
 
 ### ReportAdvisor behavior (covert selling machine)
@@ -386,7 +386,7 @@ src/
 
 ## 14. Contact & Escalation
 
-- **BK phone:** (917) 572-7734
+- **BK phone:** (610) 300-3001
 - **Site:** https://get247roi.com
 - **Audit entry:** https://get247roi.com/audit
 - **Rep demo:** https://get247roi.com/audit?s=demo-rep-247roi
@@ -491,7 +491,7 @@ Objection prep:
   "We already have a website" → {counter}
   "We get work from referrals" → {counter — AI search is growing in {zip}}
 
-Close: Free fix plan call → book or phone (917) 572-7734
+Close: Free fix plan call → book or phone (610) 300-3001
 Do NOT: Hard-sell, quote custom AI Visibility price without BK
 ```
 

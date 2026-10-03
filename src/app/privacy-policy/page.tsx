@@ -1,3 +1,4 @@
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 export const metadata = {
   title: "Privacy Policy | 247ROI",
   description: "Privacy Policy for 247ROI.",
@@ -216,8 +217,8 @@ export default function PrivacyPolicyPage() {
             <p>Brendan Kelly, doing business as 247ROI</p>
             <p className="mt-2">
               Phone:{" "}
-              <a href="tel:+19175727734" className="underline underline-offset-2 hover:text-gray-900">
-                (917) 572-7734
+              <a href={PRIMARY_PHONE_HREF} className="underline underline-offset-2 hover:text-gray-900">
+                {PRIMARY_PHONE_DISPLAY}
               </a>
             </p>
             <p className="mt-2">

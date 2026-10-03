@@ -1,4 +1,5 @@
 import type { DiscoveryState } from "./types";
+import { PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
 export type ProgressStepId =
   | "industry"
@@ -85,5 +86,5 @@ export function buildHireSmsHref(input: {
     input.employeeName ? `System: ${input.employeeName}` : null,
   ].filter(Boolean);
   const body = encodeURIComponent(bits.join(" · "));
-  return `sms:+19175727734?body=${body}`;
+  return `${PRIMARY_PHONE_HREF.replace("tel:", "sms:")}?body=${body}`;
 }

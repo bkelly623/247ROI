@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-const PRIMARY_DISPLAY = "(917) 572-7734";
-const PRIMARY_TEL = "tel:+19175727734";
+import { PRIMARY_PHONE_DISPLAY as PRIMARY_DISPLAY, PRIMARY_PHONE_HREF as PRIMARY_TEL } from "@/app/components/cta";
 
 function resolveOpenAIKey(): string | undefined {
   return (

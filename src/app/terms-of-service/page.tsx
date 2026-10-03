@@ -1,3 +1,4 @@
+import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 export const metadata = {
   title: "Terms of Service | 247ROI",
   description: "Terms of Service for 247ROI.",
@@ -60,8 +61,8 @@ export default function TermsOfServicePage() {
                     contact@247roi.com
                   </a>{" "}
                   or call{" "}
-                  <a href="tel:+19175727734" className="underline underline-offset-2 hover:text-gray-900">
-                    (917) 572-7734
+                  <a href={PRIMARY_PHONE_HREF} className="underline underline-offset-2 hover:text-gray-900">
+                    {PRIMARY_PHONE_DISPLAY}
                   </a>{" "}
                   during business hours.
                 </p>
@@ -156,8 +157,8 @@ export default function TermsOfServicePage() {
             <p className="mt-2">Brendan Kelly, doing business as 247ROI</p>
             <p className="mt-2">
               Phone:{" "}
-              <a href="tel:+19175727734" className="underline underline-offset-2 hover:text-gray-900">
-                (917) 572-7734
+              <a href={PRIMARY_PHONE_HREF} className="underline underline-offset-2 hover:text-gray-900">
+                {PRIMARY_PHONE_DISPLAY}
               </a>
             </p>
             <p className="mt-2">
