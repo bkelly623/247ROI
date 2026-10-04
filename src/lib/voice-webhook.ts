@@ -2,7 +2,7 @@ import { after, NextRequest, NextResponse } from "next/server";
 import { validTwilioSignature } from "@/lib/twilio-signature";
 import { isCallSid, type VoiceEvent } from "@/lib/missed-calls";
 import { inquiryStore } from "@/lib/inquiries";
-import { queueVoiceEvent, processVoiceJob } from "@/lib/voice-jobs";
+import { queueVoiceEvent, processVoiceJobAfterResponse } from "@/lib/voice-jobs";
 
 export async function voiceWebhook(req: NextRequest, defaultKind: VoiceEvent["kind"]) {
   if (!req.headers.get("x-twilio-signature")) return new NextResponse("Forbidden", { status: 403 });
@@ -22,7 +22,7 @@ export async function voiceWebhook(req: NextRequest, defaultKind: VoiceEvent["ki
   if (!Number.isFinite(timestamp)) return new NextResponse("Missing event timestamp", { status: 400 });
   try {
     const id = await queueVoiceEvent({ kind: kind as VoiceEvent["kind"], parent, status: String(form.get("CallStatus") || ""), answeredBy: String(form.get("AnsweredBy") || ""), timestamp }, inquiryStore(Date.now() + 6000));
-    after(async () => { try { await processVoiceJob(id); } catch { console.error("[voice_job_pending]", id); } });
+    after(async () => { try { await processVoiceJobAfterResponse(id); } catch { console.error("[voice_job_pending]", id); } });
   } catch {
     console.error("[voice_callback_enqueue_failed]", { parent, kind });
     return new NextResponse("Retry", { status: 503 });

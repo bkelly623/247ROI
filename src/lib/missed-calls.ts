@@ -4,7 +4,7 @@ export const VOICE_BASE = "https://www.get247roi.com";
 export const MISSED_CALL_TEXT = "Hi, sorry we missed your call! This is 247ROI's assistant — tell me what's going on and I'll get you the right help, or call again at (610) 300-3001. Msg & data rates may apply. Reply STOP to opt out, HELP for help.";
 // Carriers do not report audible rings. Approximate the first US ringing burst.
 export const MIN_ABANDONED_RING_MS = 2000;
-export const MISSED_CALL_DELAY_MS = 45000;
+export const MISSED_CALL_DELAY_MS = 10000;
 export const isCallSid = (s: string) => /^CA[0-9a-f]{32}$/i.test(s);
 const phone = (s: string) => /^\+[1-9]\d{7,14}$/.test(s);
 export type VoiceCall = { sid: string; caller: string; startedAt: number };

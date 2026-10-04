@@ -39,6 +39,19 @@ export async function processVoiceJob(id: string, store = inquiryStore(), handle
   }
   await store.remove(`voice-jobs/${id}.json`);
 }
+// The response is already returned to Twilio. Wait only inside its supported
+// after-response task; the durable job and timer survive interrupted execution.
+export async function processVoiceJobAfterResponse(id: string, store = inquiryStore(), handle = handleVoiceEvent) {
+  if (await processVoiceJob(id, store, handle) !== "scheduled") return;
+  const event = await store.get<VoiceEvent>(`voice-jobs/${id}.json`);
+  if (!event) return;
+  const schedule = await store.get<{ dueAt: number }>(`voice-schedule/${event.parent}.json`);
+  if (!schedule) throw new Error("voice_schedule_missing");
+  const wait = schedule.dueAt - Date.now();
+  if (wait > 15000) return; // Older/longer schedules remain in durable recovery.
+  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+  await processVoiceJob(id, store, handle);
+}
 export async function retryVoiceJobs() {
   const store = inquiryStore(Date.now() + 45000);
   await store.ensure();
