@@ -25,6 +25,7 @@ export async function processVoiceJob(id: string, store = inquiryStore(), handle
   const event = await store.get<VoiceEvent>(`voice-jobs/${id}.json`);
   if (!event) return;
   const result = await handle(event);
+  if (result === "scheduled") return "scheduled"; // Keep durable job until due.
   const parent = event.parent;
   if (result === "sms_acceptance_unknown" || result === "duplicate_suppressed") {
     const receipt = await store.get<{ ok: boolean; uncertain?: boolean; code?: number }>(`voice-results/${parent}.json`);
@@ -42,12 +43,12 @@ export async function retryVoiceJobs() {
   const store = inquiryStore(Date.now() + 45000);
   await store.ensure();
   const deadline = Date.now() + 35000;
-  let processed = 0, pending = 0;
+  let processed = 0, pending = 0, scheduled = 0;
   const jobs = await store.list("voice-jobs");
   for (const job of jobs.slice(0, 20)) {
-    if (Date.now() > deadline) return { processed, pending, hasMore: true };
-    try { await processVoiceJob(job.name.replace(/\.json$/, ""), store); processed++; }
+    if (Date.now() > deadline) return { processed, pending, scheduled, hasMore: true };
+    try { if (await processVoiceJob(job.name.replace(/\.json$/, ""), store) === "scheduled") scheduled++; else processed++; }
     catch { pending++; }
   }
-  return { processed, pending, hasMore: jobs.length > 20 };
+  return { processed, pending, scheduled, hasMore: jobs.length > 20 };
 }

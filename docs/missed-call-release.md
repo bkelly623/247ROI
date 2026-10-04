@@ -1,6 +1,7 @@
 # Missed-call outcomes repair
 
 ## Behavior
+- Owner-requested delay: wait 45 seconds AFTER a qualifying hang-up or voicemail detection. Store one due time per call; duplicate callbacks do not reset it. A 10-second dispatch timer targets roughly 45–55 seconds before carrier transport, not an exact delivery guarantee. Never start this countdown merely because a call is ringing. Recheck human classification before sending.
 - Independent child-call progress events handle caller abandonment; Dial action only ends the voice flow.
 - Never send just because a phone is ringing. Send after a terminal unanswered event plus approximately one initial ringing burst (2 seconds from provider ringing timestamp), or busy/failed.
 - Twilio Number AMD Enable detects voicemail without waiting for a beep or call completion. Human results suppress texts. Carrier voicemail remains connected; 60-second dial window replaces the prior 20-second limit so the previously observed voicemail pickup is not cut off.

@@ -4,13 +4,14 @@ export const VOICE_BASE = "https://www.get247roi.com";
 export const MISSED_CALL_TEXT = "Hi, sorry we missed your call! This is 247ROI's assistant — tell me what's going on and I'll get you the right help, or call again at (610) 300-3001. Msg & data rates may apply. Reply STOP to opt out, HELP for help.";
 // Carriers do not report audible rings. Approximate the first US ringing burst.
 export const MIN_ABANDONED_RING_MS = 2000;
+export const MISSED_CALL_DELAY_MS = 45000;
 export const isCallSid = (s: string) => /^CA[0-9a-f]{32}$/i.test(s);
 const phone = (s: string) => /^\+[1-9]\d{7,14}$/.test(s);
 export type VoiceCall = { sid: string; caller: string; startedAt: number };
 export type VoiceEvent = { kind: "child" | "amd" | "dial" | "parent"; parent: string; status: string; answeredBy: string; timestamp: number };
 type End = { status: string; at: number };
 type SmsResult = { ok: boolean; sid?: string; code?: number; uncertain?: boolean };
-type Dependencies = { store: InquiryStore; send: (to: string) => Promise<SmsResult>; lookup: (sid: string) => Promise<VoiceCall | null> };
+type Dependencies = { store: InquiryStore; send: (to: string) => Promise<SmsResult>; lookup: (sid: string) => Promise<VoiceCall | null>; now?: () => number; delayMs?: number };
 
 export function dialXml(forward: string, parent: string) {
   if (!phone(forward) || !isCallSid(parent)) throw new Error("invalid_dial_configuration");
@@ -88,6 +89,12 @@ export async function handleVoiceEvent(event: VoiceEvent, deps: Dependencies = {
     if (["busy", "failed"].includes(end.status) || elapsed >= MIN_ABANDONED_RING_MS) reason = "unanswered";
   }
   if (!reason) return "waiting_or_short_call";
+  // Persist once per call: duplicate callbacks/retries must not restart the clock.
+  const now = (deps.now ?? Date.now)();
+  await store.put(key("schedule"), { dueAt: now + (deps.delayMs ?? MISSED_CALL_DELAY_MS), reason });
+  const schedule = await store.get<{ dueAt: number }>(key("schedule"));
+  if (!schedule || !Number.isFinite(schedule.dueAt)) throw new Error("voice_schedule_missing");
+  if (now < schedule.dueAt) return "scheduled";
   if (!await store.put(key("claims"), { at: Date.now(), reason, state: "sending" })) return "duplicate_suppressed";
   // Recheck human evidence after obtaining the exclusive send claim.
   if (await store.get(key("human"))) return "human_no_text";

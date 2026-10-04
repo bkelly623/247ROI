@@ -18,7 +18,7 @@ async function fixture(sendResult = { ok: true, sid: "SMfixture" } as { ok: bool
   };
   await registerVoiceCall({ sid: id, caller: "+12025550123", startedAt: start }, store);
   let sends = 0;
-  const deps = { store, lookup: async () => null, send: async (to: string) => { assert.equal(to, "+12025550123"); sends++; return sendResult; } };
+  const deps = { store, delayMs: 0, lookup: async () => null, send: async (to: string) => { assert.equal(to, "+12025550123"); sends++; return sendResult; } };
   const event = (kind: VoiceEvent["kind"], status = "", offset = 10000, answeredBy = "") => handleVoiceEvent({ kind, status, timestamp: start + offset, parent: id, answeredBy }, deps);
   return { objects, store, deps, event, sends: () => sends };
 }
@@ -46,6 +46,38 @@ async function main() {
   await check("public or unavailable bucket blocks writes and sends", async () => { const f = await fixture(); f.store.ensure = async () => { throw new Error("not private"); }; await assert.rejects(() => f.event("amd", "", 12000,"machine_start")); assert.equal(f.sends(),0); });
   await check("durable queue retains failed work and drains after recovery", async () => { const { queueVoiceEvent, processVoiceJob } = await import("../src/lib/voice-jobs"); const f = await fixture(); const event: VoiceEvent = { kind:"amd", parent:id, status:"", answeredBy:"human", timestamp:start }; const job = await queueVoiceEvent(event,f.store); await assert.rejects(() => processVoiceJob(job,f.store,async()=>{throw new Error("temporary");})); assert(f.objects.has(`voice-jobs/${job}.json`)); await processVoiceJob(job,f.store,e=>handleVoiceEvent(e,f.deps)); assert(!f.objects.has(`voice-jobs/${job}.json`)); assert.equal(f.sends(),0); });
   await check("ring window preserves time for existing carrier voicemail", async () => { assert(dialXml("+12025550124",id).includes('timeout="60"')); assert(dialXml("+12025550124",id).includes("rp=ct,rt,5xx")); });
+  await check("45-second delay starts only after a missed outcome and survives retries", async () => {
+    const f = await fixture(); let now = start;
+    const deps = { ...f.deps, delayMs: 45000, now: () => now };
+    const event: VoiceEvent = { kind: "child", parent:id, status:"ringing", answeredBy:"", timestamp:start };
+    await handleVoiceEvent(event,deps); assert(!f.objects.has(`voice-schedule/${id}.json`));
+    now += 5000; event.status="canceled"; event.timestamp=now;
+    assert.equal(await handleVoiceEvent(event,deps),"scheduled"); assert.equal(f.sends(),0);
+    const schedule = structuredClone(f.objects.get(`voice-schedule/${id}.json`));
+    now += 44999; assert.equal(await handleVoiceEvent(event,deps),"scheduled"); assert.equal(f.sends(),0);
+    assert.deepEqual(f.objects.get(`voice-schedule/${id}.json`),schedule);
+    now++; assert.equal(await handleVoiceEvent(event,deps),"sent"); assert.equal(f.sends(),1);
+    await handleVoiceEvent(event,deps); assert.equal(f.sends(),1);
+  });
+  await check("human classification during delay cancels pending voicemail text", async () => {
+    const f = await fixture(); let now = start;
+    const deps = { ...f.deps, delayMs:45000, now:()=>now };
+    const event: VoiceEvent = {kind:"amd",parent:id,status:"",answeredBy:"machine_start",timestamp:start};
+    assert.equal(await handleVoiceEvent(event,deps),"scheduled");
+    now+=2000; await handleVoiceEvent({...event,answeredBy:"human"},deps);
+    now+=45000; assert.equal(await handleVoiceEvent(event,deps),"human_no_text"); assert.equal(f.sends(),0);
+  });
+  await check("scheduled job stays durable until its due time", async () => {
+    const {queueVoiceEvent,processVoiceJob}=await import("../src/lib/voice-jobs");
+    const f=await fixture(); let now=start;
+    const deps={...f.deps,delayMs:45000,now:()=>now};
+    const event: VoiceEvent={kind:"amd",parent:id,status:"",answeredBy:"machine_start",timestamp:start};
+    const job=await queueVoiceEvent(event,f.store);
+    assert.equal(await processVoiceJob(job,f.store,e=>handleVoiceEvent(e,deps)),"scheduled");
+    assert(f.objects.has(`voice-jobs/${job}.json`));assert.equal(f.sends(),0);
+    now+=45000;await processVoiceJob(job,f.store,e=>handleVoiceEvent(e,deps));
+    assert(!f.objects.has(`voice-jobs/${job}.json`));assert.equal(f.sends(),1);
+  });
   console.log(JSON.stringify({ passed, actualSmsSent: 0, scope: "offline fixtures; carrier detection and handset delivery require real call acceptance" }));
 }
 main().catch(e => { console.error(e); process.exitCode = 1; });
