@@ -61,7 +61,9 @@ async function main() {
     const signature=createHmac("sha1","fixture-twilio-token").update(value).digest("base64");
     const signed = new NextRequest("http://localhost:3637"+path,{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded","x-twilio-signature":signature},body:form.toString()});
     assert(validTwilioSignature(signed,await signed.clone().formData()));
-    assert.equal((await post(signed)).status,200);
+    // Voice now requires a real CallSid and durable call state; this legacy
+    // auth-only fixture intentionally has no CallSid. SMS still returns TwiML.
+    assert.equal((await post(signed)).status,path.startsWith("/api/voice/") ? 400 : 200);
   }
   console.log("PASS: durable save/readback, idempotency, failed notification retention/retry, notification dedupe, rate limiting, optional consent, input/origin/size guards, fail-closed storage, admin auth and signed/unsigned Twilio callbacks. Provider and storage fixtures only; no SMS sent.");
 }

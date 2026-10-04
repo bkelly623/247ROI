@@ -22,11 +22,11 @@ const BUCKET = "website-inquiries";
 const digest = (s: string) => createHash("sha256").update(s).digest("hex");
 
 /** Private storage is the durable record/outbox, never a public analytics event. */
-export function inquiryStore() {
+export function inquiryStore(deadline = Infinity) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = getServiceRoleKey();
   if (!url || !key || key === "[SENSITIVE]") throw new Error("inquiry_storage_unconfigured");
-  const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(8000) }) } });
+  const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(Math.max(1, Math.min(8000, deadline - Date.now()))) }) } });
   return {
     async ensure() {
       let result = await db.storage.getBucket(BUCKET);
