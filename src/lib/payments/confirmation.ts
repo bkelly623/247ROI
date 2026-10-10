@@ -1,4 +1,4 @@
-import { browserBindingMatches, issueOnboardingCapability } from "@/lib/payments/capability";
+
 import type { StripeConfig } from "@/lib/payments/config";
 import { PAYMENT_SUPPORT_EMAIL } from "@/lib/payments/constants";
 import type { PaymentLedger } from "@/lib/payments/ledger";
@@ -61,16 +61,6 @@ function view(config: StripeConfig, status: PublicConfirmation["status"], messag
   return { status, mode: config.mode, testPayment, message: `${prefix}${message}`, onboardingPath, poll };
 }
 
-function onboardingPath(config: StripeConfig, sessionId: string, now?: number) {
-  const token = issueOnboardingCapability({
-    secret: config.capabilitySecret,
-    mode: config.mode,
-    accountId: config.expectedAccountId,
-    sessionId,
-    now,
-  });
-  return `/payment/onboarding?token=${encodeURIComponent(token)}`;
-}
 
 export async function buildConfirmation(input: {
   sessionId: string | null | undefined;
@@ -103,7 +93,7 @@ export async function buildConfirmation(input: {
     remoteError = true;
   }
 
-  const fromLedger = ledgerView(input.config, sessionId, ledger, input.cookieNonce ?? null, input.now);
+  const fromLedger = ledgerView(input.config, ledger);
   if (fromLedger) return fromLedger;
   if (!remote) {
     return view(input.config, "processing", remoteError ? "We couldn't reach the payment processor. Refresh shortly." : "Your payment is processing. This page will update automatically.", true);
@@ -128,10 +118,10 @@ export async function buildConfirmation(input: {
   return view(input.config, "pending", "This payment is not complete yet.", true);
 }
 
-function ledgerView(config: StripeConfig, sessionId: string, ledger: FulfillmentState | null, cookieNonce: string | null, now?: number): PublicConfirmation | null {
+function ledgerView(config: StripeConfig, ledger: FulfillmentState | null): PublicConfirmation | null {
   if (!ledger) return null;
   if (ledger.fullRefund || ledger.status === "refunded") {
-    return view(config, "refunded", "This payment was refunded. Onboarding is not available for a refunded charge.", false);
+    return view(config, "refunded", "This payment was refunded.", false);
   }
   if (ledger.status === "failed") return view(config, "failed", "The payment failed and nothing was activated.", false);
   if (ledger.status === "expired") return view(config, "expired", "This checkout session has expired.", false);
@@ -139,13 +129,10 @@ function ledgerView(config: StripeConfig, sessionId: string, ledger: Fulfillment
     return view(config, "unrecognized", `This payment isn't linked to a 247ROI implementation checkout. Contact ${PAYMENT_SUPPORT_EMAIL}.`, false);
   }
   if ((ledger.status === "paid" || ledger.status === "partially_refunded") && ledger.recognized && ledger.fulfilledAt) {
-    const owned = browserBindingMatches(config.mode, config.expectedAccountId, cookieNonce, ledger.browserBinding, config.capabilitySecret);
-    const message = owned
-      ? (ledger.status === "partially_refunded"
-        ? "A partial refund was recorded. You can continue to implementation onboarding."
-        : "Payment received. Continue to implementation onboarding.")
-      : `Payment received. Continue in the same browser you used to pay. Another device cannot open onboarding from this link. Email ${PAYMENT_SUPPORT_EMAIL} for help. This page does not send an email sign-in code.`;
-    return view(config, ledger.status, message, false, owned ? onboardingPath(config, sessionId, now) : null);
+    const message = ledger.status === "partially_refunded"
+      ? "A partial refund was recorded. No further action is required."
+      : "Payment received. No further action is required.";
+    return view(config, ledger.status, message, false);
   }
   if (ledger.status === "processing" || ledger.status === "pending") return null;
   return null;

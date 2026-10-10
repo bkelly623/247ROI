@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import Stripe from "stripe";
-import { browserBinding, browserBindingMatches, browserNonceFromCookie, checkoutCookieValue, issueBrowserCredential, readBrowserCredential, readOnboardingCapability, signCheckoutIntent } from "../src/lib/payments/capability";
+import { browserBinding, browserBindingMatches, browserNonceFromCookie, checkoutCookieValue, issueBrowserCredential, issueOnboardingCapability, readBrowserCredential, readOnboardingCapability, signCheckoutIntent } from "../src/lib/payments/capability";
 import { startConfiguredCheckout } from "../src/lib/payments/checkout";
 import { drainPaymentNotifications } from "../src/lib/payments/outbox";
 import { buildConfirmation } from "../src/lib/payments/confirmation";
@@ -310,7 +310,7 @@ async function main() {
   const leaked = await buildConfirmation({ sessionId: SESSION, config: cfg, ledger: paidLedger, retrieve: async () => checkout(), now: 1_700_000_000 });
   assert.equal(leaked.status, "paid");
   assert.equal(leaked.onboardingPath, null);
-  assert.match(leaked.message, /same browser/);
+  assert.match(leaked.message, /Payment received\. No further action is required\./);
   const wrongCookie = await buildConfirmation({ sessionId: SESSION, config: cfg, ledger: paidLedger, cookieNonce: Buffer.alloc(32, 9).toString("base64url"), retrieve: async () => checkout(), now: 1_700_000_000 });
   assert.equal(wrongCookie.onboardingPath, null);
   const flipped = `${BINDING.slice(0, 63)}${BINDING.endsWith("0") ? "1" : "0"}`;
@@ -322,7 +322,9 @@ async function main() {
   assert.match(paidView.message, /^Test payment\./);
   assert.equal(JSON.stringify(paidView).includes(EMAIL), false);
   assert.equal(JSON.stringify(paidView).includes(CUSTOMER), false);
-  const token = new URL(`https://www.get247roi.com${paidView.onboardingPath ?? ""}`).searchParams.get("token") ?? "";
+  assert.equal(paidView.onboardingPath, null);
+  assert.match(paidView.message, /Payment received\. No further action is required\./);
+  const token = issueOnboardingCapability({ secret: CAPABILITY, mode: cfg.mode, accountId: cfg.expectedAccountId, sessionId: SESSION, now: 1_700_000_000 });
   const decoded = readOnboardingCapability(token, CAPABILITY, 1_700_000_000);
   assert.equal(JSON.stringify(decoded).includes(EMAIL), false);
   assert.equal(decoded.sessionId, SESSION);
@@ -435,6 +437,13 @@ async function main() {
   const confirmationRoute = readFileSync("src/app/api/stripe/confirmation/route.ts", "utf8");
   assert.doesNotMatch(confirmationRoute, /searchParams\.get\("paid"\)/);
   assert.doesNotMatch(confirmationRoute, /createMemoryLedger/);
+  const confirmationUi = readFileSync("src/app/payment/confirmation/ConfirmationStatus.tsx", "utf8");
+  assert.doesNotMatch(confirmationUi, /Continue to implementation onboarding|href=\{view.onboardingPath\}|<form/);
+  assert.match(confirmationUi, /mailto:brendan@get247roi.com/);
+  const retiredPage = readFileSync("src/app/payment/onboarding/page.tsx", "utf8");
+  assert.match(retiredPage, /redirect\("\/payment\/confirmation"\)/);
+  assert.doesNotMatch(retiredPage, /OnboardingForm|<form|searchParams/);
+  assert.match(readFileSync("src/app/payment/confirmation/page.tsx", "utf8"), /This page does not confirm payment status/);
   assert.doesNotMatch(readFileSync("src/app/layout.tsx", "utf8"), /lib\/payments/);
   assert.doesNotMatch(readFileSync("src/app/onboarding/page.tsx", "utf8"), /stripe/i);
   assert.match(readFileSync("supabase/migrations/018_payments_ledger.sql", "utf8"), /payments-account\|/);

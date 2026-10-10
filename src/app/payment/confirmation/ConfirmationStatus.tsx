@@ -68,7 +68,7 @@ export default function ConfirmationStatus({ sessionId }: { sessionId: string })
         {view?.testPayment ? <p className="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-[15px] text-amber-950">Test payment. This is not a live charge.</p> : null}
         <p className="text-[18px] text-gray-700 tracking-tight leading-relaxed">{view?.message ?? (stopped || "Checking this payment…")}</p>
         {stopped && view ? <p className="mt-4 text-[16px] text-gray-600">{stopped}</p> : null}
-        {view?.onboardingPath ? <a className="mt-8 inline-block text-[17px] font-medium text-emerald-700 underline" href={view.onboardingPath}>Continue to implementation onboarding</a> : null}
+        <p className="mt-8 text-[16px] text-gray-600">Questions? <a className="text-emerald-700 underline" href="mailto:brendan@get247roi.com">Email brendan@get247roi.com</a>.</p>
       </div>
     </main>
   );
