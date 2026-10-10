@@ -13,15 +13,15 @@ export default function PrivacyPolicyPage() {
         </h1>
 
         <div className="space-y-8 text-gray-700 text-[18px] leading-relaxed tracking-tight">
-          <p>Brendan Kelly, doing business as 247ROI</p>
-          <p>Effective Date: Jan 1st, 2026</p>
+          <p>247ROI LLC</p>
+          <p>LLC service-message disclosure, version 1. Applies upon publication.</p>
 
           <div>
             <p className="font-semibold text-gray-900 uppercase tracking-tight text-[15px]">
               IMPORTANT NOTICE REGARDING TEXT MESSAGING DATA
             </p>
             <p className="mt-4">
-              Brendan Kelly, doing business as 247ROI (&quot;we,&quot; &quot;us,&quot; or
+              247ROI LLC (&quot;we,&quot; &quot;us,&quot; or
               &quot;our&quot;) DOES NOT share customer opt-in information, including phone numbers
               and consent records, with any affiliates or third parties for marketing, promotional,
               or any other purposes unrelated to providing our direct services. All text messaging
@@ -78,14 +78,13 @@ export default function PrivacyPolicyPage() {
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">3. SMS Messaging &amp; Compliance</h2>
             <p className="mb-4">
-              By opting into our SMS messaging services, you agree to receive text messages related
-              to our services, including audit follow-up, service updates, and support communications.
+              The optional service SMS consent covers inquiries and follow-up, consented missed-call replies, appointments, and service updates from 247ROI LLC. A separate optional checkbox covers review requests related to services you receive. Each permission is recorded independently and both start unchecked. Messages may be automated; both scopes exclude promotional marketing. Consent is not required to submit or purchase. Calling us alone does not provide SMS consent. This describes the permitted scope, not a promise that every automation is currently available.
             </p>
             <div className="space-y-4">
               <div>
                 <p className="font-medium text-gray-900">Opt-In &amp; Consent:</p>
                 <ul className="mt-2 space-y-1 list-disc pl-6">
-                  <li>Messages are only sent after explicit opt-in</li>
+                  <li>Explicit opt-in is required for this service-message program</li>
                   <li>Consent is collected via website/contact forms</li>
                   <li>Records of consent are maintained</li>
                 </ul>
@@ -93,9 +92,9 @@ export default function PrivacyPolicyPage() {
               <div>
                 <p className="font-medium text-gray-900">Opt-Out:</p>
                 <ul className="mt-2 space-y-1 list-disc pl-6">
-                  <li>Reply STOP to unsubscribe</li>
-                  <li>Confirmation message will be sent</li>
-                  <li>No further messages will be sent unless re-opted in</li>
+                  <li>Reply STOP to unsubscribe. Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.</li>
+                  <li>Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.</li>
+                  <li>Submitting another form or replying START does not automatically restart this program. Contact support to request re-enrollment; messaging remains blocked until a reviewed process verifies new consent and resolves both provider and application restrictions.</li>
                 </ul>
               </div>
               <div>
@@ -110,10 +109,10 @@ export default function PrivacyPolicyPage() {
                   <li>
                     Reply HELP or contact{" "}
                     <a
-                      href="mailto:contact@247roi.com"
+                      href="mailto:brendan@get247roi.com"
                       className="underline underline-offset-2 hover:text-gray-900"
                     >
-                      contact@247roi.com
+                      brendan@get247roi.com
                     </a>
                   </li>
                 </ul>
@@ -188,10 +187,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-4">
               Contact:{" "}
               <a
-                href="mailto:contact@247roi.com"
+                href="mailto:brendan@get247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                contact@247roi.com
+                brendan@get247roi.com
               </a>
             </p>
           </div>
@@ -214,7 +213,7 @@ export default function PrivacyPolicyPage() {
 
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">10. Contact</h2>
-            <p>Brendan Kelly, doing business as 247ROI</p>
+            <p>247ROI LLC</p>
             <p className="mt-2">
               Phone:{" "}
               <a href={PRIMARY_PHONE_HREF} className="underline underline-offset-2 hover:text-gray-900">
@@ -224,10 +223,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2">
               Email:{" "}
               <a
-                href="mailto:contact@247roi.com"
+                href="mailto:brendan@get247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                contact@247roi.com
+                brendan@get247roi.com
               </a>
             </p>
             <p className="mt-2">

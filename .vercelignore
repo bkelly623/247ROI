@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env*
+TASK.md
+REVIEW-FIXES.md
+URGENT-FLOWS.md
+INTAKE-REVIEW-FIX.md
+IMPLEMENTATION-REPORT.md
+DEMO-FOLLOWUP-DELIVERY.md
+DEMO-FOLLOWUP-FIXES.md
+.hermes-cursor-worker.lock

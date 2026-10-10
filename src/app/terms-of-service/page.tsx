@@ -13,8 +13,8 @@ export default function TermsOfServicePage() {
         </h1>
 
         <div className="space-y-8 text-gray-700 text-[18px] leading-relaxed tracking-tight">
-          <p>Brendan Kelly, doing business as 247ROI</p>
-          <p>Effective Date: Jan 1st, 2026</p>
+          <p>247ROI LLC</p>
+          <p>LLC service-message disclosure, version 1. Applies upon publication.</p>
 
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">SMS Messaging Terms &amp; Compliance</h2>
@@ -23,8 +23,7 @@ export default function TermsOfServicePage() {
               <div>
                 <p className="font-medium text-gray-900">1. Program Description:</p>
                 <p className="mt-2">
-                  This messaging program sends automated text replies and follow-up messages to
-                  prospects and customers who contact Brendan Kelly, doing business as 247ROI,
+                  This service-message program is intended for prospects and customers who contact 247ROI LLC,
                   through our website at{" "}
                   <a
                     href="https://www.get247roi.com"
@@ -33,38 +32,41 @@ export default function TermsOfServicePage() {
                     https://www.get247roi.com
                   </a>
                   {" "}and opt in to receive SMS notifications through a dedicated checkbox for SMS
-                  consent on our contact form. Messages may include audit follow-up, service
-                  updates, reminders, and customer support communications.
+                  consent on our contact or consent form. The service scope includes inquiries and follow-up, consented missed-call replies, appointments, and service updates. A separate optional checkbox covers review requests related to services you receive; each permission is recorded independently and both start unchecked. Messages may be automated. This does not include promotional marketing. Consent is not required to submit or purchase. Calling us alone does not provide SMS consent. This is a description of permitted message types, not a promise that every automation is currently available.
                 </p>
               </div>
 
               <div>
                 <p className="font-medium text-gray-900">2. Cancellation Instructions:</p>
                 <p className="mt-2">
-                  You can cancel the SMS service at any time. Simply text &quot;STOP&quot; to the
-                  same number that sent you messages. Upon sending &quot;STOP,&quot; we will
-                  confirm your unsubscribe status via SMS. Following this confirmation, you will no
-                  longer receive SMS messages from us. To rejoin, sign up as you did initially, and
-                  we will resume sending SMS messages to you.
+                  <strong>You can cancel the SMS service at any time. Reply &quot;STOP&quot; to the
+                  number that sent you messages, or clearly tell us you no longer want texts.
+                  Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.
+                  Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.
+                  Submitting another form or
+                  replying &quot;START&quot; does not automatically restart this program.
+                  To request re-enrollment, contact our support team. Messaging remains blocked
+                  until a reviewed process verifies new consent and both provider and application
+                  restrictions have been resolved; re-enrollment is not guaranteed.</strong>
                 </p>
               </div>
 
               <div>
                 <p className="font-medium text-gray-900">3. Support Information:</p>
                 <p className="mt-2">
-                  If you experience issues with the messaging program, reply with the keyword
+                  <strong>If you experience issues with the messaging program, reply with the keyword
                   &quot;HELP&quot; for more assistance, or reach out directly to{" "}
                   <a
-                    href="mailto:contact@247roi.com"
+                    href="mailto:brendan@get247roi.com"
                     className="underline underline-offset-2 hover:text-gray-900"
                   >
-                    contact@247roi.com
+                    brendan@get247roi.com
                   </a>{" "}
                   or call{" "}
                   <a href={PRIMARY_PHONE_HREF} className="underline underline-offset-2 hover:text-gray-900">
                     {PRIMARY_PHONE_DISPLAY}
                   </a>{" "}
-                  during business hours.
+                  during business hours.</strong>
                 </p>
               </div>
 
@@ -111,8 +113,7 @@ export default function TermsOfServicePage() {
             </div>
 
             <p className="mt-6">
-              We comply with all applicable laws and regulations, including the Telephone Consumer
-              Protection Act (TCPA) and CTIA guidelines, regarding the use of SMS communications.
+              SMS program operation is subject to applicable consent requirements and carrier approval. This disclosure is not a certification of registration approval.
             </p>
           </div>
 
@@ -121,8 +122,7 @@ export default function TermsOfServicePage() {
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">General Terms</h2>
             <p>
-              This website (the &quot;Site&quot;) is owned and operated by Brendan Kelly, doing
-              business as 247ROI (&quot;COMPANY,&quot; &quot;we&quot; or &quot;us&quot;). By using
+              This website (the &quot;Site&quot;) is owned and operated by 247ROI LLC (&quot;COMPANY,&quot; &quot;we&quot; or &quot;us&quot;). By using
               the Site, you agree to be bound by these Terms of Service and to use the Site in
               accordance with these Terms of Service, our Privacy Policy, and any additional terms
               and conditions that may apply.
@@ -133,8 +133,7 @@ export default function TermsOfServicePage() {
               <div>
                 <p className="font-medium text-gray-900">Intellectual Property Rights:</p>
                 <p className="mt-1">
-                  All materials on this Site are owned by Brendan Kelly, doing business as
-                  247ROI.
+                  All materials on this Site are owned by 247ROI LLC.
                 </p>
               </div>
               <div>
@@ -154,7 +153,7 @@ export default function TermsOfServicePage() {
 
           <div>
             <p className="font-medium text-gray-900">Contact Information:</p>
-            <p className="mt-2">Brendan Kelly, doing business as 247ROI</p>
+            <p className="mt-2">247ROI LLC</p>
             <p className="mt-2">
               Phone:{" "}
               <a href={PRIMARY_PHONE_HREF} className="underline underline-offset-2 hover:text-gray-900">
@@ -164,10 +163,10 @@ export default function TermsOfServicePage() {
             <p className="mt-2">
               Email:{" "}
               <a
-                href="mailto:contact@247roi.com"
+                href="mailto:brendan@get247roi.com"
                 className="underline underline-offset-2 hover:text-gray-900"
               >
-                contact@247roi.com
+                brendan@get247roi.com
               </a>
             </p>
             <p className="mt-2">

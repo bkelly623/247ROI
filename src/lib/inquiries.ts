@@ -2,6 +2,8 @@ import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { getServiceRoleKey } from "@/lib/audit/supabase/server";
 import { z } from "zod";
+import { SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, SMS_BRAND, SMS_SUBJECTS, REVIEW_CONSENT_TEXT, REVIEW_CONSENT_VERSION, REVIEW_SUBJECTS } from "@/lib/sms-consent";
+import { consentPhone, indexSmsPermission } from "@/lib/sms-permission";
 
 export const inquirySchema = z.object({
   submissionId: z.string().uuid(),
@@ -10,13 +12,17 @@ export const inquirySchema = z.object({
   email: z.union([z.string().trim().email().max(254), z.literal("")]).optional(),
   message: z.string().trim().min(5).max(1800),
   smsConsent: z.boolean(),
+  // Omission means the original inquiry-only disclosure, never the expanded scope.
+  consentVersion: z.enum(["contact-2026-10", SMS_CONSENT_VERSION]).optional(),
+  reviewConsent: z.boolean().optional(),
+  reviewConsentVersion: z.literal(REVIEW_CONSENT_VERSION).optional(),
   topic: z.enum(["missed-call-text-back", "ai-receptionist", "lead-capture", "custom-software", "workflow-automation", "dashboard", "unsure"]).default("unsure"),
   source: z.string().max(200).default("/contact"),
   campaign: z.string().max(200).default(""),
   website: z.string().max(200).optional(),
-});
+}).refine(v => v.reviewConsent !== true || v.reviewConsentVersion === REVIEW_CONSENT_VERSION, { message: "Review consent requires the separate disclosure version.", path: ["reviewConsentVersion"] });
 export type InquiryInput = z.infer<typeof inquirySchema>;
-export type SavedInquiry = Omit<InquiryInput, "website"> & { receivedAt: string; fingerprint: string; ipHash: string; consentVersion: "contact-2026-10" };
+export type SavedInquiry = Omit<InquiryInput, "website"> & { receivedAt: string; fingerprint: string; ipHash: string; consentVersion: "contact-2026-10" | typeof SMS_CONSENT_VERSION; consentText?: string; consentBrand?: string; consentPhone?: string | null; consentSubjects?: readonly string[]; reviewConsentText?: string; reviewConsentSubjects?: readonly string[]; reviewConsentBrand?: string; reviewConsentPhone?: string | null };
 type Receipt = { notifiedAt: string; messageId: number; channel: "telegram" };
 const BUCKET = "website-inquiries";
 const digest = (s: string) => createHash("sha256").update(s).digest("hex");
@@ -76,6 +82,7 @@ export async function saveInquiry(input: InquiryInput, ip: string, store: Inquir
   const existing = await store.get<SavedInquiry>(key);
   if (existing) {
     if (existing.fingerprint !== fingerprint) throw new Error("idempotency_conflict");
+    await indexSmsPermission(existing, store);
     return existing;
   }
   const ipHash = digest(`${process.env.CONTACT_ADMIN_SECRET || "inquiry"}:${ip}`);
@@ -86,15 +93,20 @@ export async function saveInquiry(input: InquiryInput, ip: string, store: Inquir
     if (await store.put(`limits/${ipHash}-${hour}-${slot}.json`, { at: new Date().toISOString() })) { allowed = true; break; }
   }
   if (!allowed) throw new Error("rate_limited");
-  const saved: SavedInquiry = { ...payload, receivedAt: new Date().toISOString(), fingerprint, ipHash, consentVersion: "contact-2026-10" };
+  const saved: SavedInquiry = { ...payload, reviewConsent: input.reviewConsent === true, receivedAt: new Date().toISOString(), fingerprint, ipHash, consentVersion: input.consentVersion ?? "contact-2026-10", ...(input.consentVersion === SMS_CONSENT_VERSION ? { consentText: SMS_CONSENT_TEXT, consentBrand: SMS_BRAND, consentSubjects: SMS_SUBJECTS, consentPhone: consentPhone(input.phone) } : {}), ...(input.reviewConsentVersion === REVIEW_CONSENT_VERSION ? { reviewConsentText: REVIEW_CONSENT_TEXT, reviewConsentSubjects: REVIEW_SUBJECTS, reviewConsentBrand: SMS_BRAND, reviewConsentPhone: consentPhone(input.phone) } : {}) };
+  // Publish the reference first: an interrupted submission is unknown/denied,
+  // never permission to reuse an older opt-in while a decline is being saved.
+  await indexSmsPermission(saved, store);
   if (!await store.put(key, saved)) {
     const concurrent = await store.get<SavedInquiry>(key);
     if (!concurrent || concurrent.fingerprint !== fingerprint) throw new Error("idempotency_conflict");
+    await indexSmsPermission(concurrent, store);
     return concurrent;
   }
   // Read the exact durable record before acknowledging receipt to the visitor.
   const verified = await store.get<SavedInquiry>(key);
   if (!verified || verified.fingerprint !== fingerprint) throw new Error("inquiry_verification_failed");
+  await indexSmsPermission(verified, store);
   return verified;
 }
 

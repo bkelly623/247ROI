@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { inquiryStore, type InquiryStore } from "@/lib/inquiries";
 import { handleVoiceEvent, type VoiceEvent } from "@/lib/missed-calls";
+import { retryDemoFollowupJobs, type DemoDeps } from "@/lib/demo-followup-delivery";
 
 export async function queueVoiceEvent(event: VoiceEvent, store: InquiryStore) {
   await store.ensure();
@@ -52,16 +53,22 @@ export async function processVoiceJobAfterResponse(id: string, store = inquirySt
   if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
   await processVoiceJob(id, store, handle);
 }
-export async function retryVoiceJobs() {
-  const store = inquiryStore(Date.now() + 45000);
+export async function retryVoiceJobs(store = inquiryStore(Date.now() + 45000), deps?: DemoDeps) {
   await store.ensure();
   const deadline = Date.now() + 35000;
   let processed = 0, pending = 0, scheduled = 0;
   const jobs = await store.list("voice-jobs");
-  for (const job of jobs.slice(0, 20)) {
-    if (Date.now() > deadline) return { processed, pending, scheduled, hasMore: true };
-    try { if (await processVoiceJob(job.name.replace(/\.json$/, ""), store) === "scheduled") scheduled++; else processed++; }
+  let index = 0;
+  for (; index < Math.min(jobs.length, 20); index++) {
+    if (Date.now() > deadline) break;
+    try { if (await processVoiceJob(jobs[index].name.replace(/\.json$/, ""), store) === "scheduled") scheduled++; else processed++; }
     catch { pending++; }
   }
-  return { processed, pending, scheduled, hasMore: jobs.length > 20 };
+  const voiceHasMore = index < jobs.length;
+  let demoFollowup = { processed: 0, pending: 0, hasMore: false };
+  if (Date.now() <= deadline) {
+    try { demoFollowup = await retryDemoFollowupJobs(store, deadline, deps); }
+    catch { demoFollowup = { processed: 0, pending: 1, hasMore: true }; }
+  } else demoFollowup = { processed: 0, pending: 0, hasMore: true };
+  return { processed, pending, scheduled, hasMore: voiceHasMore || demoFollowup.hasMore, demoFollowup };
 }

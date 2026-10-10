@@ -1,40 +1,18 @@
-import Script from "next/script";
+import { ContactForm } from "@/components/contact/ContactForm";
 
 export const metadata = {
-  title: "Consent | 247ROI",
-  description: "SMS and service consent form for 247ROI.",
+  title: "SMS Consent | 247ROI LLC",
+  description: "Optional SMS consent and service inquiries for 247ROI LLC.",
 };
 
 export default function ConsentPage() {
   return (
-    <main className="min-h-screen bg-white px-6 py-24">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-[32px] lg:text-[40px] font-semibold text-gray-900 tracking-tight leading-tight mb-8 text-center">
-          Consent
-        </h1>
-
-        <div className="rounded-xl border border-gray-200 bg-gray-50/50 overflow-hidden shadow-sm">
-          <iframe
-            src="https://api.leadconnectorhq.com/widget/form/SzaVYAYj1ztvwK1cfw8h"
-            className="block w-full min-h-[773px] border-0 rounded-[3px]"
-            id="inline-SzaVYAYj1ztvwK1cfw8h"
-            data-layout="{'id':'INLINE'}"
-            data-trigger-type="alwaysShow"
-            data-trigger-value=""
-            data-activation-type="alwaysActivated"
-            data-activation-value=""
-            data-deactivation-type="neverDeactivate"
-            data-deactivation-value=""
-            data-form-name="Consent"
-            data-height="773"
-            data-layout-iframe-id="inline-SzaVYAYj1ztvwK1cfw8h"
-            data-form-id="SzaVYAYj1ztvwK1cfw8h"
-            title="Consent"
-          />
-        </div>
+    <main className="min-h-screen bg-background px-6 py-24 text-foreground">
+      <div className="mx-auto max-w-2xl space-y-8">
+        <h1 className="font-display text-4xl font-semibold">247ROI LLC SMS consent</h1>
+        <p className="leading-relaxed text-muted-foreground">Use this form to contact us and, if you choose, opt in to service-related texts. Service messages and service-related review requests have separate optional checkboxes; both start unchecked. Calling us alone does not provide SMS consent. The listed message types describe the scope of your permission, not a promise that every automation is currently available.</p>
+        <ContactForm source="consent" />
       </div>
-
-      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
     </main>
   );
 }

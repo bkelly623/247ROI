@@ -1,6 +1,7 @@
 "use client";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, REVIEW_CONSENT_TEXT, REVIEW_CONSENT_VERSION } from "@/lib/sms-consent";
 import { getInquiryAttribution, trackSiteEvent } from "@/lib/analytics/client";
 
 const field = "min-h-12 w-full rounded-lg border border-white/20 bg-background/60 p-3 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30";
@@ -8,9 +9,10 @@ const topics = [
   ["unsure", "Not sure yet"], ["missed-call-text-back", "Missed-call text back"], ["ai-receptionist", "AI receptionist"], ["lead-capture", "Lead capture & follow-up"],
   ["custom-software", "Custom software & AI"], ["workflow-automation", "Workflow automation"], ["dashboard", "Custom dashboard"],
 ];
-export function ContactForm() {
+export function ContactForm({ source = "contact" }: { source?: "contact" | "consent" } = {}) {
   const [name, setName] = useState(""); const [phone, setPhone] = useState(""); const [email, setEmail] = useState("");
   const [message, setMessage] = useState(""); const [topic, setTopic] = useState("unsure"); const [smsConsent, setSmsConsent] = useState(false);
+  const [reviewConsent, setReviewConsent] = useState(false);
   const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [reference, setReference] = useState("");
   const submissionId = useRef("");
   useEffect(() => {
@@ -28,8 +30,8 @@ export function ContactForm() {
     try {
       const response = await fetch("/api/contact", {
         method: "POST", headers: { "Content-Type": "application/json" }, signal: AbortSignal.timeout(55000),
-        body: JSON.stringify({ submissionId: submissionId.current, name: name.trim(), phone: phone.trim(), email: email.trim(), message: message.trim(), topic, smsConsent,
-          website: new FormData(form).get("website") || "", source: [params.get("source") || "contact", attribution.source].filter(Boolean).join(" | ").slice(0, 200),
+        body: JSON.stringify({ submissionId: submissionId.current, name: name.trim(), phone: phone.trim(), email: email.trim(), message: message.trim(), topic, smsConsent, consentVersion: SMS_CONSENT_VERSION, reviewConsent, reviewConsentVersion: REVIEW_CONSENT_VERSION,
+          website: new FormData(form).get("website") || "", source: [params.get("source") || source, attribution.source].filter(Boolean).join(" | ").slice(0, 200),
           campaign: (attribution.campaign || [params.get("utm_source"), params.get("utm_medium"), params.get("utm_campaign")].filter(Boolean).join(" / ")).slice(0, 200) }),
       });
       const data = await response.json().catch(() => ({}));
@@ -53,7 +55,8 @@ export function ContactForm() {
     <div><label htmlFor="contact-phone" className="mb-1 block text-sm font-medium">Phone number</label><input id="contact-phone" name="phone" type="tel" autoComplete="tel" className={field} value={phone} onChange={e => setPhone(e.target.value)} maxLength={30} required /></div>
     <div><label htmlFor="contact-email" className="mb-1 block text-sm font-medium">Email <span className="text-muted-foreground">(optional)</span></label><input id="contact-email" name="email" type="email" autoComplete="email" className={field} value={email} onChange={e => setEmail(e.target.value)} maxLength={254} /></div>
     <div><label htmlFor="contact-message" className="mb-1 block text-sm font-medium">What would you like to improve?</label><textarea id="contact-message" name="message" className={`${field} min-h-28 resize-y`} value={message} onChange={e => setMessage(e.target.value)} minLength={5} maxLength={1800} placeholder="Missed calls, slow follow-up, repeated admin work, scattered data…" required /></div>
-    <label htmlFor="contact-sms-consent" className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"><input id="contact-sms-consent" type="checkbox" className="mt-1 h-4 w-4 shrink-0" checked={smsConsent} onChange={e => setSmsConsent(e.target.checked)} /><span>(Optional) I agree to receive SMS from 247ROI about my inquiry and follow-up (approx. 2–4 messages). Consent is not required to submit or purchase. Message frequency varies; message and data rates may apply. Reply STOP to cancel, HELP for help. <Link href="/terms-of-service" className="underline">Terms</Link> · <Link href="/privacy-policy" className="underline">Privacy</Link>.</span></label>
+    <label htmlFor="contact-sms-consent" className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"><input id="contact-sms-consent" type="checkbox" className="mt-1 h-4 w-4 shrink-0" checked={smsConsent} onChange={e => setSmsConsent(e.target.checked)} /><span>{SMS_CONSENT_TEXT} <Link href="/terms-of-service" className="underline">Terms</Link> · <Link href="/privacy-policy" className="underline">Privacy</Link>.</span></label>
+    <label htmlFor="contact-review-consent" className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"><input id="contact-review-consent" type="checkbox" className="mt-1 h-4 w-4 shrink-0" checked={reviewConsent} onChange={e => setReviewConsent(e.target.checked)} /><span>{REVIEW_CONSENT_TEXT} <Link href="/terms-of-service" className="underline">Terms</Link> · <Link href="/privacy-policy" className="underline">Privacy</Link>.</span></label>
     {error && <p role="alert" className="text-sm font-medium text-red-300">{error}</p>}
     <button type="submit" disabled={busy} className="min-h-12 w-full rounded-full bg-orange-700 px-6 py-3 font-semibold text-primary-foreground hover:bg-orange-800 disabled:opacity-50">{busy ? "Saving your message…" : "Send message"}</button>
   </form>;

@@ -8,7 +8,7 @@ export const MISSED_CALL_DELAY_MS = 10000;
 export const isCallSid = (s: string) => /^CA[0-9a-f]{32}$/i.test(s);
 const phone = (s: string) => /^\+[1-9]\d{7,14}$/.test(s);
 export type VoiceCall = { sid: string; caller: string; startedAt: number };
-export type VoiceEvent = { kind: "child" | "amd" | "dial" | "parent"; parent: string; status: string; answeredBy: string; timestamp: number };
+export type VoiceEvent = { kind: "child" | "amd" | "dial" | "parent" | "sip"; parent: string; status: string; answeredBy: string; timestamp: number; providerDuration?: number };
 type End = { status: string; at: number };
 type SmsResult = { ok: boolean; sid?: string; code?: number; uncertain?: boolean };
 type Dependencies = { store: InquiryStore; send: (to: string) => Promise<SmsResult>; lookup: (sid: string) => Promise<VoiceCall | null>; now?: () => number; delayMs?: number };
@@ -60,6 +60,13 @@ export async function handleVoiceEvent(event: VoiceEvent, deps: Dependencies = {
   const { store } = deps, id = event.parent;
   if (!isCallSid(id) || !Number.isFinite(event.timestamp)) throw new Error("invalid_voice_event");
   await store.ensure();
+  if (event.kind === "sip" || event.kind === "parent" || event.kind === "dial") {
+    const route = await store.get<{ route?: string }>(`voice-route/${id}.json`);
+    if (event.kind === "sip" || route?.route === "receptionist") {
+      const { handleReceptionistVoiceEvent } = await import("@/lib/voice-receptionist");
+      return handleReceptionistVoiceEvent(event, deps);
+    }
+  }
   let call = await store.get<VoiceCall>(`voice-calls/${id}.json`);
   if (!call) {
     call = await deps.lookup(id);
