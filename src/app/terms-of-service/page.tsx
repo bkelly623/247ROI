@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-export const metadata = {
+export const metadata: Metadata = {
   title: "Terms of Service | 247ROI",
   description: "Terms of Service for 247ROI.",
+  alternates: { canonical: "/terms-of-service" },
 };
 
 export default function TermsOfServicePage() {

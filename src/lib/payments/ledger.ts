@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
+import { validateBillingSnapshot, type BillingApplyResult, type BillingInvoice, type BillingSnapshot } from "./recurring";
 import { createServiceClient } from "@/lib/audit/supabase/server";
 import type { StripeMode } from "@/lib/payments/config";
 import { assertIncomingIdentity, combineFulfillments, reduceFulfillment, type CheckoutAction, type FulfillmentState, type FulfillmentStatus, type RefundAction } from "@/lib/payments/state";
@@ -50,7 +51,13 @@ export type LedgerAction =
       payload: Record<string, unknown>;
     };
 
+export type BillingLeaseInput = { accountId: string; mode: StripeMode; subscriptionId: string; holder: string; leaseSeconds: number };
+export type BillingLeaseToken = { accountId: string; mode: StripeMode; subscriptionId: string; holder: string; fence: number };
+
 export type PaymentLedger = {
+  acquireBillingLease?: (input: BillingLeaseInput) => Promise<{ fence: number } | null>;
+  releaseBillingLease?: (input: BillingLeaseToken) => Promise<boolean>;
+  applyBilling?: (snapshot: BillingSnapshot) => Promise<BillingApplyResult>;
   apply(action: LedgerAction, nowIso?: string): Promise<ApplyResult>;
   getBySession(accountId: string, mode: StripeMode, sessionId: string): Promise<FulfillmentState | null>;
   saveOnboarding(record: OnboardingRecord): Promise<OnboardingRecord>;
@@ -75,11 +82,39 @@ export function onboardingDedupeKey(record: Pick<OnboardingRecord, "mode" | "ses
   return `onboarding:${record.mode}:${record.sessionId}:${hash}`;
 }
 
+function invoiceRank(status: string): number {
+  if (status === "paid") return 40;
+  if (status === "uncollectible" || status === "void") return 30;
+  return 10;
+}
+
+function mergeInvoice(stored: BillingInvoice | undefined, incoming: BillingInvoice): BillingInvoice {
+  if (!stored) return incoming;
+  const storedPrices = [...stored.priceIds].sort().join("\0");
+  const incomingPrices = [...incoming.priceIds].sort().join("\0");
+  if (storedPrices !== incomingPrices || stored.initial !== incoming.initial || stored.currency !== incoming.currency) throw new Error("payment_identity_conflict");
+  if (stored.paymentIntentId && incoming.paymentIntentId && stored.paymentIntentId !== incoming.paymentIntentId) throw new Error("payment_identity_conflict");
+  const incomingRank = invoiceRank(incoming.status);
+  const storedRank = invoiceRank(stored.status);
+  const keepStored = incomingRank < storedRank || (incomingRank === storedRank && incoming.status !== stored.status);
+  return {
+    ...incoming,
+    status: keepStored ? stored.status : incoming.status,
+    paymentIntentId: stored.paymentIntentId ?? incoming.paymentIntentId,
+    amountPaid: keepStored ? stored.amountPaid : incoming.amountPaid,
+    amountDue: keepStored ? stored.amountDue : incoming.amountDue,
+  };
+}
+
 /** In-memory ledger for deterministic tests. Production routes must not call this or fall back to it. */
 export function createMemoryLedger(): PaymentLedger {
   const events = new Map<string, ApplyResult>();
+  const billingEvents = new Map<string, BillingApplyResult>();
   const bySession = new Map<string, FulfillmentState>();
   const byIntent = new Map<string, FulfillmentState>();
+  const subscriptions = new Map<string, { customerId: string; sessionId: string; browserBinding: string; monthlyPriceId: string; setupPriceId: string | null; subscriptionStatus: string; cancelAtPeriodEnd: boolean; observedAt: string }>();
+  const readLeases = new Map<string, { fence: number; holder: string; until: number }>();
+  const billingInvoices = new Map<string, BillingInvoice>();
   const profiles = new Map<string, OnboardingRecord>();
   const outbox = new Map<string, OutboxRecord>();
   let tail: Promise<unknown> = Promise.resolve();
@@ -99,6 +134,110 @@ export function createMemoryLedger(): PaymentLedger {
   }
 
   return {
+    acquireBillingLease(input) {
+      return exclusive(() => {
+        if (!/^sub_[A-Za-z0-9]+$/.test(input.subscriptionId) || !/^[A-Za-z0-9]{16,80}$/.test(input.holder) || input.leaseSeconds < 5 || input.leaseSeconds > 60) throw new Error("billing_lease_invalid");
+        const key = `${input.accountId}|${input.mode}|${input.subscriptionId}`;
+        const current = readLeases.get(key);
+        const now = Date.now();
+        if (current && current.until > now) return null;
+        const fence = (current?.fence ?? 0) + 1;
+        readLeases.set(key, { fence, holder: input.holder, until: now + input.leaseSeconds * 1000 });
+        return { fence };
+      });
+    },
+    releaseBillingLease(input) {
+      return exclusive(() => {
+        const key = `${input.accountId}|${input.mode}|${input.subscriptionId}`;
+        const current = readLeases.get(key);
+        if (!current || current.fence !== input.fence || current.holder !== input.holder || current.until <= Date.now()) return false;
+        current.until = Date.now();
+        return true;
+      });
+    },
+    applyBilling(snapshot) {
+      return exclusive(() => {
+        validateBillingSnapshot(snapshot);
+        const key = eventKey(snapshot.account, snapshot.mode, snapshot.eventId);
+        const prior = billingEvents.get(key);
+        if (prior) return { ...prior, duplicate: true, fulfilledNow: false, serviceTerminated: false };
+        const leaseKey = `${snapshot.account}|${snapshot.mode}|${snapshot.subscriptionId}`;
+        const lease = readLeases.get(leaseKey);
+        if (!lease || lease.fence !== snapshot.fence || lease.holder !== snapshot.holder || lease.until <= Date.now()) throw new Error("billing_lease_lost");
+        const subKey = leaseKey;
+        const storedSub = subscriptions.get(subKey);
+        if (storedSub && (storedSub.customerId !== snapshot.customerId || storedSub.sessionId !== snapshot.sessionId || storedSub.browserBinding !== snapshot.browserBinding || storedSub.monthlyPriceId !== snapshot.monthlyPriceId || storedSub.setupPriceId !== snapshot.setupPriceId)) {
+          throw new Error("payment_identity_conflict");
+        }
+        const subscriptionStatus = snapshot.subscriptionStatus;
+        const cancelAtPeriodEnd = snapshot.cancelAtPeriodEnd;
+        subscriptions.set(subKey, {
+          customerId: snapshot.customerId,
+          sessionId: snapshot.sessionId,
+          browserBinding: snapshot.browserBinding,
+          monthlyPriceId: snapshot.monthlyPriceId,
+          setupPriceId: snapshot.setupPriceId,
+          subscriptionStatus,
+          cancelAtPeriodEnd,
+          observedAt: snapshot.observedAt,
+        });
+        for (const invoice of snapshot.invoices) {
+          const invoiceKey = `${snapshot.account}|${snapshot.mode}|${invoice.id}`;
+          billingInvoices.set(invoiceKey, mergeInvoice(billingInvoices.get(invoiceKey), invoice));
+        }
+        let status = "recorded";
+        let fulfilledNow = false;
+        let paymentIntentId: string | null = null;
+        const initial = snapshot.initialInvoiceId ? billingInvoices.get(`${snapshot.account}|${snapshot.mode}|${snapshot.initialInvoiceId}`) : undefined;
+        if (initial) {
+          const outcome = initial.status === "paid" ? "paid" : initial.status === "uncollectible" || initial.status === "void" ? "failed" : "unpaid";
+          const sessionState = bySession.get(`${snapshot.account}|${snapshot.mode}|${snapshot.sessionId}`) ?? null;
+          const intentState = initial.paymentIntentId ? byIntent.get(`${snapshot.account}|${snapshot.mode}|${initial.paymentIntentId}`) ?? null : null;
+          let current = sessionState ?? intentState;
+          const action: CheckoutAction = {
+            kind: "checkout",
+            accountId: snapshot.account,
+            mode: snapshot.mode as StripeMode,
+            sessionId: snapshot.sessionId,
+            paymentIntentId: initial.paymentIntentId,
+            chargeId: null,
+            customerId: snapshot.customerId,
+            amountTotal: initial.status === "paid" ? initial.amountPaid : initial.amountDue,
+            currency: initial.currency,
+            recognized: initial.status === "paid",
+            outcome,
+            browserBinding: snapshot.browserBinding,
+          };
+          if (sessionState && intentState && sessionState !== intentState) {
+            assertIncomingIdentity(sessionState, action);
+            assertIncomingIdentity(intentState, action);
+            current = combineFulfillments(sessionState, intentState);
+          } else if (current) assertIncomingIdentity(current, action);
+          const reduced = reduceFulfillment(current, action, snapshot.observedAt);
+          remember(reduced.state);
+          fulfilledNow = reduced.fulfilledNow;
+          status = reduced.state.status;
+          paymentIntentId = reduced.state.paymentIntentId;
+          if (reduced.fulfilledNow && reduced.state.sessionId) {
+            const dedupeKey = `fulfillment:${snapshot.account}:${snapshot.mode}:${reduced.state.sessionId}`;
+            if (!outbox.has(dedupeKey)) {
+              outbox.set(dedupeKey, {
+                dedupeKey,
+                mode: snapshot.mode as StripeMode,
+                kind: "fulfillment_recorded",
+                payload: { sessionId: reduced.state.sessionId, mode: snapshot.mode, amountTotal: reduced.state.amountTotal, currency: reduced.state.currency },
+                sentAt: null,
+                attemptCount: 0,
+                lastError: null,
+              });
+            }
+          }
+        }
+        const result: BillingApplyResult = { duplicate: false, status, fulfilledNow, paymentIntentId, subscriptionStatus, cancelAtPeriodEnd, serviceTerminated: false };
+        billingEvents.set(key, result);
+        return result;
+      });
+    },
     apply(action, nowIso = new Date().toISOString()) {
       return exclusive(() => {
         const key = eventKey(action.accountId, action.mode, action.eventId);
@@ -271,12 +410,17 @@ function supabaseLedger(client: RpcClient): PaymentLedger {
 
   async function rpc(fn: string, args: Record<string, unknown>) {
     const { data, error } = await client.rpc(fn, args);
-    if (error) throw new Error("payment_persist_failed");
+    if (error) {
+      if (error.message.includes("billing_lease_lost")) throw new Error("billing_lease_lost");
+      if (error.message.includes("billing_lease_busy")) throw new Error("billing_lease_busy");
+      throw new Error("payment_persist_failed");
+    }
     return data;
   }
 
   return {
     async apply(action) {
+      // One-time transitions retain the immutable 018 implementation.
       const data = asRecord(
         await rpc("apply_payment_transition", {
           p_account: action.accountId,
@@ -309,6 +453,28 @@ function supabaseLedger(client: RpcClient): PaymentLedger {
               ? data.payment_intent_id
               : null,
         recognized: data.recognized === true,
+      };
+    },
+    async acquireBillingLease(input) {
+      const result = asRecord(await rpc("acquire_billing_lease", { p_account: input.accountId, p_mode: input.mode, p_subscription_id: input.subscriptionId, p_holder: input.holder, p_lease_seconds: input.leaseSeconds }));
+      if (result.acquired !== true) return null;
+      return { fence: Number(result.fence) };
+    },
+    async releaseBillingLease(input) {
+      const result = asRecord(await rpc("release_billing_lease", { p_account: input.accountId, p_mode: input.mode, p_subscription_id: input.subscriptionId, p_holder: input.holder, p_fence: input.fence }));
+      return result.released === true;
+    },
+    async applyBilling(snapshot) {
+      const result = asRecord(await rpc("apply_billing_snapshot", { p: snapshot }));
+      if (result.serviceTerminated === true || result.service_terminated === true) throw new Error("service_termination_rejected");
+      return {
+        duplicate: result.duplicate === true,
+        status: String(result.status),
+        fulfilledNow: result.fulfilledNow === true || result.fulfilled_now === true,
+        paymentIntentId: typeof result.paymentIntentId === "string" ? result.paymentIntentId : typeof result.payment_intent_id === "string" ? result.payment_intent_id : null,
+        subscriptionStatus: String(result.subscriptionStatus ?? result.subscription_status ?? ""),
+        cancelAtPeriodEnd: result.cancelAtPeriodEnd === true || result.cancel_at_period_end === true,
+        serviceTerminated: false,
       };
     },
     async getBySession(accountId, mode, sessionId) {

@@ -2,6 +2,7 @@ import type { StripeConfig } from "@/lib/payments/config";
 import type { PaymentLedger } from "@/lib/payments/ledger";
 import { recognizeCheckout, type PriceLine } from "@/lib/payments/recognition";
 import type { CheckoutAction } from "@/lib/payments/state";
+import { ingestBillingEvent } from "@/lib/payments/recurring";
 import type { StripeGateway, VerifiedStripeEvent } from "@/lib/payments/stripe-server";
 
 export type WebhookResult = { status: number; body: Record<string, unknown> };
@@ -70,7 +71,7 @@ export async function handleStripeWebhook(input: {
   signature: string | null;
   config: StripeConfig;
   ledger: PaymentLedger;
-  gateway: Pick<StripeGateway, "constructEvent" | "retrieveCheckoutSession">;
+  gateway: Pick<StripeGateway, "constructEvent" | "retrieveCheckoutSession" | "discoverSubscriptionId" | "readBilling">;
 }): Promise<WebhookResult> {
   if (!input.signature) return { status: 400, body: { error: "signature_invalid" } };
   let event: VerifiedStripeEvent;
@@ -89,6 +90,23 @@ export async function handleStripeWebhook(input: {
   try {
     const object = asObject(event.data?.object);
     if (!event.id || !object) return { status: 400, body: { error: "event_invalid" } };
+
+    const billingEvent = ["invoice.paid", "invoice.payment_failed", "customer.subscription.updated", "customer.subscription.deleted"].includes(event.type);
+    const recurringCheckout = CHECKOUT_EVENTS.has(event.type) && object.mode === "subscription";
+    if (billingEvent || recurringCheckout) {
+      if (!input.gateway.discoverSubscriptionId || !input.gateway.readBilling || !input.ledger.acquireBillingLease || !input.ledger.applyBilling || !input.ledger.releaseBillingLease) throw new Error("billing_unconfigured");
+      const ingested = await ingestBillingEvent({
+        config: input.config,
+        event,
+        ledger: input.ledger as Required<Pick<PaymentLedger, "acquireBillingLease" | "releaseBillingLease" | "applyBilling">>,
+        discoverSubscriptionId: (item) => input.gateway.discoverSubscriptionId!(item),
+        readBilling: (item, subscriptionId) => input.gateway.readBilling!(item, subscriptionId),
+      });
+      if (ingested.kind === "applied") return { status: 200, body: publicBody(ingested.result) };
+      // Unrecognized subscriptions and separate invoices cannot grant initial fulfillment.
+      const result = await input.ledger.apply({ kind: "ignore", eventId: event.id, eventType: event.type, accountId: input.config.expectedAccountId, mode: input.config.mode, payload: safePayload(event, null, null, null) });
+      return { status: 200, body: publicBody(result) };
+    }
 
     if (event.type === "charge.refunded") {
       const paymentIntentId = idField(object.payment_intent);

@@ -99,6 +99,7 @@ export async function buildConfirmation(input: {
     return view(input.config, "processing", remoteError ? "We couldn't reach the payment processor. Refresh shortly." : "Your payment is processing. This page will update automatically.", true);
   }
   if (remote.status === "expired") return view(input.config, "expired", "This checkout session has expired.", false);
+  if (remote.mode === "subscription") return view(input.config, "processing", "Your initial invoice is being verified. This page will update automatically.", true);
   if (remote.paymentStatus === "paid") {
     const recognition = recognizeCheckout(
       { mode: remote.mode, amountTotal: remote.amountTotal, paymentStatus: remote.paymentStatus, currency: remote.currency, lineItems: remote.lineItems, metadata: remote.metadata },
@@ -123,7 +124,7 @@ function ledgerView(config: StripeConfig, ledger: FulfillmentState | null): Publ
   if (ledger.fullRefund || ledger.status === "refunded") {
     return view(config, "refunded", "This payment was refunded.", false);
   }
-  if (ledger.status === "failed") return view(config, "failed", "The payment failed and nothing was activated.", false);
+  if (ledger.status === "failed") return view(config, "failed", "The payment failed. Contact support for payment assistance.", false);
   if (ledger.status === "expired") return view(config, "expired", "This checkout session has expired.", false);
   if (ledger.status === "unrecognized") {
     return view(config, "unrecognized", `This payment isn't linked to a 247ROI implementation checkout. Contact ${PAYMENT_SUPPORT_EMAIL}.`, false);

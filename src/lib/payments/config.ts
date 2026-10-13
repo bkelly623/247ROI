@@ -1,3 +1,4 @@
+import { readRecurringOffers, type RecurringOffer } from "./offers";
 import {
   CHECKOUT_PURPOSE,
   EXPECTED_STRIPE_ACCOUNT_ID,
@@ -13,6 +14,7 @@ export type StripeConfig = {
   webhookSecret: string;
   expectedAccountId: typeof EXPECTED_STRIPE_ACCOUNT_ID;
   allowedPriceIds: readonly string[];
+  recurringOffers?: Record<string, RecurringOffer>;
   capabilitySecret: string;
   portalConfigurationId: string | null;
   appBaseUrl: string;
@@ -107,6 +109,7 @@ export function readStripeConfig(env: NodeJS.ProcessEnv = process.env): StripeCo
     webhookSecret,
     expectedAccountId,
     allowedPriceIds: allowedPrices(env.STRIPE_ALLOWED_PRICE_IDS),
+    recurringOffers: readRecurringOffers(env.STRIPE_RECURRING_OFFERS_JSON),
     capabilitySecret,
     portalConfigurationId: portalRaw,
     appBaseUrl: appBaseUrl(env),

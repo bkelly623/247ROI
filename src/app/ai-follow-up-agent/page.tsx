@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "AI Follow-Up Agent | 247ROI",
   description:
     "AI follow-up employee for instant lead response, appointment reminders, estimate reactivation, and booked-call handoffs.",
+  alternates: { canonical: "/ai-follow-up-agent" },
 };
 
 export default function AiFollowUpAgentPage() {

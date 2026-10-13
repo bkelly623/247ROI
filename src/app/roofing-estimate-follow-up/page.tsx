@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Roofing Estimate Follow-Up AI | 247ROI",
   description:
     "AI follow-up for roofing companies: estimate reminders, storm lead response, inspection booking, and stale quote reactivation.",
+  alternates: { canonical: "/roofing-estimate-follow-up" },
 };
 
 export default function RoofingEstimateFollowUpPage() {

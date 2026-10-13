@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/guarantee" },
+};
+
 export default function GuaranteePage() {
   return (
     <main className="min-h-screen bg-white px-6 py-24">

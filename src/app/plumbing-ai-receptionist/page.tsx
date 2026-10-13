@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Plumbing Missed-Call Recovery | 247ROI",
   description:
     "24/7 missed-call capture and instant follow-up for plumbing companies. No upfront setup cost for qualified businesses — continue only if it creates value.",
+  alternates: { canonical: "/plumbing-ai-receptionist" },
 };
 
 export default function PlumbingRoutePage() {

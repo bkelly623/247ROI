@@ -34,32 +34,25 @@ const INDEXABLE_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const lastModified = new Date();
-
   const baseUrls = INDEXABLE_PATHS.map((p) => ({
     url: `${SITE_URL}${p}`,
-    lastModified,
   }));
 
   const aiEmployeeUrls = AI_EMPLOYEE_OFFERS.map((offer) => ({
     url: `${SITE_URL}${offer.route}`,
-    lastModified,
   }));
 
   const seoLandingUrls = SEO_LANDING_PAGE_PATHS.map((path) => ({
     url: `${SITE_URL}${path}`,
-    lastModified,
   }));
 
   const articleUrls = ARTICLE_PATHS.map((path) => ({
     url: `${SITE_URL}${path}`,
-    lastModified,
   }));
 
   const transcripts = await getTranscriptsIndex();
   const transcriptUrls = transcripts.map((t) => ({
     url: `${SITE_URL}/transcripts/${t.slug}`,
-    lastModified,
   }));
 
   return [...baseUrls, ...aiEmployeeUrls, ...seoLandingUrls, ...articleUrls, ...transcriptUrls];

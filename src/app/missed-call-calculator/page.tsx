@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Missed Call Calculator | 247ROI",
   description:
     "Estimate revenue lost from missed calls with a quick calculator for local businesses.",
+  alternates: { canonical: "/missed-call-calculator" },
 };
 
 export default function MissedCallCalculatorPage() {

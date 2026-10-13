@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/ContactForm";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "SMS Consent | 247ROI LLC",
   description: "Optional SMS consent and service inquiries for 247ROI LLC.",
+  alternates: { canonical: "/consent" },
 };
 
 export default function ConsentPage() {

@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "HVAC AI Receptionist | 247ROI",
   description:
     "24/7 AI receptionist for HVAC companies that captures after-hours calls, urgent service requests, tune-ups, and replacement inquiries.",
+  alternates: { canonical: "/hvac-ai-receptionist" },
 };
 
 export default function HvacAiReceptionistPage() {

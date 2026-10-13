@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-export const metadata = {
+export const metadata: Metadata = {
   title: "Privacy Policy | 247ROI",
   description: "Privacy Policy for 247ROI.",
+  alternates: { canonical: "/privacy-policy" },
 };
 
 export default function PrivacyPolicyPage() {

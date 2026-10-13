@@ -1,7 +1,7 @@
-export async function requestTestCheckout(priceId: string, request: typeof fetch = fetch): Promise<string> {
+export async function requestTestCheckout(priceId: string, request: typeof fetch = fetch, recurring = false): Promise<string> {
   const response = await request("/api/stripe/checkout", {
     method: "POST", credentials: "same-origin", cache: "no-store",
-    headers: { "Content-Type": "application/json" }, body: JSON.stringify({ priceId }),
+    headers: { "Content-Type": "application/json" }, body: JSON.stringify(recurring ? { offerToken: priceId } : { priceId }),
   });
   if (!response.ok) throw new Error("checkout_failed");
   const body: unknown = await response.json();

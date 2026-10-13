@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "AI Bid Assistant for Contractors | 247ROI",
   description:
     "AI bidding assistant for contractors: opportunity screening, requirements extraction, bid checklists, and deadline reminders.",
+  alternates: { canonical: "/contractor-bid-assistant" },
 };
 
 export default function ContractorBidAssistantPage() {
