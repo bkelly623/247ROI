@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { MissedCallNotice } from "@/components/contact/MissedCallNotice";
 export const metadata: Metadata = {
   title: "Privacy Policy | 247ROI",
   description: "Privacy Policy for 247ROI.",
@@ -16,7 +17,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="space-y-8 text-gray-700 text-[18px] leading-relaxed tracking-tight">
           <p>247ROI LLC</p>
-          <p>LLC service-message disclosure, version 1. Applies upon publication.</p>
+          <p>LLC missed-call inquiry disclosure, version 2. Applies upon publication.</p>
 
           <div>
             <p className="font-semibold text-gray-900 uppercase tracking-tight text-[15px]">
@@ -80,15 +81,16 @@ export default function PrivacyPolicyPage() {
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">3. SMS Messaging &amp; Compliance</h2>
             <p className="mb-4">
-              The optional service SMS consent covers inquiries and follow-up, consented missed-call replies, appointments, and service updates from 247ROI LLC. A separate optional checkbox covers review requests related to services you receive. Each permission is recorded independently and both start unchecked. Messages may be automated; both scopes exclude promotional marketing. Consent is not required to submit or purchase. Calling us alone does not provide SMS consent. This describes the permitted scope, not a promise that every automation is currently available.
+              Ongoing service notifications and review requests use separate optional website checkbox enrollments. Each permission is recorded independently and both start unchecked. Messages may be automated; both scopes exclude promotional marketing. Consent is not required to submit or purchase. A missed-call inquiry is a separate single acknowledgment and does not enroll you in ongoing service updates, review requests, or marketing. This describes the permitted scope, not a promise that every automation is currently available.
             </p>
+            <MissedCallNotice className="mb-4" />
             <div className="space-y-4">
               <div>
                 <p className="font-medium text-gray-900">Opt-In &amp; Consent:</p>
                 <ul className="mt-2 space-y-1 list-disc pl-6">
-                  <li>Explicit opt-in is required for this service-message program</li>
-                  <li>Consent is collected via website/contact forms</li>
-                  <li>Records of consent are maintained</li>
+                  <li>Explicit website checkbox enrollment is required for ongoing service notifications and for the separate review scope. Both checkboxes start unchecked, and each permission is recorded independently.</li>
+                  <li>A separate inbound call record covers a single missed-call inquiry. That record includes the caller number, the call timestamp and outcome, and the related response record. A missed-call-only inquiry does not send an enrollment confirmation.</li>
+                  <li>Records of consent are maintained.</li>
                 </ul>
               </div>
               <div>
@@ -96,7 +98,7 @@ export default function PrivacyPolicyPage() {
                 <ul className="mt-2 space-y-1 list-disc pl-6">
                   <li>Reply STOP to unsubscribe. Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.</li>
                   <li>Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.</li>
-                  <li>Submitting another form or replying START does not automatically restart this program. Contact support to request re-enrollment; messaging remains blocked until a reviewed process verifies new consent and resolves both provider and application restrictions.</li>
+                  <li>Subsequent calls, submitting another form, or replying START do not automatically restart messages. Contact support to request re-enrollment; messaging remains blocked until a reviewed process verifies new scope-specific consent and resolves both provider and application restrictions.</li>
                 </ul>
               </div>
               <div>

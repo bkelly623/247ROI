@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
+import { MissedCallNotice } from "@/components/contact/MissedCallNotice";
 export const metadata: Metadata = {
   title: "Terms of Service | 247ROI",
   description: "Terms of Service for 247ROI.",
@@ -16,7 +17,7 @@ export default function TermsOfServicePage() {
 
         <div className="space-y-8 text-gray-700 text-[18px] leading-relaxed tracking-tight">
           <p>247ROI LLC</p>
-          <p>LLC service-message disclosure, version 1. Applies upon publication.</p>
+          <p>LLC missed-call inquiry disclosure, version 2. Applies upon publication.</p>
 
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">SMS Messaging Terms &amp; Compliance</h2>
@@ -24,17 +25,16 @@ export default function TermsOfServicePage() {
             <div className="space-y-6">
               <div>
                 <p className="font-medium text-gray-900">1. Program Description:</p>
+                <MissedCallNotice className="mt-2" />
                 <p className="mt-2">
-                  This service-message program is intended for prospects and customers who contact 247ROI LLC,
-                  through our website at{" "}
+                  This program has two paths. (1) Customer-initiated missed-call inquiry: one acknowledgment, then a reply-gated inquiry conversation, as described in the public notice above. A missed-call-only inquiry does not send an enrollment confirmation and does not enroll you in ongoing service updates, review requests, or marketing. (2) Optional website form enrollment on our contact or consent form at{" "}
                   <a
                     href="https://www.get247roi.com"
                     className="underline underline-offset-2 hover:text-gray-900"
                   >
                     https://www.get247roi.com
                   </a>
-                  {" "}and opt in to receive SMS notifications through a dedicated checkbox for SMS
-                  consent on our contact or consent form. The service scope includes inquiries and follow-up, consented missed-call replies, appointments, and service updates. A separate optional checkbox covers review requests related to services you receive; each permission is recorded independently and both start unchecked. Messages may be automated. This does not include promotional marketing. Consent is not required to submit or purchase. Calling us alone does not provide SMS consent. This is a description of permitted message types, not a promise that every automation is currently available.
+                  {" "}covers ongoing service notifications and independently selected service-related feedback. Each permission is recorded independently and both checkboxes start unchecked. Messages may be automated. This does not include promotional marketing. Consent is not required to submit or purchase. This is a description of permitted message types, not a promise that every automation is currently available.
                 </p>
               </div>
 
@@ -45,10 +45,10 @@ export default function TermsOfServicePage() {
                   number that sent you messages, or clearly tell us you no longer want texts.
                   Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.
                   Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.
-                  Submitting another form or
-                  replying &quot;START&quot; does not automatically restart this program.
+                  Subsequent calls, submitting another form, or
+                  replying &quot;START&quot; do not automatically restart messages.
                   To request re-enrollment, contact our support team. Messaging remains blocked
-                  until a reviewed process verifies new consent and both provider and application
+                  until a reviewed process verifies new scope-specific consent and both provider and application
                   restrictions have been resolved; re-enrollment is not guaranteed.</strong>
                 </p>
               </div>
