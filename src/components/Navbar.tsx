@@ -14,7 +14,7 @@ import {
   siteLogoNavImageClassName,
 } from "@/lib/siteLogo";
 
-const navLinks = [
+const defaultNavLinks = [
   { name: "AI Opportunity Audit", href: "/ai-opportunity-audit" },
   { name: "Services", href: "/services" },
   { name: "Examples", href: "/demo" },
@@ -22,7 +22,16 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ offerFirst = false }: { offerFirst?: boolean }) {
+  const navLinks = offerFirst ? [
+    { name: "Solutions", href: "/#solutions" },
+    { name: "Custom software & AI", href: "/#custom-software" },
+    { name: "Examples", href: "/#examples" },
+    { name: "About", href: "/about" },
+  ] : defaultNavLinks;
+  const ctaHref = offerFirst ? "/contact?offer=lead-capture&source=navbar" : "/ai-opportunity-audit";
+  const ctaLabel = offerFirst ? "Let’s talk" : CTA_LABEL_NAV;
+  const ctaColor = offerFirst ? "bg-orange-700 text-white hover:bg-orange-800" : "bg-primary text-primary-foreground hover:bg-primary/90";
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -80,16 +89,16 @@ export default function Navbar() {
               <Button
                 asChild
                 size="lg"
-                className="relative z-10 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 xl:px-8 text-sm font-semibold whitespace-nowrap"
+                className={`${ctaColor} relative z-10 rounded-full px-6 xl:px-8 text-sm font-semibold whitespace-nowrap`}
               >
                 <Link
-                  href="/ai-opportunity-audit"
+                  href={ctaHref}
                   data-track-event="cta_click"
-                  data-track-label={CTA_LABEL_NAV}
-                  data-track-destination="/ai-opportunity-audit"
+                  data-track-label={ctaLabel}
+                  data-track-destination={ctaHref}
                   data-track-source="navbar"
                 >
-                  {CTA_LABEL_NAV}
+                  {ctaLabel}
                 </Link>
               </Button>
             </div>
@@ -171,17 +180,17 @@ export default function Navbar() {
               <Button
                 asChild
                 size="lg"
-                className="min-h-[3.5rem] w-full rounded-full bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90"
+                className={`${ctaColor} min-h-[3.5rem] w-full rounded-full px-6 font-semibold`}
               >
                 <Link
-                  href="/ai-opportunity-audit"
+                  href={ctaHref}
                   data-track-event="cta_click"
-                  data-track-label={CTA_LABEL_NAV}
-                  data-track-destination="/ai-opportunity-audit"
+                  data-track-label={ctaLabel}
+                  data-track-destination={ctaHref}
                   data-track-source="mobile_nav"
                   onClick={() => setIsOpen(false)}
                 >
-                  {CTA_LABEL_NAV}
+                  {ctaLabel}
                 </Link>
               </Button>
             </div>
