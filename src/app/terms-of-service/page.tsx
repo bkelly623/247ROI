@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
-import { MissedCallNotice } from "@/components/contact/MissedCallNotice";
 export const metadata: Metadata = {
   title: "Terms of Service | 247ROI",
   description: "Terms of Service for 247ROI.",
@@ -17,7 +16,6 @@ export default function TermsOfServicePage() {
 
         <div className="space-y-8 text-gray-700 text-[18px] leading-relaxed tracking-tight">
           <p>247ROI LLC</p>
-          <p>LLC missed-call inquiry disclosure, version 2. Applies upon publication.</p>
 
           <div>
             <h2 className="text-[22px] font-semibold text-gray-900 mb-4">SMS Messaging Terms &amp; Compliance</h2>
@@ -25,16 +23,12 @@ export default function TermsOfServicePage() {
             <div className="space-y-6">
               <div>
                 <p className="font-medium text-gray-900">1. Program Description:</p>
-                <MissedCallNotice className="mt-2" />
                 <p className="mt-2">
-                  This program has two paths. (1) Customer-initiated missed-call inquiry: one acknowledgment, then a reply-gated inquiry conversation, as described in the public notice above. A missed-call-only inquiry does not send an enrollment confirmation and does not enroll you in ongoing service updates, review requests, or marketing. (2) Optional website form enrollment on our contact or consent form at{" "}
-                  <a
-                    href="https://www.get247roi.com"
-                    className="underline underline-offset-2 hover:text-gray-900"
-                  >
-                    https://www.get247roi.com
-                  </a>
-                  {" "}covers ongoing service notifications and independently selected service-related feedback. Each permission is recorded independently and both checkboxes start unchecked. Messages may be automated. This does not include promotional marketing. Consent is not required to submit or purchase. This is a description of permitted message types, not a promise that every automation is currently available.
+                  The 247ROI LLC SMS program sends optional website form inquiry confirmations and related inquiry follow-up. You can enroll on our{" "}
+                  <a href="/contact" className="underline underline-offset-2 hover:text-gray-900">
+                    contact form
+                  </a>{" "}
+                  by checking the optional SMS checkbox, which is specific to text messages and starts unchecked. Consent is not a condition of submitting the form or purchasing services. We do not send promotional marketing messages through this program.
                 </p>
               </div>
 
@@ -45,11 +39,7 @@ export default function TermsOfServicePage() {
                   number that sent you messages, or clearly tell us you no longer want texts.
                   Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.
                   Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.
-                  Subsequent calls, submitting another form, or
-                  replying &quot;START&quot; do not automatically restart messages.
-                  To request re-enrollment, contact our support team. Messaging remains blocked
-                  until a reviewed process verifies new scope-specific consent and both provider and application
-                  restrictions have been resolved; re-enrollment is not guaranteed.</strong>
+                  To request restarting messages after opting out, contact our support team.</strong>
                 </p>
               </div>
 
@@ -81,7 +71,7 @@ export default function TermsOfServicePage() {
                 <p className="font-medium text-gray-900">5. Message &amp; Data Rates:</p>
                 <p className="mt-2">
                   Message and data rates may apply for messages sent to you from us and to us from
-                  you. Message frequency varies based on your inquiry and service activity.
+                  you. Message frequency varies based on your inquiry.
                   For questions about your text plan or data plan, contact your wireless
                   provider.
                 </p>
@@ -114,9 +104,6 @@ export default function TermsOfServicePage() {
               </div>
             </div>
 
-            <p className="mt-6">
-              SMS program operation is subject to applicable consent requirements and carrier approval. This disclosure is not a certification of registration approval.
-            </p>
           </div>
 
           <hr className="border-gray-200 my-10" />

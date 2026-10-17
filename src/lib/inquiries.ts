@@ -2,7 +2,7 @@ import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { getServiceRoleKey } from "@/lib/audit/supabase/server";
 import { z } from "zod";
-import { SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, SMS_BRAND, SMS_SUBJECTS, REVIEW_CONSENT_TEXT, REVIEW_CONSENT_VERSION, REVIEW_SUBJECTS } from "@/lib/sms-consent";
+import { SMS_CONSENT_TEXT, SMS_CONSENT_VERSION, SMS_BRAND, SMS_SUBJECTS, SERVICE_V2_CONSENT_TEXT, SERVICE_V2_CONSENT_VERSION, SERVICE_V2_SUBJECTS, REVIEW_CONSENT_TEXT, REVIEW_CONSENT_VERSION, REVIEW_SUBJECTS } from "@/lib/sms-consent";
 import { consentPhone, indexSmsPermission } from "@/lib/sms-permission";
 
 export const inquirySchema = z.object({
@@ -13,7 +13,7 @@ export const inquirySchema = z.object({
   message: z.string().trim().min(5).max(1800),
   smsConsent: z.boolean(),
   // Omission means the original inquiry-only disclosure, never the expanded scope.
-  consentVersion: z.enum(["contact-2026-10", SMS_CONSENT_VERSION]).optional(),
+  consentVersion: z.enum(["contact-2026-10", SERVICE_V2_CONSENT_VERSION, SMS_CONSENT_VERSION]).optional(),
   reviewConsent: z.boolean().optional(),
   reviewConsentVersion: z.literal(REVIEW_CONSENT_VERSION).optional(),
   topic: z.enum(["missed-call-text-back", "ai-receptionist", "lead-capture", "custom-software", "workflow-automation", "dashboard", "unsure"]).default("unsure"),
@@ -22,7 +22,7 @@ export const inquirySchema = z.object({
   website: z.string().max(200).optional(),
 }).refine(v => v.reviewConsent !== true || v.reviewConsentVersion === REVIEW_CONSENT_VERSION, { message: "Review consent requires the separate disclosure version.", path: ["reviewConsentVersion"] });
 export type InquiryInput = z.infer<typeof inquirySchema>;
-export type SavedInquiry = Omit<InquiryInput, "website"> & { receivedAt: string; fingerprint: string; ipHash: string; consentVersion: "contact-2026-10" | typeof SMS_CONSENT_VERSION; consentText?: string; consentBrand?: string; consentPhone?: string | null; consentSubjects?: readonly string[]; reviewConsentText?: string; reviewConsentSubjects?: readonly string[]; reviewConsentBrand?: string; reviewConsentPhone?: string | null };
+export type SavedInquiry = Omit<InquiryInput, "website"> & { receivedAt: string; fingerprint: string; ipHash: string; consentVersion: "contact-2026-10" | typeof SERVICE_V2_CONSENT_VERSION | typeof SMS_CONSENT_VERSION; consentText?: string; consentBrand?: string; consentPhone?: string | null; consentSubjects?: readonly string[]; reviewConsentText?: string; reviewConsentSubjects?: readonly string[]; reviewConsentBrand?: string; reviewConsentPhone?: string | null };
 type Receipt = { notifiedAt: string; messageId: number; channel: "telegram" };
 const BUCKET = "website-inquiries";
 const digest = (s: string) => createHash("sha256").update(s).digest("hex");
@@ -93,7 +93,7 @@ export async function saveInquiry(input: InquiryInput, ip: string, store: Inquir
     if (await store.put(`limits/${ipHash}-${hour}-${slot}.json`, { at: new Date().toISOString() })) { allowed = true; break; }
   }
   if (!allowed) throw new Error("rate_limited");
-  const saved: SavedInquiry = { ...payload, reviewConsent: input.reviewConsent === true, receivedAt: new Date().toISOString(), fingerprint, ipHash, consentVersion: input.consentVersion ?? "contact-2026-10", ...(input.consentVersion === SMS_CONSENT_VERSION ? { consentText: SMS_CONSENT_TEXT, consentBrand: SMS_BRAND, consentSubjects: SMS_SUBJECTS, consentPhone: consentPhone(input.phone) } : {}), ...(input.reviewConsentVersion === REVIEW_CONSENT_VERSION ? { reviewConsentText: REVIEW_CONSENT_TEXT, reviewConsentSubjects: REVIEW_SUBJECTS, reviewConsentBrand: SMS_BRAND, reviewConsentPhone: consentPhone(input.phone) } : {}) };
+  const saved: SavedInquiry = { ...payload, reviewConsent: input.reviewConsent === true, receivedAt: new Date().toISOString(), fingerprint, ipHash, consentVersion: input.consentVersion ?? "contact-2026-10", ...(input.consentVersion === SMS_CONSENT_VERSION ? { consentText: SMS_CONSENT_TEXT, consentBrand: SMS_BRAND, consentSubjects: SMS_SUBJECTS, consentPhone: consentPhone(input.phone) } : {}), ...(input.consentVersion === SERVICE_V2_CONSENT_VERSION ? { consentText: SERVICE_V2_CONSENT_TEXT, consentBrand: SMS_BRAND, consentSubjects: SERVICE_V2_SUBJECTS, consentPhone: consentPhone(input.phone) } : {}), ...(input.reviewConsentVersion === REVIEW_CONSENT_VERSION ? { reviewConsentText: REVIEW_CONSENT_TEXT, reviewConsentSubjects: REVIEW_SUBJECTS, reviewConsentBrand: SMS_BRAND, reviewConsentPhone: consentPhone(input.phone) } : {}) };
   // Publish the reference first: an interrupted submission is unknown/denied,
   // never permission to reuse an older opt-in while a decline is being saved.
   await indexSmsPermission(saved, store);

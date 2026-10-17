@@ -2,13 +2,15 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-const NOTICE =
-  "If you call 247ROI LLC and we miss your call, you may receive one automated text acknowledging your inquiry. If you do not reply, no further inquiry texts are sent from that call. Calling does not enroll you in ongoing service updates, review requests, or marketing. Reply STOP to opt out, HELP for help. Msg & data rates may apply.";
+const CONSENT_TEXT =
+  "(Optional) I agree to receive SMS from 247ROI LLC at the phone number provided about my inquiry and related follow-up. Messages may be automated. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. Consent is not required to submit this form or purchase services. We will not sell or share mobile information with third parties for promotional or marketing purposes.";
+const INTRO =
+  "Use this form to contact 247ROI LLC. If you want text replies about your inquiry and related follow-up, check the optional SMS box. It starts unchecked, and you can submit without agreeing to texts.";
+const PHONE_LINE = "For telephone inquiries, we may send an informational response about your call. Reply STOP to opt out.";
 const OLD = "Calling us alone does not provide SMS consent.";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
-const notice = read("src/components/contact/MissedCallNotice.tsx");
 const contact = read("src/app/contact/page.tsx");
 const consent = read("src/app/consent/page.tsx");
 const privacy = read("src/app/privacy-policy/page.tsx");
@@ -24,109 +26,77 @@ const between = (source, start, end) => {
   return source.slice(from, to);
 };
 
-test("shared notice text is exact and inherits readable small type", () => {
-  assert.equal(notice.split(NOTICE).length - 1, 1);
-  assert.match(notice, /className\?: string/);
-  assert.match(notice, /text-sm/);
-  assert.match(notice, /text-inherit/);
-  assert.doesNotMatch(notice, /opacity-0|text-transparent|\binvisible\b|\bhidden\b/);
-  assert.doesNotMatch(notice, /privacy-policy|terms-of-service|<Link|href=/);
+test("form has exactly one optional, initially unchecked SMS checkbox", () => {
+  assert.equal(form.match(/type="checkbox"/g)?.length, 1);
+  assert.match(form, /const \[smsConsent, setSmsConsent\] = useState\(false\)/);
+  assert.match(form, /checked=\{smsConsent\}/);
+  assert.equal(form.includes("defaultChecked"), false);
+  const checkbox = form.slice(form.indexOf('id="contact-sms-consent"'), form.indexOf("/>", form.indexOf('id="contact-sms-consent"')));
+  assert.doesNotMatch(checkbox, /\brequired\b/);
+  assert.doesNotMatch(form, /reviewConsent|REVIEW_CONSENT/);
+  assert.doesNotMatch(form, /!smsConsent|smsConsent\s*===\s*false/, "no client-side consent gate");
+  assert.match(form, /\{SMS_CONSENT_TEXT\}/);
+  assert.match(form, /href="\/terms-of-service"/);
+  assert.match(form, /href="\/privacy-policy"/);
 });
 
-test("notice sits immediately below the contact call button", () => {
-  const region = between(contact, "Call {PRIMARY_PHONE_DISPLAY}", "mailto:brendan@get247roi.com");
-  assert.match(region, /<MissedCallNotice\b/);
-  assert.equal(contact.includes(NOTICE), false);
+test("v3 disclosure text, version and inquiry-only scope; legacy versions retained", () => {
+  assert.match(consentSource, /export const SMS_CONSENT_VERSION = "247roi-llc-inquiry-v3"/);
+  assert.match(consentSource, /export const SMS_SUBJECTS = \["inquiry"\] as const/);
+  assert.ok(consentSource.includes(`export const SMS_CONSENT_TEXT = ${JSON.stringify(CONSENT_TEXT)}`));
+  assert.match(consentSource, /export const SERVICE_V2_CONSENT_VERSION = "247roi-llc-service-v2"/);
+  assert.match(consentSource, /export const REVIEW_CONSENT_VERSION = "247roi-llc-review-v1"/);
 });
 
-test("consent shows the missed-call heading and notice above the form", () => {
-  const region = between(consent, "Missed-call replies", "<ContactForm");
-  assert.match(region, /<MissedCallNotice\b/);
-  assert.ok(consent.indexOf("Missed-call replies") < consent.indexOf("<ContactForm"));
-  assert.match(consent, /not a promise that every automation is currently available/);
+test("consent intro is simplified and missed-call notices are removed from pages", () => {
+  assert.ok(consent.includes(INTRO));
+  for (const source of [footer, contact, consent, privacy, terms]) assert.doesNotMatch(source, /MissedCallNotice/);
+  assert.match(contact, /Call \{PRIMARY_PHONE_DISPLAY\}/);
+  assert.match(footer, /\{PRIMARY_PHONE_DISPLAY\}/);
+  assert.match(contact, /mailto:brendan@get247roi.com/);
 });
 
-test("footer notice is beside the phone contact", () => {
-  const region = between(footer, "PRIMARY_PHONE_HREF", "columns.map");
-  assert.match(region, /flex flex-wrap/);
-  assert.match(region, /\{PRIMARY_PHONE_DISPLAY\}/);
-  assert.match(region, /<MissedCallNotice\b/);
-  assert.ok(region.indexOf("{PRIMARY_PHONE_DISPLAY}") < region.indexOf("<MissedCallNotice"));
+test("terms describe the optional web form inquiry program", () => {
+  const region = between(terms, "1. Program Description:", "2. Cancellation Instructions:");
+  assert.match(region, /optional website form inquiry confirmations and related inquiry follow-up/);
+  assert.match(region, /href="\/contact"/);
+  assert.match(region, /starts unchecked/);
+  assert.match(region, /not a condition of submitting the form or purchasing services/);
+  assert.match(region, /do not send promotional marketing/);
+  assert.doesNotMatch(terms, /two paths|review request|version 2|carrier approval|not a promise that every automation/i);
+  assert.match(terms, /Reply &quot;STOP&quot;/);
+  assert.match(terms, /&quot;HELP&quot;/);
+  assert.match(terms, /Carriers are not liable/);
+  assert.match(terms, /Message and data rates may apply/);
+  assert.match(terms, /Message frequency varies/);
+  assert.match(terms, /18 years or older/);
+  assert.match(terms, /privacy-policy/);
+  assert.match(terms, /General Terms/);
+  assert.match(terms, /contact our support team/);
 });
 
-test("privacy SMS section includes the notice and call-record list", () => {
+test("privacy describes web form enrollment, records, and keeps the phone line separate", () => {
   const region = between(privacy, "3. SMS Messaging", "SMS Data Protection Statement");
-  assert.match(region, /<MissedCallNotice\b/);
-  assert.match(region, /Explicit website checkbox enrollment is required for ongoing service notifications and for the separate review scope/);
-  assert.match(region, /separate inbound call record covers a single missed-call inquiry/);
-  assert.match(region, /caller number, the call timestamp and outcome, and the related response record/);
-  assert.match(region, /missed-call-only inquiry does not send an enrollment confirmation/);
-  assert.match(region, /not a promise that every automation is currently available/);
+  assert.match(region, /optional website form inquiry confirmations and related inquiry follow-up/);
+  assert.match(region, /phone number, whether you checked the SMS box, the submission timestamp, and the disclosure version and text/);
+  assert.equal(privacy.split(PHONE_LINE).length - 1, 1);
+  const smsList = between(privacy, "3. SMS Messaging", PHONE_LINE);
+  assert.ok(smsList.lastIndexOf("</div>") > smsList.indexOf("Carrier Disclaimer"), "phone line sits outside the web form program list");
+  assert.doesNotMatch(privacy, /review scope|version 2|missed-call-only|not a promise that every automation/i);
   assert.match(privacy, /DOES NOT share customer opt-in information/);
   assert.match(privacy, /No mobile information will be shared with third parties\/affiliates/);
+  assert.match(privacy, /SMS providers \(delivery only\)/);
   assert.match(privacy, /Reply HELP or contact/);
   assert.match(privacy, /mailto:brendan@get247roi.com/);
 });
 
-test("terms program section enumerates both paths and keeps the carrier caveat", () => {
-  const region = between(terms, "1. Program Description:", "2. Cancellation Instructions:");
-  assert.match(region, /<MissedCallNotice\b/);
-  assert.match(region, /\(1\) Customer-initiated missed-call inquiry: one acknowledgment, then a reply-gated inquiry conversation, as described in the public notice/);
-  assert.match(region, /missed-call-only inquiry does not send an enrollment confirmation/);
-  assert.match(region, /\(2\) Optional website form enrollment/);
-  assert.match(region, /ongoing service notifications and independently selected service-related feedback/);
-  assert.match(region, /This does not include promotional marketing/);
-  assert.match(region, /not a promise that every automation is currently available/);
-  assert.match(terms, /subject to applicable consent requirements and carrier approval/);
-});
-
 test("old call-consent contradiction is absent", () => {
-  for (const source of [notice, contact, consent, privacy, terms, footer, form]) {
-    assert.equal(source.includes(OLD), false);
-  }
-  assert.doesNotMatch(privacy, /any call is sufficient|calling constitutes consent|by calling you consent/i);
-  assert.doesNotMatch(terms, /any call is sufficient|calling constitutes consent|by calling you consent/i);
-  assert.doesNotMatch(consent, /any call is sufficient|calling constitutes consent|by calling you consent/i);
-});
-
-test("STOP persists through later calls and START does not auto-restart", () => {
+  for (const source of [contact, consent, privacy, terms, footer, form]) assert.equal(source.includes(OLD), false);
+  for (const source of [privacy, terms, consent]) assert.doesNotMatch(source, /any call is sufficient|calling constitutes consent|by calling you consent/i);
   for (const source of [privacy, terms]) {
-    assert.match(source, /Subsequent calls, submitting another form, or/);
-    assert.match(source, /do not automatically restart messages/);
-    assert.match(source, /START/);
-    assert.match(source, /scope-specific consent/);
-    assert.match(source, /provider and application/);
-    assert.match(source, /support/);
-    assert.match(source, /Reply (?:&quot;)?STOP/);
     assert.doesNotMatch(source, /reply START to (enroll|opt|join|subscribe|restart)/i);
     assert.doesNotMatch(source, /text START to/i);
   }
-});
-
-test("legal disclosure is version 2 and checkbox versions stay put", () => {
-  for (const source of [privacy, terms]) {
-    assert.match(source, /LLC missed-call inquiry disclosure, version 2\. Applies upon publication\./);
-    assert.equal(source.includes("version 1"), false);
-    assert.equal(source.includes("247roi-llc-service-v2"), false);
-    assert.equal(source.includes("247roi-llc-review-v1"), false);
-  }
-  assert.match(consentSource, /export const SMS_CONSENT_VERSION = "247roi-llc-service-v2"/);
-  assert.match(consentSource, /export const REVIEW_CONSENT_VERSION = "247roi-llc-review-v1"/);
-});
-
-test("optional service and review checkboxes are unchanged", () => {
-  assert.match(form, /const \[smsConsent, setSmsConsent\] = useState\(false\)/);
-  assert.match(form, /const \[reviewConsent, setReviewConsent\] = useState\(false\)/);
-  assert.match(form, /checked=\{smsConsent\}/);
-  assert.match(form, /checked=\{reviewConsent\}/);
-  assert.equal(form.includes("defaultChecked"), false);
-  assert.match(form, /\{SMS_CONSENT_TEXT\}/);
-  assert.match(form, /\{REVIEW_CONSENT_TEXT\}/);
-  assert.match(consentSource, /export const SMS_CONSENT_TEXT = "\(Optional\) I agree to receive SMS from 247ROI LLC at the number provided about my inquiries and follow-up, missed-call replies when I have opted in, appointments, service updates, and service-related follow-up\. Messages may be automated\. This does not include promotional marketing\. Consent is not required to submit or purchase\. Message frequency varies; message and data rates may apply\. Reply STOP to cancel, HELP for help\."/);
-  assert.match(consentSource, /export const REVIEW_CONSENT_TEXT = "\(Optional, separate permission\) I agree to receive automated SMS from 247ROI LLC at the number provided with review requests related to services I receive\. This does not include promotional marketing\. Consent is not required to submit or purchase\. Message frequency varies; message and data rates may apply\. Reply STOP to cancel, HELP for help\."/);
-  assert.match(consent, /separate optional checkboxes; both start unchecked/);
-  assert.match(privacy, /both start unchecked/);
-  assert.match(terms, /both checkboxes start unchecked/);
 });
 
 test("canonical exports stay on the public pages", () => {
