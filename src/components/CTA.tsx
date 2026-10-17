@@ -39,9 +39,9 @@ export default function CTA() {
               </Button>
             </div>
 
-            <a href="mailto:contact@247roi.com" className="mt-7 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+            <a href="mailto:brendan@get247roi.com" className="mt-7 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
               <Mail className="h-4 w-4 shrink-0" />
-              contact@247roi.com
+              brendan@get247roi.com
             </a>
           </div>
         </motion.div>

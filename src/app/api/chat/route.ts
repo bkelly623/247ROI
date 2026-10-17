@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const key = resolveOpenAIKey();
   if (!key) {
     return NextResponse.json({
-      reply: `The fastest next step is simple: start the Business Systems Audit / AI Opportunity Audit at /ai-opportunity-audit, call or text ${PRIMARY_DISPLAY}, or email contact@247roi.com. Good first message: "I want to improve [workflow]."`,
+      reply: `The fastest next step is simple: start the Business Systems Audit / AI Opportunity Audit at /ai-opportunity-audit, call or text ${PRIMARY_DISPLAY}, or email brendan@get247roi.com. Good first message: "I want to improve [workflow]."`,
     });
   }
 
@@ -37,7 +37,7 @@ Positioning: 247ROI helps owners and operators find the bottlenecks worth fixing
 
 Promise: cleaner operations and measurable operating lift, not fake full autonomy. Explain that AI and automation can take repetitive work off the team's plate while humans keep approval on pricing, bids, exceptions, and sensitive decisions.
 
-Best next step: ask what workflow is slow, messy, or leaking revenue, then direct qualified visitors to start the Business Systems Audit / AI Opportunity Audit at /ai-opportunity-audit, call/text the primary business line, or email contact@247roi.com.
+Best next step: ask what workflow is slow, messy, or leaking revenue, then direct qualified visitors to start the Business Systems Audit / AI Opportunity Audit at /ai-opportunity-audit, call/text the primary business line, or email brendan@get247roi.com.
 
 Phone number:
 - Primary business (call/text): ${PRIMARY_DISPLAY} → ${PRIMARY_TEL}

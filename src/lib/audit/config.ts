@@ -13,7 +13,7 @@ export const BRAND = {
   phone: PRIMARY_PHONE_HREF.replace("tel:", "").replace("+1", ""),
   phoneDisplay: PRIMARY_PHONE_DISPLAY,
   phoneHref: PRIMARY_PHONE_HREF,
-  email: "contact@247roi.com",
+  email: "brendan@get247roi.com",
   siteUrl: SITE_URL,
   schedulingUrl: process.env.NEXT_PUBLIC_SCHEDULING_URL || CALENDAR_PATH,
 } as const;

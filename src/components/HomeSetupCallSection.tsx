@@ -57,9 +57,9 @@ export default function HomeSetupCallSection() {
                   {PRIMARY_PHONE_DISPLAY}
                 </a>
               </Button>
-              <a href="mailto:contact@247roi.com" className="inline-flex justify-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
+              <a href="mailto:brendan@get247roi.com" className="inline-flex justify-center gap-2 text-sm font-semibold text-primary underline underline-offset-4">
                 <Mail className="h-4 w-4" aria-hidden />
-                contact@247roi.com
+                brendan@get247roi.com
               </a>
             </div>
           </div>
