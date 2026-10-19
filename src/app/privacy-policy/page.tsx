@@ -94,7 +94,7 @@ export default function PrivacyPolicyPage() {
                 <ul className="mt-2 space-y-1 list-disc pl-6">
                   <li>Reply STOP to unsubscribe. Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.</li>
                   <li>Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.</li>
-                  <li>To request restarting messages after opting out, contact support.</li>
+                  <li>To request restarting inquiry texts after opting out, contact support. Messages resume only after renewed permission is verified and applicable suppression controls are resolved. A provider unblock keyword such as START does not by itself enroll you in this website-form program or authorize related follow-up.</li>
                 </ul>
               </div>
               <div>
@@ -127,7 +127,12 @@ export default function PrivacyPolicyPage() {
             </div>
           </div>
 
-          <p>For telephone inquiries, we may send an informational response about your call. Reply STOP to opt out.</p>
+          <div>
+            <h2 className="text-[22px] font-semibold text-gray-900 mb-4">Separate telephone operations</h2>
+            <p>
+              Separately from the website-form SMS program described above, our existing telephone-inquiry operations may send an informational text response about your call. Those responses are not part of this website-form program. Calling us does not enroll you in this program. Reply STOP to opt out of texts.
+            </p>
+          </div>
 
           <hr className="border-gray-200" />
 

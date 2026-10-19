@@ -39,7 +39,7 @@ export default function TermsOfServicePage() {
                   number that sent you messages, or clearly tell us you no longer want texts.
                   Replying STOP will trigger one final opt-out acknowledgement; no further program messages will be sent.
                   Other clear opt-out requests also stop program messages, without a promised SMS acknowledgement.
-                  To request restarting messages after opting out, contact our support team.</strong>
+                  To request restarting inquiry texts after opting out, contact support. Messages resume only after renewed permission is verified and applicable suppression controls are resolved. A provider unblock keyword such as START does not by itself enroll you in this website-form program or authorize related follow-up.</strong>
                 </p>
               </div>
 
