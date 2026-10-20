@@ -6,7 +6,7 @@ const DEMO_HREF = "tel:+16109987247";
 const DEMO_DISPLAY = "(610) 998-7247";
 const BUSINESS_HREF = "tel:+16103003001";
 const BUSINESS_DISPLAY = "(610) 300-3001";
-const TESTING_LINE = "Try a conversation for your business. Demo bookings are for testing only.";
+const TESTING_LINE = "Talk with our AI assistant about your business, then ask Brendan for a custom demo.";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
@@ -109,5 +109,6 @@ test("demo page live AI voice demo block", () => {
   assert.ok(demoPage.includes(DEMO_HREF));
   assert.ok(demoPage.includes(DEMO_DISPLAY));
   assert.ok(demoPage.indexOf('id="voice-demo"') < demoPage.indexOf('<WorkflowDemo />'));
-  assert.ok(demoPage.includes('Demo bookings are for testing only.'));
+  assert.ok(demoPage.includes('Talk with Brendan to arrange a custom demo.'));
+  assert.ok(!demoPage.includes('Tell it your business name and website'));
 });
