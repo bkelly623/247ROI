@@ -6,6 +6,9 @@ import Footer from "@/components/Footer";
 import LeadJourneyExample from "@/components/LeadJourneyExample";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
+const AI_DEMO_PHONE_HREF = "tel:+16109987247";
+const AI_DEMO_PHONE_DISPLAY = "(610) 998-7247";
+
 const offers=[
  {icon:MessageSquare,tag:"A practical place to start",title:"Keep new leads from going cold.",body:"Text back missed callers, respond to new inquiries and follow up until there’s a clear next step—not another forgotten message.",items:["Missed-call text back","New-inquiry response","Follow-up & team notifications"],href:"/contact?offer=lead-capture&source=homepage",cta:"Discuss lead follow-up",featured:true},
  {icon:PhoneCall,tag:"When calls need an answer",title:"An AI receptionist when you can’t pick up.",body:"Give routine callers an answer, capture what they need and help them book or reach the right person. Built around your hours, services and handoff rules.",items:["After-hours or overflow coverage","Caller details & summaries","Booking & human handoff"],href:"/contact?offer=ai-receptionist&source=homepage",cta:"Discuss call coverage",featured:false},
@@ -23,7 +26,9 @@ export default function HomePage(){return <div className="min-h-screen bg-zinc-5
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-300">247ROI · Customer follow-up & business automation</p>
           <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.06] sm:text-5xl lg:text-6xl">Respond faster.<br />Stay in the conversation.<br /><span className="text-orange-400">Win more business.</span></h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-300">Turn missed calls and new inquiries into conversations your team can act on—with automated follow-up, AI call answering and easier booking.</p>
-          <div className="mt-8 flex flex-wrap gap-3"><a href="#examples" className={button} data-track-event="cta_click" data-track-label="Explore examples" data-track-source="homepage_hero">See how it works <ArrowRight size={18} aria-hidden /></a><Link href="/contact?offer=lead-capture&source=homepage-hero" className="inline-flex min-h-12 items-center rounded-full border border-white/30 px-6 py-3 font-semibold text-white hover:bg-white/10">Talk through your setup</Link></div>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"><a href={AI_DEMO_PHONE_HREF} className={button} data-track-event="demo_phone_click" data-track-lane="ai-voice" data-track-source="homepage_hero"><PhoneCall size={18} aria-hidden />Call the AI demo</a><Link href="/contact?offer=lead-capture&source=homepage-hero" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/30 px-6 py-3 font-semibold text-white hover:bg-white/10" data-track-event="cta_click" data-track-label="Talk to Brendan" data-track-source="homepage_hero">Talk to Brendan</Link></div>
+          <p className="mt-4 text-sm leading-relaxed text-zinc-300">AI voice demo: <a href={AI_DEMO_PHONE_HREF} className="font-semibold text-white underline decoration-white/40 underline-offset-4" data-track-event="demo_phone_click" data-track-lane="ai-voice" data-track-source="homepage_hero_number">{AI_DEMO_PHONE_DISPLAY}</a>. Try a conversation for your business. Demo bookings are for testing only.</p>
+          <a href="#examples" className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-orange-300 underline-offset-4 hover:underline" data-track-event="cta_click" data-track-label="Explore examples" data-track-source="homepage_hero">See how it works <ArrowRight size={16} aria-hidden /></a>
           <p className="mt-6 text-sm text-zinc-400">Need something built around your business? <a href="#custom-software" className="font-semibold text-white underline decoration-white/40 underline-offset-4">We also build custom software & AI.</a></p>
         </div>
         <div className="rounded-3xl border border-white/15 bg-white/[0.04] p-6 sm:p-8">

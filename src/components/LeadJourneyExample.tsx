@@ -34,7 +34,7 @@ export default function LeadJourneyExample() {
   const journey=journeys[selected];
   return <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8" data-testid="lead-journey">
     <p className="text-xs font-bold uppercase tracking-widest text-orange-800">Interactive illustration · fictional business</p>
-    <p className="mt-2 text-sm leading-relaxed text-zinc-600">Explore the steps. No calls, messages, bookings or reviews are sent. This is not a live GHL demonstration.</p>
+    <p className="mt-2 text-sm leading-relaxed text-zinc-600">Explore the steps. No calls, messages, bookings or reviews are sent.</p>
     <div className="my-6 flex flex-wrap gap-2" aria-label="Choose an example">
       {journeys.map((item,index)=><button key={item.id} type="button" aria-pressed={selected===index} onClick={()=>{setSelected(index);setStep(0);}} className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-700 ${selected===index?"border-zinc-950 bg-zinc-950 text-white":"border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-100"}`}>{item.name}</button>)}
     </div>

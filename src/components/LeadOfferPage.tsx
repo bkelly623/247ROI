@@ -5,6 +5,9 @@ import Footer from "@/components/Footer";
 import { LeadCaptureVisual, MISSED_CALL_PATH, RECEPTIONIST_PATH, offerButton, offerContact, type LeadOffer } from "@/components/LeadCapture";
 import { PRIMARY_PHONE_DISPLAY, PRIMARY_PHONE_HREF } from "@/app/components/cta";
 
+const AI_DEMO_PHONE_HREF = "tel:+16109987247";
+const AI_DEMO_PHONE_DISPLAY = "(610) 998-7247";
+
 const missedFaq = [
   ["Is this an AI receptionist?", "No. Text back starts an SMS conversation after an eligible missed call. An AI receptionist answers the call itself. You can start with text back without adding voice AI."],
   ["Can I keep my business number?", "We first check your number, carrier and current phone setup. Keeping the number may be possible through a compatible connection or forwarding arrangement; we confirm before you commit."],
@@ -39,8 +42,14 @@ export default function LeadOfferPage({ offer }: { offer: LeadOffer }) {
       <div><Link href="/services" className="text-sm font-semibold text-orange-300 hover:underline">Lead capture / {title}</Link>
         <h1 className="mt-5 font-display text-4xl font-bold leading-[1.08] sm:text-5xl lg:text-6xl">{voice ? "Your next customer shouldn’t have to wait for you to pick up." : "Miss the call. Not the chance to win the customer."}</h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-300">{voice ? "An AI receptionist that answers within your rules, captures what callers need, and gives your team a clearer next step—even when you’re tied up." : "Give missed callers a prompt, helpful text and an easy way to reply. Stay in the conversation while you’re busy running the business."}</p>
+        {voice ? <>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"><a href={AI_DEMO_PHONE_HREF} className={offerButton} data-track-event="demo_phone_click" data-track-lane="ai-voice" data-track-source={offer}><Phone className="h-4 w-4" aria-hidden />Call the AI demo</a><Link href={offerContact(offer)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3 text-sm font-semibold hover:bg-white/10" data-track-event="cta_click" data-track-label={`${offer}_hero_inquiry`} data-track-source={offer}>Discuss AI answering<ArrowRight className="h-4 w-4" aria-hidden /></Link></div>
+        <p className="mt-4 text-sm leading-relaxed text-zinc-300">AI voice demo: <a href={AI_DEMO_PHONE_HREF} className="font-semibold text-white underline decoration-white/40 underline-offset-4" data-track-event="demo_phone_click" data-track-lane="ai-voice" data-track-source={`${offer}_number`}>{AI_DEMO_PHONE_DISPLAY}</a>. Try a conversation for your business. Demo bookings are for testing only.</p>
+        <a href="#how-it-works" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-orange-300 underline-offset-4 hover:underline">See how it works</a>
+        </> : <>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"><Link href={offerContact(offer)} className={offerButton} data-track-event="cta_click" data-track-label={`${offer}_hero_inquiry`} data-track-source={offer}>{voice ? "Discuss AI answering" : "Check my phone setup"}<ArrowRight className="h-4 w-4" aria-hidden /></Link><a href="#how-it-works" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3 text-sm font-semibold hover:bg-white/10">See how it works</a></div>
         <p className="mt-4 text-sm text-zinc-400">Start with one call flow. Expand only if it makes sense.</p>
+        </>}
       </div><LeadCaptureVisual voice={voice} />
     </div></section>
     {!voice && <section className="border-b border-zinc-200 bg-white py-8"><div className="container mx-auto px-5 sm:px-6"><h2 className="font-display text-xl font-bold">See text back on a real phone.</h2><p className="mt-3 max-w-3xl text-sm leading-relaxed text-zinc-600">Call <a href={PRIMARY_PHONE_HREF} data-track-event="demo_phone_click" data-track-lane="lead-capture" className="font-semibold text-orange-700 underline">{PRIMARY_PHONE_DISPLAY}</a> to arrange a text-back demonstration on our business line. This is not an AI voice demo; delivery depends on mobile eligibility, carrier support and opt-out status.</p><Link href="/articles/missed-call-text-back-vs-ai-receptionist" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-orange-700 underline">Compare text back and AI answering</Link></div></section>}
