@@ -1,70 +1,69 @@
 /**
- * Conversational lead-capture engine for the missed-call text-back flow.
- * Reuses the same OpenAI call pattern as src/lib/hire/openai.ts but with a
- * leaner schema tuned for SMS: short replies, no markdown, no chips.
+ * Conversational SMS assistant for the missed-call text-back flow on
+ * (610) 300-3001. Intent-based: every turn answers or helps, and moves suitable
+ * inquiries toward the one supported action — a recorded callback request.
  *
  * Conversation state lives entirely in Twilio's own Messages log (see
  * getConversationHistory in @/lib/twilio) — no separate database table,
  * so this works across stateless serverless invocations with zero new infra.
  *
- * KNOWLEDGE_BASE below is pulled directly from already-published site copy
- * (HomePage, /services, /about, /ai-opportunity-audit, /missed-call-calculator)
- * so the assistant can answer real questions instead of deferring everything
- * to Brendan. Nothing in here should be pricing, guarantee terms, or a
- * timeline — the site doesn't publish those, so neither does this prompt.
+ * The prompt lives in ./prompt so the exact text sent here is what tests check.
  */
 
-const KNOWLEDGE_BASE = `Real facts about 247ROI you can use to answer questions accurately (do not go beyond this — no pricing, no specific guarantee terms, no timelines; those go to Brendan):
-
-WHAT WE DO: 247ROI builds custom AI agents, workflow automation, dashboards, and internal tools for small business owners and operators who want cleaner operations. Not off-the-shelf software — systems built around how the business actually works. We identify where time, revenue, handoffs, or decisions are leaking instead of assuming every problem needs AI. Sometimes the right answer is traditional automation, a dashboard, better data flow, or just a cleaner process — not AI at all.
-
-HOW WE START — THE AI OPPORTUNITY AUDIT: A guided audit that finds the first business bottleneck worth fixing (based on money, time, handoffs, visibility, and owner attention) and recommends whether AI, automation, a dashboard, internal app, integration, custom software, or human workflow cleanup is the right next move. Output: a plain-English map of where the process breaks, a practical recommendation, and a clear first system idea with success criteria.
-
-WHAT WE BUILD (examples):
-- Lead-response / missed-call systems: capture every inquiry (call, text, form, ad, referral), send a fast first reply, route the lead, create the follow-up task, flag stalled opportunities. This SMS conversation is one of those systems in action.
-- Estimate/quote follow-up systems: watch sent quotes, draft useful follow-ups, flag high-value opportunities so deals don't die quietly.
-- Dashboards & internal apps: pull scattered numbers (leads, revenue, follow-ups, bottlenecks) into one operating view so owners stop chasing updates across spreadsheets, inboxes, and portals.
-- Inbox assistants: classify messages, extract next actions, draft replies, update records, escalate anything sensitive or unusual.
-- AI agents for research, triage, drafting, reporting, CRM updates, bid/estimate prep, and handoffs — always producing human-reviewable output (drafts, summaries, queues), never final say.
-
-HUMAN CONTROL: Humans always keep approval over pricing, bids, discounts, legal language, financial details, and anything customer-facing or judgment-based. The AI drafts and prepares; a person approves. This is a stated principle, not a caveat — if a prospect is worried about AI "going rogue," this directly answers it.
-
-WHO: Brendan Kelly runs 247ROI personally and follows up on every lead himself — this isn't a call-center or a faceless SaaS tool.
-
-NOT PUBLISHED ANYWHERE — do not guess or estimate: pricing/cost, specific guarantee terms (there is a guarantee, but its exact conditions aren't for you to state), exact delivery timelines. If asked, say Brendan will cover that on the call.`;
-
-const SYSTEM_PROMPT = `You are 247ROI's SMS assistant for the business text line (610) 300-3001.
-Someone has just texted this number — either replying after a missed call, or texting in cold without ever calling. Don't assume which; read the conversation and respond naturally to whichever it is. If earlier messages in the thread mention a missed call, you already know context; if not, just greet them naturally as someone texting the business.
-
-${KNOWLEDGE_BASE}
-
-Your jobs, in order:
-1. If they ask a real question about what 247ROI does, answer it directly and accurately using the knowledge base above, in one short text. Don't dodge into "Brendan will cover that" for things you actually know — that's exactly the kind of unhelpful deflection that makes people give up on texting back. Only defer to Brendan for pricing, exact guarantee terms, timelines, or anything not covered above.
-2. Find out what they need help with — that's what they actually care about, and you already have their phone number for a callback, so don't ask for their name before you know why they're texting. One short, specific question at a time — never ask two things in one text, and never ask an open-ended "tell me everything" question when a narrower one would get a faster, easier answer.
-3. Once you have a real sense of what they need, tell them Brendan will personally follow up shortly, and stop asking further questions. Only ask for their name if it comes up naturally — it is never required to wrap up.
-
-Rules:
-- This is a text message conversation. Keep every reply under 300 characters. No markdown, no bullet points, no emojis unless the person used one first.
-- Sound like a helpful, sharp human assistant — not a chatbot, not salesy, not corporate.
-- Ask ONE question per message, and make it as easy to answer as possible. Never interrogate. Cap discovery at 2 questions total before wrapping up — SMS is not the place for a long back-and-forth.
-- Answering a real question (using the knowledge base) does not count against the 2-question discovery cap — it's not you asking, it's you being useful.
-- If they describe anything urgent (emergency, actively losing money right now, needs someone today), say Brendan will call them directly and prioritize it.
-- If they ask something outside the knowledge base (pricing specifics, exact guarantee terms, technical implementation detail), say Brendan will cover that when he follows up — don't invent numbers or promises.
-- Once you have a real sense of their need, do not keep fishing for more detail (including their name). Wrap up warmly and let the human take over.
-- If the conversation continues after wrap-up, stay warm and brief, but don't reopen discovery questions.
-
-Respond ONLY with a JSON object: { "reply": string, "leadReady": boolean, "summary": string|null, "urgent": boolean }
-- "reply": the exact text to send back.
-- "leadReady": true the FIRST turn you have a real sense of their need (name optional; stays true on later turns too).
-- "summary": a single compact line like "Water heater leaking, wants callback today (no name given)" or "Mike — needs a water heater replaced" once leadReady is true, else null.
-- "urgent": true if this sounds time-sensitive/emergency.`;
+import { buildSmsMessages, SMS_INTENTS, SMS_REPLY_MAX_CHARS, type SmsHistoryMessage, type SmsIntent } from "./prompt";
 
 export type SmsTurnResult = {
   reply: string;
   leadReady: boolean;
   summary: string | null;
   urgent: boolean;
+  intent?: SmsIntent;
 };
+
+const MODEL_TIMEOUT_MS = 9000;
+const SUMMARY_MAX_CHARS = 200;
+
+const KEYWORDS = new Set(["STOP", "STOPALL", "UNSUBSCRIBE", "CANCEL", "END", "QUIT", "HELP", "INFO"]);
+const WITHDRAWAL = [
+  /^(?:please\s+)?(?:stop|quit|don['’]?t|do not|no more)\s+(?:texting|messaging|contacting|calling|text|message|contact)\s+me(?:\s+(?:again|anymore))?[.!\s]*$/i,
+  /^(?:please\s+)?leave me alone[.!\s]*$/i,
+  /^(?:please\s+)?(?:remove (?:me|my number)|take me off)(?:\s+(?:from\s+)?(?:your|the)\s+(?:list|texts|messages))?[.!\s]*$/i,
+  /^unsubscribe[.!\s]*$/i,
+];
+const WRONG_NUMBER = [/^(?:(?:sorry|you have the|this is the)[,\s]+)?wrong (?:number|person)[.!\s]*$/i, /^(?:I\s+)?never called (?:you|this number)[.!\s]*$/i];
+
+/** Deterministic pre-model guard for messages that must never get a sales reply. */
+export function guardInbound(text: string): { kind: "keyword" | "withdrawal" | "wrong_number"; result: SmsTurnResult } | null {
+  const trimmed = text.trim();
+  if (KEYWORDS.has(trimmed.toUpperCase())) {
+    return { kind: "keyword", result: { reply: "", leadReady: false, summary: null, urgent: false } };
+  }
+  if (WRONG_NUMBER.some((re) => re.test(trimmed))) {
+    return {
+      kind: "wrong_number",
+      result: { reply: "Thanks for letting us know, and sorry for the mix-up.", leadReady: false, summary: null, urgent: false, intent: "wrong_number" },
+    };
+  }
+  if (WITHDRAWAL.some((re) => re.test(trimmed))) {
+    return {
+      kind: "withdrawal",
+      result: { reply: "Understood, sorry for the bother.", leadReady: false, summary: null, urgent: false, intent: "withdrawal" },
+    };
+  }
+  return null;
+}
+
+export const SMS_FALLBACK: SmsTurnResult = {
+  reply:
+    "Thanks for texting 247ROI. This is the automated assistant, and I couldn't put a full answer together just now. Your message is saved in this thread for the team to review.",
+  leadReady: true,
+  summary: "AI reply unavailable — message needs manual review",
+  urgent: false,
+};
+
+function fallback(): SmsTurnResult {
+  return { ...SMS_FALLBACK };
+}
 
 function extractJson(text: string): unknown {
   const trimmed = text.trim();
@@ -78,56 +77,106 @@ function extractJson(text: string): unknown {
   }
 }
 
-export async function runSmsTurn(
-  history: { role: "user" | "assistant"; content: string }[]
-): Promise<SmsTurnResult> {
-  const key = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+function strictBool(v: unknown): boolean {
+  if (v === true) return true;
+  if (typeof v === "string") return v.trim().toLowerCase() === "true";
+  return false;
+}
 
-  const fallback: SmsTurnResult = {
-    reply: "Thanks for the reply! Brendan will follow up with you shortly. You can also call (610) 300-3001 anytime.",
-    leadReady: true,
-    summary: "Reply received (AI reply failed — needs manual follow-up)",
-    urgent: false,
+/** Shortens at a sentence end, else a word boundary; never mid-word. */
+export function fitSms(text: string, max = SMS_REPLY_MAX_CHARS): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const window = clean.slice(0, max + 1);
+  const sentenceEnd = Math.max(window.lastIndexOf(". "), window.lastIndexOf("? "), window.lastIndexOf("! "));
+  if (sentenceEnd >= max * 0.5) return clean.slice(0, sentenceEnd + 1);
+  const space = clean.slice(0, max).lastIndexOf(" ");
+  return `${clean.slice(0, space > 0 ? space : max - 1).replace(/[\s,;:-]+$/, "")}…`;
+}
+
+const LINK = /(https?:\/\/|www\.)/i;
+const FALSE_COMMITMENT = [
+  /\b(you'?re|you are|is|been|i'?ve|we'?ve)\s+(all\s+)?(booked|scheduled|confirmed)\b/i,
+  /\bwill (call|text|reach out to|contact) you (shortly|soon|today|tomorrow|within|in \d|at \d|right away)/i,
+  /\b(has|have) been notified\b/i,
+];
+
+/** Replies that violate hard policy are replaced with the truthful fallback. */
+export function violatesReplyPolicy(reply: string): boolean {
+  return LINK.test(reply) || FALSE_COMMITMENT.some((re) => re.test(reply));
+}
+
+export function parseModelContent(content: unknown): SmsTurnResult | null {
+  if (typeof content !== "string" || !content.trim()) return null;
+  let parsed: unknown;
+  try {
+    parsed = extractJson(content);
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  const p = parsed as Record<string, unknown>;
+  if (typeof p.reply !== "string" || !p.reply.trim()) return null;
+  const reply = fitSms(p.reply);
+  if (violatesReplyPolicy(reply)) return null;
+
+  const intent = SMS_INTENTS.includes(p.intent as SmsIntent) ? (p.intent as SmsIntent) : undefined;
+  const stopped = intent === "wrong_number" || intent === "withdrawal";
+  const leadReady = !stopped && strictBool(p.leadReady);
+  const summary = typeof p.summary === "string" && p.summary.trim() ? p.summary.replace(/\s+/g, " ").trim().slice(0, SUMMARY_MAX_CHARS) : null;
+
+  return {
+    reply,
+    leadReady,
+    summary: leadReady ? summary : null,
+    urgent: !stopped && strictBool(p.urgent),
+    ...(intent ? { intent } : {}),
   };
+}
 
+export async function runSmsTurn(history: SmsHistoryMessage[]): Promise<SmsTurnResult> {
+  const latest = [...history].reverse().find((m) => m.role === "user");
+  const guarded = latest ? guardInbound(latest.content) : null;
+  if (guarded) return guarded.result;
+
+  const key = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY;
   if (!key) {
     console.error("sms-lead: no OpenAI API key configured");
-    return fallback;
+    return fallback();
   }
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
   try {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
+      signal: controller.signal,
       body: JSON.stringify({
         model: process.env.OPENAI_HIRE_MODEL || process.env.OPENAI_MODEL || "gpt-4o",
-        temperature: 0.6,
-        max_tokens: 300,
+        temperature: 0.5,
+        max_tokens: 350,
         response_format: { type: "json_object" },
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
+        messages: buildSmsMessages(history),
       }),
     });
 
     if (!res.ok) {
-      console.error("sms-lead: OpenAI error", res.status, await res.text().catch(() => ""));
-      return fallback;
+      console.error("sms-lead: OpenAI error", res.status);
+      return fallback();
     }
 
-    const data = await res.json();
-    const content = data?.choices?.[0]?.message?.content;
-    if (!content) return fallback;
-
-    const parsed = extractJson(content) as Partial<SmsTurnResult>;
-    if (!parsed || typeof parsed.reply !== "string" || !parsed.reply.trim()) return fallback;
-
-    return {
-      reply: parsed.reply.slice(0, 480),
-      leadReady: Boolean(parsed.leadReady),
-      summary: typeof parsed.summary === "string" ? parsed.summary.slice(0, 200) : null,
-      urgent: Boolean(parsed.urgent),
-    };
+    const data = (await res.json()) as { choices?: { message?: { content?: unknown } }[] } | null;
+    const result = parseModelContent(data?.choices?.[0]?.message?.content);
+    if (!result) {
+      console.error("sms-lead: model response rejected");
+      return fallback();
+    }
+    return result;
   } catch (err) {
-    console.error("sms-lead: turn failed", err);
-    return fallback;
+    console.error("sms-lead: turn failed", err instanceof Error ? err.name : "unknown");
+    return fallback();
+  } finally {
+    clearTimeout(timer);
   }
 }
