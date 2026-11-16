@@ -57,6 +57,9 @@ Pull the business's **Google Business Profile** (Google Places API, or search fo
 Rules:
 - **Every fact on the site must come from facts.json or the call notes.** Never invent years in business, licenses, insurance, response times, prices, emails, owner names or certifications.
 - **Review quotes are copied exactly.** No edits, no merging, no inventing. Choose short ones (under 25 words) that show the business's strengths.
+- **Find the personal hook.** Read every review and note anything customers mention again and again about the owner or the experience: the owner's name, a dog that rides along, "came out the same evening," "honest about not needing the repair." Put the strongest one on the page (a headline, a review pick or the hero image). It's what makes the site feel like *their* business and not a template.
+- **Pull real services from the reviews too.** Jobs customers describe (battery replacement, alternator, pre-purchase inspection, etc.) are real services. Use them instead of vague categories like "Something's off?".
+- **Hours caveat:** if the listing says "Open 24 hours" for a solo operator, show it as "Open 24/7 on Google" or "Evenings & weekends" only if reviews back it up, and flag it for B to confirm on the next call.
 - **Lead with the strongest facts.** If the business is open 24/7, has a rating of 4.7 or higher with 20+ reviews, or has a standout review theme (like "arrived in 20 minutes"), the hero must show it.
 - Use the business's email address on the site only if it was confirmed on the call or appears on the listing.
 - If there's no Google listing, build from the call notes alone and flag it in the report.
@@ -163,6 +166,8 @@ It must **not** see the build conversation or the code. Use a strong vision mode
 **First phone screen (phone-01, above the sticky bar)**
 - [ ] The strongest real facts are visible: hours (especially 24/7) and star rating + review count, when they exist
 - [ ] The headline is concrete (service + town), not vague or poetic
+- [ ] Hours (especially 24-hour or evening availability) appear if the listing has them; services are concrete jobs, not vague categories
+- [ ] The business's personal hook from the reviews (owner, dog, standout trait) is used somewhere prominent (should)
 - [ ] The primary Call button is fully visible, with nothing half-hidden behind the sticky bar
 - [ ] The vehicle image is visible, not a solid color block
 
@@ -179,7 +184,8 @@ It must **not** see the build conversation or the code. Use a strong vision mode
 - [ ] No H2 over 3 lines on a phone; no single word alone on a headline line; no awkward mid-phrase breaks (e.g. "6 AM–" / "10 PM")
 - [ ] No broken underlines, cut-off ticker or marquee text, empty grid cells, stray empty bands or large unexplained gaps
 - [ ] Phone number formatted as (XXX) XXX-XXXX; shown as a giant headline at most twice
-- [ ] ↗ arrows only on external links
+- [ ] ↗ arrows only on external links; icons are clean SVG line icons, not emoji or ☎ glyphs
+- [ ] No filler micro-labels ("01 / CARE THAT COMES CLOSER", "PERSONAL BY DESIGN") that say nothing
 - [ ] Desktop: the vehicle fills a meaningful part of the hero; the layout is balanced (should)
 - [ ] Consistent quality: no section looks clearly cheaper than the rest, e.g. amateur line drawings next to a photo-quality hero (should)
 - [ ] Overall impression is premium: depth, hierarchy, confident type, not a generic template (should)
