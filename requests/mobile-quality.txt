@@ -1,1 +1,1 @@
-https://mobile-quality-preview.vercel.app/?v=mq-sliding-2
+https://mobile-quality-preview.vercel.app/?v=mq-sliding-2&r=1443
