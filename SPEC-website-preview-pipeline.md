@@ -120,6 +120,7 @@ Composite the business name (and logo or monogram) onto the door and side panel 
 **Step C: export** webp + jpg at 960 (mobile, 4:5 crop with the vehicle fully visible), 1100 and 1920 wide (16:9, vehicle filling about half the frame).
 
 Rules:
+- **Check vehicle anatomy before using the image.** Image models invent impossible vehicles (a van with a hinged door in the rear side wall, extra wheels, mirrors in the wrong place). Name the real body type in the prompt (e.g. "Mercedes Sprinter-style high-roof cargo van") and state how it opens ("sliding side door open behind the passenger cab door, showing tool shelving" or "rear barn doors open"). Reject and regenerate any image where a door or opening sits where that vehicle doesn't have one.
 - No other company's name, logo or lettering anywhere in the image.
 - No faces, no plates, no accident damage or wrecks (unless accident recovery is the business's main service).
 - The scenery must match the region (no Pacific Northwest pines for Pennsylvania).
@@ -176,6 +177,7 @@ It must **not** see the build conversation or the code. Use a strong vision mode
 - [ ] Review quotes match facts.json exactly
 - [ ] No other company's name or branding in any image; no faces; no plates
 - [ ] Vehicle lettering is spelled correctly, sharp and believable (not warped or garbled)
+- [ ] Vehicle anatomy is real-world correct: doors, hinges, wheels, mirrors and openings where that make and model actually has them (e.g. a cargo van opens with a sliding side door behind the cab or rear barn doors, never a hinged door in the rear quarter panel); no extra or missing wheels, melted parts or impossible geometry. Describe the vehicle's doors and openings in the review before passing it
 - [ ] No accident or damage scenes (unless that's the core service); scenery fits the region
 - [ ] At most one small "design preview" line, in the footer only. No top banner, no "concept imagery" labels
 
