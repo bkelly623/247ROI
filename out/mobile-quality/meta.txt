@@ -1,2 +1,2 @@
-https://mobile-quality-preview.vercel.app/?v=mq-van-2
-2026-11-17T16:36:24.096Z
+https://mobile-quality-preview.vercel.app/?v=mq-sliding-1
+2026-11-17T17:02:56.362Z
