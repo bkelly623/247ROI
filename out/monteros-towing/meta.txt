@@ -1,2 +1,2 @@
-https://monteros-towing-preview.vercel.app/?v=mt-2
-2026-11-18T18:09:50.032Z
+https://monteros-towing-preview.vercel.app/?v=mt-2&r=0638
+2026-11-19T11:42:12.318Z
