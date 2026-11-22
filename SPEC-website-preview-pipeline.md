@@ -181,6 +181,14 @@ It must **not** see the build conversation or the code. Use a strong vision mode
 - [ ] No accident or damage scenes (unless that's the core service); scenery fits the region
 - [ ] At most one small "design preview" line, in the footer only. No top banner, no "concept imagery" labels
 
+**Full-text read (do this every round, not just the changed parts)**
+- [ ] Read EVERY string in content.json / the page source, not just what's visible in screenshots: headings, card text, FAQ answers (they're collapsed in screenshots), alt text, page title, footer and preview-notes text
+- [ ] Every review fragment is in quote marks with an attribution; every bio/role line is clearly a description. Never mix the two without labels
+- [ ] No quote appears twice on the page; the reviews section uses the same source as the headline rating where possible
+- [ ] No internal/process wording anywhere a visitor or owner could see it, including alt text ("Illustrative…"), preview notes ("supplied by Brendan", "noindex is not access control") and the page title
+- [ ] No image is reused in two sections
+- [ ] The page is real HTML in the source (pre-rendered), not an empty div filled by JavaScript, with LocalBusiness schema
+
 **Visual quality**
 - [ ] Body text looks about 17–18px and regular weight, not oversized or heavy
 - [ ] No H2 over 3 lines on a phone; no single word alone on a headline line; no awkward mid-phrase breaks (e.g. "6 AM–" / "10 PM")
