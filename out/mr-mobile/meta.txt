@@ -1,2 +1,2 @@
-https://mr-mobile-preview.vercel.app/?v=mm-r2&r=1636
-2026-11-23T21:37:51.444Z
+https://mr-mobile-preview.vercel.app/?v=mm-fixes-1
+2026-11-23T22:37:47.741Z
