@@ -1,1 +1,1 @@
-https://mr-mobile-preview.vercel.app/?v=mm-r2
+https://mr-mobile-preview.vercel.app/?v=mm-r2&r=1636
