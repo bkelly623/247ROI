@@ -164,6 +164,11 @@ It must **not** see the build conversation or the code. Use a strong vision mode
 
 ### Checklist ("must" unless marked "should")
 
+**Header contrast — every site (phone-01 and desktop-01)**
+- [ ] Zoom into both header regions. Logo mark, wordmark and menu button (where displayed) have clear contrast against the photograph on load.
+- [ ] Dedicated75%-ink top scrim fades to transparent over approximately160px mobile/200px desktop, with40%-ink transparent-header logo fill.
+- [ ] No divider beneath the transparent header; divider appears only with the solid scrolled header. Parent verifies scroll and return-to-top behavior.
+
 **First phone screen (phone-01, above the sticky bar)**
 - [ ] The strongest real facts are visible: hours (especially 24/7) and star rating + review count, when they exist
 - [ ] The headline is concrete (service + town), not vague or poetic
